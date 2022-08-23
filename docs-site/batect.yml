@@ -1,0 +1,59 @@
+containers:
+  build-env:
+    image: node:18.7.0
+    volumes:
+      - local: .
+        container: /code
+
+      - type: cache
+        name: node_modules
+        container: /code/node_modules
+
+      - type: cache
+        name: npm_cache
+        container: /root/.npm
+
+    enable_init_process: true
+    working_directory: /code
+    run_as_current_user:
+      enabled: true
+      home_directory: /home/container-user
+
+  structurizr:
+    image: structurizr/lite
+    volumes:
+      - local: ./structurizr
+        container: /usr/local/structurizr
+    ports:
+      - local: 8090
+        container: 8080
+
+tasks:
+  shell:
+    description: Build the Site
+    run:
+      container: build-env
+      command: bash
+      ports:
+        - local: 8000
+          container: 8000
+
+  build:
+    description: Build the Site
+    run:
+      container: build-env
+      command: ./.batect/scripts/build.sh
+
+  run:
+    description: Run the site locally
+    run:
+      container: build-env
+      command: ./.batect/scripts/run.sh
+      ports:
+        - local: 8000
+          container: 8000
+
+  structurizr:
+    description: Run the Structurizr tool for C4 Modelling
+    run:
+      container: structurizr
