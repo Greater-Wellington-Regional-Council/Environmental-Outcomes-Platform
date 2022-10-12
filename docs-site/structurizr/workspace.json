@@ -1,0 +1,418 @@
+{
+  "id" : 1,
+  "name" : "EOP - Plan Limits Viewer",
+  "description" : "Description",
+  "revision" : 0,
+  "lastModifiedDate" : "2022-10-12T01:53:18Z",
+  "lastModifiedAgent" : "structurizr-web/2828/diagram",
+  "properties" : {
+    "structurizr.dsl" : "d29ya3NwYWNlICJFT1AgLSBQbGFuIExpbWl0cyBWaWV3ZXIiIHsKCiAgICBtb2RlbCB7CiAgICAgICAgdXNlciA9IHBlcnNvbiAiVXNlciIgIkEgcGVyc29uIHdhbnRpbmcgdG8gdW5kZXJzdGFuZCB3aGF0IE5SUGxhbiBMaW1pdHMgYXBwbHkgdG8gYSBhcmVhLiIKCiAgICAgICAgZW50ZXJwcmlzZSAiRU9QIiB7CiAgICAgICAgICAgIHBsYW5MaW1pdHNTeXN0ZW0gPSBzb2Z0d2FyZVN5c3RlbSAiUGxhbiBMaW1pdHMiICJUaGUgc3lzdGVtIGZvciBwcm9kaXZpbmcgUGxhbiBMaW1pdHMgaW5mb3JtYXRpb24uIiB7CgogICAgICAgICAgICAgICAgZnJvbnRlbmQgPSBjb250YWluZXIgIlNpbmdsZS1QYWdlIEFwcGxpY2F0aW9uIiAiUHJvdmlkZXMgYWJpbGl0eSBmb3IgdXNlcnMgdG8gZmluZCB3aGljaCBsaW1pdHMgYXBwbHkgdG8gd2hhdCBhcmVhcyB2aWEgYSBtYXAgaW50ZXJmYWNlLiIgIlR5cGVzY3JpcHQgLyBSZWFjdCIgIldlYiBCcm93c2VyIgogICAgICAgICAgICAgICAgYmFja2VuZCA9IGNvbnRhaW5lciAiU2VydmVyIEFwcGxpY2F0aW9uIiAiRXhwb3NlcyBMaW1pdHMgYW5kIEdlb3NwYXRpYWwgZGF0YSB2aWEgQVBJLiBLZWVwcyBkYXRhIHN0b3JlIGluIHN5bmMgd2l0aCBHSVMgU3lzdGVtcy4iICJLb3RsaW4gLyBTcHJpbmcgQm9vdCIgewogICAgICAgICAgICAgICAgICAgIGNvbnRyb2xsZXJHcmFwaCA9IGNvbXBvbmVudCAiR3JhcGggQVBJIENvbnRyb2xsZXIiICJBbGxvdyBhY2Nlc3MgdG8gZGF0YSBpbiB0aGUgc3lzdGVtLiIgIlNwcmluZyBHcmFwaFFMIENvbnRyb2xsZXIiCiAgICAgICAgICAgICAgICAgICAgZmV0Y2hlckdpcyA9IGNvbXBvbmVudCAiRGF0YSBGZXRjaGVyIC0gR0lTIiAiS2VlcHMgZGF0YSBzdG9yZSBpbiBzeW5jIGxhdGVzdCB2ZXJzaW9uIG9mIGRhdGEgZnJvbSB0aGUgR0lTIHN5c3RlbSIgIlNwcmluZyBTY2hlZHVsZWQgSHR0cCBTeW5jIgogICAgICAgICAgICAgICAgICAgIGxvYWRlclBsYW5MaW1pdHMgPSBjb21wb25lbnQgIkxvYWRlciAtIFBsYW4gTGltaXRzIiAiTG9hZHMgZGF0YSBzdG9yZSB3aXRoIHRoZSBzdGF0aWMgcGxhbiBsaW1pdHMgZGF0YSAoU1FMIFNjcmlwdHMpIiAiUmVkZ2F0ZSBGbHl3YXkiCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBkYXRhYmFzZSA9IGNvbnRhaW5lciAiRGF0YWJhc2UiICJQZXJzaXN0YW50IHN0b3JhZ2UgZm9yIHRoZSBQbGFuIGxpbWl0cyBhbmQgR2Vvc3BhdGlhbCBkYXRhLCBhbGxvaW5nIGZvciB0aGUgTGltaXRzIGFuZCBHZW9zcGF0aWFsICIgIlBvc3RnaXMiICJEYXRhYmFzZSIKICAgICAgICAgICAgfQogICAgICAgIH0KCiAgICAgICAgZ3JvdXAgIkdXUkMiIHsKICAgICAgICAgICAgZ2lzID0gc29mdHdhcmVzeXN0ZW0gIkdXUkMgR0lTIFN5c3RlbSIgIlRoZSBHV1JDIEdJUyBzeXN0ZW0ocykiICJFeGlzdGluZyBTeXN0ZW0iCiAgICAgICAgICAgIHBsYW4gPSBlbGVtZW50ICJHV1JDIE5SUGxhbiIgIkRvY3VtZW50cyIgIlRoZSBOYXR1cmFsIFJlc291cmNlcyBQbGFuIiAiRG9jdW1lbnQiCiAgICAgICAgfQoKICAgICAgICBncm91cCAiVG9pdMWrIFRlIFdoZW51YSBMSU5aIiB7CiAgICAgICAgICAgIGJhc2VtYXBzID0gc29mdHdhcmVzeXN0ZW0gIkxJTlogQmFzZW1hcHMgU3lzdGVtIiAiVGhlIExJTlogQmFzZW1hcHMiICJFeGlzdGluZyBTeXN0ZW0iCiAgICAgICAgfQoKICAgICAgICAjIFJlbGF0aW9uc2hpcHMgdG8gU3lzdGVtcwogICAgICAgIHVzZXIgLT4gcGxhbkxpbWl0c1N5c3RlbSAiVXNlcyIKICAgICAgICBwbGFuTGltaXRzU3lzdGVtIC0+IGdpcyAiR2Vvc3BhdGlhbCBib3VuZGFyaWVzIHB1bGxlZCBmcm9tIgogICAgICAgIHBsYW5MaW1pdHNTeXN0ZW0gLT4gcGxhbiAiUGxhbiBsaW1pdHMgcHVsbGVkIG91dCBvZiwgbWFudWFsbHkgZGlnaXRpemVkIGFuZCBzdG9yZWQiCgogICAgICAgICMgUmVsYXRpb25zaGlwcyB0byBDb250YWluZXJzCiAgICAgICAgdXNlciAtPiBmcm9udGVuZCAiVmlzaXRzIFBsYW4gbGltaXRzIHZpZXdlciB1c2luZyIKCiAgICAgICAgIyBSZWxhdGlvbnNoaXBzIHRvIENvbXBvbmVudHMKICAgICAgICBmcm9udGVuZCAtPiBjb250cm9sbGVyR3JhcGggIk1ha2VzIEFQSSBjYWxscyB0byIgIkdyYXBoUUwvSFRUUFMiCiAgICAgICAgZnJvbnRlbmQgLT4gYmFzZW1hcHMgIkxvYWRzIGJhc2VtYXBzIGZyb20iICJKU09OIGFuZCBXRUJQL0hUVFBTIgogICAgICAgIGZldGNoZXJHaXMgLT4gZGF0YWJhc2UgIlN0b3JlcyB0byIgIkpEQkMiCiAgICAgICAgZmV0Y2hlckdpcyAtPiBnaXMgIlN5bmNzIHNwYXRpYWwgZmVhdHVyZXMgZnJvbSIgIkpTT04vSFRUUFMiCiAgICAgICAgbG9hZGVyUGxhbkxpbWl0cyAtPiBkYXRhYmFzZSAiU3RvcmVzIHRvIiAiSkRCQyIKICAgICAgICBkYXRhYmFzZSAtPiBjb250cm9sbGVyR3JhcGggIlJlYWRzIGZyb20iICJKREJDIgogICAgfQoKICAgIHZpZXdzIHsKCiAgICAgICAgc3lzdGVtQ29udGV4dCBwbGFuTGltaXRzU3lzdGVtICJTeXN0ZW1Db250ZXh0IiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvTGF5b3V0IGxyIDQwMCA0MDAKICAgICAgICB9CgogICAgICAgIGNvbnRhaW5lciBwbGFuTGltaXRzU3lzdGVtICJTeXN0ZW1Db250YWluZXJzIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyIDQwMCA0MDAKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBiYWNrZW5kICJTZXJ2ZXJDb21wb25lbnRzIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyIDQwMCA0MDAKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIkNvbXBvbmVudCIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjODViYmYwCiAgICAgICAgICAgICAgICBjb2xvciAjMDAwMDAwCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29udGFpbmVyIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM0MzhkZDUKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJTb2Z0d2FyZSBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzExNjhiZAogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBDeWxpbmRlcgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIldlYiBCcm93c2VyIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBXZWJCcm93c2VyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiUGVyc29uIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBwZXJzb24KICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA4NDI3YgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkV4aXN0aW5nIFN5c3RlbSIgewogICAgICAgICAgICAgICAgc2hhcGUgUm91bmRlZEJveAogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRG9jdW1lbnQiIHsKICAgICAgICAgICAgICAgIHNoYXBlIEZvbGRlcgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjZmZlOWEyCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0K"
+  },
+  "configuration" : { },
+  "model" : {
+    "enterprise" : {
+      "name" : "EOP"
+    },
+    "people" : [ {
+      "id" : "1",
+      "tags" : "Element,Person",
+      "name" : "User",
+      "description" : "A person wanting to understand what NRPlan Limits apply to a area.",
+      "relationships" : [ {
+        "id" : "12",
+        "tags" : "Relationship",
+        "sourceId" : "1",
+        "destinationId" : "2",
+        "description" : "Uses"
+      }, {
+        "id" : "15",
+        "tags" : "Relationship",
+        "sourceId" : "1",
+        "destinationId" : "3",
+        "description" : "Visits Plan limits viewer using"
+      } ],
+      "location" : "External"
+    } ],
+    "softwareSystems" : [ {
+      "id" : "2",
+      "tags" : "Element,Software System",
+      "name" : "Plan Limits",
+      "description" : "The system for prodiving Plan Limits information.",
+      "relationships" : [ {
+        "id" : "13",
+        "tags" : "Relationship",
+        "sourceId" : "2",
+        "destinationId" : "9",
+        "description" : "Geospatial boundaries pulled from"
+      }, {
+        "id" : "14",
+        "tags" : "Relationship",
+        "sourceId" : "2",
+        "destinationId" : "10",
+        "description" : "Plan limits pulled out of, manually digitized and stored"
+      }, {
+        "id" : "19",
+        "sourceId" : "2",
+        "destinationId" : "11",
+        "description" : "Loads basemaps from",
+        "technology" : "JSON and WEBP/HTTPS",
+        "linkedRelationshipId" : "18"
+      } ],
+      "location" : "Internal",
+      "containers" : [ {
+        "id" : "3",
+        "tags" : "Element,Container,Web Browser",
+        "name" : "Single-Page Application",
+        "description" : "Provides ability for users to find which limits apply to what areas via a map interface.",
+        "relationships" : [ {
+          "id" : "16",
+          "tags" : "Relationship",
+          "sourceId" : "3",
+          "destinationId" : "5",
+          "description" : "Makes API calls to",
+          "technology" : "GraphQL/HTTPS"
+        }, {
+          "id" : "18",
+          "tags" : "Relationship",
+          "sourceId" : "3",
+          "destinationId" : "11",
+          "description" : "Loads basemaps from",
+          "technology" : "JSON and WEBP/HTTPS"
+        }, {
+          "id" : "17",
+          "sourceId" : "3",
+          "destinationId" : "4",
+          "description" : "Makes API calls to",
+          "technology" : "GraphQL/HTTPS",
+          "linkedRelationshipId" : "16"
+        } ],
+        "technology" : "Typescript / React"
+      }, {
+        "id" : "4",
+        "tags" : "Element,Container",
+        "name" : "Server Application",
+        "description" : "Exposes Limits and Geospatial data via API. Keeps data store in sync with GIS Systems.",
+        "relationships" : [ {
+          "id" : "23",
+          "sourceId" : "4",
+          "destinationId" : "9",
+          "description" : "Syncs spatial features from",
+          "technology" : "JSON/HTTPS",
+          "linkedRelationshipId" : "22"
+        }, {
+          "id" : "21",
+          "sourceId" : "4",
+          "destinationId" : "8",
+          "description" : "Stores to",
+          "technology" : "JDBC",
+          "linkedRelationshipId" : "20"
+        } ],
+        "technology" : "Kotlin / Spring Boot",
+        "components" : [ {
+          "id" : "7",
+          "tags" : "Element,Component",
+          "name" : "Loader - Plan Limits",
+          "description" : "Loads data store with the static plan limits data (SQL Scripts)",
+          "relationships" : [ {
+            "id" : "24",
+            "tags" : "Relationship",
+            "sourceId" : "7",
+            "destinationId" : "8",
+            "description" : "Stores to",
+            "technology" : "JDBC"
+          } ],
+          "technology" : "Redgate Flyway",
+          "size" : 0
+        }, {
+          "id" : "5",
+          "tags" : "Element,Component",
+          "name" : "Graph API Controller",
+          "description" : "Allow access to data in the system.",
+          "technology" : "Spring GraphQL Controller",
+          "size" : 0
+        }, {
+          "id" : "6",
+          "tags" : "Element,Component",
+          "name" : "Data Fetcher - GIS",
+          "description" : "Keeps data store in sync latest version of data from the GIS system",
+          "relationships" : [ {
+            "id" : "20",
+            "tags" : "Relationship",
+            "sourceId" : "6",
+            "destinationId" : "8",
+            "description" : "Stores to",
+            "technology" : "JDBC"
+          }, {
+            "id" : "22",
+            "tags" : "Relationship",
+            "sourceId" : "6",
+            "destinationId" : "9",
+            "description" : "Syncs spatial features from",
+            "technology" : "JSON/HTTPS"
+          } ],
+          "technology" : "Spring Scheduled Http Sync",
+          "size" : 0
+        } ]
+      }, {
+        "id" : "8",
+        "tags" : "Element,Container,Database",
+        "name" : "Database",
+        "description" : "Persistant storage for the Plan limits and Geospatial data, alloing for the Limits and Geospatial",
+        "relationships" : [ {
+          "id" : "26",
+          "sourceId" : "8",
+          "destinationId" : "4",
+          "description" : "Reads from",
+          "technology" : "JDBC",
+          "linkedRelationshipId" : "25"
+        }, {
+          "id" : "25",
+          "tags" : "Relationship",
+          "sourceId" : "8",
+          "destinationId" : "5",
+          "description" : "Reads from",
+          "technology" : "JDBC"
+        } ],
+        "technology" : "Postgis"
+      } ],
+      "documentation" : { }
+    }, {
+      "id" : "11",
+      "tags" : "Element,Software System,Existing System",
+      "name" : "LINZ Basemaps System",
+      "description" : "The LINZ Basemaps",
+      "group" : "Toitū Te Whenua LINZ",
+      "location" : "External",
+      "documentation" : { }
+    }, {
+      "id" : "9",
+      "tags" : "Element,Software System,Existing System",
+      "name" : "GWRC GIS System",
+      "description" : "The GWRC GIS system(s)",
+      "group" : "GWRC",
+      "location" : "External",
+      "documentation" : { }
+    } ],
+    "customElements" : [ {
+      "id" : "10",
+      "tags" : "Element,Document",
+      "name" : "GWRC NRPlan",
+      "description" : "The Natural Resources Plan",
+      "group" : "GWRC",
+      "metadata" : "Documents"
+    } ]
+  },
+  "documentation" : { },
+  "views" : {
+    "systemContextViews" : [ {
+      "softwareSystemId" : "2",
+      "key" : "SystemContext",
+      "order" : 1,
+      "paperSize" : "A4_Landscape",
+      "dimensions" : {
+        "width" : 2620,
+        "height" : 2358
+      },
+      "automaticLayout" : {
+        "implementation" : "Graphviz",
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 400,
+        "nodeSeparation" : 400,
+        "edgeSeparation" : 0,
+        "vertices" : false
+      },
+      "enterpriseBoundaryVisible" : true,
+      "relationships" : [ {
+        "id" : "14"
+      }, {
+        "id" : "13"
+      }, {
+        "id" : "12"
+      }, {
+        "id" : "19"
+      } ],
+      "elements" : [ {
+        "id" : "11",
+        "x" : 1858,
+        "y" : 329
+      }, {
+        "id" : "1",
+        "x" : 208,
+        "y" : 979
+      }, {
+        "id" : "2",
+        "x" : 1008,
+        "y" : 1029
+      }, {
+        "id" : "9",
+        "x" : 1858,
+        "y" : 1029
+      }, {
+        "id" : "10",
+        "x" : 1858,
+        "y" : 1729
+      } ]
+    } ],
+    "containerViews" : [ {
+      "softwareSystemId" : "2",
+      "key" : "SystemContainers",
+      "order" : 2,
+      "paperSize" : "A4_Landscape",
+      "dimensions" : {
+        "width" : 3470,
+        "height" : 1554
+      },
+      "automaticLayout" : {
+        "implementation" : "Graphviz",
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 400,
+        "nodeSeparation" : 400,
+        "edgeSeparation" : 0,
+        "vertices" : false
+      },
+      "externalSoftwareSystemBoundariesVisible" : true,
+      "relationships" : [ {
+        "id" : "18"
+      }, {
+        "id" : "17"
+      }, {
+        "id" : "15"
+      }, {
+        "id" : "26",
+        "vertices" : [ {
+          "x" : 2508,
+          "y" : 329
+        } ]
+      }, {
+        "id" : "23"
+      }, {
+        "id" : "21",
+        "vertices" : [ {
+          "x" : 2508,
+          "y" : 629
+        } ]
+      } ],
+      "elements" : [ {
+        "id" : "11",
+        "x" : 1858,
+        "y" : 1029
+      }, {
+        "id" : "1",
+        "x" : 208,
+        "y" : 279
+      }, {
+        "id" : "3",
+        "x" : 1008,
+        "y" : 329
+      }, {
+        "id" : "4",
+        "x" : 1858,
+        "y" : 329
+      }, {
+        "id" : "8",
+        "x" : 2708,
+        "y" : 329
+      }, {
+        "id" : "9",
+        "x" : 2708,
+        "y" : 1029
+      } ]
+    } ],
+    "componentViews" : [ {
+      "key" : "ServerComponents",
+      "order" : 3,
+      "paperSize" : "A4_Landscape",
+      "dimensions" : {
+        "width" : 2566,
+        "height" : 2358
+      },
+      "automaticLayout" : {
+        "implementation" : "Graphviz",
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 400,
+        "nodeSeparation" : 400,
+        "edgeSeparation" : 0,
+        "vertices" : false
+      },
+      "containerId" : "4",
+      "externalContainerBoundariesVisible" : true,
+      "relationships" : [ {
+        "id" : "16"
+      }, {
+        "id" : "25"
+      }, {
+        "id" : "24"
+      }, {
+        "id" : "22"
+      }, {
+        "id" : "20"
+      } ],
+      "elements" : [ {
+        "id" : "3",
+        "x" : 207,
+        "y" : 992
+      }, {
+        "id" : "5",
+        "x" : 1057,
+        "y" : 992
+      }, {
+        "id" : "6",
+        "x" : 1057,
+        "y" : 1692
+      }, {
+        "id" : "7",
+        "x" : 1057,
+        "y" : 292
+      }, {
+        "id" : "8",
+        "x" : 1907,
+        "y" : 992
+      }, {
+        "id" : "9",
+        "x" : 1907,
+        "y" : 1692
+      } ]
+    } ],
+    "configuration" : {
+      "branding" : { },
+      "styles" : {
+        "elements" : [ {
+          "tag" : "Component",
+          "background" : "#85bbf0",
+          "color" : "#000000"
+        }, {
+          "tag" : "Container",
+          "background" : "#438dd5",
+          "color" : "#ffffff"
+        }, {
+          "tag" : "Software System",
+          "background" : "#1168bd",
+          "color" : "#ffffff"
+        }, {
+          "tag" : "Database",
+          "shape" : "Cylinder"
+        }, {
+          "tag" : "Web Browser",
+          "shape" : "WebBrowser"
+        }, {
+          "tag" : "Person",
+          "background" : "#08427b",
+          "color" : "#ffffff",
+          "shape" : "Person"
+        }, {
+          "tag" : "Existing System",
+          "background" : "#999999",
+          "color" : "#ffffff",
+          "shape" : "RoundedBox"
+        }, {
+          "tag" : "Document",
+          "background" : "#ffe9a2",
+          "color" : "#ffffff",
+          "shape" : "Folder"
+        } ]
+      },
+      "terminology" : { },
+      "lastSavedView" : "ServerComponents"
+    }
+  }
+}
