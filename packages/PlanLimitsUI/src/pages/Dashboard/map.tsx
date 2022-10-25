@@ -261,7 +261,7 @@ export default function LimitsMap({
             type="line"
             paint={{
               'line-color': '#2b8cbe',
-              'line-width': 3,
+              'line-width': ['+', 1, ['get', 'stream_order']],
             }}
           />
         </Source>

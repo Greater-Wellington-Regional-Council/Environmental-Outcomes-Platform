@@ -26,6 +26,12 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
               title={
                 'What spatial surface water catchment management unit am I in?'
               }
+              text={mouseState.surfaceWater ? 'Mangatarere' : 'None'}
+            />
+            <LimitsListItem
+              title={
+                'What spatial surface water catchment management sub-unit am I in?'
+              }
               text={mouseState.surfaceWater ? mouseState.surfaceWater : 'None'}
             />
             <LimitsListItem
@@ -37,18 +43,6 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
               }
             />
             <LimitsListItem
-              title={'What spatial sub-unit am I in?'}
-              text="???"
-            />
-            <LimitsListItem
-              title={'What groundwater category am I? (A, B or C)'}
-              text={
-                mouseState.groundWaterZone
-                  ? `00-20m ${mouseState.gw00}, 20-30m ${mouseState.gw20}, Over 30m ${mouseState.gw30}`
-                  : 'None'
-              }
-            />
-            <LimitsListItem
               title={'What flow management site applies to me?'}
               text={
                 mouseState.flowRestrictionsManagementSiteName
@@ -56,6 +50,82 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
                   : 'None'
               }
             />
+            <div className="col-span-2">
+              <dt className="font-medium text-gray-500">
+                What allocation limit applies to me?
+              </dt>
+              <dd className="mt-1 text-gray-900">
+                {mouseState.allocationLimit ? (
+                  <>
+                    <span className={'font-medium'}>Surface Water:</span>
+                    <span>{mouseState.allocationLimit}</span>
+                    {mouseState.gw00 && mouseState.gw00 === 'A' ? (
+                      <>
+                        <br />
+                        <span className={'font-medium'}>
+                          Ground Water 0-20m:
+                        </span>
+                        <span>{mouseState.allocationLimit}</span>
+                      </>
+                    ) : (
+                      mouseState.gw00 === 'B' && (
+                        <>
+                          {' '}
+                          <>
+                            <br />
+                            <span className={'font-medium'}>
+                              Ground Water 00-20m (Stream Depletion):
+                            </span>
+                            <span>{mouseState.allocationLimit}</span>
+                            <br />
+                            <span className={'font-medium'}>
+                              Ground Water 00-20m:
+                            </span>
+                            <span>2,300,000 (m3/year)</span>
+                          </>
+                        </>
+                      )
+                    )}
+                    {mouseState.gw20 && mouseState.gw20 === 'C' ? (
+                      <>
+                        <br />
+                        <span className={'font-medium'}>
+                          Ground Water 20-30m:
+                        </span>
+                        <span>2,300,000 (m3/year)</span>
+                      </>
+                    ) : (
+                      mouseState.gw20 === 'B' && (
+                        <>
+                          <br />
+                          <span className={'font-medium'}>
+                            Ground Water 20-30m (Stream Depletion):
+                          </span>
+                          <span>{mouseState.allocationLimit}</span>
+                          <br />
+                          <span className={'font-medium'}>
+                            Ground Water 20-30m:
+                          </span>
+                          <span>2,300,000 (m3/year)</span>
+                        </>
+                      )
+                    )}
+
+                    {mouseState.gw30 && (
+                      <>
+                        <br />
+                        <span className={'font-medium'}>
+                          Ground Water Over 30m:
+                        </span>
+                        <span>2,300,000 (m3/year)</span>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  'None'
+                )}
+              </dd>
+            </div>
             <LimitsListItem
               title={
                 'What (if any) minimum flow or restriction flow applies to me?'
@@ -64,12 +134,6 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
                 mouseState.flowRestrictionsLevel
                   ? mouseState.flowRestrictionsLevel
                   : 'None'
-              }
-            />
-            <LimitsListItem
-              title={'What allocation limit applies to me?'}
-              text={
-                mouseState.allocationLimit ? mouseState.allocationLimit : 'None'
               }
             />
           </dl>
