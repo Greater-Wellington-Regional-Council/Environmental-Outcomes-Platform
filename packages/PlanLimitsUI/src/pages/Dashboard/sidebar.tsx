@@ -57,13 +57,13 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
               <dd className="mt-1 text-gray-900">
                 {mouseState.allocationLimit ? (
                   <>
-                    <span className={'font-medium'}>Surface Water:</span>
+                    <span className={'font-medium'}>Surface Water:&nbsp;</span>
                     <span>{mouseState.allocationLimit}</span>
                     {mouseState.gw00 && mouseState.gw00 === 'A' ? (
                       <>
                         <br />
                         <span className={'font-medium'}>
-                          Ground Water 0-20m:
+                          Groundwater 0-20m:&nbsp;
                         </span>
                         <span>{mouseState.allocationLimit}</span>
                       </>
@@ -74,12 +74,12 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
                           <>
                             <br />
                             <span className={'font-medium'}>
-                              Ground Water 00-20m (Stream Depletion):
+                              Groundwater 00-20m (Stream Depletion):&nbsp;
                             </span>
                             <span>{mouseState.allocationLimit}</span>
                             <br />
                             <span className={'font-medium'}>
-                              Ground Water 00-20m:
+                              Groundwater 00-20m:&nbsp;
                             </span>
                             <span>2,300,000 (m3/year)</span>
                           </>
@@ -90,7 +90,7 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
                       <>
                         <br />
                         <span className={'font-medium'}>
-                          Ground Water 20-30m:
+                          Groundwater 20-30m:&nbsp;
                         </span>
                         <span>2,300,000 (m3/year)</span>
                       </>
@@ -99,12 +99,12 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
                         <>
                           <br />
                           <span className={'font-medium'}>
-                            Ground Water 20-30m (Stream Depletion):
+                            Groundwater 20-30m (Stream Depletion):&nbsp;
                           </span>
                           <span>{mouseState.allocationLimit}</span>
                           <br />
                           <span className={'font-medium'}>
-                            Ground Water 20-30m:
+                            Groundwater 20-30m:&nbsp;
                           </span>
                           <span>2,300,000 (m3/year)</span>
                         </>
@@ -115,7 +115,7 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
                       <>
                         <br />
                         <span className={'font-medium'}>
-                          Ground Water Over 30m:
+                          Groundwater Over 30m:&nbsp;
                         </span>
                         <span>2,300,000 (m3/year)</span>
                       </>

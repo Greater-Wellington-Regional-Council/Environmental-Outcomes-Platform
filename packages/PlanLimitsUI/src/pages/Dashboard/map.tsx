@@ -55,7 +55,6 @@ export default function LimitsMap({
           [160, -60],
           [-160, -20],
         ]}
-        scrollZoom={false}
         onMove={(evt) => setViewState(evt.viewState)}
         onMouseMove={(evt) => {
           const findFeature = (
