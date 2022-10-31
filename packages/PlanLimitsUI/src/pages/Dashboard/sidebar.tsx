@@ -10,7 +10,7 @@ const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
 
 export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
   return (
-    <aside className="w-[48rem] overflow-y-auto border-l border-gray-200 bg-white">
+    <aside className="w-[36rem] overflow-y-auto border-l border-gray-200 bg-white">
       <div>
         <div className="px-6 py-5">
           <h3 className="text-lg font-medium leading-6 text-gray-900">
