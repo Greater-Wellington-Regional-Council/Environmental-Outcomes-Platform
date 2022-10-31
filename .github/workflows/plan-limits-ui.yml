@@ -18,3 +18,8 @@ jobs:
 
       - name: Build app
         run: ./batect build
+
+      - name: Upload Distribution Files
+        uses: actions/upload-artifact@v3
+        with:
+            path: ./packages/PlanLimitsUI/dist/
