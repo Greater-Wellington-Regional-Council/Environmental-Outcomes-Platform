@@ -1,0 +1,36 @@
+containers:
+  build-env:
+    image: node:18.7.0
+    volumes:
+      - local: .
+        container: /code
+
+      - type: cache
+        name: node_modules
+        container: /code/node_modules
+
+      - type: cache
+        name: npm_cache
+        container: /root/.npm
+
+    enable_init_process: true
+    working_directory: /code
+    run_as_current_user:
+      enabled: true
+      home_directory: /home/container-user
+
+tasks:
+  shell:
+    description: Build the Site
+    run:
+      container: build-env
+      command: bash
+      ports:
+        - local: 8000
+          container: 8000
+
+  build:
+    description: Build the Site
+    run:
+      container: build-env
+      command: ./.batect/scripts/build.sh

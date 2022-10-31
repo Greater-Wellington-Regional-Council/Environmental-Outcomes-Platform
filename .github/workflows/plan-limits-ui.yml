@@ -1,0 +1,26 @@
+name: Plan Limits UI
+
+on:
+  push:
+    paths:
+      - .github/workflows/plan-limits-ui.yml  
+      - packages/PlanLimitsUI/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/PlanLimitsUI
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build app
+        run: ./batect build
+
+      - name: Upload Distribution Files
+        uses: actions/upload-artifact@v3
+        with:
+            name: dist
+            path: ./packages/PlanLimitsUI/dist/

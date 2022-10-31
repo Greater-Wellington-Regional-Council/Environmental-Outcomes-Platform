@@ -35,6 +35,9 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
+### IntelliJ Fleet ###
+.fleet
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
