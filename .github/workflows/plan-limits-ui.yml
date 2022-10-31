@@ -22,4 +22,5 @@ jobs:
       - name: Upload Distribution Files
         uses: actions/upload-artifact@v3
         with:
+            name: dist
             path: ./packages/PlanLimitsUI/dist/
