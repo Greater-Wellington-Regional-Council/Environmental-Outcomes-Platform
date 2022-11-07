@@ -56,7 +56,7 @@ class GeoJsonController(val context: DSLContext) {
   @ResponseBody
   fun getLayerRivers(): ResponseEntity<String> {
     val innerQuery =
-        select(RIVERS.HYDRO_ID.`as`("id"), RIVERS.PATH.`as`("geometry"), RIVERS.STREAM_ORDER)
+        select(RIVERS.HYDRO_ID.`as`("id"), RIVERS.GEOM.`as`("geometry"), RIVERS.STREAM_ORDER)
             .from(RIVERS)
             .where(RIVERS.STREAM_ORDER.ge(3))
 

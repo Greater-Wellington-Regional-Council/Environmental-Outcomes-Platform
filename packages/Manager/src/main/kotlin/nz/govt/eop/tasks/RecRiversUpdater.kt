@@ -45,7 +45,7 @@ class RecRiversUpdater(val context: DSLContext) {
               RIVERS.NZ_SEGMENT,
               RIVERS.IS_HEADWATER,
               RIVERS.STREAM_ORDER,
-              RIVERS.PATH)
+              RIVERS.GEOM)
           .select(
               context
                   .select(

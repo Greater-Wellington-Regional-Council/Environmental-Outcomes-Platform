@@ -327,7 +327,6 @@ VALUES
 
 INSERT INTO
   allocation_amounts (
-    id,
     area_description,
     hydro_id,
     allocation_amount,
@@ -340,7 +339,6 @@ INSERT INTO
   )
 VALUES
   (
-    4,
     'Te Ore Ore Category B groundwater',
     NULL,
     480000,
@@ -352,7 +350,6 @@ VALUES
     7.5
   ),
   (
-    1,
     'Waingawa Category B groundwater and Waingawa Category C groundwater',
     NULL,
     1900000,
@@ -364,7 +361,6 @@ VALUES
     7.5
   ),
   (
-    6,
     'Ruamāhanga Category B groundwater and Ruamāhanga Category C groundwater',
     NULL,
     3550000,
@@ -376,7 +372,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Fernhill-Tiffen Category C groundwater',
     NULL,
     1200000,
@@ -388,7 +383,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Taratahi Category B groundwater and Taratahi Category C groundwater',
     NULL,
     1400000,
@@ -400,7 +394,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Parkvale Category B groundwater and Parkvale Category C groundwater (confined)',
     NULL,
     350000,
@@ -412,7 +405,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Parkvale Category B groundwater and Parkvale Category C groundwater (unconfined)',
     NULL,
     1550000,
@@ -424,7 +416,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Mangatarere Category B groundwater and Mangatarere Category C groundwater',
     NULL,
     2300000,
@@ -436,7 +427,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Tauherenikau Category B groundwater',
     NULL,
     6600000,
@@ -448,7 +438,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Lower Ruamāhanga Category B groundwater',
     NULL,
     3300000,
@@ -460,7 +449,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Lake Category B groundwater and Lake Category C groundwater',
     NULL,
     6750000,
@@ -472,7 +460,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Huangarua Category B groundwater',
     NULL,
     650000,
@@ -484,7 +471,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Martinborough Category C groundwater',
     NULL,
     800000,
@@ -496,7 +482,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Dry River Category B groundwater',
     NULL,
     650000,
@@ -508,7 +493,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Onoke Category C groundwater',
     NULL,
     2100000,
@@ -520,7 +504,6 @@ VALUES
     7.5
   ),
   (
-    NULL,
     'Ruamāhanga River and tributaries, upstream of (but not including) the confluence with the Lake Wairarapa outflow, and all Category A groundwater and Category B groundwater (stream depletion) identified in the catchment management sub-units below in Table 7.3',
     265439,
     7430,
@@ -532,7 +515,6 @@ VALUES
     7.3
   ),
   (
-    7,
     'Kopuaranga River and tributaries, Category A groundwater and Upper Ruamāhanga Category B groundwater(stream depletion)',
     254602,
     180,
@@ -544,7 +526,6 @@ VALUES
     7.3
   ),
   (
-    2,
     'Waipoua River and tributaries, Category A groundwater and Upper Ruamāhanga or Waingawa Category B groundwater (stream depletion)',
     256291,
     145,
@@ -556,7 +537,6 @@ VALUES
     7.3
   ),
   (
-    3,
     'Waingawa River and tributaries, Waingawa Category A groundwater) and Taratahi or Waingawa Category B groundwater (stream depletion)',
     257578,
     920,
@@ -568,7 +548,6 @@ VALUES
     7.3
   ),
   (
-    5,
     'Ruamāhanga River and tributaries upstream of the confluence with the Waingawa River, Upper Ruamāhanga Category A groundwater and Waingawa, Te Ore Ore or Upper Ruamāhanga Category B groundwater (stream depletion), excluding all the above catchment management subunits in the Ruamāhanga catchment (above this row in Table 7.3)',
     257579,
     1200,
@@ -580,7 +559,6 @@ VALUES
     7.3
   ),
   (
-    NULL,
     'Parkvale Stream and tributaries, and Taratahi or Parkvale Category B groundwater (stream depletion)',
     259497,
     40,
@@ -592,7 +570,6 @@ VALUES
     7.3
   ),
   (
-    NULL,
     'Booths Creek and tributaries and Parkvale, Mangatarere or Taratahi Category B groundwater (stream depletion)',
     259523,
     25,
@@ -604,9 +581,8 @@ VALUES
     7.3
   ),
   (
-    NULL,
     'Mangatarere Stream and tributaries, Mangatarere Category A groundwater and Mangatarere Category B groundwater (stream depletion)',
-    257905,
+    258982,
     110,
     'L/s',
     FALSE,
@@ -616,7 +592,6 @@ VALUES
     7.3
   ),
   (
-    NULL,
     'Waiohine River and tributaries (excluding Mangatarere Stream and tributaries) Waiohine Category A groundwater) and Mangatarere Category B groundwater (stream depletion)',
     260015,
     1590,
@@ -628,7 +603,6 @@ VALUES
     7.3
   ),
   (
-    NULL,
     'Papawai Stream and tributaries and Waiohine Category A groundwater',
     260343,
     105,
@@ -640,7 +614,6 @@ VALUES
     7.3
   ),
   (
-    NULL,
     'Ruamāhanga River and tributaries upstream of the confluence with the Papawai Stream, and Middle Ruamāhanga Category A groundwater excluding all the above catchment management sub-units in the Ruamāhanga catchment (above this row in Table 7.3)',
     260344,
     1240,
@@ -652,7 +625,6 @@ VALUES
     7.3
   ),
   (
-    NULL,
     'Huangarua River and tributaries and Huangarua Category A groundwater and Huangarua Category B groundwater (stream depletion)',
     262787,
     110,
@@ -664,7 +636,6 @@ VALUES
     7.3
   ),
   (
-    NULL,
     'Lower Ruamāhanga River and tributaries upstream of (but not including) the confluence with the Lake Wairarapa outflow, and Lower Ruamāhanga Category A groundwater and Lake Category B groundwater (stream depletion) excluding all the above catchment management sub-units in the Ruamāhanga catchment (above this row in Table 7.3)',
     265439,
     1370,
@@ -676,7 +647,6 @@ VALUES
     7.3
   ),
   (
-    NULL,
     'Lake Wairarapa and tributaries above the confluence of the Lake Wairarapa outflow with the Ruamāhanga River, and Tauherenikau Category A groundwater and Lake or Tauherenikau Category B groundwater (stream depletion)',
     265528,
     1800,
@@ -688,7 +658,6 @@ VALUES
     7.4
   ),
   (
-    NULL,
     'Otukura Stream and tributaries above (but not including) the confluence with Dock/Stonestead Creek and Tauherenikau Category B groundwater (stream depletion)',
     262349,
     30,
@@ -700,7 +669,6 @@ VALUES
     7.4
   ),
   (
-    NULL,
     'Tauherenikau River and tributaries, and Tauherenikau Category A groundwater and Tauherenikau Category B groundwater (stream depletion)',
     261974,
     410,
@@ -712,7 +680,6 @@ VALUES
     7.4
   ),
   (
-    NULL,
     'Te Awa Kairangi/Hutt River and tributaries, Upper Hutt or Lower Hutt Category A groundwater and Upper or Lower Hutt Category B groundwater (stream depletion) in the catchment management units shown in Figures 8.1 and 8.2',
     263323,
     2140,
@@ -724,7 +691,6 @@ VALUES
     8.2
   ),
   (
-    NULL,
     'Wainuiomata River and tributaries',
     267323,
     180,
@@ -736,7 +702,6 @@ VALUES
     8.2
   ),
   (
-    NULL,
     'Orongorongo River and tributaries',
     267384,
     95,
@@ -748,7 +713,6 @@ VALUES
     8.2
   ),
   (
-    NULL,
     'Upper Hutt Category B groundwater and Upper Hutt Category C groundwater',
     NULL,
     770000,
@@ -760,7 +724,6 @@ VALUES
     8.3
   ),
   (
-    NULL,
     'Lower Hutt Category B groundwater',
     NULL,
     36500000,
@@ -772,7 +735,6 @@ VALUES
     8.3
   ),
   (
-    NULL,
     'Waitohu Stream and tributaries, Waitohu Category A groundwater and Ōtaki Category B groundwater (stream depletion)',
     249434,
     45,
@@ -784,7 +746,6 @@ VALUES
     10.2
   ),
   (
-    NULL,
     'Ōtaki River and tributaries, Ōtaki Category A groundwater and Ōtaki or Te Horo Category B groundwater (stream depletion)',
     250291,
     590,
@@ -796,7 +757,6 @@ VALUES
     10.2
   ),
   (
-    NULL,
     'Mangaone Stream and tributaries, Te Horo Category B groundwater (stream depletion)',
     251029,
     24,
@@ -808,7 +768,6 @@ VALUES
     10.2
   ),
   (
-    NULL,
     'Waikanae River and tributaries, Waikanae Category A groundwater and Waikanae Category B groundwater (stream depletion)',
     253589,
     220,
@@ -820,7 +779,6 @@ VALUES
     10.2
   ),
   (
-    NULL,
     'Raumati Category B groundwater',
     NULL,
     1229000,
@@ -832,7 +790,6 @@ VALUES
     10.3
   ),
   (
-    NULL,
     'Waikanae Category B groundwater',
     NULL,
     2710000,
@@ -844,7 +801,6 @@ VALUES
     10.3
   ),
   (
-    NULL,
     'Te Horo Category B groundwater',
     NULL,
     1620000,
@@ -856,7 +812,6 @@ VALUES
     10.3
   ),
   (
-    NULL,
     'Waitohu Category B groundwater',
     NULL,
     1080000,

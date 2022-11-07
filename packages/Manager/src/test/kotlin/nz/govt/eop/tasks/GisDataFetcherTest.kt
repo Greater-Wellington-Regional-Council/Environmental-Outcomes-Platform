@@ -83,10 +83,10 @@ class GisDataFetcherTest(
     // GIVEN
     context.truncate(GROUNDWATER_ZONES).execute()
 
-    var groundwater_geojson = constructTestGroundwaterData()
+    val groundwater_geojson = constructTestGroundwaterData()
 
     // WHEN
-    gisDataFetcher.materialiseGroundwaterGeoJson(featureCollection = groundwater_geojson)
+    gisDataFetcher.materialiseGroundwaterGeoJson(groundwater_geojson)
 
     // THEN
     val first = context.select(DSL.count()).from(GROUNDWATER_ZONES).first()

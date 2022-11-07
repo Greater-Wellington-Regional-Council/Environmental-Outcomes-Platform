@@ -39,7 +39,7 @@ class RecWatershedsUpdater(val context: DSLContext) {
 
       context
           .insertInto(WATERSHEDS)
-          .columns(WATERSHEDS.HYDRO_ID, WATERSHEDS.NZ_SEGMENT, WATERSHEDS.PATH)
+          .columns(WATERSHEDS.HYDRO_ID, WATERSHEDS.NZ_SEGMENT, WATERSHEDS.GEOM)
           .select(
               context
                   .select(
