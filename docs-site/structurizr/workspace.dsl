@@ -13,6 +13,14 @@ workspace "EOP - Plan Limits Viewer" {
                     loaderPlanLimits = component "Loader - Plan Limits" "Loads data store with the static plan limits data (SQL Scripts)" "Redgate Flyway"
                 }
                 database = container "Database" "Persistant storage for the Plan limits and Geospatial data, alloing for the Limits and Geospatial " "Postgis" "Database"
+                datamodel = container "Data Model" {
+                        sites = component "Sites" "A monitoring / management site"
+                        rivers = component "Rivers" "A river on the network"
+                        catchments = component "Catchments" "A hydrological catchment for water"
+                        minimumFlows = component "Minimum Flow limits" "A minimum flow defined in the plan"
+                        allocationAmounts = component "Allocation amounts" "Water that can be allocated"
+                        groundWaterZones = component "Groundwater Zones" "Groundwater zones"
+                    }
             }
         }
 
@@ -40,6 +48,14 @@ workspace "EOP - Plan Limits Viewer" {
         fetcherGis -> gis "Syncs spatial features from" "JSON/HTTPS"
         loaderPlanLimits -> database "Stores to" "JDBC"
         database -> controllerGraph "Reads from" "JDBC"
+        
+        # Relationships in data model
+        sites -> Rivers "monitor"
+        rivers -> Catchments "are part of"
+        minimumFLows -> "Sites" "are measured at"
+        minimumFLows -> "Catchments" "have an effect on water use in"
+        allocationAmounts -> "catchments" "belong to"
+        allocationAmounts -> "groundWaterZones" "belong to"
     }
 
     views {
@@ -55,6 +71,16 @@ workspace "EOP - Plan Limits Viewer" {
         }
 
         component backend "ServerComponents" {
+            include *
+            autolayout lr 400 400
+        }
+        
+        component datamodel "DatabaseComponents" {
+            include *
+            autolayout lr 400 400
+        }
+
+        component datamodel "DataModel" {
             include *
             autolayout lr 400 400
         }

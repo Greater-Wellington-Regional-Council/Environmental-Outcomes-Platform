@@ -16,9 +16,20 @@ Structurizr lite is used to automatically create C4 diagram images from code, an
 
 Workflow
 
-* `cd docs`
-* `./batect docs`
-* View the running docs on http://localhost:8090
-* Make changes to the workspace.json or markdown files
-* "Export to offline HTML page" and update the version in `docs-exports`
+Launching Structurizr locally
+
+* `cd docs-site`
+* `./batect structurizr`
+
+Making changes
+
+* Edit workspace.dsl file to update diagrams
+* View on http://localhost:8090
+
+Include diagrams in the site:
+
+* Export diagrams via http://localhost:8090
+* Save exported diagrams to the relevant folder in `src/markdown-pages`
+* Update the relevant markdown file to incorporate diagrams into the site.
+* 
 * `git commit` changes
