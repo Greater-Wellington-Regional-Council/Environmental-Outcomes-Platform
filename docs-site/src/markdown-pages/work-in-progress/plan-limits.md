@@ -63,4 +63,10 @@ Key libraries:
 
 The database provides persistent storage for the information loaded from the Plan and GIS.
 
+#### Data Model
+
+The data model represnts the relationship between plan limit data, the river envrionment classification (REC) and other spatial data that is used in the plans limit viewer.
+
+![Containers Diagram](./structurizr-1-DatabaseComponents.png)
+
 ## Deployment
