@@ -23,7 +23,7 @@ tasks:
 
 containers:
   build-env:
-    image: openjdk:17
+    build_directory: .batect/build-env
     volumes:
       - local: .
         container: /code
