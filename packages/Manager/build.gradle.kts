@@ -1,3 +1,4 @@
+import org.flywaydb.gradle.task.FlywayMigrateTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 
@@ -48,10 +49,14 @@ tasks.withType<Test> { useJUnitPlatform() }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   kotlin {
-    targetExclude("build/generated-src/**/*.*")
     ktfmt()
   }
   kotlinGradle { ktfmt() }
+  format("sql") {
+    target("src/main/resources/**/*.sql")
+    prettier(mapOf("prettier" to "2.7.1", "prettier-plugin-sql" to "0.12.1"))
+        .config(mapOf("language" to "postgresql", "keywordCase" to "upper"))
+  }
 }
 
 val dbConfig =
@@ -68,12 +73,14 @@ flyway {
   locations = arrayOf("filesystem:./src/main/resources/db/migration")
 }
 
+tasks.named<FlywayMigrateTask>("flywayMigrate") { dependsOn("spotlessApply") }
+
 jooq {
   version.set(dependencyManagement.importedProperties["jooq.version"])
 
   configurations {
     create("main") {
-      generateSchemaSourceOnCompilation.set(true)
+      generateSchemaSourceOnCompilation.set(false)
 
       jooqConfiguration.apply {
         jdbc.apply {
