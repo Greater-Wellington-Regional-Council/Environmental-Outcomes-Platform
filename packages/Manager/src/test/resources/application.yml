@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/eop_test
+    username: postgres
+    password: password

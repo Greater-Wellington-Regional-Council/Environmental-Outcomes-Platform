@@ -1,0 +1,54 @@
+
+tasks:
+  clean:
+    description: Clean all outputs
+    run:
+      container: build-env
+      command: ./gradlew clean
+
+  build:
+    description: Build and test the App
+    dependencies:
+      - database
+    run:
+      container: build-env
+      command: ./gradlew check
+      environment:
+        DB_HOST: database
+
+  runDatabase:
+    description: Run Database for Local Dev
+    run:
+      container: dev-database
+
+containers:
+  build-env:
+    image: openjdk:17
+    volumes:
+      - local: .
+        container: /code
+
+      - type: cache
+        name: gradle-cache
+        container: /root/.gradle
+
+    working_directory: /code
+
+    environment:
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
+
+  dev-database:
+    build_directory: .batect/database
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - local: 5432
+        container: 5432
+    volumes:
+      - local: .postgres
+        container: /var/lib/postgresql/data
+
+  database:
+    build_directory: .batect/database
+    environment:
+      POSTGRES_PASSWORD: password
