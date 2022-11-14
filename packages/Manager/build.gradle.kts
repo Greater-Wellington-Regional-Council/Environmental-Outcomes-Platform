@@ -1,4 +1,3 @@
-import org.flywaydb.gradle.task.FlywayMigrateTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 
@@ -7,7 +6,7 @@ plugins {
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   kotlin("jvm") version "1.7.10"
   kotlin("plugin.spring") version "1.7.10"
-  id("com.diffplug.spotless") version "6.8.0"
+  id("com.diffplug.spotless") version "6.11.0"
   id("org.flywaydb.flyway") version "9.1.6"
   id("nu.studer.jooq") version "8.0"
 }
@@ -54,7 +53,10 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> { useJUnitPlatform() }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
-  kotlin { ktfmt() }
+  kotlin {
+    targetExclude("build/generated-src/**/*.*")
+    ktfmt()
+  }
   kotlinGradle { ktfmt() }
   format("sql") {
     target("src/main/resources/**/*.sql")
@@ -77,13 +79,9 @@ flyway {
   locations = arrayOf("filesystem:./src/main/resources/db/migration")
 }
 
-tasks.named<FlywayMigrateTask>("flywayMigrate") { dependsOn("spotlessApply") }
-
 jooq {
   configurations {
     create("main") {
-      generateSchemaSourceOnCompilation.set(false)
-
       jooqConfiguration.apply {
         jdbc.apply {
           driver = "org.postgresql.Driver"
