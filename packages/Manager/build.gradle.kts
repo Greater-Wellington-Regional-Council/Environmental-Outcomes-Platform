@@ -3,13 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 
 plugins {
-  id("org.springframework.boot") version "2.7.3"
+  id("org.springframework.boot") version "2.7.5"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   kotlin("jvm") version "1.7.10"
   kotlin("plugin.spring") version "1.7.10"
   id("com.diffplug.spotless") version "6.8.0"
   id("org.flywaydb.flyway") version "9.1.6"
-  id("nu.studer.jooq") version "7.1.1"
+  id("nu.studer.jooq") version "8.0"
 }
 
 group = "nz.govt.eop"
@@ -20,22 +20,28 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories { mavenCentral() }
 
+ext["jooq.version"] = jooq.version.get()
+
 dependencies {
   jooqGenerator("org.postgresql:postgresql")
+  // @see https://github.com/etiennestuder/gradle-jooq-plugin/issues/209#issuecomment-1056578392
+  jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 
   runtimeOnly("org.springframework.boot:spring-boot-devtools")
   runtimeOnly("org.postgresql:postgresql")
 
+  implementation("org.springframework.boot:spring-boot-starter-web")
+  implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
 
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.flywaydb:flyway-core")
-  implementation("io.github.microutils:kotlin-logging-jvm:3.0.3")
+  implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("io.kotest:kotest-assertions-core:5.5.3")
+  testImplementation("io.kotest:kotest-assertions-core:5.5.4")
 }
 
 tasks.withType<KotlinCompile> {
@@ -74,8 +80,6 @@ flyway {
 tasks.named<FlywayMigrateTask>("flywayMigrate") { dependsOn("spotlessApply") }
 
 jooq {
-  version.set(dependencyManagement.importedProperties["jooq.version"])
-
   configurations {
     create("main") {
       generateSchemaSourceOnCompilation.set(false)
@@ -99,16 +103,19 @@ jooq {
                       includeExpression = ".*"
                       includeTypes = "GEOMETRY"
                     })
+            excludes =
+                "st_.*|spatial_ref_sys|geography_columns|geometry_columns|flyway_schema_history"
           }
           generate.apply {
-            isUdts = false
+            isGlobalTableReferences = false
             isRoutines = false
-            isDeprecated = false
-            isRecords = false
+            isUdts = false
+            isIndexes = false
+            isKeys = false
+            isTables = false
 
             isPojosAsKotlinDataClasses = true
             isImmutablePojos = true
-            isFluentSetters = true
           }
           target.apply { packageName = "nz.govt.eop.si.jooq" }
           strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
