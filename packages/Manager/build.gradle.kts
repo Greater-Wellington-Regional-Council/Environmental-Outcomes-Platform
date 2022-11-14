@@ -54,7 +54,10 @@ tasks.withType<Test> { useJUnitPlatform() }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   kotlin {
-    targetExclude("build/generated-src/**/*.*")
+    // We specify the target directly here to avoid having the plugin depend on
+    // generated sources, which was forcing Flyway to run before the SQL had been
+    // formatted, which then confused flyway the next time it ran.
+    target("src/main/kotlin/**/*.kt", "src/test/kotlin/**/*.kt")
     ktfmt()
   }
   kotlinGradle { ktfmt() }
