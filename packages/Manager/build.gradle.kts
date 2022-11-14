@@ -48,9 +48,7 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> { useJUnitPlatform() }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
-  kotlin {
-    ktfmt()
-  }
+  kotlin { ktfmt() }
   kotlinGradle { ktfmt() }
   format("sql") {
     target("src/main/resources/**/*.sql")
