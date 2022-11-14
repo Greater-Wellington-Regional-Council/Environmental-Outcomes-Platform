@@ -8,7 +8,12 @@ CREATE TABLE
   );
 
 CREATE TABLE
-  catchments (id INTEGER, nz_segment INTEGER UNIQUE, geom GEOMETRY, PRIMARY KEY (id));
+  catchments (
+    id INTEGER,
+    nz_segment INTEGER UNIQUE,
+    geom GEOMETRY,
+    PRIMARY KEY (id)
+  );
 
 CREATE TABLE
   minimum_flow_limits (
