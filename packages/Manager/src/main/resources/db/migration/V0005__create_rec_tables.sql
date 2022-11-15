@@ -53,10 +53,3 @@ CREATE TABLE
     DEPTH INTEGER,
     PRIMARY KEY (hydro_id)
   );
-
-CREATE TABLE
-  rivers_catchments (
-    hydro_id INTEGER NOT NULL,
-    PATH geometry NOT NULL,
-    PRIMARY KEY (hydro_id)
-  );
