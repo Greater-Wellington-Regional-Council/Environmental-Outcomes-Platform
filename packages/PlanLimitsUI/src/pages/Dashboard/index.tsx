@@ -1,8 +1,16 @@
 import Map from './map';
 import Sidebar from './sidebar';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ViewState } from 'react-map-gl';
-import useLocalStorage from '../../lib/useLocalStorage';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDebounce } from 'usehooks-ts';
+import { createLocationString, parseLocationString } from './locationString';
+
+const defaultViewLocation = {
+  latitude: -41,
+  longitude: 175.35,
+  zoom: 8,
+};
 
 export type MouseState = {
   position: {
@@ -29,6 +37,9 @@ export type MouseState = {
 };
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const { location } = useParams();
+
   const [mouseState, setMouseState] = React.useState<MouseState>({
     position: {
       lng: 0,
@@ -53,11 +64,11 @@ export default function Dashboard() {
     allocationLimitId: 'NONE',
   });
 
-  const [viewState, setViewState] = useLocalStorage<ViewState>('map-state', {
-    longitude: 175.35,
-    latitude: -41,
+  const initialLocation = parseLocationString(location) || defaultViewLocation;
+
+  const [viewState, setViewState] = useState<ViewState>({
+    ...initialLocation,
     bearing: 0,
-    zoom: 8,
     pitch: 30,
     padding: {
       left: 0,
@@ -66,6 +77,11 @@ export default function Dashboard() {
       right: 0,
     },
   });
+
+  const debouncedValue = useDebounce<ViewState>(viewState, 500);
+  useEffect(() => {
+    navigate(`/${createLocationString(debouncedValue)}`);
+  }, [debouncedValue]);
 
   return (
     <>
