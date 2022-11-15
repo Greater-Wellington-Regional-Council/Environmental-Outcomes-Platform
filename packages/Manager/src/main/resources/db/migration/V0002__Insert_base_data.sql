@@ -111,7 +111,7 @@ INSERT INTO
     siteid_hilltop,
     plan_table_reference,
     plan_version,
-    nz_segment
+    hydro_id
   )
 VALUES
   (
