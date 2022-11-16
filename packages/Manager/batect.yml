@@ -6,13 +6,23 @@ tasks:
       container: build-env
       command: ./gradlew clean
 
+  check:
+    description: Validate and test the app
+    dependencies:
+      - database
+    run:
+      container: build-env
+      command: ./gradlew check
+      environment:
+        DB_HOST: database
+
   build:
     description: Build and test the App
     dependencies:
       - database
     run:
       container: build-env
-      command: ./gradlew check
+      command: ./gradlew bootJar
       environment:
         DB_HOST: database
 
