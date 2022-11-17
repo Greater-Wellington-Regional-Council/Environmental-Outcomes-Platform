@@ -38,7 +38,7 @@ CREATE TABLE
     plan_minimum_flow_value NUMERIC,
     plan_minimum_flow_unit VARCHAR,
     siteid_hilltop INTEGER NULL,
-    plan_table_reference VARCHAR NULL,
+    plan_table NUMERIC NULL,
     plan_version VARCHAR NULL,
     hydro_id INTEGER NULL,
     FOREIGN KEY (siteid_hilltop) REFERENCES sites (siteid_hilltop),
@@ -71,6 +71,6 @@ CREATE TABLE
     catchment_management_unit VARCHAR NULL,
     groundwater_zone VARCHAR,
     plan_version VARCHAR NULL,
-    plan_table VARCHAR NULL,
+    plan_table NUMERIC NULL,
     PRIMARY KEY (id)
   );
