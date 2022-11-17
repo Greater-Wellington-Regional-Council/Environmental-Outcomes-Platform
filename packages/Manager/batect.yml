@@ -14,7 +14,7 @@ tasks:
       container: build-env
       command: ./gradlew check
       environment:
-        DB_HOST: database
+        CONFIG_DATABASE_HOST: database
 
   build:
     description: Build and test the App
@@ -24,7 +24,7 @@ tasks:
       container: build-env
       command: ./gradlew bootJar
       environment:
-        DB_HOST: database
+        CONFIG_DATABASE_HOST: database
 
   runDatabase:
     description: Run Database for Local Dev
