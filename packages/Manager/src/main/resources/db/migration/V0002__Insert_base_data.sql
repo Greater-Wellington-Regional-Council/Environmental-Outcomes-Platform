@@ -109,7 +109,7 @@ INSERT INTO
     plan_minimum_flow_value,
     plan_minimum_flow_unit,
     siteid_hilltop,
-    plan_table_reference,
+    plan_table,
     plan_version,
     hydro_id
   )
@@ -122,7 +122,7 @@ VALUES
     758,
     7.1,
     'final appeals version 2022',
-    NULL
+    257409
   ),
   (
     'Between the confluence with the Waiohine River and the Belvedere Road bridge',
@@ -132,7 +132,7 @@ VALUES
     758,
     7.1,
     'final appeals version 2022',
-    NULL
+    257905
   ),
   (
     'Kopuaranga River upstream of the confluence with the Ruamāhanga River',
@@ -142,7 +142,7 @@ VALUES
     597,
     7.1,
     'final appeals version 2022',
-    NULL
+    254602
   ),
   (
     'Waipoua River upstream of the confluence with the Ruamāhanga River',
@@ -152,7 +152,7 @@ VALUES
     2634,
     7.1,
     'final appeals version 2022',
-    NULL
+    256291
   ),
   (
     'Waingawa River upstream of the confluence with the Ruamāhanga River',
@@ -162,7 +162,7 @@ VALUES
     2559,
     7.1,
     'final appeals version 2022',
-    NULL
+    257578
   ),
   (
     'Parkvale Stream upstream of the confluence with the Ruamāhanga River',
@@ -172,7 +172,7 @@ VALUES
     1136,
     7.1,
     'final appeals version 2022',
-    NULL
+    259497
   ),
   (
     'Waiohine River upstream of the confluence with the Ruamāhanga River',
@@ -182,7 +182,7 @@ VALUES
     2609,
     7.1,
     'final appeals version 2022',
-    NULL
+    260015
   ),
   (
     'Papawai Stream upstream of the confluence with the Ruamāhanga River',
@@ -192,27 +192,27 @@ VALUES
     1093,
     7.1,
     'final appeals version 2022',
-    NULL
+    260343
   ),
   (
     'Upper and Middle Ruamāhanga River upstream of the confluence with the Waiohine River',
-    'Wardells',
+    'Wardells ',
     2400,
     'L/s',
     1521,
     7.1,
     'final appeals version 2022',
-    NULL
+    259960
   ),
   (
     'Otukura Stream upstream of the confluence with Dock/Stonestead Creek',
-    'Weir recorder',
+    'Weir recorder ',
     95,
     'L/s',
     1045,
     7.1,
     'final appeals version 2022',
-    NULL
+    262397
   ),
   (
     'Tauherenikau River upstream of Lake Wairarapa',
@@ -222,17 +222,17 @@ VALUES
     2368,
     7.1,
     'final appeals version 2022',
-    NULL
+    261930
   ),
   (
-    'Lower Ruamāhanga River between the boundary with the coastal marine area and the Waiohine River confluence',
+    'Lower Ruamāhanga River between the boundary with the coastal marine area and the Waiohine River confluence ',
     'Waihenga recorder',
     8500,
     'L/s',
     1518,
     7.1,
     'final appeals version 2022',
-    NULL
+    267143
   ),
   (
     'Te Awa Kairangi/Hutt River Upstream of the confluence with the Pakuratahi River',
@@ -242,27 +242,27 @@ VALUES
     454,
     8.1,
     'final appeals version 2022',
-    NULL
+    258639
   ),
   (
     'Te Awa Kairangi/Hutt River Downstream of the confluence with the Pakuratahi River',
-    'Birchville recorder',
+    'Birchville recorder ',
     1200,
     'L/s',
     434,
     8.1,
     'final appeals version 2022',
-    NULL
+    263323
   ),
   (
-    'Wainuiomata River Between Manuka Track and the confluence with Georges Creek',
+    'Wainuiomata River Between Manuka Track and the confluence with Georges Creek ',
     'Manuka recorder',
     100,
     'L/s',
     2589,
     8.1,
     'final appeals version 2022',
-    NULL
+    264063
   ),
   (
     'Wainuiomata River Between Georges Creek and the boundary of the coastal marine area',
@@ -272,7 +272,7 @@ VALUES
     2588,
     8.1,
     'final appeals version 2022',
-    NULL
+    267323
   ),
   (
     'Orongorongo River upstream of the boundary with the coastal marine area',
@@ -282,17 +282,17 @@ VALUES
     978,
     8.1,
     'final appeals version 2022',
-    NULL
+    267384
   ),
   (
     'Waitohu Stream upstream of the coastal marine area boundary',
-    'KCDC Water Supply Intake recorder',
+    'KCDC Water Supply Intake recorder ',
     140,
     'L/s',
     2666,
     10.1,
     'final appeals version 2022',
-    NULL
+    249434
   ),
   (
     'Ōtaki River upstream of the coastal marine area boundary',
@@ -302,7 +302,7 @@ VALUES
     1012,
     10.1,
     'final appeals version 2022',
-    NULL
+    250291
   ),
   (
     'Mangaone Stream upstream of the coastal marine area boundary',
@@ -312,23 +312,24 @@ VALUES
     706,
     10.1,
     'final appeals version 2022',
-    NULL
+    251029
   ),
   (
-    'Waikanae River upstream of the coastal marine area boundary',
+    'Waikanae River upstream of the coastal marine area boundary ',
     'WTP recorder',
     750,
     'L/s',
     2528,
     10.1,
     'final appeals version 2022',
-    NULL
+    253589
   );
 
 INSERT INTO
   allocation_amounts (
     area_description,
     category,
+    hydro_id,
     allocation_amount,
     allocation_amount_unit,
     consented_allocation_greater_than_allocation_amount,
@@ -341,968 +342,1060 @@ VALUES
   (
     'Te Ore Ore Category B groundwater',
     'Category B groundwater',
+    NULL,
     480000,
     'm 3 /year',
     TRUE,
     'Upper Ruamāhanga',
     'Te Ore Ore Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Waingawa Category B groundwater and Waingawa Category C groundwater',
     'Category B groundwater',
+    NULL,
     1900000,
     'm 3 /year',
     FALSE,
     'Upper Ruamāhanga',
     'Waingawa Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Waingawa Category B groundwater and Waingawa Category C groundwater',
     'Category C groundwater',
+    NULL,
     1900000,
     'm 3 /year',
     FALSE,
     'Upper Ruamāhanga',
     'Waingawa Category C groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Ruamāhanga Category B groundwater and Ruamāhanga Category C groundwater',
     'Category B groundwater',
+    NULL,
     3550000,
     'm 3 /year',
     FALSE,
     'Upper Ruamāhanga',
     'Ruamāhanga Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Ruamāhanga Category B groundwater and Ruamāhanga Category C groundwater',
     'Category C groundwater',
+    NULL,
     3550000,
     'm 3 /year',
     FALSE,
     'Upper Ruamāhanga',
     'Ruamāhanga Category C groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Fernhill-Tiffen Category C groundwater',
     'Category C groundwater',
+    NULL,
     1200000,
     'm 3 /year',
     FALSE,
     'Middle Ruamāhanga',
     'Fernhill-Tiffen Category C groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Taratahi Category B groundwater and Taratahi Category C groundwater',
     'Category B groundwater',
+    NULL,
     1400000,
     'm 3 /year',
     FALSE,
     'Middle Ruamāhanga',
     'Taratahi Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Taratahi Category B groundwater and Taratahi Category C groundwater',
     'Category C groundwater',
+    NULL,
     1400000,
     'm 3 /year',
     FALSE,
     'Middle Ruamāhanga',
     'Taratahi Category C groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Parkvale Category B groundwater and Parkvale Category C groundwater (confined)',
     'Category B groundwater (confined)',
+    NULL,
     350000,
     'm 3 /year',
     TRUE,
     'Middle Ruamāhanga',
     'Parkvale Category B groundwater (confined)',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Parkvale Category B groundwater and Parkvale Category C groundwater (confined)',
     'Category C groundwater (confined)',
+    NULL,
     350000,
     'm 3 /year',
     TRUE,
     'Middle Ruamāhanga',
     'Parkvale Category C groundwater (confined)',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Parkvale Category B groundwater and Parkvale Category C groundwater (unconfined)',
     'Category B groundwater (unconfined)',
+    NULL,
     1550000,
     'm 3 /year',
     TRUE,
     'Middle Ruamāhanga',
     'Parkvale Category B groundwater (unconfined)',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Parkvale Category B groundwater and Parkvale Category C groundwater (unconfined)',
     'Category C groundwater (unconfined)',
+    NULL,
     1550000,
     'm 3 /year',
     TRUE,
     'Middle Ruamāhanga',
     'Parkvale Category C groundwater (unconfined)',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Mangatarere Category B groundwater and Mangatarere Category C groundwater',
     'Category B groundwater',
+    NULL,
     2300000,
     'm 3 /year',
     TRUE,
     'Middle Ruamāhanga',
     'Mangatarere Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Mangatarere Category B groundwater and Mangatarere Category C groundwater',
     'Category C groundwater',
+    NULL,
     2300000,
     'm 3 /year',
     TRUE,
     'Middle Ruamāhanga',
     'Mangatarere Category C groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Tauherenikau Category B groundwater',
     'Category B groundwater',
+    NULL,
     6600000,
     'm 3 /year',
     TRUE,
     'Lower Ruamāhanga',
     'Tauherenikau Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Lower Ruamāhanga Category B groundwater',
     'Category B groundwater',
+    NULL,
     3300000,
     'm 3 /year',
     FALSE,
     'Lower Ruamāhanga',
     'Lower Ruamāhanga Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Lake Category B groundwater and Lake Category C groundwater',
     'Category B groundwater',
+    NULL,
     6750000,
     'm 3 /year',
     TRUE,
     'Lower Ruamāhanga',
     'Lake Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Lake Category B groundwater and Lake Category C groundwater',
     'Category C groundwater',
+    NULL,
     6750000,
     'm 3 /year',
     TRUE,
     'Lower Ruamāhanga',
     'Lake Category C groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Huangarua Category B groundwater',
     'Category B groundwater',
+    NULL,
     650000,
     'm 3 /year',
     TRUE,
     'Lower Ruamāhanga',
     'Huangarua Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Martinborough Category C groundwater',
     'Category C groundwater',
+    NULL,
     800000,
     'm 3 /year',
     FALSE,
     'Lower Ruamāhanga',
     'Martinborough Category C groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Dry River Category B groundwater',
     'Category B groundwater',
+    NULL,
     650000,
     'm 3 /year',
     FALSE,
     'Lower Ruamāhanga',
     'Dry River Category B groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Onoke Category C groundwater',
     'Category C groundwater',
+    NULL,
     2100000,
     'm 3 /year',
     FALSE,
     'Lower Ruamāhanga',
     'Onoke Category C groundwater',
     'final appeals version 2022',
-    '7.5'
+    7.5
   ),
   (
     'Ruamāhanga River and tributaries, upstream of (but not including) the confluence with the Lake Wairarapa outflow, and all Category A groundwater and Category B groundwater (stream depletion) identified in the catchment management sub-units below in Table 7.3',
     'Surface Water',
+    9265128,
     7430,
     'L/s',
     FALSE,
     'Ruamāhanga River catchment above the Lake Wairarapa outflow',
     'Ruamāhanga River and tributaries, upstream of (but not including) the confluence with the Lake Wairarapa outflow',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Ruamāhanga River and tributaries, upstream of (but not including) the confluence with the Lake Wairarapa outflow, and all Category A groundwater and Category B groundwater (stream depletion) identified in the catchment management sub-units below in Table 7.3',
     'Category A groundwater',
+    9265128,
     7430,
     'L/s',
     FALSE,
     'Ruamāhanga River catchment above the Lake Wairarapa outflow',
     'All Category A groundwater identified in the catchment management sub-units in Table 7.3',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Ruamāhanga River and tributaries, upstream of (but not including) the confluence with the Lake Wairarapa outflow, and all Category A groundwater and Category B groundwater (stream depletion) identified in the catchment management sub-units below in Table 7.3',
     'Category B groundwater (stream depletion)',
+    9265128,
     7430,
     'L/s',
     FALSE,
     'Ruamāhanga River catchment above the Lake Wairarapa outflow',
     'All Category B groundwater (stream depletion) identified in the catchment management sub-units in Table 7.3',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Kopuaranga River and tributaries, Category A groundwater and Upper Ruamāhanga Category B groundwater(stream depletion)',
     'Surface Water',
+    9254500,
     180,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Kopuaranga River and tributaries',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Kopuaranga River and tributaries, Category A groundwater and Upper Ruamāhanga Category B groundwater(stream depletion)',
     'Category A groundwater',
+    9254500,
     180,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Kopuaranga River Category A groundwater',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Kopuaranga River and tributaries, Category A groundwater and Upper Ruamāhanga Category B groundwater(stream depletion)',
     'Category B groundwater (stream depletion)',
+    9254500,
     180,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Upper Ruamāhanga Category B groundwater(stream depletion)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Waipoua River and tributaries, Category A groundwater and Upper Ruamāhanga or Waingawa Category B groundwater (stream depletion)',
     'Surface Water',
+    9256259,
     145,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Waipoua River and tributaries',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Waipoua River and tributaries, Category A groundwater and Upper Ruamāhanga or Waingawa Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9256259,
     145,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Waipoua River Category A groundwater',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Waipoua River and tributaries, Category A groundwater and Upper Ruamāhanga or Waingawa Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9256259,
     145,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Upper Ruamāhanga or Waingawa Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Waingawa River and tributaries, Waingawa Category A groundwater) and Taratahi or Waingawa Category B groundwater (stream depletion)',
     'Surface Water',
+    9257515,
     920,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Waingawa River and tributaries',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Waingawa River and tributaries, Waingawa Category A groundwater) and Taratahi or Waingawa Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9257515,
     920,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Waingawa Category A groundwater',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Waingawa River and tributaries, Waingawa Category A groundwater) and Taratahi or Waingawa Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9257515,
     920,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Taratahi or Waingawa Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Ruamāhanga River and tributaries upstream of the confluence with the Waingawa River, Upper Ruamāhanga Category A groundwater and Waingawa, Te Ore Ore or Upper Ruamāhanga Category B groundwater (stream depletion), excluding all the above catchment management subunits in the Ruamāhanga catchment (above this row in Table 7.3)',
     'Surface Water',
+    9257572,
     1200,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Ruamāhanga River and tributaries upstream of the confluence with the Waingawa River',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Ruamāhanga River and tributaries upstream of the confluence with the Waingawa River, Upper Ruamāhanga Category A groundwater and Waingawa, Te Ore Ore or Upper Ruamāhanga Category B groundwater (stream depletion), excluding all the above catchment management subunits in the Ruamāhanga catchment (above this row in Table 7.3)',
     'Category A groundwater',
+    9257572,
     1200,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Upper Ruamāhanga Category A groundwater',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Ruamāhanga River and tributaries upstream of the confluence with the Waingawa River, Upper Ruamāhanga Category A groundwater and Waingawa, Te Ore Ore or Upper Ruamāhanga Category B groundwater (stream depletion), excluding all the above catchment management subunits in the Ruamāhanga catchment (above this row in Table 7.3)',
     'Category B groundwater (stream depletion)',
+    9257572,
     1200,
     'L/s',
     FALSE,
     'Upper Ruamāhanga',
     'Waingawa, Te Ore Ore or Upper Ruamāhanga Category B groundwater (stream depletion), excluding all the above catchment management subunits in the Ruamāhanga catchment (above this row in Table 7.3)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Parkvale Stream and tributaries, and Taratahi or Parkvale Category B groundwater (stream depletion)',
     'Surface Water',
+    9259306,
     40,
     'L/s',
     TRUE,
     'Middle Ruamāhanga',
     'Parkvale Stream and tributaries',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Parkvale Stream and tributaries, and Taratahi or Parkvale Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9259306,
     40,
     'L/s',
     TRUE,
     'Middle Ruamāhanga',
     'Taratahi or Parkvale Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Booths Creek and tributaries and Parkvale, Mangatarere or Taratahi Category B groundwater (stream depletion)',
     'Surface Water',
+    9259591,
     25,
     'L/s',
     TRUE,
     'Middle Ruamāhanga',
     'Booths Creek and tributaries and Parkvale',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Booths Creek and tributaries and Parkvale, Mangatarere or Taratahi Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9259591,
     25,
     'L/s',
     TRUE,
     'Middle Ruamāhanga',
     'Mangatarere or Taratahi Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Mangatarere Stream and tributaries, Mangatarere Category A groundwater and Mangatarere Category B groundwater (stream depletion)',
     'Surface Water',
+    9257756,
     110,
     'L/s',
     FALSE,
     'Middle Ruamāhanga',
     'Mangatarere Stream and tibutaries',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Mangatarere Stream and tributaries, Mangatarere Category A groundwater and Mangatarere Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9257756,
     110,
     'L/s',
     FALSE,
     'Middle Ruamāhanga',
     'Mangatarere Category A groundwater',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Mangatarere Stream and tributaries, Mangatarere Category A groundwater and Mangatarere Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9257756,
     110,
     'L/s',
     FALSE,
     'Middle Ruamāhanga',
     'Managatere Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Waiohine River and tributaries (excluding Mangatarere Stream and tributaries) Waiohine Category A groundwater) and Mangatarere Category B groundwater (stream depletion)',
     'Surface Water',
+    9259933,
     1590,
     'L/s',
     FALSE,
     'Middle Ruamāhanga',
     'Waiohine River and tributaries (excluding Mangatarere Stream and tributaries)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Waiohine River and tributaries (excluding Mangatarere Stream and tributaries) Waiohine Category A groundwater) and Mangatarere Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9259933,
     1590,
     'L/s',
     FALSE,
     'Middle Ruamāhanga',
     'Waiohine Category A groundwater',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Waiohine River and tributaries (excluding Mangatarere Stream and tributaries) Waiohine Category A groundwater) and Mangatarere Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9259933,
     1590,
     'L/s',
     FALSE,
     'Middle Ruamāhanga',
     'Mangatarere Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Papawai Stream and tributaries and Waiohine Category A groundwater',
     'Surface Water',
+    9260403,
     105,
     'L/s',
     TRUE,
     'Middle Ruamāhanga',
     'Papawai Stream and tributaries',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Papawai Stream and tributaries and Waiohine Category A groundwater',
     'Category A groundwater',
+    9260403,
     105,
     'L/s',
     TRUE,
     'Middle Ruamāhanga',
     'Waiohine Category A groundwater',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Ruamāhanga River and tributaries upstream of the confluence with the Papawai Stream, and Middle Ruamāhanga Category A groundwater excluding all the above catchment management sub-units in the Ruamāhanga catchment (above this row in Table 7.3)',
     'Surface Water',
+    9260404,
     1240,
     'L/s',
     FALSE,
     'Middle Ruamāhanga',
     'Ruamāhanga River and tributaries upstream of the confluence with the Papawai Stream',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Ruamāhanga River and tributaries upstream of the confluence with the Papawai Stream, and Middle Ruamāhanga Category A groundwater excluding all the above catchment management sub-units in the Ruamāhanga catchment (above this row in Table 7.3)',
     'Category A groundwater',
+    9260404,
     1240,
     'L/s',
     FALSE,
     'Middle Ruamāhanga',
     'Middle Ruamāhanga Category A groundwater excluding all the above catchment management sub-units in the Ruamāhanga catchment (above this row in Table 7.3)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Huangarua River and tributaries and Huangarua Category A groundwater and Huangarua Category B groundwater (stream depletion)',
     'Surface Water',
+    9262716,
     110,
     'L/s',
     FALSE,
     'Lower Ruamāhanga',
     'Huangarua River and tributaries',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Huangarua River and tributaries and Huangarua Category A groundwater and Huangarua Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9262716,
     110,
     'L/s',
     FALSE,
     'Lower Ruamāhanga',
     'Huangarua Category A groundwater',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Huangarua River and tributaries and Huangarua Category A groundwater and Huangarua Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9262716,
     110,
     'L/s',
     FALSE,
     'Lower Ruamāhanga',
     'Huangarua Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Lower Ruamāhanga River and tributaries upstream of (but not including) the confluence with the Lake Wairarapa outflow, and Lower Ruamāhanga Category A groundwater and Lake Category B groundwater (stream depletion) excluding all the above catchment management sub-units in the Ruamāhanga catchment (above this row in Table 7.3)',
     'Surface Water',
+    9265128,
     1370,
     'L/s',
     FALSE,
     'Lower Ruamāhanga',
     'Lower Ruamāhanga River and tributaries upstream of (but not including) the confluence with the Lake Wairarapa outflow',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Lower Ruamāhanga River and tributaries upstream of (but not including) the confluence with the Lake Wairarapa outflow, and Lower Ruamāhanga Category A groundwater and Lake Category B groundwater (stream depletion) excluding all the above catchment management sub-units in the Ruamāhanga catchment (above this row in Table 7.3)',
     'Category A groundwater',
+    9265128,
     1370,
     'L/s',
     FALSE,
     'Lower Ruamāhanga',
     'Lower Ruamāhanga Category A groundwater',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Lower Ruamāhanga River and tributaries upstream of (but not including) the confluence with the Lake Wairarapa outflow, and Lower Ruamāhanga Category A groundwater and Lake Category B groundwater (stream depletion) excluding all the above catchment management sub-units in the Ruamāhanga catchment (above this row in Table 7.3)',
     'Category B groundwater (stream depletion)',
+    9265128,
     1370,
     'L/s',
     FALSE,
     'Lower Ruamāhanga',
     'Lake Category B groundwater (stream depletion) excluding all the above catchment management sub-units in the Ruamāhanga catchment (above this row in Table 7.3)',
     'final appeals version 2022',
-    '7.3'
+    7.3
   ),
   (
     'Lake Wairarapa and tributaries above the confluence of the Lake Wairarapa outflow with the Ruamāhanga River, and Tauherenikau Category A groundwater and Lake or Tauherenikau Category B groundwater (stream depletion)',
     'Surface Water',
+    9265450,
     1800,
     'L/s',
     FALSE,
     'Lake Wairarapa',
     'Lake Wairarapa and tributaries above the confluence of the Lake Wairarapa outflow with the Ruamāhanga River',
     'final appeals version 2022',
-    '7.4'
+    7.4
   ),
   (
     'Lake Wairarapa and tributaries above the confluence of the Lake Wairarapa outflow with the Ruamāhanga River, and Tauherenikau Category A groundwater and Lake or Tauherenikau Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9265450,
     1800,
     'L/s',
     FALSE,
     'Lake Wairarapa',
     'Tauherenikau Category A groundwater',
     'final appeals version 2022',
-    '7.4'
+    7.4
   ),
   (
     'Lake Wairarapa and tributaries above the confluence of the Lake Wairarapa outflow with the Ruamāhanga River, and Tauherenikau Category A groundwater and Lake or Tauherenikau Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9265450,
     1800,
     'L/s',
     FALSE,
     'Lake Wairarapa',
     'Lake or Tauherenikau Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.4'
+    7.4
   ),
   (
     'Otukura Stream and tributaries above (but not including) the confluence with Dock/Stonestead Creek and Tauherenikau Category B groundwater (stream depletion)',
     'Surface Water',
+    9262384,
     30,
     'L/s',
     TRUE,
     'Lake Wairarapa',
     'Otukura Stream and tributaries above (but not including) the confluence with Dock/Stonestead Creek',
     'final appeals version 2022',
-    '7.4'
+    7.4
   ),
   (
     'Otukura Stream and tributaries above (but not including) the confluence with Dock/Stonestead Creek and Tauherenikau Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9262384,
     30,
     'L/s',
     TRUE,
     'Lake Wairarapa',
     'Tauherenikau Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.4'
+    7.4
   ),
   (
     'Tauherenikau River and tributaries, and Tauherenikau Category A groundwater and Tauherenikau Category B groundwater (stream depletion)',
     'Surface Water',
+    9262043,
     410,
     'L/s',
     FALSE,
     'Lake Wairarapa',
     'Tauherenikau River and tributaries',
     'final appeals version 2022',
-    '7.4'
+    7.4
   ),
   (
     'Tauherenikau River and tributaries, and Tauherenikau Category A groundwater and Tauherenikau Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9262043,
     410,
     'L/s',
     FALSE,
     'Lake Wairarapa',
     'Tauherenikau Category A groundwater',
     'final appeals version 2022',
-    '7.4'
+    7.4
   ),
   (
     'Tauherenikau River and tributaries, and Tauherenikau Category A groundwater and Tauherenikau Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9262043,
     410,
     'L/s',
     FALSE,
     'Lake Wairarapa',
     'Tauherenikau Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '7.4'
+    7.4
   ),
   (
     'Te Awa Kairangi/Hutt River and tributaries, Upper Hutt or Lower Hutt Category A groundwater and Upper or Lower Hutt Category B groundwater (stream depletion) in the catchment management units shown in Figures 8.1 and 8.2',
     'Surface Water',
+    9263188,
     2140,
     'L/s',
     FALSE,
     'Te Awa Kairangi/Hutt River',
     'Te Awa Kairangi/Hutt River and tributaries',
     'final appeals version 2022',
-    '8.2'
+    8.2
   ),
   (
     'Te Awa Kairangi/Hutt River and tributaries, Upper Hutt or Lower Hutt Category A groundwater and Upper or Lower Hutt Category B groundwater (stream depletion) in the catchment management units shown in Figures 8.1 and 8.2',
     'Category A groundwater',
+    9263188,
     2140,
     'L/s',
     FALSE,
     'Te Awa Kairangi/Hutt River',
     'Upper Hutt or Lower Hutt Category A groundwater',
     'final appeals version 2022',
-    '8.2'
+    8.2
   ),
   (
     'Te Awa Kairangi/Hutt River and tributaries, Upper Hutt or Lower Hutt Category A groundwater and Upper or Lower Hutt Category B groundwater (stream depletion) in the catchment management units shown in Figures 8.1 and 8.2',
     'Category B groundwater (stream depletion)',
+    9263188,
     2140,
     'L/s',
     FALSE,
     'Te Awa Kairangi/Hutt River',
     'Upper or Lower Hutt Category B groundwater (stream depletion) in the catchment management units shown in Figures 8.1 and 8.2',
     'final appeals version 2022',
-    '8.2'
+    8.2
   ),
   (
     'Wainuiomata River and tributaries',
     'Surface Water',
+    9267263,
     180,
     'L/s',
     FALSE,
     'Wainuiomata River',
     'Wainuiomata River and tributaries',
     'final appeals version 2022',
-    '8.2'
+    8.2
   ),
   (
     'Orongorongo River and tributaries',
     'Surface Water',
+    9267413,
     95,
     'L/s',
     FALSE,
     'Orongorongo River',
     'Orongorongo River and tributaries',
     'final appeals version 2022',
-    '8.2'
+    8.2
   ),
   (
     'Upper Hutt Category B groundwater and Upper Hutt Category C groundwater',
     'Category B groundwater',
+    NULL,
     770000,
     'm 3 /year',
     FALSE,
     'Wellington Harbour and Hutt Valley Whaitua',
     'Upper Hutt Category B groundwater',
     'final appeals version 2022',
-    '8.3'
+    8.3
   ),
   (
     'Upper Hutt Category B groundwater and Upper Hutt Category C groundwater',
     'Category C groundwater',
+    NULL,
     770000,
     'm 3 /year',
     FALSE,
     'Wellington Harbour and Hutt Valley Whaitua',
     'Upper Hutt Category C groundwater',
     'final appeals version 2022',
-    '8.3'
+    8.3
   ),
   (
     'Lower Hutt Category B groundwater',
     'Category B groundwater',
+    NULL,
     36500000,
     'm 3 /year',
     FALSE,
     'Wellington Harbour and Hutt Valley Whaitua',
     'Lower Hutt Category B groundwater',
     'final appeals version 2022',
-    '8.3'
+    8.3
   ),
   (
     'Waitohu Stream and tributaries, Waitohu Category A groundwater and Ōtaki Category B groundwater (stream depletion)',
     'Surface Water',
+    9249511,
     45,
     'L/s',
     FALSE,
     'Waitohu Stream and tributaries',
     'Waitohu Stream and tributaries',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Waitohu Stream and tributaries, Waitohu Category A groundwater and Ōtaki Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9249511,
     45,
     'L/s',
     FALSE,
     'Waitohu Category A groundwater',
     'Waitohu Category A groundwater',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Waitohu Stream and tributaries, Waitohu Category A groundwater and Ōtaki Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9249511,
     45,
     'L/s',
     FALSE,
     'Ōtaki Category B groundwater (stream depletion)',
     'Ōtaki Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Ōtaki River and tributaries, Ōtaki Category A groundwater and Ōtaki or Te Horo Category B groundwater (stream depletion)',
     'Surface Water',
+    9250231,
     590,
     'L/s',
     FALSE,
     'Ōtaki River and tributaries, Ōtaki Category A groundwater and Ōtaki or Te Horo Category B groundwater (stream depletion)',
     'Ōtaki River and tributaries',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Ōtaki River and tributaries, Ōtaki Category A groundwater and Ōtaki or Te Horo Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9250231,
     590,
     'L/s',
     FALSE,
     'Ōtaki River and tributaries, Ōtaki Category A groundwater and Ōtaki or Te Horo Category B groundwater (stream depletion)',
     'Ōtaki Category A groundwater',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Ōtaki River and tributaries, Ōtaki Category A groundwater and Ōtaki or Te Horo Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9250231,
     590,
     'L/s',
     FALSE,
     'Ōtaki River and tributaries, Ōtaki Category A groundwater and Ōtaki or Te Horo Category B groundwater (stream depletion)',
     'Ōtaki or Te Horo Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Mangaone Stream and tributaries, Te Horo Category B groundwater (stream depletion)',
     'Surface Water',
+    9251129,
     24,
     'L/s',
     FALSE,
     'Mangaone Stream and tributaries',
     'Mangaone Stream and tributaries',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Mangaone Stream and tributaries, Te Horo Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9251129,
     24,
     'L/s',
     FALSE,
     'Te Horo Category B groundwater (stream depletion)',
     'Te Horo Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Waikanae River and tributaries, Waikanae Category A groundwater and Waikanae Category B groundwater (stream depletion)',
     'Surface Water',
+    9253625,
     220,
     'L/s',
     FALSE,
     'Waikanae River and tributaries',
     'Waikanae River and tributaries',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Waikanae River and tributaries, Waikanae Category A groundwater and Waikanae Category B groundwater (stream depletion)',
     'Category A groundwater',
+    9253625,
     220,
     'L/s',
     FALSE,
     'Waikanae Category A groundwater',
     'Waikanae Category A groundwater',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Waikanae River and tributaries, Waikanae Category A groundwater and Waikanae Category B groundwater (stream depletion)',
     'Category B groundwater (stream depletion)',
+    9253625,
     220,
     'L/s',
     FALSE,
     'Waikanae Category B groundwater (stream depletion)',
     'Waikanae Category B groundwater (stream depletion)',
     'final appeals version 2022',
-    '10.2'
+    10.2
   ),
   (
     'Raumati Category B groundwater',
     'Category B groundwater',
+    NULL,
     1229000,
     'm 3 /year',
     FALSE,
     'Raumati Category B groundwater',
     'Raumati Category B groundwater',
     'final appeals version 2022',
-    '10.3'
+    10.3
   ),
   (
     'Waikanae Category B groundwater',
     'Category B groundwater',
+    NULL,
     2710000,
     'm 3 /year',
     FALSE,
     'Waikanae Category B groundwater',
     'Waikanae Category B groundwater',
     'final appeals version 2022',
-    '10.3'
+    10.3
   ),
   (
     'Te Horo Category B groundwater',
     'Category B groundwater',
+    NULL,
     1620000,
     'm 3 /year',
     FALSE,
     'Te Horo Category B groundwater',
     'Te Horo Category B groundwater',
     'final appeals version 2022',
-    '10.3'
+    10.3
   ),
   (
     'Waitohu Category B groundwater',
     'Category B groundwater',
+    NULL,
     1080000,
     'm 3 /year',
     FALSE,
     'Waitohu Category B groundwater',
     'Waitohu Category B groundwater',
     'final appeals version 2022',
-    '10.3'
+    10.3
   );
+
+;
+
+;
