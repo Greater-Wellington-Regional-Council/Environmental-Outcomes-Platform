@@ -70,7 +70,8 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 
 val dbConfig =
     mapOf(
-        "url" to "jdbc:postgresql://${System.getenv("DB_HOST") ?: "localhost"}:5432/eop_test",
+        "url" to
+            "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?: "localhost"}:5432/eop_test",
         "user" to "postgres",
         "password" to "password")
 
