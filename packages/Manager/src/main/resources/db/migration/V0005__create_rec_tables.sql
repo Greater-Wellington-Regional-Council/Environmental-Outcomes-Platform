@@ -53,3 +53,10 @@ CREATE TABLE
     DEPTH INTEGER,
     PRIMARY KEY (hydro_id)
   );
+
+CREATE TABLE
+  raw_rec_rivers_names (
+    OID INTEGER NOT NULL nz_segment INTEGER NOT NULL,
+    river_name VARCHAR,
+    PRIMARY KEY (nz_segment)
+  );
