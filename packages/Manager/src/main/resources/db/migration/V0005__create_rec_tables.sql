@@ -56,7 +56,8 @@ CREATE TABLE
 
 CREATE TABLE
   raw_rec_rivers_names (
-    OID INTEGER NOT NULL nz_segment INTEGER NOT NULL,
+    o_id INTEGER NOT NULL,
+    nz_segment INTEGER NOT NULL,
     river_name VARCHAR,
     PRIMARY KEY (nz_segment)
   );
