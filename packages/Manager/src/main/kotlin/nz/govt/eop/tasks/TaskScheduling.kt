@@ -6,39 +6,35 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
-
-
-// data class GeojsonObject (
-//   var
-// )
+import org.geojson.GeoJsonObject
 
 @Component
-class ScheduleTasks (val context: DSLContext, val restTemplate: RestTemplate) {
+class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
 
   @Scheduled(fixedRate = 60000)
   fun updateWhaituaBoundaries() {
 
-    // Get data
+   val url = UriComponentsBuilder
+             .fromHttpUrl("https://mapping.gw.govt.nz/arcgis/rest/services/GW/NRPMap_P_operative/MapServer/119/query?where=1=1&outFields=*&f=geojson")
+             .build()
+             .toUri()
 
-    val url = UriComponentsBuilder.fromHttpUrl("https://mapping.gw.govt.nz/arcgis/rest/services/GW/NRPMap_P_operative/MapServer/119/query?where=1%3D1&outFields=*&f=geojson").build().toUri()
+  // Get data
+  
+  // Trying with restTemplate
+  val response = restTemplate.getForObject(url, GeoJsonObject::class.java)
 
-    // val test = restTemplate.getForObject(url)
+  println(response)
 
-    //// RestTemplate - spring
+  //// RestTemplate - spring
 
-    // FuelManager.instance.basePath = "https://mapping.gw.govt.nz/arcgis/rest/services/GW"
-    // FuelManager.instance.baseParams = listOf("where" to "1=1", "outFields" to "*", "f" to "geojson")
+  // deserialise
 
-    // val (request, response, result) = Fuel.get("/NRPMap_P_operative/MapServer/119/query").response()
-    // println(response)
+  //// jackson deserialise json and maybe specificaly geojson
 
-    // deserialise
+  // write to db
 
-    //// jackson deserialise json and maybe specificaly geojson
-
-    // write to db
-
-    //// jooq
+  //// jooq
 
   }
 }
