@@ -3,3 +3,5 @@ spring:
     url: jdbc:postgresql://${CONFIG_DATABASE_HOST:localhost}:${CONFIG_DATABASE_PORT:5432}/eop_test
     username: postgres
     password: password
+  flyway:
+    locations: "filesystem:./src/**/resources/db/migration"
