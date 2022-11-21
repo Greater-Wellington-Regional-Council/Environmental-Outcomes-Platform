@@ -80,7 +80,7 @@ flyway {
   user = dbConfig["user"]
   password = dbConfig["password"]
   schemas = arrayOf("public")
-  locations = arrayOf("filesystem:./src/main/resources/db/migration")
+  locations = arrayOf("filesystem:./src/**/resources/db/migration")
 }
 
 jooq {
