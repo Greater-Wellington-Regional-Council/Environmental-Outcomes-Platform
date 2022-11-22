@@ -19,8 +19,28 @@ jobs:
       - name: Build app
         run: ./batect --config-var git_sha=${GITHUB_SHA} --config-var linz_api_key=${{ secrets.LINZ_API_KEY }} build
 
+      - name: Upload Distribution Files
+        uses: actions/upload-artifact@v3
+        with:
+            name: dist
+            path: ./packages/PlanLimitsUI/dist/
+
+  deploy-dev:
+    if: github.ref == 'refs/heads/deploy/dev'
+    needs: build
+    name: Deploy Dev
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+            working-directory: ./packages/PlanLimitsUI
+    steps:
+      - name: Download Distribution Files
+        uses: actions/download-artifact@v3
+        with:
+            name: dist
+            path: ./packages/PlanLimitsUI/dist/
+
       - name: Configure Dev Environment Access
-        if: github.ref == 'refs/heads/deploy/dev'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -31,41 +51,6 @@ jobs:
           role-session-name: GitHubActions
 
       - name: Deploy Dev
-        if: github.ref == 'refs/heads/deploy/dev'
         run: |
           aws s3 sync dist s3://plan-limits.gw-eop-dev.tech --region ap-southeast-2 --cache-control max-age=31536000,public --exclude "index.html"
           aws s3 cp dist/index.html s3://plan-limits.gw-eop-dev.tech --region ap-southeast-2 --metadata-directive REPLACE --cache-control no-cache,public --content-type text/html
-
-      - name: Configure Stage Environment Access
-        if: github.ref == 'refs/heads/deploy/stage'
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-2
-          role-to-assume: arn:aws:iam::564180615104:role/allow-auto-deploy-from-other-accounts
-          role-duration-seconds: 1200
-          role-session-name: GitHubActions
-
-      - name: Deploy Stage
-        if: github.ref == 'refs/heads/deploy/stage'
-        run: |
-          aws s3 sync dist s3://plan-limits.gw-eop-stage.tech --region ap-southeast-2 --cache-control max-age=31536000,public --exclude "index.html"
-          aws s3 cp dist/index.html s3://plan-limits.gw-eop-stage.tech --region ap-southeast-2 --metadata-directive REPLACE --cache-control no-cache,public --content-type text/html
-
-      - name: Configure Prod Environment Access
-        if: github.ref == 'refs/heads/deploy/prod'
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-2
-          role-to-assume: arn:aws:iam::422253851608:role/allow-auto-deploy-from-other-accounts
-          role-duration-seconds: 1200
-          role-session-name: GitHubActions
-
-      - name: Deploy Prod
-        if: github.ref == 'refs/heads/deploy/prod'
-        run: |
-          aws s3 sync dist s3://plan-limits.gw-eop-prod.tech --region ap-southeast-2 --cache-control max-age=31536000,public --exclude "index.html"
-          aws s3 cp dist/index.html s3://plan-limits.gw-eop-prod.tech --region ap-southeast-2 --metadata-directive REPLACE --cache-control no-cache,public --content-type text/html
