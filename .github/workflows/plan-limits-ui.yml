@@ -25,6 +25,25 @@ jobs:
           name: dist
           path: ./packages/PlanLimitsUI/dist/
 
+  deploy:
+    needs: build
+    strategy:
+      matrix:
+        env: [dev, stage, prod]
+    name: Deploy ${{ matrix.env }}
+    if: github.ref == 'refs/heads/deploy/${{ matrix.env }}'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/PlanLimitsUI
+    steps:
+      - name: Download Distribution Files
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: ./packages/PlanLimitsUI/dist/
+
+
   deploy-dev:
     if: github.ref == 'refs/heads/deploy/dev'
     needs: build
