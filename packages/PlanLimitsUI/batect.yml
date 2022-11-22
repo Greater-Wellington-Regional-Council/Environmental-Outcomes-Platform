@@ -1,3 +1,10 @@
+config_variables:
+  git_sha:
+    default: DEVELOPER_BUILD
+    description: The Git SHA being used for this build (expected for CI only)
+  linz_api_key:
+    description: The developer key from LINZ to use (see https://basemaps.linz.govt.nz/)
+
 containers:
   build-env:
     image: node:18.7.0
@@ -21,7 +28,7 @@ containers:
 
 tasks:
   shell:
-    description: Build the Site
+    description: Run a shell
     run:
       container: build-env
       command: bash
@@ -34,3 +41,6 @@ tasks:
     run:
       container: build-env
       command: ./.batect/scripts/build.sh
+      environment:
+        VITE_GIT_SHA: <{git_sha}
+        VITE_LINZ_API_KEY: <{linz_api_key}

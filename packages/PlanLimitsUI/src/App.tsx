@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from 'react-router-dom';
 
 export default function App() {
   return (
@@ -6,6 +6,7 @@ export default function App() {
       <div className="flex flex-1 items-stretch overflow-hidden">
         <Outlet />
       </div>
+      <div className="hidden">{import.meta.env.VITE_GIT_SHA}</div>
     </>
   );
 }
