@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -25,81 +26,30 @@ jobs:
           name: dist
           path: ./packages/PlanLimitsUI/dist/
 
-  deploy:
-    needs: build
-    strategy:
-      matrix:
-        env: [dev, stage, prod]
-    name: Deploy ${{ matrix.env }}
-    if: github.ref == 'refs/heads/deploy/${{ matrix.env }}'
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/PlanLimitsUI
-    steps:
-      - name: Download Distribution Files
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: ./packages/PlanLimitsUI/dist/
-
-
   deploy-dev:
-    if: github.ref == 'refs/heads/deploy/dev'
-    needs: build
     name: Deploy Dev
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/PlanLimitsUI
-    steps:
-      - name: Download Distribution Files
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: ./packages/PlanLimitsUI/dist/
-
-      - name: Configure Environment Access
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-2
-          role-to-assume: arn:aws:iam::657968434173:role/allow-auto-deploy-from-other-accounts
-          role-duration-seconds: 1200
-          role-session-name: GitHubActions
-
-      - name: Deploy to S3
-        run: |
-          aws s3 sync dist s3://plan-limits.gw-eop-dev.tech --region ap-southeast-2 --cache-control max-age=31536000,public --exclude "index.html"
-          aws s3 cp dist/index.html s3://plan-limits.gw-eop-dev.tech --region ap-southeast-2 --metadata-directive REPLACE --cache-control no-cache,public --content-type text/html
+    needs: build
+    if: github.ref == 'refs/heads/deploy/dev'
+    uses: ./.github/workflows/plan-limits-ui-deploy.yml    
+    with:
+      environment: plan-limits-dev  
+    secrets: inherit
 
   deploy-stage:
-    if: github.ref == 'refs/heads/deploy/stage'
-    needs: build
     name: Deploy Stage
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./packages/PlanLimitsUI
-    steps:
-      - name: Download Distribution Files
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: ./packages/PlanLimitsUI/dist/
+    needs: build
 
-      - name: Configure Environment Access
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-2
-          role-to-assume: arn:aws:iam::564180615104:role/allow-auto-deploy-from-other-accounts
-          role-duration-seconds: 1200
-          role-session-name: GitHubActions
+    if: github.ref == 'refs/heads/deploy/stage'
+    uses: ./.github/workflows/plan-limits-ui-deploy.yml    
+    with:
+      environment: plan-limits-stage    
+    secrets: inherit
 
-      - name: Deploy to S3
-        run: |
-          aws s3 sync dist s3://plan-limits.gw-eop-stage.tech --region ap-southeast-2 --cache-control max-age=31536000,public --exclude "index.html"
-          aws s3 cp dist/index.html s3://plan-limits.gw-eop-stage.tech --region ap-southeast-2 --metadata-directive REPLACE --cache-control no-cache,public --content-type text/html
+  deploy-prod:
+    name: Deploy Prod
+    needs: build
+    if: github.ref == 'refs/heads/deploy/prod'
+    uses: ./.github/workflows/plan-limits-ui-deploy.yml    
+    with:
+      environment: plan-limits-prod    
+    secrets: inherit    
