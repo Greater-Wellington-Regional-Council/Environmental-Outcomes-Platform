@@ -28,6 +28,7 @@ dependencies {
 
   runtimeOnly("org.springframework.boot:spring-boot-devtools")
   runtimeOnly("org.postgresql:postgresql")
+  runtimeOnly("io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.2")
 
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
