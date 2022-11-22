@@ -11,7 +11,7 @@ import org.geojson.GeoJsonObject
 @Component
 class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
 
-  @Scheduled(fixedRate = 60000)
+  @Scheduled(fixedRate = 600000)
   fun updateWhaituaBoundaries() {
 
    val url = UriComponentsBuilder
@@ -22,19 +22,13 @@ class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
   // Get data
   
   // Trying with restTemplate
-  val response = restTemplate.getForObject(url, GeoJsonObject::class.java)
+  val whaitua_geojson = restTemplate.getForObject(url, GeoJsonObject::class.java)
 
-  println(response)
-
-  //// RestTemplate - spring
-
-  // deserialise
-
-  //// jackson deserialise json and maybe specificaly geojson
+  println(whaitua_geojson)
 
   // write to db
 
   //// jooq
-
+.
   }
 }
