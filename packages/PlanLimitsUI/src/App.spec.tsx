@@ -28,6 +28,18 @@ describe('App Routing', () => {
     });
   });
 
+  it('should switch to default location when unparsable', async () => {
+    const router = createMemoryRouter(routes, {
+      initialEntries: ['/limits/I-KNOW-NOTHING'],
+    });
+
+    render(<RouterProvider router={router} />);
+
+    await waitFor(() => {
+      expect(router.state.location.pathname).toEqual('/limits/@-41,175.35,8z');
+    });
+  });
+
   it('should do nothing when location is in url', async () => {
     const router = createMemoryRouter(routes, {
       initialEntries: ['/limits/@-44.675,169.138,16z'],

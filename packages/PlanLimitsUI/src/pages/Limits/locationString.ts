@@ -1,4 +1,4 @@
-type ViewLocation = {
+export type ViewLocation = {
   longitude: number;
   latitude: number;
   zoom: number;

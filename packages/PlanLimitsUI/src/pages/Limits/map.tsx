@@ -32,7 +32,7 @@ export default function LimitsMap({
   mouseState: MouseState;
   setMouseState: React.Dispatch<React.SetStateAction<MouseState>>;
   viewState: ViewState;
-  setViewState: React.Dispatch<React.SetStateAction<ViewState>>;
+  setViewState: (value: ViewState) => void;
 }) {
   const [showImagery, setShowImagery] = React.useState(true);
 
