@@ -80,7 +80,7 @@ export default function Dashboard() {
 
   const debouncedValue = useDebounce<ViewState>(viewState, 500);
   useEffect(() => {
-    navigate(`/${createLocationString(debouncedValue)}`);
+    navigate(`/limits/${createLocationString(debouncedValue)}`);
   }, [debouncedValue]);
 
   return (
