@@ -4,24 +4,24 @@ import App from './App';
 import './index.css';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
+import Limits from './pages/Limits';
 
-const router = createBrowserRouter([
+export const routes = [
   {
     path: '/',
     element: <App />,
     children: [
-      { index: true, element: <Dashboard /> },
+      { index: true, element: <Limits /> },
       {
         path: '/:location',
-        element: <Dashboard />,
+        element: <Limits />,
       },
     ],
   },
-]);
+];
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <RouterProvider router={createBrowserRouter(routes)} />
   </React.StrictMode>
 );
