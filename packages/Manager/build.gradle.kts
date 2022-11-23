@@ -39,6 +39,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.flywaydb:flyway-core")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+  implementation("de.grundid.opendatalab:geojson-jackson:1.14")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-assertions-core:5.5.4")
