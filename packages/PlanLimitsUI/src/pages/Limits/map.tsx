@@ -2,6 +2,8 @@ import React from 'react';
 import maplibregl from 'maplibre-gl';
 import Map, {
   Layer,
+  MapRef,
+  Marker,
   NavigationControl,
   ScaleControl,
   Source,
@@ -20,6 +22,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import LayerControl from '../../components/map/LayerControl';
 import { MouseState } from './index';
 import mapboxgl from 'mapbox-gl';
+import { PinnedLocation } from './locationString';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 
@@ -28,24 +31,120 @@ export default function LimitsMap({
   setMouseState,
   viewState,
   setViewState,
+  initialPinnedLocation,
+  setCurrentPinnedLocation,
 }: {
   mouseState: MouseState;
   setMouseState: React.Dispatch<React.SetStateAction<MouseState>>;
   viewState: ViewState;
   setViewState: (value: ViewState) => void;
+  initialPinnedLocation?: PinnedLocation;
+  setCurrentPinnedLocation: (value?: PinnedLocation) => void;
 }) {
+  const [mapRenderCount, setMapRenderCount] = React.useState(0);
   const [showImagery, setShowImagery] = React.useState(true);
+
+  const [pinnedLocation, storePinnedLocation] = React.useState(
+    initialPinnedLocation
+  );
+
+  const [highlightLocation, setHighlightLocation] = React.useState<
+    PinnedLocation | undefined
+  >(initialPinnedLocation);
 
   const riversToShow = {
     ...rivers,
     features: rivers.features.filter(
-      (river) => river.properties['stream_order'] >= 2
+      (river) => river.properties['stream_order'] >= 3
     ),
   };
+
+  const changesCallback = React.useCallback(
+    (map: MapRef | null) => {
+      if (highlightLocation && map) {
+        const result = map.queryRenderedFeatures(
+          map.project([highlightLocation.longitude, highlightLocation.latitude])
+        );
+        const findFeature = (
+          features: mapboxgl.MapboxGeoJSONFeature[],
+          layer: string,
+          prop: string
+        ) =>
+          features.find((feat) => feat.layer.id === layer)?.properties?.[
+            prop
+          ] as string | undefined;
+
+        const council = findFeature(result, 'councils', 'REGC2022_V1_00_NAME');
+        const whaitua = findFeature(result, 'whaitua', 'Name');
+        const whaituaId = findFeature(result, 'whaitua', 'OBJECTID') || 'NONE';
+        const gw00 = findFeature(result, 'groundWater', 'category00');
+        const gw20 = findFeature(result, 'groundWater', 'category20');
+        const gw30 = findFeature(result, 'groundWater', 'category30');
+        const groundWaterId =
+          findFeature(result, 'groundWater', 'OBJECTID') || 'NONE';
+        const groundWaterZone = findFeature(result, 'groundWater', 'Zone');
+        const site = findFeature(result, 'flowSites', 'Name');
+        const river = findFeature(result, 'rivers', 'name');
+        const surfaceWater = findFeature(result, 'surfaceWater', 'Name');
+        const surfaceWaterId =
+          findFeature(result, 'surfaceWater', 'Id') || 'NONE';
+        const flowRestrictionsLevel = findFeature(
+          result,
+          'surfaceWater',
+          'flowRestrictionsLevel'
+        );
+        const flowRestrictionsManagementSiteName = findFeature(
+          result,
+          'surfaceWater',
+          'flowRestrictionsManagementSiteName'
+        );
+        const flowRestrictionsManagementSiteId =
+          findFeature(
+            result,
+            'surfaceWater',
+            'flowRestrictionsManagementSiteId'
+          ) || 'NONE';
+        const allocationLimit = findFeature(
+          result,
+          'allocationLimits',
+          'allocationLimit'
+        );
+        const allocationLimitId =
+          findFeature(result, 'allocationLimits', 'Id') || 'NONE';
+
+        setMouseState({
+          ...mouseState,
+          position: {
+            lng: highlightLocation.longitude,
+            lat: highlightLocation.latitude,
+          },
+          council,
+          whaitua,
+          whaituaId,
+          gw00,
+          gw20,
+          gw30,
+          groundWaterId,
+          groundWaterZone,
+          site,
+          river,
+          surfaceWater,
+          surfaceWaterId,
+          allocationLimit,
+          allocationLimitId,
+          flowRestrictionsLevel,
+          flowRestrictionsManagementSiteName,
+          flowRestrictionsManagementSiteId,
+        });
+      }
+    },
+    [highlightLocation, mapRenderCount]
+  );
 
   return (
     <main className="flex-1 overflow-y-auto">
       <Map
+        ref={changesCallback}
         reuseMaps={true}
         mapLib={maplibregl}
         style={{ width: '100%', height: '100vh' }}
@@ -57,75 +156,28 @@ export default function LimitsMap({
         ]}
         onMove={(evt) => setViewState(evt.viewState)}
         onMouseMove={(evt) => {
-          const findFeature = (
-            evt: mapboxgl.MapLayerMouseEvent,
-            layer: string,
-            prop: string
-          ) =>
-            evt.features?.find((feat) => feat.layer.id === layer)?.properties?.[
-              prop
-            ] as string | undefined;
-
-          const council = findFeature(evt, 'councils', 'REGC2022_V1_00_NAME');
-          const whaitua = findFeature(evt, 'whaitua', 'name');
-          const whaituaId = findFeature(evt, 'whaitua', 'OBJECTID') || 'NONE';
-          const gw00 = findFeature(evt, 'groundWater', 'category00');
-          const gw20 = findFeature(evt, 'groundWater', 'category20');
-          const gw30 = findFeature(evt, 'groundWater', 'category30');
-          const groundWaterId =
-            findFeature(evt, 'groundWater', 'OBJECTID') || 'NONE';
-          const groundWaterZone = findFeature(evt, 'groundWater', 'Zone');
-          const site = findFeature(evt, 'flowSites', 'Name');
-          const river = findFeature(evt, 'rivers', 'name');
-          const surfaceWater = findFeature(evt, 'surfaceWater', 'Name');
-          const surfaceWaterId =
-            findFeature(evt, 'surfaceWater', 'Id') || 'NONE';
-          const flowRestrictionsLevel = findFeature(
-            evt,
-            'surfaceWater',
-            'flowRestrictionsLevel'
-          );
-          const flowRestrictionsManagementSiteName = findFeature(
-            evt,
-            'surfaceWater',
-            'flowRestrictionsManagementSiteName'
-          );
-          const flowRestrictionsManagementSiteId =
-            findFeature(
-              evt,
-              'surfaceWater',
-              'flowRestrictionsManagementSiteId'
-            ) || 'NONE';
-          const allocationLimit = findFeature(
-            evt,
-            'allocationLimits',
-            'allocationLimit'
-          );
-          const allocationLimitId =
-            findFeature(evt, 'allocationLimits', 'Id') || 'NONE';
-
-          setMouseState({
-            ...mouseState,
-            position: evt.lngLat,
-            council,
-            whaitua,
-            whaituaId,
-            gw00,
-            gw20,
-            gw30,
-            groundWaterId,
-            groundWaterZone,
-            site,
-            river,
-            surfaceWater,
-            surfaceWaterId,
-            allocationLimit,
-            allocationLimitId,
-            flowRestrictionsLevel,
-            flowRestrictionsManagementSiteName,
-            flowRestrictionsManagementSiteId,
+          if (!pinnedLocation) {
+            setHighlightLocation({
+              latitude: evt.lngLat.lat,
+              longitude: evt.lngLat.lng,
+            });
+          }
+        }}
+        onClick={(evt) => {
+          const newPinnedLocation = pinnedLocation
+            ? undefined
+            : {
+                latitude: evt.lngLat.lat,
+                longitude: evt.lngLat.lng,
+              };
+          setCurrentPinnedLocation(newPinnedLocation);
+          storePinnedLocation(newPinnedLocation);
+          setHighlightLocation({
+            latitude: evt.lngLat.lat,
+            longitude: evt.lngLat.lng,
           });
         }}
+        onRender={() => setMapRenderCount(mapRenderCount + 1)}
         interactiveLayerIds={[
           'councils',
           'whaitua',
@@ -259,8 +311,28 @@ export default function LimitsMap({
             id="rivers"
             type="line"
             paint={{
-              'line-color': '#2b8cbe',
-              'line-width': ['+', 1, ['get', 'stream_order']],
+              'line-width': ['+', 0, ['get', 'stream_order']],
+              'line-color': [
+                'match',
+                ['get', 'stream_order'],
+                1,
+                '#9bc4e2',
+                2,
+                '#9bc4e2',
+                3,
+                '#9bc4e2',
+                4,
+                '#17569B',
+                5,
+                '#17569B',
+                6,
+                '#17569B',
+                7,
+                '#17569B',
+                8,
+                '#17569B',
+                '#17569B',
+              ],
             }}
           />
         </Source>
@@ -280,6 +352,13 @@ export default function LimitsMap({
             }}
           />
         </Source>
+
+        {pinnedLocation && (
+          <Marker
+            longitude={pinnedLocation.longitude}
+            latitude={pinnedLocation.latitude}
+          />
+        )}
 
         {showImagery && (
           <Source

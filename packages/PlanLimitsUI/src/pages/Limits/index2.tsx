@@ -1,10 +1,8 @@
 import Map from './map';
 import Sidebar from './sidebar';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ViewState } from 'react-map-gl';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useDebounce } from 'usehooks-ts';
-import { createLocationString, ViewLocation } from './locationString';
+import { PinnedLocation, ViewLocation } from './locationString';
 
 export type MouseState = {
   position: {
@@ -33,14 +31,16 @@ export type MouseState = {
 type Props = {
   initialLocation: ViewLocation;
   setCurrentViewLocation: (viewLocation: ViewLocation) => void;
+  initialPinnedLocation?: PinnedLocation;
+  setCurrentPinnedLocation: (pinnedLocation?: PinnedLocation) => void;
 };
 
 export default function Limitszz({
   initialLocation,
   setCurrentViewLocation,
+  initialPinnedLocation,
+  setCurrentPinnedLocation,
 }: Props) {
-  const navigate = useNavigate();
-
   const [mouseState, setMouseState] = React.useState<MouseState>({
     position: {
       lng: 0,
@@ -89,6 +89,8 @@ export default function Limitszz({
         setMouseState={setMouseState}
         viewState={viewState}
         setViewState={setViewState}
+        initialPinnedLocation={initialPinnedLocation}
+        setCurrentPinnedLocation={setCurrentPinnedLocation}
       />
       <Sidebar mouseState={mouseState} />
     </>

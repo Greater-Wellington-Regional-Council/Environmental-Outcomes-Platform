@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useLoaderData, useNavigate } from 'react-router-dom';
-import { createLocationString, ViewLocation } from './locationString';
+import {
+  LoaderFunction,
+  redirect,
+  useLoaderData,
+  useNavigate,
+} from 'react-router-dom';
+import {
+  createLocationString,
+  createPinnedLocationString,
+  parseLocationString,
+  parsePinnedLocation,
+  PinnedLocation,
+  ViewLocation,
+} from './locationString';
 import Limitszz from './index2';
 import { useDebounce } from 'usehooks-ts';
 
@@ -34,22 +46,53 @@ export type MouseState = {
   allocationLimitId: string;
 };
 
+export const loader: LoaderFunction = ({ params, request }) => {
+  const url = new URL(request.url);
+  const pinnedParam = url.searchParams.get('pinned');
+
+  const parsedLocation = parseLocationString(params.location);
+  const parsedPinnedLocation = parsePinnedLocation(pinnedParam);
+  return parsedLocation
+    ? {
+        locationString: parsedLocation,
+        pinnedLocation: parsedPinnedLocation || undefined,
+      }
+    : redirect(`/limits/${createLocationString(defaultViewLocation)}`);
+};
+
 export default function Limits() {
   const navigate = useNavigate();
 
-  const initialViewLocation = useLoaderData() as ViewLocation;
+  const {
+    locationString: initialViewLocation,
+    pinnedLocation: initialPinnedLocation,
+  } = useLoaderData() as {
+    locationString: ViewLocation;
+    pinnedLocation?: PinnedLocation;
+  };
 
   const [viewLocation, setCurrentViewLocation] = useState(initialViewLocation);
   const debouncedValue = useDebounce<ViewLocation>(viewLocation, 500);
 
+  const [pinnedLocation, setPinnedLocation] = useState(initialPinnedLocation);
+
   useEffect(() => {
-    navigate(`/limits/${createLocationString(debouncedValue)}`);
-  }, [debouncedValue]);
+    if (pinnedLocation) {
+      navigate({
+        pathname: `/limits/${createLocationString(debouncedValue)}`,
+        search: `pinned=${createPinnedLocationString(pinnedLocation)}`,
+      });
+    } else {
+      navigate(`/limits/${createLocationString(debouncedValue)}`);
+    }
+  }, [debouncedValue, pinnedLocation]);
 
   return (
     <Limitszz
       initialLocation={initialViewLocation}
       setCurrentViewLocation={setCurrentViewLocation}
+      initialPinnedLocation={initialPinnedLocation}
+      setCurrentPinnedLocation={setPinnedLocation}
     />
   );
 }

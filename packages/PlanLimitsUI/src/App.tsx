@@ -5,12 +5,9 @@ import {
   redirect,
 } from 'react-router-dom';
 import Layout from './Layout';
-import Limits, { defaultViewLocation } from './pages/Limits';
+import Limits, { defaultViewLocation, loader } from './pages/Limits';
 import React from 'react';
-import {
-  createLocationString,
-  parseLocationString,
-} from './pages/Limits/locationString';
+import { createLocationString } from './pages/Limits/locationString';
 
 export const routes: RouteObject[] = [
   {
@@ -29,12 +26,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/limits/:location',
-        loader: ({ params }) => {
-          return (
-            parseLocationString(params.location) ||
-            redirect(`/limits/${createLocationString(defaultViewLocation)}`)
-          );
-        },
+        loader: loader,
         element: <Limits />,
       },
     ],
