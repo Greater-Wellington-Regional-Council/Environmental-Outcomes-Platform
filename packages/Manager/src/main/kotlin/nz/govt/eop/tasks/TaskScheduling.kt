@@ -10,9 +10,12 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
+import mu.KotlinLogging
 
 @Component
 class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
+
+  private val logger = KotlinLogging.logger {}
 
   @Scheduled(fixedDelay = 86400000) // once a day
   fun updateWhaituaBoundaries() {
@@ -27,10 +30,13 @@ class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
             .toUri()
 
     // println(url)
+    logger.info { "Making GET request for Whaitua data.." }
 
     var whaitua_features = restTemplate.getForObject(url, FeatureCollection::class.java)
 
     if (whaitua_features != null) {
+
+      logger.info { "Writing data to the database.." }
 
       context.deleteFrom(WhaituaBoundaries.WHAITUA_BOUNDARIES).execute()
 
@@ -51,9 +57,12 @@ class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
             .execute()
       }
     }
+    logger.info { "Finished updataing Whaitua data." }
   }
   @Scheduled(fixedDelay = 86400000, initialDelay = 500) // once a day
   fun updateGroundwaterZones() {
+
+    logger.info { "Making GET request for Groundwater Zones data.." }
 
     val url =
         UriComponentsBuilder.newInstance()
@@ -68,6 +77,8 @@ class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
     var groundwater_result = restTemplate.getForObject(url, FeatureCollection::class.java)
 
     if (groundwater_result != null) {
+
+      logger.info { "Writing data to the database.." }
 
       context.deleteFrom(GroundwaterZones.GROUNDWATER_ZONES).execute()
 
@@ -95,5 +106,6 @@ class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
             .execute()
       }
     }
+    logger.info { "Finished updataing Groundwater Zones data." }
   }
 }
