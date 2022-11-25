@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
+import org.springframework.transaction.annotation.Transactional
 import mu.KotlinLogging
 
 @Component
@@ -17,6 +18,8 @@ class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
 
   private val logger = KotlinLogging.logger {}
 
+
+  @Transactional
   @Scheduled(fixedDelay = 86400000) // once a day
   fun updateWhaituaBoundaries() {
 
@@ -59,6 +62,8 @@ class ScheduleTasks(val context: DSLContext, val restTemplate: RestTemplate) {
     }
     logger.info { "Finished updataing Whaitua data." }
   }
+
+  @Transactional
   @Scheduled(fixedDelay = 86400000, initialDelay = 500) // once a day
   fun updateGroundwaterZones() {
 
