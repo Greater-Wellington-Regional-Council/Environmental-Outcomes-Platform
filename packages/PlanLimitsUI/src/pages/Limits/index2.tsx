@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { ViewState } from 'react-map-gl';
 import { PinnedLocation, ViewLocation } from './locationString';
 
+export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
+
 export type MouseState = {
   position: {
     lng: number;
@@ -41,6 +43,9 @@ export default function Limitszz({
   initialPinnedLocation,
   setCurrentPinnedLocation,
 }: Props) {
+  const [waterTakeFilter, setWaterTakeFilter] =
+    React.useState<WaterTakeFilter>('Combined');
+
   const [mouseState, setMouseState] = React.useState<MouseState>({
     position: {
       lng: 0,
@@ -91,8 +96,13 @@ export default function Limitszz({
         setViewState={setViewState}
         initialPinnedLocation={initialPinnedLocation}
         setCurrentPinnedLocation={setCurrentPinnedLocation}
+        waterTakeFilter={waterTakeFilter}
       />
-      <Sidebar mouseState={mouseState} />
+      <Sidebar
+        mouseState={mouseState}
+        waterTakeFilter={waterTakeFilter}
+        setWaterTakeFilter={setWaterTakeFilter}
+      />
     </>
   );
 }

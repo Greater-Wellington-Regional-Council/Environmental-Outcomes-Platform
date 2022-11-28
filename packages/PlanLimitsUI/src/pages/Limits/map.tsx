@@ -23,6 +23,8 @@ import LayerControl from '../../components/map/LayerControl';
 import { MouseState } from './index';
 import mapboxgl from 'mapbox-gl';
 import { PinnedLocation } from './locationString';
+import Button from '../../components/Button';
+import { WaterTakeFilter } from './index2';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 
@@ -33,6 +35,7 @@ export default function LimitsMap({
   setViewState,
   initialPinnedLocation,
   setCurrentPinnedLocation,
+  waterTakeFilter,
 }: {
   mouseState: MouseState;
   setMouseState: React.Dispatch<React.SetStateAction<MouseState>>;
@@ -40,6 +43,7 @@ export default function LimitsMap({
   setViewState: (value: ViewState) => void;
   initialPinnedLocation?: PinnedLocation;
   setCurrentPinnedLocation: (value?: PinnedLocation) => void;
+  waterTakeFilter: WaterTakeFilter;
 }) {
   const [mapRenderCount, setMapRenderCount] = React.useState(0);
   const [showImagery, setShowImagery] = React.useState(true);
@@ -138,7 +142,7 @@ export default function LimitsMap({
         });
       }
     },
-    [highlightLocation, mapRenderCount]
+    [highlightLocation, mapRenderCount, waterTakeFilter]
   );
 
   return (
@@ -192,14 +196,11 @@ export default function LimitsMap({
         <NavigationControl position="top-left" visualizePitch={true} />
         <ScaleControl />
         <LayerControl>
-          <button
+          <Button
             onClick={() => setShowImagery(!showImagery)}
-            style={{ pointerEvents: 'all' }}
-            type="button"
-            className="inline-flex items-center rounded border border-transparent bg-indigo-100 px-2.5 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            {showImagery ? 'Hide' : 'Show '} aerial imagery
-          </button>
+            text={`${showImagery ? 'Hide' : 'Show '} aerial imagery`}
+            // style={{ pointerEvents: 'all' }}
+          />
         </LayerControl>
 
         <Source type="geojson" data={councils}>
@@ -254,16 +255,18 @@ export default function LimitsMap({
               'fill-opacity': 0,
             }}
           />
-          <Layer
-            id="groundWater-highlight"
-            type="fill"
-            filter={['in', 'OBJECTID', mouseState.groundWaterId]}
-            paint={{
-              'fill-outline-color': '#484896',
-              'fill-color': '#33ff99',
-              'fill-opacity': 0.5,
-            }}
-          />
+          {['Ground', 'Combined'].includes(waterTakeFilter) && (
+            <Layer
+              id="groundWater-highlight"
+              type="fill"
+              filter={['in', 'OBJECTID', mouseState.groundWaterId]}
+              paint={{
+                'fill-outline-color': '#484896',
+                'fill-color': '#33ff99',
+                'fill-opacity': 0.5,
+              }}
+            />
+          )}
         </Source>
 
         <Source type="geojson" data={surfaceWater}>
@@ -274,16 +277,18 @@ export default function LimitsMap({
               'fill-opacity': 0,
             }}
           />
-          <Layer
-            id="surfaceWater-highlight"
-            type="fill"
-            filter={['in', 'Id', mouseState.surfaceWaterId]}
-            paint={{
-              'fill-outline-color': '#484896',
-              'fill-color': '#6e599f',
-              'fill-opacity': 0.5,
-            }}
-          />
+          {['Surface', 'Combined'].includes(waterTakeFilter) && (
+            <Layer
+              id="surfaceWater-highlight"
+              type="fill"
+              filter={['in', 'Id', mouseState.surfaceWaterId]}
+              paint={{
+                'fill-outline-color': '#484896',
+                'fill-color': '#6e599f',
+                'fill-opacity': 0.5,
+              }}
+            />
+          )}
         </Source>
 
         <Source type="geojson" data={allocation}>
@@ -294,16 +299,18 @@ export default function LimitsMap({
               'fill-opacity': 0,
             }}
           />
-          <Layer
-            id="allocationLimits-highlight"
-            type="fill"
-            filter={['in', 'Id', mouseState.allocationLimitId]}
-            paint={{
-              'fill-outline-color': '#484896',
-              'fill-color': '#6e599f',
-              'fill-opacity': 0.3,
-            }}
-          />
+          {['Surface', 'Combined'].includes(waterTakeFilter) && (
+            <Layer
+              id="allocationLimits-highlight"
+              type="fill"
+              filter={['in', 'Id', mouseState.allocationLimitId]}
+              paint={{
+                'fill-outline-color': '#484896',
+                'fill-color': '#6e599f',
+                'fill-opacity': 0.3,
+              }}
+            />
+          )}
         </Source>
 
         <Source type="geojson" data={riversToShow}>

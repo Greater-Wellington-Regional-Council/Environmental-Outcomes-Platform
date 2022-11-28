@@ -1,5 +1,7 @@
 import React from 'react';
 import { MouseState } from './index';
+import Button from '../../components/Button';
+import { WaterTakeFilter } from './index2';
 
 const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   <div className="col-span-2">
@@ -8,7 +10,17 @@ const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   </div>
 );
 
-export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
+type State = 'Surface' | 'Ground' | 'Combined';
+
+export default function Sidebar({
+  mouseState,
+  waterTakeFilter,
+  setWaterTakeFilter,
+}: {
+  mouseState: MouseState;
+  waterTakeFilter: WaterTakeFilter;
+  setWaterTakeFilter: (value: WaterTakeFilter) => void;
+}) {
   return (
     <aside className="w-[36rem] overflow-y-auto border-l border-gray-200 bg-white">
       <div>
@@ -21,27 +33,59 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
           </p>
         </div>
         <div className="border-t border-gray-200 px-6 py-5">
+          <Button
+            text="Surface water view"
+            onClick={() => {
+              setWaterTakeFilter('Surface');
+            }}
+            active={waterTakeFilter === 'Surface'}
+          />
+          <Button
+            text="Groundwater view"
+            onClick={() => {
+              setWaterTakeFilter('Ground');
+            }}
+            active={waterTakeFilter === 'Ground'}
+          />
+          <Button
+            text="Combined view"
+            onClick={() => {
+              setWaterTakeFilter('Combined');
+            }}
+            active={waterTakeFilter === 'Combined'}
+          />
+
           <dl className="grid grid-cols-2 gap-x-4 gap-y-4">
-            <LimitsListItem
-              title={
-                'What spatial surface water catchment management unit am I in?'
-              }
-              text={mouseState.surfaceWater ? 'Mangatarere' : 'None'}
-            />
-            <LimitsListItem
-              title={
-                'What spatial surface water catchment management sub-unit am I in?'
-              }
-              text={mouseState.surfaceWater ? mouseState.surfaceWater : 'None'}
-            />
-            <LimitsListItem
-              title={
-                'What spatial groundwater catchment management unit am I in?'
-              }
-              text={
-                mouseState.groundWaterZone ? mouseState.groundWaterZone : 'None'
-              }
-            />
+            {['Surface', 'Combined'].includes(waterTakeFilter) && (
+              <>
+                <LimitsListItem
+                  title={
+                    'What spatial surface water catchment management unit am I in?'
+                  }
+                  text={mouseState.surfaceWater ? 'Mangatarere' : 'None'}
+                />
+                <LimitsListItem
+                  title={
+                    'What spatial surface water catchment management sub-unit am I in?'
+                  }
+                  text={
+                    mouseState.surfaceWater ? mouseState.surfaceWater : 'None'
+                  }
+                />
+              </>
+            )}
+            {['Ground', 'Combined'].includes(waterTakeFilter) && (
+              <LimitsListItem
+                title={
+                  'What spatial groundwater catchment management unit am I in?'
+                }
+                text={
+                  mouseState.groundWaterZone
+                    ? mouseState.groundWaterZone
+                    : 'None'
+                }
+              />
+            )}
             <LimitsListItem
               title={'What flow management site applies to me?'}
               text={
@@ -57,67 +101,77 @@ export default function Sidebar({ mouseState }: { mouseState: MouseState }) {
               <dd className="mt-1 text-gray-900">
                 {mouseState.allocationLimit ? (
                   <>
-                    <span className={'font-medium'}>Surface Water:&nbsp;</span>
-                    <span>{mouseState.allocationLimit}</span>
-                    {mouseState.gw00 && mouseState.gw00 === 'A' ? (
+                    {['Surface', 'Combined'].includes(waterTakeFilter) && (
                       <>
-                        <br />
                         <span className={'font-medium'}>
-                          Groundwater 0-20m:&nbsp;
+                          Surface Water:&nbsp;
                         </span>
                         <span>{mouseState.allocationLimit}</span>
                       </>
-                    ) : (
-                      mouseState.gw00 === 'B' && (
-                        <>
-                          {' '}
+                    )}
+                    {['Ground', 'Combined'].includes(waterTakeFilter) && (
+                      <>
+                        {mouseState.gw00 && mouseState.gw00 === 'A' ? (
                           <>
                             <br />
                             <span className={'font-medium'}>
-                              Groundwater 00-20m (Stream Depletion):&nbsp;
+                              Groundwater 0-20m:&nbsp;
                             </span>
                             <span>{mouseState.allocationLimit}</span>
+                          </>
+                        ) : (
+                          mouseState.gw00 === 'B' && (
+                            <>
+                              {' '}
+                              <>
+                                <br />
+                                <span className={'font-medium'}>
+                                  Groundwater 00-20m (Stream Depletion):&nbsp;
+                                </span>
+                                <span>{mouseState.allocationLimit}</span>
+                                <br />
+                                <span className={'font-medium'}>
+                                  Groundwater 00-20m:&nbsp;
+                                </span>
+                                <span>2,300,000 (m3/year)</span>
+                              </>
+                            </>
+                          )
+                        )}
+                        {mouseState.gw20 && mouseState.gw20 === 'C' ? (
+                          <>
                             <br />
                             <span className={'font-medium'}>
-                              Groundwater 00-20m:&nbsp;
+                              Groundwater 20-30m:&nbsp;
                             </span>
                             <span>2,300,000 (m3/year)</span>
                           </>
-                        </>
-                      )
-                    )}
-                    {mouseState.gw20 && mouseState.gw20 === 'C' ? (
-                      <>
-                        <br />
-                        <span className={'font-medium'}>
-                          Groundwater 20-30m:&nbsp;
-                        </span>
-                        <span>2,300,000 (m3/year)</span>
-                      </>
-                    ) : (
-                      mouseState.gw20 === 'B' && (
-                        <>
-                          <br />
-                          <span className={'font-medium'}>
-                            Groundwater 20-30m (Stream Depletion):&nbsp;
-                          </span>
-                          <span>{mouseState.allocationLimit}</span>
-                          <br />
-                          <span className={'font-medium'}>
-                            Groundwater 20-30m:&nbsp;
-                          </span>
-                          <span>2,300,000 (m3/year)</span>
-                        </>
-                      )
-                    )}
+                        ) : (
+                          mouseState.gw20 === 'B' && (
+                            <>
+                              <br />
+                              <span className={'font-medium'}>
+                                Groundwater 20-30m (Stream Depletion):&nbsp;
+                              </span>
+                              <span>{mouseState.allocationLimit}</span>
+                              <br />
+                              <span className={'font-medium'}>
+                                Groundwater 20-30m:&nbsp;
+                              </span>
+                              <span>2,300,000 (m3/year)</span>
+                            </>
+                          )
+                        )}
 
-                    {mouseState.gw30 && (
-                      <>
-                        <br />
-                        <span className={'font-medium'}>
-                          Groundwater Over 30m:&nbsp;
-                        </span>
-                        <span>2,300,000 (m3/year)</span>
+                        {mouseState.gw30 && (
+                          <>
+                            <br />
+                            <span className={'font-medium'}>
+                              Groundwater Over 30m:&nbsp;
+                            </span>
+                            <span>2,300,000 (m3/year)</span>
+                          </>
+                        )}
                       </>
                     )}
                   </>
