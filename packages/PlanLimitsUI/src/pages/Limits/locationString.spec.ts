@@ -34,6 +34,16 @@ describe('parseLocationString', () => {
       zoom: 8,
     });
   });
+
+  test('should return object when string has no decimal places', () => {
+    const result = parseLocationString('@-40,175,8z');
+
+    expect(result).toEqual({
+      latitude: -40,
+      longitude: 175,
+      zoom: 8,
+    });
+  });
 });
 
 describe('createLocationString', () => {
@@ -45,6 +55,16 @@ describe('createLocationString', () => {
     });
 
     expect(result).toEqual('@-41.32,175.166,8z');
+  });
+
+  test('should build a string with no decimal places', () => {
+    const result = createLocationString({
+      latitude: -41,
+      longitude: 175,
+      zoom: 8,
+    });
+
+    expect(result).toEqual('@-41,175,8z');
   });
 });
 
@@ -73,6 +93,15 @@ describe('parsePinnedLocation', () => {
     expect(result).toEqual({
       latitude: -40.959,
       longitude: 175.455,
+    });
+  });
+
+  test('should return object when string has no decimal places', () => {
+    const result = parsePinnedLocation('-40,175');
+
+    expect(result).toEqual({
+      latitude: -40,
+      longitude: 175,
     });
   });
 });

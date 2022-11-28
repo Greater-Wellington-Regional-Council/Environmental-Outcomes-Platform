@@ -15,15 +15,17 @@ export const parseLocationString = (
   if (!locationString) {
     return null;
   }
+
+  // e.g. -00.000,000.000,1Z
   const match = locationString.match(
-    /^@(-?\d?\d?.\d*),(\d?\d?\d?\.\d*),(\d\d?)z$/
+    /^@(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?),(\d\d?)z$/
   );
 
   return match
     ? {
         latitude: Number(match[1]),
-        longitude: Number(match[2]),
-        zoom: Number(match[3]),
+        longitude: Number(match[3]),
+        zoom: Number(match[5]),
       }
     : null;
 };
@@ -35,12 +37,14 @@ export const parsePinnedLocation = (
     return null;
   }
 
-  const match = pinnedLocationString.match(/^(-?\d?\d?.\d*),(\d?\d?\d?\.\d*)$/);
+  const match = pinnedLocationString.match(
+    /^(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?)$/
+  );
 
   return match
     ? {
         latitude: Number(match[1]),
-        longitude: Number(match[2]),
+        longitude: Number(match[3]),
       }
     : null;
 };
