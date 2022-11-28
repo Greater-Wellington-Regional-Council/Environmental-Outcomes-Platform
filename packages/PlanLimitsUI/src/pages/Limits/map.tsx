@@ -26,6 +26,8 @@ import { PinnedLocation } from './locationString';
 import Button from '../../components/Button';
 import { WaterTakeFilter } from './index2';
 
+import marker from '../../images/marker_flow.svg';
+
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 
 export default function LimitsMap({
@@ -107,7 +109,7 @@ export default function LimitsMap({
             result,
             'surfaceWater',
             'flowRestrictionsManagementSiteId'
-          ) || 'NONE';
+          ) || '0';
         const allocationLimit = findFeature(
           result,
           'allocationLimits',
@@ -140,6 +142,14 @@ export default function LimitsMap({
           flowRestrictionsManagementSiteName,
           flowRestrictionsManagementSiteId,
         });
+      }
+
+      if (map) {
+        if (!map.hasImage('marker_flow')) {
+          const img = new Image(20, 20);
+          img.onload = () => map.addImage('marker_flow', img);
+          img.src = marker;
+        }
       }
     },
     [highlightLocation, mapRenderCount, waterTakeFilter]
@@ -185,7 +195,6 @@ export default function LimitsMap({
         interactiveLayerIds={[
           'councils',
           'whaitua',
-          'flowSites',
           'rivers',
           'allocationLimits',
           'groundWater',
@@ -199,7 +208,6 @@ export default function LimitsMap({
           <Button
             onClick={() => setShowImagery(!showImagery)}
             text={`${showImagery ? 'Hide' : 'Show '} aerial imagery`}
-            // style={{ pointerEvents: 'all' }}
           />
         </LayerControl>
 
@@ -345,17 +353,23 @@ export default function LimitsMap({
         </Source>
 
         <Source type="geojson" data={sites}>
-          <Layer id="flowSites" type="circle" />
           <Layer
-            id="flowSites-highlight"
-            type="circle"
-            filter={[
-              'in',
-              'SITE_ID',
-              mouseState.flowRestrictionsManagementSiteId,
-            ]}
+            id="flowSites"
+            type="symbol"
+            layout={{
+              'icon-image': 'marker_flow',
+            }}
             paint={{
-              'circle-color': 'magenta',
+              'icon-opacity': [
+                'case',
+                [
+                  '==',
+                  ['get', 'SITE_ID'],
+                  mouseState.flowRestrictionsManagementSiteId,
+                ],
+                1,
+                0.5,
+              ],
             }}
           />
         </Source>

@@ -33,7 +33,7 @@ export default function Sidebar({
           </p>
         </div>
         <div className="border-t border-gray-200 px-6 py-4">
-          <div className="pb-4">
+          <div className="pb-4 flex flex-row justify-around">
             <Button
               text="Surface water view"
               onClick={() => {

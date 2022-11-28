@@ -65,7 +65,7 @@ export default function Limitszz({
     surfaceWaterId: 'NONE',
     flowRestrictionsLevel: null,
     flowRestrictionsManagementSiteName: null,
-    flowRestrictionsManagementSiteId: 'NONE',
+    flowRestrictionsManagementSiteId: '0',
     allocationLimit: null,
     allocationLimitId: 'NONE',
   });
