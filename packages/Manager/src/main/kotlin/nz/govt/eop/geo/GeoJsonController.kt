@@ -2,6 +2,7 @@ package nz.govt.eop.geo
 
 import java.util.concurrent.TimeUnit
 import nz.govt.eop.si.jooq.tables.CouncilBoundaries.Companion.COUNCIL_BOUNDARIES
+import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
 import nz.govt.eop.si.jooq.tables.WhaituaBoundaries.Companion.WHAITUA_BOUNDARIES
 import org.jooq.*
 import org.jooq.impl.DSL.*
@@ -47,6 +48,20 @@ class GeoJsonController(val context: DSLContext) {
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
+        .body(buildFeatureCollection(context, innerQuery))
+  }
+
+  @Cacheable("layers_rivers")
+  @RequestMapping("/layers/rivers", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun getLayerRivers(): ResponseEntity<String> {
+    val innerQuery =
+        select(RIVERS.HYDRO_ID.`as`("id"), RIVERS.PATH.`as`("geometry"), RIVERS.STREAM_ORDER)
+            .from(RIVERS)
+            .where(RIVERS.STREAM_ORDER.ge(3))
+
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
         .body(buildFeatureCollection(context, innerQuery))
   }
 

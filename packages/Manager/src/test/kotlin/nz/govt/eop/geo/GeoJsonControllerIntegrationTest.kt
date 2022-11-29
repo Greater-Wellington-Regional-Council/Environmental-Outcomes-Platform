@@ -24,4 +24,10 @@ class GeoJsonControllerIntegrationTest(@Autowired val mvc: MockMvc) {
     mvc.perform(get("/layers/whaitua").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk)
   }
+
+  @Test
+  fun `can load rivers`() {
+    mvc.perform(get("/layers/rivers").contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk)
+  }
 }
