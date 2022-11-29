@@ -1,8 +1,10 @@
 import Map from './map';
 import Sidebar from './sidebar';
-import React from 'react';
+import React, { useState } from 'react';
 import { ViewState } from 'react-map-gl';
-import useLocalStorage from '../../lib/useLocalStorage';
+import { PinnedLocation, ViewLocation } from './locationString';
+
+export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
 
 export type MouseState = {
   position: {
@@ -28,7 +30,22 @@ export type MouseState = {
   allocationLimitId: string;
 };
 
-export default function Dashboard() {
+type Props = {
+  initialLocation: ViewLocation;
+  setCurrentViewLocation: (viewLocation: ViewLocation) => void;
+  initialPinnedLocation?: PinnedLocation;
+  setCurrentPinnedLocation: (pinnedLocation?: PinnedLocation) => void;
+};
+
+export default function Limitszz({
+  initialLocation,
+  setCurrentViewLocation,
+  initialPinnedLocation,
+  setCurrentPinnedLocation,
+}: Props) {
+  const [waterTakeFilter, setWaterTakeFilter] =
+    React.useState<WaterTakeFilter>('Combined');
+
   const [mouseState, setMouseState] = React.useState<MouseState>({
     position: {
       lng: 0,
@@ -48,16 +65,14 @@ export default function Dashboard() {
     surfaceWaterId: 'NONE',
     flowRestrictionsLevel: null,
     flowRestrictionsManagementSiteName: null,
-    flowRestrictionsManagementSiteId: 'NONE',
+    flowRestrictionsManagementSiteId: '0',
     allocationLimit: null,
     allocationLimitId: 'NONE',
   });
 
-  const [viewState, setViewState] = useLocalStorage<ViewState>('map-state', {
-    longitude: 175.35,
-    latitude: -41,
+  const [viewState, storeViewState] = useState<ViewState>({
+    ...initialLocation,
     bearing: 0,
-    zoom: 8,
     pitch: 30,
     padding: {
       left: 0,
@@ -67,6 +82,11 @@ export default function Dashboard() {
     },
   });
 
+  const setViewState = (value: ViewState) => {
+    setCurrentViewLocation(value);
+    storeViewState(value);
+  };
+
   return (
     <>
       <Map
@@ -74,8 +94,15 @@ export default function Dashboard() {
         setMouseState={setMouseState}
         viewState={viewState}
         setViewState={setViewState}
+        initialPinnedLocation={initialPinnedLocation}
+        setCurrentPinnedLocation={setCurrentPinnedLocation}
+        waterTakeFilter={waterTakeFilter}
       />
-      <Sidebar mouseState={mouseState} />
+      <Sidebar
+        mouseState={mouseState}
+        waterTakeFilter={waterTakeFilter}
+        setWaterTakeFilter={setWaterTakeFilter}
+      />
     </>
   );
 }
