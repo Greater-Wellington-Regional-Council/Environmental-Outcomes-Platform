@@ -1,5 +1,6 @@
 package nz.govt.eop.tasks
 
+import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import nz.govt.eop.si.jooq.tables.RawRecFeaturesWatersheds.Companion.RAW_REC_FEATURES_WATERSHEDS
 import nz.govt.eop.si.jooq.tables.Watersheds.Companion.WATERSHEDS
@@ -14,7 +15,7 @@ class RecWatershedsUpdater(val context: DSLContext) {
 
   private val logger = KotlinLogging.logger {}
 
-  @Scheduled(fixedDelay = 86400000)
+  @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
   @Transactional
   fun checkRec() {
     logger.info { "Start task RecWatershedsUpdater" }
@@ -33,6 +34,7 @@ class RecWatershedsUpdater(val context: DSLContext) {
     if (lastProcessedWatershed == null ||
         lastProcessedWatershed.createdAt!!.isBefore(lastIngestedWatershed.ingestedAt)) {
 
+      logger.info { "RAW Watersheds data has been updated since last processed, re-processing now" }
       context.deleteFrom(WATERSHEDS).execute()
 
       context

@@ -1,5 +1,6 @@
 package nz.govt.eop.tasks
 
+import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import nz.govt.eop.si.jooq.tables.RawRecFeaturesRivers.Companion.RAW_REC_FEATURES_RIVERS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
@@ -14,7 +15,7 @@ class RecRiversUpdater(val context: DSLContext) {
 
   private val logger = KotlinLogging.logger {}
 
-  @Scheduled(fixedDelay = 86400000)
+  @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
   @Transactional
   fun checkRec() {
     logger.info { "Start task RecRiversUpdater" }
@@ -33,6 +34,7 @@ class RecRiversUpdater(val context: DSLContext) {
     if (lastProcessedRiver == null ||
         lastProcessedRiver.createdAt!!.isBefore(lastIngestedRiver.ingestedAt)) {
 
+      logger.info { "RAW Rivers data has been updated since last processed, re-processing now" }
       context.deleteFrom(RIVERS).execute()
 
       context
