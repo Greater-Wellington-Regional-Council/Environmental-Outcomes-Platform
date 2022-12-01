@@ -64,7 +64,7 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   }
   kotlinGradle { ktfmt() }
   format("sql") {
-    target("src/main/resources/**/*.sql")
+    target("src/main/resources/db/migration/*.sql")
     prettier(mapOf("prettier" to "2.7.1", "prettier-plugin-sql" to "0.12.1"))
         .config(mapOf("language" to "postgresql", "keywordCase" to "upper"))
   }
