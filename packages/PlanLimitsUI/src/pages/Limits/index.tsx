@@ -15,6 +15,14 @@ import {
 } from './locationString';
 import Limitszz from './index2';
 import { useDebounce } from 'usehooks-ts';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import {
+  fetchCouncilsGeoJson,
+  fetchRiversGeoJson,
+  fetchSurfaceWaterManagementSubUnitsGeoJson,
+  fetchSurfaceWaterManagementUnitsGeoJson,
+  fetchWhaituaGeoJson,
+} from '../../api';
 
 export const defaultViewLocation = {
   latitude: -41,
@@ -36,14 +44,14 @@ export type MouseState = {
   groundWaterId: string;
   groundWaterZone?: string | null;
   site?: string | null;
-  river?: string | null;
-  surfaceWater?: string | null;
-  surfaceWaterId: string;
+  surfaceWaterMgmtUnitId: string;
+  surfaceWaterMgmtUnitDescription?: string | null;
+  surfaceWaterMgmtSubUnitId: string;
+  surfaceWaterMgmtSubUnitDescription?: string | null;
   flowRestrictionsLevel?: string | null;
   flowRestrictionsManagementSiteName?: string | null;
   flowRestrictionsManagementSiteId: string;
   allocationLimit?: string | null;
-  allocationLimitId: string;
 };
 
 export const loader: LoaderFunction = ({ params, request }) => {
@@ -71,11 +79,10 @@ export default function Limits() {
     pinnedLocation?: PinnedLocation;
   };
 
-  const [viewLocation, setCurrentViewLocation] = useState(initialViewLocation);
-  const debouncedValue = useDebounce<ViewLocation>(viewLocation, 500);
-
   const [pinnedLocation, setPinnedLocation] = useState(initialPinnedLocation);
+  const [viewLocation, setCurrentViewLocation] = useState(initialViewLocation);
 
+  const debouncedValue = useDebounce<ViewLocation>(viewLocation, 500);
   useEffect(() => {
     if (pinnedLocation) {
       navigate({
@@ -87,12 +94,38 @@ export default function Limits() {
     }
   }, [debouncedValue, pinnedLocation]);
 
+  const geoJsonQueries = useQueries({
+    queries: [
+      {
+        queryKey: ['councils'],
+        queryFn: fetchCouncilsGeoJson,
+      },
+      {
+        queryKey: ['whaitua'],
+        queryFn: fetchWhaituaGeoJson,
+      },
+      {
+        queryKey: ['rivers'],
+        queryFn: fetchRiversGeoJson,
+      },
+      {
+        queryKey: ['surface_water_management_units'],
+        queryFn: fetchSurfaceWaterManagementUnitsGeoJson,
+      },
+      {
+        queryKey: ['surface_water_management_sub_units'],
+        queryFn: fetchSurfaceWaterManagementSubUnitsGeoJson,
+      },
+    ],
+  });
+
   return (
     <Limitszz
       initialLocation={initialViewLocation}
       setCurrentViewLocation={setCurrentViewLocation}
       initialPinnedLocation={initialPinnedLocation}
       setCurrentPinnedLocation={setPinnedLocation}
+      queries={geoJsonQueries}
     />
   );
 }

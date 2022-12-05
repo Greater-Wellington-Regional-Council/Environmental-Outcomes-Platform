@@ -10,8 +10,6 @@ const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   </div>
 );
 
-type State = 'Surface' | 'Ground' | 'Combined';
-
 export default function Sidebar({
   mouseState,
   waterTakeFilter,
@@ -69,14 +67,20 @@ export default function Sidebar({
                   title={
                     'What spatial surface water catchment management unit am I in?'
                   }
-                  text={mouseState.surfaceWater ? 'Mangatarere' : 'None'}
+                  text={
+                    mouseState.surfaceWaterMgmtUnitDescription
+                      ? mouseState.surfaceWaterMgmtUnitDescription
+                      : 'None'
+                  }
                 />
                 <LimitsListItem
                   title={
                     'What spatial surface water catchment management sub-unit am I in?'
                   }
                   text={
-                    mouseState.surfaceWater ? mouseState.surfaceWater : 'None'
+                    mouseState.surfaceWaterMgmtSubUnitDescription
+                      ? mouseState.surfaceWaterMgmtSubUnitDescription
+                      : 'None'
                   }
                 />
               </>

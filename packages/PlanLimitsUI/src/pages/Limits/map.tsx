@@ -10,13 +10,8 @@ import Map, {
   ViewState,
 } from 'react-map-gl';
 
-import { councils } from '../../mock-data/councils';
-import { rivers } from '../../mock-data/rivers';
-import { whaitua } from '../../mock-data/whaitua';
 import { sites } from '../../mock-data/sites';
 import { groundWater } from '../../mock-data/ground-water';
-import { surfaceWater } from '../../mock-data/surface-water';
-import { allocation } from '../../mock-data/allocation';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import LayerControl from '../../components/map/LayerControl';
@@ -28,6 +23,9 @@ import { WaterTakeFilter } from './index2';
 
 import marker from '../../images/marker_flow.svg';
 
+import { GeoJSON } from 'geojson';
+import { UseQueryResult } from '@tanstack/react-query';
+
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 
 export default function LimitsMap({
@@ -38,6 +36,7 @@ export default function LimitsMap({
   initialPinnedLocation,
   setCurrentPinnedLocation,
   waterTakeFilter,
+  queries,
 }: {
   mouseState: MouseState;
   setMouseState: React.Dispatch<React.SetStateAction<MouseState>>;
@@ -46,6 +45,13 @@ export default function LimitsMap({
   initialPinnedLocation?: PinnedLocation;
   setCurrentPinnedLocation: (value?: PinnedLocation) => void;
   waterTakeFilter: WaterTakeFilter;
+  queries: [
+    UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>
+  ];
 }) {
   const [mapRenderCount, setMapRenderCount] = React.useState(0);
   const [showImagery, setShowImagery] = React.useState(true);
@@ -58,19 +64,13 @@ export default function LimitsMap({
     PinnedLocation | undefined
   >(initialPinnedLocation);
 
-  const riversToShow = {
-    ...rivers,
-    features: rivers.features.filter(
-      (river) => river.properties['stream_order'] >= 3
-    ),
-  };
-
   const changesCallback = React.useCallback(
     (map: MapRef | null) => {
       if (highlightLocation && map) {
         const result = map.queryRenderedFeatures(
           map.project([highlightLocation.longitude, highlightLocation.latitude])
         );
+
         const findFeature = (
           features: mapboxgl.MapboxGeoJSONFeature[],
           layer: string,
@@ -80,9 +80,31 @@ export default function LimitsMap({
             prop
           ] as string | undefined;
 
-        const council = findFeature(result, 'councils', 'REGC2022_V1_00_NAME');
-        const whaitua = findFeature(result, 'whaitua', 'Name');
-        const whaituaId = findFeature(result, 'whaitua', 'OBJECTID') || 'NONE';
+        const findFeatureId = (
+          features: mapboxgl.MapboxGeoJSONFeature[],
+          layer: string
+        ) => features.find((feat) => feat.layer.id === layer)?.id as string;
+
+        const council = findFeature(result, 'councils', 'name');
+        const whaitua = findFeature(result, 'whaitua', 'name');
+        const whaituaId = findFeatureId(result, 'whaitua');
+
+        const surfaceWaterMgmtUnitId =
+          findFeatureId(result, 'surfaceWaterMgmtUnits') || 'NONE';
+        const surfaceWaterMgmtUnitDescription = findFeature(
+          result,
+          'surfaceWaterMgmtUnits',
+          'catchment_management_unit'
+        );
+
+        const surfaceWaterMgmtSubUnitId =
+          findFeatureId(result, 'surfaceWaterMgmtSubUnits') || 'NONE';
+        const surfaceWaterMgmtSubUnitDescription = findFeature(
+          result,
+          'surfaceWaterMgmtSubUnits',
+          'catchment_management_unit'
+        );
+
         const gw00 = findFeature(result, 'groundWater', 'category00');
         const gw20 = findFeature(result, 'groundWater', 'category20');
         const gw30 = findFeature(result, 'groundWater', 'category30');
@@ -91,9 +113,6 @@ export default function LimitsMap({
         const groundWaterZone = findFeature(result, 'groundWater', 'Zone');
         const site = findFeature(result, 'flowSites', 'Name');
         const river = findFeature(result, 'rivers', 'name');
-        const surfaceWater = findFeature(result, 'surfaceWater', 'Name');
-        const surfaceWaterId =
-          findFeature(result, 'surfaceWater', 'Id') || 'NONE';
         const flowRestrictionsLevel = findFeature(
           result,
           'surfaceWater',
@@ -110,13 +129,14 @@ export default function LimitsMap({
             'surfaceWater',
             'flowRestrictionsManagementSiteId'
           ) || '0';
-        const allocationLimit = findFeature(
-          result,
-          'allocationLimits',
-          'allocationLimit'
-        );
-        const allocationLimitId =
-          findFeature(result, 'allocationLimits', 'Id') || 'NONE';
+        const allocationLimit =
+          surfaceWaterMgmtSubUnitId === 'NONE'
+            ? findFeature(result, 'surfaceWaterMgmtUnits', 'allocation_amount')
+            : findFeature(
+                result,
+                'surfaceWaterMgmtSubUnits',
+                'allocation_amount'
+              );
 
         setMouseState({
           ...mouseState,
@@ -133,11 +153,11 @@ export default function LimitsMap({
           groundWaterId,
           groundWaterZone,
           site,
-          river,
-          surfaceWater,
-          surfaceWaterId,
+          surfaceWaterMgmtUnitId,
+          surfaceWaterMgmtUnitDescription,
+          surfaceWaterMgmtSubUnitId,
+          surfaceWaterMgmtSubUnitDescription,
           allocationLimit,
-          allocationLimitId,
           flowRestrictionsLevel,
           flowRestrictionsManagementSiteName,
           flowRestrictionsManagementSiteId,
@@ -155,6 +175,14 @@ export default function LimitsMap({
     [highlightLocation, mapRenderCount, waterTakeFilter]
   );
 
+  const [
+    councilsGeoJson,
+    whaituaGeoJson,
+    riversGeoJson,
+    surfaceWaterMgmtUnitsGeoJson,
+    surfaceWaterMgmtSubUnitsGeoJson,
+  ] = queries;
+
   return (
     <main className="flex-1 overflow-y-auto">
       <Map
@@ -162,7 +190,7 @@ export default function LimitsMap({
         reuseMaps={true}
         mapLib={maplibregl}
         style={{ width: '100%', height: '100vh' }}
-        mapStyle={`https://basemaps.linz.govt.nz/v1/tiles/topographic/EPSG:3857/style/topographic.json?api=${publicLinzApiKey}`}
+        mapStyle={`https://basemaps.linz.govt.nz/v1/tiles/topographic/EPSG:4326/style/topographic.json?api=${publicLinzApiKey}`}
         minZoom={5}
         maxBounds={[
           [160, -60],
@@ -192,14 +220,7 @@ export default function LimitsMap({
           });
         }}
         onRender={() => setMapRenderCount(mapRenderCount + 1)}
-        interactiveLayerIds={[
-          'councils',
-          'whaitua',
-          'rivers',
-          'allocationLimits',
-          'groundWater',
-          'surfaceWater',
-        ]}
+        interactiveLayerIds={['groundWater']}
         {...viewState}
       >
         <NavigationControl position="top-left" visualizePitch={true} />
@@ -211,49 +232,53 @@ export default function LimitsMap({
           />
         </LayerControl>
 
-        <Source type="geojson" data={councils}>
-          <Layer
-            id="councils"
-            type="fill"
-            paint={{
-              'fill-opacity': 0,
-            }}
-          />
-          <Layer
-            type="line"
-            paint={{
-              'line-color': 'pink',
-              'line-width': 2,
-            }}
-          />
-        </Source>
+        {councilsGeoJson.data && (
+          <Source type="geojson" data={councilsGeoJson.data}>
+            <Layer
+              id="councils"
+              type="fill"
+              paint={{
+                'fill-opacity': 0,
+              }}
+            />
+            <Layer
+              type="line"
+              paint={{
+                'line-color': 'green',
+                'line-width': 2,
+              }}
+            />
+          </Source>
+        )}
 
-        <Source type="geojson" data={whaitua}>
-          <Layer
-            id="whaitua"
-            type="fill"
-            paint={{
-              'fill-opacity': 0,
-            }}
-          />
-          <Layer
-            id="whaitua-highlight"
-            filter={['in', 'OBJECTID', mouseState.whaituaId]}
-            type="fill"
-            paint={{
-              'fill-outline-color': '#484896',
-              'fill-color': '#6e599f',
-              'fill-opacity': 0.1,
-            }}
-          />
-          <Layer
-            type="line"
-            paint={{
-              'line-color': 'green',
-              'line-width': 2,
-            }}
-          />
-        </Source>
+        {whaituaGeoJson.data && (
+          <Source type="geojson" data={whaituaGeoJson.data}>
+            <Layer
+              id="whaitua"
+              type="fill"
+              paint={{
+                'fill-opacity': 0,
+              }}
+            />
+            <Layer
+              id="whaitua-highlight"
+              filter={['==', ['id'], mouseState.whaituaId]}
+              type="fill"
+              paint={{
+                'fill-outline-color': '#484896',
+                'fill-color': '#6e599f',
+                'fill-opacity': 0.1,
+              }}
+            />
+            <Layer
+              type="line"
+              paint={{
+                'line-color': 'green',
+                'line-width': 2,
+              }}
+            />
+          </Source>
+        )}
 
         <Source type="geojson" data={groundWater}>
           <Layer
@@ -277,80 +302,86 @@ export default function LimitsMap({
           )}
         </Source>
 
-        <Source type="geojson" data={surfaceWater}>
-          <Layer
-            id="surfaceWater"
-            type="fill"
-            paint={{
-              'fill-opacity': 0,
-            }}
-          />
-          {['Surface', 'Combined'].includes(waterTakeFilter) && (
+        {surfaceWaterMgmtUnitsGeoJson.data && (
+          <Source type="geojson" data={surfaceWaterMgmtUnitsGeoJson.data}>
             <Layer
-              id="surfaceWater-highlight"
+              id="surfaceWaterMgmtUnits"
               type="fill"
-              filter={['in', 'Id', mouseState.surfaceWaterId]}
               paint={{
-                'fill-outline-color': '#484896',
-                'fill-color': '#6e599f',
-                'fill-opacity': 0.5,
+                'fill-opacity': 0,
               }}
             />
-          )}
-        </Source>
+            {['Surface', 'Combined'].includes(waterTakeFilter) && (
+              <Layer
+                id="surfaceWaterMgmtUnits-highlight"
+                type="fill"
+                filter={['==', ['id'], mouseState.surfaceWaterMgmtUnitId]}
+                paint={{
+                  'fill-outline-color': '#484896',
+                  'fill-color': '#6e599f',
+                  'fill-opacity': 0.2,
+                }}
+              />
+            )}
+          </Source>
+        )}
 
-        <Source type="geojson" data={allocation}>
-          <Layer
-            id="allocationLimits"
-            type="fill"
-            paint={{
-              'fill-opacity': 0,
-            }}
-          />
-          {['Surface', 'Combined'].includes(waterTakeFilter) && (
+        {surfaceWaterMgmtSubUnitsGeoJson.data && (
+          <Source type="geojson" data={surfaceWaterMgmtSubUnitsGeoJson.data}>
             <Layer
-              id="allocationLimits-highlight"
+              id="surfaceWaterMgmtSubUnits"
               type="fill"
-              filter={['in', 'Id', mouseState.allocationLimitId]}
               paint={{
-                'fill-outline-color': '#484896',
-                'fill-color': '#6e599f',
-                'fill-opacity': 0.3,
+                'fill-opacity': 0,
               }}
             />
-          )}
-        </Source>
+            {['Surface', 'Combined'].includes(waterTakeFilter) && (
+              <Layer
+                id="surfaceWaterMgmtSubUnits-highlight"
+                type="fill"
+                filter={['==', ['id'], mouseState.surfaceWaterMgmtSubUnitId]}
+                paint={{
+                  'fill-outline-color': '#484896',
+                  'fill-color': '#6e599f',
+                  'fill-opacity': 0.5,
+                }}
+              />
+            )}
+          </Source>
+        )}
 
-        <Source type="geojson" data={riversToShow}>
-          <Layer
-            id="rivers"
-            type="line"
-            paint={{
-              'line-width': ['+', 0, ['get', 'stream_order']],
-              'line-color': [
-                'match',
-                ['get', 'stream_order'],
-                1,
-                '#9bc4e2',
-                2,
-                '#9bc4e2',
-                3,
-                '#9bc4e2',
-                4,
-                '#17569B',
-                5,
-                '#17569B',
-                6,
-                '#17569B',
-                7,
-                '#17569B',
-                8,
-                '#17569B',
-                '#17569B',
-              ],
-            }}
-          />
-        </Source>
+        {riversGeoJson.data && (
+          <Source type="geojson" data={riversGeoJson.data}>
+            <Layer
+              id="rivers"
+              type="line"
+              paint={{
+                'line-width': ['+', 0, ['get', 'stream_order']],
+                'line-color': [
+                  'match',
+                  ['get', 'stream_order'],
+                  1,
+                  '#9bc4e2',
+                  2,
+                  '#9bc4e2',
+                  3,
+                  '#9bc4e2',
+                  4,
+                  '#17569B',
+                  5,
+                  '#17569B',
+                  6,
+                  '#17569B',
+                  7,
+                  '#17569B',
+                  8,
+                  '#17569B',
+                  '#17569B',
+                ],
+              }}
+            />
+          </Source>
+        )}
 
         <Source type="geojson" data={sites}>
           <Layer

@@ -2,39 +2,26 @@ import Map from './map';
 import Sidebar from './sidebar';
 import React, { useState } from 'react';
 import { ViewState } from 'react-map-gl';
+
 import { PinnedLocation, ViewLocation } from './locationString';
+import { GeoJSON } from 'geojson';
+import { MouseState } from './index';
+import { QueriesResults, UseQueryResult } from '@tanstack/react-query';
 
 export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
-
-export type MouseState = {
-  position: {
-    lng: number;
-    lat: number;
-  };
-  council?: string | null;
-  whaitua?: string | null;
-  whaituaId: string;
-  gw00?: string | null;
-  gw20?: string | null;
-  gw30?: string | null;
-  groundWaterId: string;
-  groundWaterZone?: string | null;
-  site?: string | null;
-  river?: string | null;
-  surfaceWater?: string | null;
-  surfaceWaterId: string;
-  flowRestrictionsLevel?: string | null;
-  flowRestrictionsManagementSiteName?: string | null;
-  flowRestrictionsManagementSiteId: string;
-  allocationLimit?: string | null;
-  allocationLimitId: string;
-};
 
 type Props = {
   initialLocation: ViewLocation;
   setCurrentViewLocation: (viewLocation: ViewLocation) => void;
   initialPinnedLocation?: PinnedLocation;
   setCurrentPinnedLocation: (pinnedLocation?: PinnedLocation) => void;
+  queries: [
+    UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>
+  ];
 };
 
 export default function Limitszz({
@@ -42,6 +29,7 @@ export default function Limitszz({
   setCurrentViewLocation,
   initialPinnedLocation,
   setCurrentPinnedLocation,
+  queries,
 }: Props) {
   const [waterTakeFilter, setWaterTakeFilter] =
     React.useState<WaterTakeFilter>('Combined');
@@ -60,14 +48,14 @@ export default function Limitszz({
     groundWaterZone: null,
     groundWaterId: 'NONE',
     site: null,
-    river: null,
-    surfaceWater: null,
-    surfaceWaterId: 'NONE',
+    surfaceWaterMgmtUnitId: 'NONE',
+    surfaceWaterMgmtUnitDescription: null,
+    surfaceWaterMgmtSubUnitId: 'NONE',
+    surfaceWaterMgmtSubUnitDescription: null,
     flowRestrictionsLevel: null,
     flowRestrictionsManagementSiteName: null,
     flowRestrictionsManagementSiteId: '0',
     allocationLimit: null,
-    allocationLimitId: 'NONE',
   });
 
   const [viewState, storeViewState] = useState<ViewState>({
@@ -97,6 +85,7 @@ export default function Limitszz({
         initialPinnedLocation={initialPinnedLocation}
         setCurrentPinnedLocation={setCurrentPinnedLocation}
         waterTakeFilter={waterTakeFilter}
+        queries={queries}
       />
       <Sidebar
         mouseState={mouseState}
