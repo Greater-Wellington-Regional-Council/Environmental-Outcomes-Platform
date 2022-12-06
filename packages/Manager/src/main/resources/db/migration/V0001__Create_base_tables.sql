@@ -71,5 +71,5 @@ CREATE TABLE
     groundwater_zone VARCHAR,
     plan_version VARCHAR NULL,
     plan_table NUMERIC NULL,
-    created_at DATE NOT NULL
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
