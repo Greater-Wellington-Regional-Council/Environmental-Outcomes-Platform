@@ -40,6 +40,8 @@ dependencies {
   implementation("org.flywaydb:flyway-core")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:4.43.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.43.0")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-assertions-core:5.5.4")

@@ -2,7 +2,9 @@ package nz.govt.eop.tasks
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.net.URI
+import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import nz.govt.eop.si.jooq.tables.GroundwaterZones
 import nz.govt.eop.si.jooq.tables.WhaituaBoundaries
 import org.geojson.FeatureCollection
@@ -22,10 +24,10 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
 
   fun getGeoJson(url: URI): FeatureCollection {
     val resp = restTemplate.getForEntity(url, FeatureCollection::class.java)
-    if (resp.getStatusCode() == HttpStatus.OK) {
-      return resp.getBody()!!
+    if (resp.statusCode == HttpStatus.OK) {
+      return resp.body!!
     } else {
-      throw RuntimeException("Request failed with status: ${resp.getStatusCode()} ")
+      throw RuntimeException("Request failed with status: ${resp.statusCode} ")
     }
   }
 
@@ -36,8 +38,6 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
     context.deleteFrom(WhaituaBoundaries.WHAITUA_BOUNDARIES).execute()
 
     for (feature in featureCollection.features) {
-
-      ///
       context
           .insertInto(
               WhaituaBoundaries.WHAITUA_BOUNDARIES,
@@ -52,7 +52,7 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
           .execute()
     }
 
-    logger.info { "Finished updataing Whaitua data." }
+    logger.info { "Finished updating Whaitua data." }
   }
 
   @Transactional
@@ -85,10 +85,11 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
           .execute()
     }
 
-    logger.info { "Finished updataing Groundwater Zones data." }
+    logger.info { "Finished updating Groundwater Zones data." }
   }
 
-  @Scheduled(fixedDelay = 86400000) // once a day
+  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
+  @SchedulerLock(name = "updateWhaituaBoundaries")
   fun updateWhaituaBoundaries() {
 
     logger.info { "Getting new Whaitua data .." }
@@ -107,7 +108,8 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
     materialiseWhaituaGeoJson(whaitua_geojson)
   }
 
-  @Scheduled(fixedDelay = 86400000, initialDelay = 500) // once a day with delay
+  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
+  @SchedulerLock(name = "updateGroundwaterZones")
   fun updateGroundwaterZones() {
 
     logger.info { "Getting new Groundwater zone data .." }

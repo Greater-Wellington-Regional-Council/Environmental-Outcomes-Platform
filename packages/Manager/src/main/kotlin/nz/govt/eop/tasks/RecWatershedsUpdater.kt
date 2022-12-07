@@ -2,6 +2,7 @@ package nz.govt.eop.tasks
 
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import nz.govt.eop.si.jooq.tables.RawRecFeaturesWatersheds.Companion.RAW_REC_FEATURES_WATERSHEDS
 import nz.govt.eop.si.jooq.tables.Watersheds.Companion.WATERSHEDS
 import org.jooq.DSLContext
@@ -16,8 +17,9 @@ class RecWatershedsUpdater(val context: DSLContext) {
   private val logger = KotlinLogging.logger {}
 
   @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
+  @SchedulerLock(name = "checkWatersheds")
   @Transactional
-  fun checkRec() {
+  fun checkWatersheds() {
     logger.debug { "Start task RecWatershedsUpdater" }
     val needsRefresh = doesDataNeedRefresh()
     if (needsRefresh) {

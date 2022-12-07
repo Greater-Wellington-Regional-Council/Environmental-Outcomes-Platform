@@ -54,7 +54,7 @@ class RecRiversUpdaterTest(
         .execute()
 
     // WHEN
-    recRiversUpdater.checkRec()
+    recRiversUpdater.checkRivers()
 
     // THEN
     val first = context.select(DSL.count()).from(RIVERS).first()
@@ -93,7 +93,7 @@ class RecRiversUpdaterTest(
         .execute()
 
     // WHEN
-    recRiversUpdater.checkRec()
+    recRiversUpdater.checkRivers()
 
     // THEN
     val first = context.select(DSL.count()).from(RIVERS).first()
@@ -128,7 +128,7 @@ class RecRiversUpdaterTest(
         .execute()
 
     // WHEN
-    recRiversUpdater.checkRec()
+    recRiversUpdater.checkRivers()
 
     // THEN
     val first = context.select(DSL.count()).from(RIVERS).first()

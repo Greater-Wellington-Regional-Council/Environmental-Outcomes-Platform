@@ -3,6 +3,7 @@ package nz.govt.eop.tasks
 import java.util.Collections
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import nz.govt.eop.si.jooq.tables.AllocationAmounts.Companion.ALLOCATION_AMOUNTS
 import nz.govt.eop.si.jooq.tables.Catchments.Companion.CATCHMENTS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
@@ -21,6 +22,7 @@ class RecCatchmentGenerator(@Autowired val context: DSLContext) {
   private val logger = KotlinLogging.logger {}
 
   @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+  @SchedulerLock(name = "checkCatchments")
   @Transactional
   fun checkCatchments() {
     logger.debug { "Start task RecCatchmentGenerator" }

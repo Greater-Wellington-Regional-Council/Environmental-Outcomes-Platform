@@ -48,7 +48,7 @@ class RecWatershedsUpdaterTest(
         .execute()
 
     // WHEN
-    recWatershedsUpdater.checkRec()
+    recWatershedsUpdater.checkWatersheds()
 
     // THEN
     val first = context.select(DSL.count()).from(WATERSHEDS).first()
@@ -81,7 +81,7 @@ class RecWatershedsUpdaterTest(
         .execute()
 
     // WHEN
-    recWatershedsUpdater.checkRec()
+    recWatershedsUpdater.checkWatersheds()
 
     // THEN
     val first = context.select(DSL.count()).from(WATERSHEDS).first()
@@ -113,7 +113,7 @@ class RecWatershedsUpdaterTest(
         .execute()
 
     // WHEN
-    recWatershedsUpdater.checkRec()
+    recWatershedsUpdater.checkWatersheds()
 
     // THEN
     val first = context.select(DSL.count()).from(WATERSHEDS).first()
