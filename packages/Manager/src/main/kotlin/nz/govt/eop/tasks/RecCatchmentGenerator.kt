@@ -16,62 +16,68 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-class RecCatchmentGenerator(@Autowired val create: DSLContext) {
+class RecCatchmentGenerator(@Autowired val context: DSLContext) {
 
   private val logger = KotlinLogging.logger {}
 
   @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
   @Transactional
   fun checkCatchments() {
-    logger.info { "Start task RecCatchmentGenerator" }
+    logger.debug { "Start task RecCatchmentGenerator" }
+    val needsRefresh = doesDataNeedRefresh()
+    if (needsRefresh) {
+      refresh()
+    }
+    logger.debug { "End task RecCatchmentGenerator" }
+  }
 
-    val lastIngestedRiver =
-        create.selectFrom(RIVERS).orderBy(RIVERS.CREATED_AT.desc()).limit(1).fetchAny() ?: return
+  private fun doesDataNeedRefresh(): Boolean {
+    val lastCreatedRiver =
+        context.select(max(RIVERS.CREATED_AT)).from(RIVERS).fetchOne(max(RIVERS.CREATED_AT))
+            ?: return false
 
-    val lastIngestedWatershed =
-        create.selectFrom(WATERSHEDS).orderBy(WATERSHEDS.CREATED_AT.desc()).limit(1).fetchAny()
-            ?: return
+    val lastCreatedWatershed =
+        context
+            .select(max(WATERSHEDS.CREATED_AT))
+            .from(WATERSHEDS)
+            .fetchOne(max(WATERSHEDS.CREATED_AT))
+            ?: return false
 
     val lastCreatedAllocationAmount =
-        create
-            .selectFrom(ALLOCATION_AMOUNTS)
-            .orderBy(ALLOCATION_AMOUNTS.CREATED_AT.desc())
-            .limit(1)
-            .fetchAny()
-            ?: return
+        context
+            .select(max(ALLOCATION_AMOUNTS.CREATED_AT))
+            .from(ALLOCATION_AMOUNTS)
+            .fetchOne(max(ALLOCATION_AMOUNTS.CREATED_AT))
+            ?: return false
 
     val lastUpdatedDependency =
-        Collections.max(
-            listOf(
-                lastIngestedRiver.createdAt,
-                lastIngestedWatershed.createdAt,
-                lastCreatedAllocationAmount.createdAt))
+        Collections.max(listOf(lastCreatedRiver, lastCreatedWatershed, lastCreatedAllocationAmount))
 
     val lastProcessedCatchment =
-        create.selectFrom(CATCHMENTS).orderBy(CATCHMENTS.CREATED_AT.desc()).limit(1).fetchAny()
+        context
+            .select(max(CATCHMENTS.CREATED_AT))
+            .from(CATCHMENTS)
+            .fetchOne(max(CATCHMENTS.CREATED_AT))
 
-    if (lastProcessedCatchment == null ||
-        lastProcessedCatchment.createdAt!!.isBefore(lastUpdatedDependency)) {
+    return lastProcessedCatchment == null || lastProcessedCatchment.isBefore(lastUpdatedDependency)
+  }
 
-      logger.info {
-        "Catchment source data has been updated since last processed, re-processing now"
-      }
-      create.deleteFrom(CATCHMENTS).execute()
+  private fun refresh() {
+    logger.info { "Catchment source data has been updated since last processed, re-processing now" }
+    context.deleteFrom(CATCHMENTS).execute()
 
-      val catchmentHydroIds =
-          create
-              .selectDistinct(ALLOCATION_AMOUNTS.HYDRO_ID)
-              .from(ALLOCATION_AMOUNTS)
-              .where(ALLOCATION_AMOUNTS.HYDRO_ID.isNotNull)
-              .fetch { it.get("hydro_id") as Int }
-              .toSet()
+    val catchmentHydroIds =
+        context
+            .selectDistinct(ALLOCATION_AMOUNTS.HYDRO_ID)
+            .from(ALLOCATION_AMOUNTS)
+            .where(ALLOCATION_AMOUNTS.HYDRO_ID.isNotNull)
+            .fetch { it.get("hydro_id") as Int }
+            .toSet()
 
-      catchmentHydroIds.forEach {
-        val catchmentTree = selectCatchmentTree(it)
-        insertCatchmentFromWatersheds(it, catchmentTree)
-      }
+    catchmentHydroIds.forEach {
+      val catchmentTree = selectCatchmentTree(it)
+      insertCatchmentFromWatersheds(it, catchmentTree)
     }
-    logger.info { "End task RecCatchmentGenerator" }
   }
 
   fun selectCatchmentTree(hydroId: Int): Set<Int> {
@@ -92,7 +98,7 @@ class RecCatchmentGenerator(@Autowired val create: DSLContext) {
                             .join(table(name("r")))
                             .on(field(name("r", "hydro_id"), INTEGER).eq(RIVERS.NEXT_HYDRO_ID))))
 
-    return create
+    return context
         .withRecursive(cte)
         .selectFrom(cte)
         .fetch { it.get("hydro_id") as Int }
@@ -101,13 +107,13 @@ class RecCatchmentGenerator(@Autowired val create: DSLContext) {
   }
 
   fun insertCatchmentFromWatersheds(root: Int, segments: Set<Int>) {
-    create
+    context
         .insertInto(CATCHMENTS, CATCHMENTS.HYDRO_ID, CATCHMENTS.GEOM)
         .select(
-            create
+            context
                 .select(inline(root), field("ST_UNION( geom )", ByteArray::class.java))
                 .from(
-                    create
+                    context
                         .select(WATERSHEDS.GEOM)
                         .from(WATERSHEDS)
                         .where(WATERSHEDS.HYDRO_ID.`in`(segments))))

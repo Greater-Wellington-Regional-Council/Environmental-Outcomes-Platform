@@ -18,41 +18,48 @@ class RecWatershedsUpdater(val context: DSLContext) {
   @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
   @Transactional
   fun checkRec() {
-    logger.info { "Start task RecWatershedsUpdater" }
+    logger.debug { "Start task RecWatershedsUpdater" }
+    val needsRefresh = doesDataNeedRefresh()
+    if (needsRefresh) {
+      refresh()
+    }
+    logger.debug { "End task RecWatershedsUpdater" }
+  }
 
+  private fun doesDataNeedRefresh(): Boolean {
     val lastIngestedWatershed =
         context
-            .selectFrom(RAW_REC_FEATURES_WATERSHEDS)
-            .orderBy(RAW_REC_FEATURES_WATERSHEDS.INGESTED_AT.desc())
-            .limit(1)
-            .fetchAny()
-            ?: return
+            .select(DSL.max(RAW_REC_FEATURES_WATERSHEDS.INGESTED_AT))
+            .from(RAW_REC_FEATURES_WATERSHEDS)
+            .fetchOne(DSL.max(RAW_REC_FEATURES_WATERSHEDS.INGESTED_AT))
+            ?: return false
 
-    val lastProcessedWatershed =
-        context.selectFrom(WATERSHEDS).orderBy(WATERSHEDS.CREATED_AT.desc()).limit(1).fetchAny()
+    val lastCreatedWatershed =
+        context
+            .select(DSL.max(WATERSHEDS.CREATED_AT))
+            .from(WATERSHEDS)
+            .fetchOne(DSL.max(WATERSHEDS.CREATED_AT))
 
-    if (lastProcessedWatershed == null ||
-        lastProcessedWatershed.createdAt!!.isBefore(lastIngestedWatershed.ingestedAt)) {
+    return lastCreatedWatershed == null || lastCreatedWatershed.isBefore(lastIngestedWatershed)
+  }
 
-      logger.info { "RAW Watersheds data has been updated since last processed, re-processing now" }
-      context.deleteFrom(WATERSHEDS).execute()
+  private fun refresh() {
+    logger.info { "RAW Watersheds data has been updated since last processed, re-processing now" }
+    context.deleteFrom(WATERSHEDS).execute()
 
-      context
-          .insertInto(WATERSHEDS)
-          .columns(WATERSHEDS.HYDRO_ID, WATERSHEDS.NZ_SEGMENT, WATERSHEDS.GEOM)
-          .select(
-              context
-                  .select(
-                      DSL.field("(data -> 'properties' -> 'HydroID')::INT", Int::class.java)
-                          .`as`("hydro_id"),
-                      DSL.field("(data -> 'properties' -> 'nzsegment')::INT", Int::class.java)
-                          .`as`("nz_segment"),
-                      DSL.field("st_geomfromgeojson(data -> 'geometry')", ByteArray::class.java)
-                          .`as`("path"))
-                  .from(RAW_REC_FEATURES_WATERSHEDS))
-          .execute()
-    }
-
-    logger.info { "End task RecWatershedsUpdater" }
+    context
+        .insertInto(WATERSHEDS)
+        .columns(WATERSHEDS.HYDRO_ID, WATERSHEDS.NZ_SEGMENT, WATERSHEDS.GEOM)
+        .select(
+            context
+                .select(
+                    DSL.field("(data -> 'properties' -> 'HydroID')::INT", Int::class.java)
+                        .`as`("hydro_id"),
+                    DSL.field("(data -> 'properties' -> 'nzsegment')::INT", Int::class.java)
+                        .`as`("nz_segment"),
+                    DSL.field("st_geomfromgeojson(data -> 'geometry')", ByteArray::class.java)
+                        .`as`("path"))
+                .from(RAW_REC_FEATURES_WATERSHEDS))
+        .execute()
   }
 }
