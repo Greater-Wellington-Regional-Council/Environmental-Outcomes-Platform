@@ -11,15 +11,11 @@ import org.springframework.test.context.ActiveProfiles
 @SpringBootTest
 class LoadByTakeTypeTest(@Autowired val context: DSLContext) {
 
-    @Test
-    fun `test`() {
+  @Test
+  fun `test`() {
 
-        val records = context.selectFrom(AllocationAmounts.ALLOCATION_AMOUNTS).fetch()
+    val records = context.selectFrom(AllocationAmounts.ALLOCATION_AMOUNTS).fetch()
 
-        println(records)
-
-
-    }
-
-
+    println(records)
+  }
 }

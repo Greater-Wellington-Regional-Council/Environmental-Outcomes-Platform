@@ -1,6 +1,9 @@
 package nz.govt.eop.geo
 
 import java.util.concurrent.TimeUnit
+import nz.govt.eop.si.jooq.ManagementUnitType
+import nz.govt.eop.si.jooq.tables.AllocationAmounts.Companion.ALLOCATION_AMOUNTS
+import nz.govt.eop.si.jooq.tables.Catchments.Companion.CATCHMENTS
 import nz.govt.eop.si.jooq.tables.CouncilBoundaries.Companion.COUNCIL_BOUNDARIES
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
 import nz.govt.eop.si.jooq.tables.WhaituaBoundaries.Companion.WHAITUA_BOUNDARIES
@@ -59,6 +62,49 @@ class GeoJsonController(val context: DSLContext) {
         select(RIVERS.HYDRO_ID.`as`("id"), RIVERS.GEOM.`as`("geometry"), RIVERS.STREAM_ORDER)
             .from(RIVERS)
             .where(RIVERS.STREAM_ORDER.ge(3))
+
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        .body(buildFeatureCollection(context, innerQuery))
+  }
+
+  @Cacheable("surface_water_management_units_layer")
+  @RequestMapping("/layers/surface_water_mgmt", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun getLayerSurfaceWaterManagementUnits(): ResponseEntity<String> {
+    val innerQuery =
+        select(
+                CATCHMENTS.ID.`as`("id"),
+                CATCHMENTS.GEOM.`as`("geometry"),
+                ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT,
+                ALLOCATION_AMOUNTS.AREA_DESCRIPTION,
+                ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT_UNIT)
+            .from(CATCHMENTS)
+            .join(ALLOCATION_AMOUNTS)
+            .on(ALLOCATION_AMOUNTS.ID.eq(CATCHMENTS.ID))
+            .where(ALLOCATION_AMOUNTS.MANAGEMENT_UNIT_TYPE.eq(ManagementUnitType.MANAGEMENT_UNIT))
+
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        .body(buildFeatureCollection(context, innerQuery))
+  }
+
+  @Cacheable("surface_water_management_sub_units_layer")
+  @RequestMapping("/layers/surface_water_mgmt_sub", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun getLayerSurfaceWaterManagementSubUnits(): ResponseEntity<String> {
+    val innerQuery =
+        select(
+                CATCHMENTS.ID.`as`("id"),
+                CATCHMENTS.GEOM.`as`("geometry"),
+                ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT,
+                ALLOCATION_AMOUNTS.AREA_DESCRIPTION,
+                ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT_UNIT)
+            .from(CATCHMENTS)
+            .join(ALLOCATION_AMOUNTS)
+            .on(ALLOCATION_AMOUNTS.ID.eq(CATCHMENTS.ID))
+            .where(
+                ALLOCATION_AMOUNTS.MANAGEMENT_UNIT_TYPE.eq(ManagementUnitType.MANAGEMENT_SUB_UNIT))
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
