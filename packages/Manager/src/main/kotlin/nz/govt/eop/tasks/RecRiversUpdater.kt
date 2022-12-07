@@ -2,7 +2,6 @@ package nz.govt.eop.tasks
 
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
-import net.javacrumbs.shedlock.core.LockAssert
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import nz.govt.eop.si.jooq.tables.RawRecFeaturesRivers.Companion.RAW_REC_FEATURES_RIVERS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
