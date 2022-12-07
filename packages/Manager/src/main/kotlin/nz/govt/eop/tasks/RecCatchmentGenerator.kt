@@ -70,19 +70,24 @@ class RecCatchmentGenerator(@Autowired val context: DSLContext) {
 
     val catchmentHydroIds =
         context
-            .selectDistinct(ALLOCATION_AMOUNTS.HYDRO_ID)
+            .select(
+                ALLOCATION_AMOUNTS.ID,
+                ALLOCATION_AMOUNTS.HYDRO_ID,
+                ALLOCATION_AMOUNTS.EXCLUDED_HYDRO_IDS)
             .from(ALLOCATION_AMOUNTS)
             .where(ALLOCATION_AMOUNTS.HYDRO_ID.isNotNull)
-            .fetch { it.get("hydro_id") as Int }
-            .toSet()
+            .fetch()
 
     catchmentHydroIds.forEach {
-      val catchmentTree = selectCatchmentTree(it)
-      insertCatchmentFromWatersheds(it, catchmentTree)
+      val id = it.get(ALLOCATION_AMOUNTS.ID)!!
+      val hydroId = it.get(ALLOCATION_AMOUNTS.HYDRO_ID)!!
+      val excludedHydroIds = it.get(ALLOCATION_AMOUNTS.EXCLUDED_HYDRO_IDS)!!
+      val catchmentTree = selectCatchmentTree(hydroId, excludedHydroIds.toSet())
+      insertCatchmentFromWatersheds(id, hydroId, excludedHydroIds.toSet(), catchmentTree)
     }
   }
 
-  fun selectCatchmentTree(hydroId: Int): Set<Int> {
+  fun selectCatchmentTree(hydroId: Int, excludedHydroIds: Set<Int?>): Set<Int> {
     val cte =
         name("r")
             .fields(
@@ -91,14 +96,16 @@ class RecCatchmentGenerator(@Autowired val context: DSLContext) {
             .`as`(
                 select(RIVERS.HYDRO_ID)
                     .from(RIVERS)
-                    .where(RIVERS.NEXT_HYDRO_ID.eq(hydroId))
+                    .where(
+                        RIVERS.NEXT_HYDRO_ID.eq(hydroId), RIVERS.HYDRO_ID.notIn(excludedHydroIds))
                     .unionAll(
                         select(
                                 RIVERS.HYDRO_ID,
                             )
                             .from(RIVERS)
                             .join(table(name("r")))
-                            .on(field(name("r", "hydro_id"), INTEGER).eq(RIVERS.NEXT_HYDRO_ID))))
+                            .on(field(name("r", "hydro_id"), INTEGER).eq(RIVERS.NEXT_HYDRO_ID))
+                            .where(RIVERS.HYDRO_ID.notIn(excludedHydroIds))))
 
     return context
         .withRecursive(cte)
@@ -108,12 +115,26 @@ class RecCatchmentGenerator(@Autowired val context: DSLContext) {
         .plus(hydroId)
   }
 
-  fun insertCatchmentFromWatersheds(root: Int, segments: Set<Int>) {
+  fun insertCatchmentFromWatersheds(
+      id: Int,
+      startHydroId: Int,
+      excludedHydroIds: Set<Int?>,
+      segments: Set<Int>
+  ) {
     context
-        .insertInto(CATCHMENTS, CATCHMENTS.HYDRO_ID, CATCHMENTS.GEOM)
+        .insertInto(
+            CATCHMENTS,
+            CATCHMENTS.ID,
+            CATCHMENTS.HYDRO_ID,
+            CATCHMENTS.EXCLUDED_HYDRO_IDS,
+            CATCHMENTS.GEOM)
         .select(
             context
-                .select(inline(root), field("ST_UNION( geom )", ByteArray::class.java))
+                .select(
+                    inline(id),
+                    inline(startHydroId),
+                    inline(excludedHydroIds.toTypedArray()),
+                    field("ST_UNION( geom )", ByteArray::class.java))
                 .from(
                     context
                         .select(WATERSHEDS.GEOM)

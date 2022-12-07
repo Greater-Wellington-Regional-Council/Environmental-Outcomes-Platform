@@ -1,8 +1,7 @@
-package nz.govt.eop.data.rec
+package nz.govt.eop.tasks
 
 import io.kotest.matchers.shouldBe
 import java.util.stream.Stream
-import nz.govt.eop.tasks.RecCatchmentGenerator
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -22,22 +21,29 @@ class RecCatchmentGeneratorTest(@Autowired val underTest: RecCatchmentGenerator)
     fun buildTreeForSegment(): Stream<Arguments> {
       // Well known data from the test SQL file
       return Stream.of(
-          Arguments.arguments(1, setOf(1)),
-          Arguments.arguments(5, setOf(5)),
-          Arguments.arguments(9, setOf(9, 1, 2)),
-          Arguments.arguments(11, setOf(11, 10, 9, 1, 2)),
+          Arguments.arguments(1, setOf<Int>(), setOf(1)),
+          Arguments.arguments(5, setOf<Int>(), setOf(5)),
+          Arguments.arguments(9, setOf<Int>(), setOf(9, 1, 2)),
+          Arguments.arguments(11, setOf<Int>(), setOf(11, 10, 9, 1, 2)),
+          Arguments.arguments(11, setOf(9), setOf(11, 10)),
+          Arguments.arguments(11, setOf(10), setOf(11, 9, 1, 2)),
+          Arguments.arguments(11, setOf(1), setOf(11, 10, 9, 2)),
       )
     }
   }
 
   @ParameterizedTest
   @MethodSource("buildTreeForSegment")
-  fun `buildTreeForSegment should return expected tree`(initial: Int, expected: Set<Int>) {
-    underTest.selectCatchmentTree(initial).shouldBe(expected)
+  fun `buildTreeForSegment should return expected tree`(
+      initial: Int,
+      excludes: Set<Int>,
+      expected: Set<Int>
+  ) {
+    underTest.selectCatchmentTree(initial, excludes).shouldBe(expected)
   }
 
   @Test
   fun `creates a catchment`() {
-    underTest.insertCatchmentFromWatersheds(11, setOf(11, 10, 9, 1, 2))
+    underTest.insertCatchmentFromWatersheds(1, 11, setOf(), setOf(11, 10, 9, 1, 2))
   }
 }
