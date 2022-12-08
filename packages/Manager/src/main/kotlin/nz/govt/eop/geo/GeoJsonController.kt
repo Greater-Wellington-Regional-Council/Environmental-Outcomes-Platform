@@ -6,6 +6,7 @@ import nz.govt.eop.si.jooq.tables.AllocationAmounts.Companion.ALLOCATION_AMOUNTS
 import nz.govt.eop.si.jooq.tables.Catchments.Companion.CATCHMENTS
 import nz.govt.eop.si.jooq.tables.CouncilBoundaries.Companion.COUNCIL_BOUNDARIES
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
+import nz.govt.eop.si.jooq.tables.Sites.Companion.SITES
 import nz.govt.eop.si.jooq.tables.WhaituaBoundaries.Companion.WHAITUA_BOUNDARIES
 import org.jooq.*
 import org.jooq.impl.DSL.*
@@ -23,7 +24,7 @@ class GeoJsonController(val context: DSLContext) {
   @Cacheable("layers_councils")
   @RequestMapping("/layers/councils", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun getLayerRegionalCouncils(): ResponseEntity<String> {
+  fun getRegionalCouncils(): ResponseEntity<String> {
 
     val innerQuery =
         select(
@@ -40,7 +41,7 @@ class GeoJsonController(val context: DSLContext) {
   @Cacheable("layers_whaitua")
   @RequestMapping("/layers/whaitua", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun getLayerWhaitua(): ResponseEntity<String> {
+  fun getWhaitua(): ResponseEntity<String> {
 
     val innerQuery =
         select(
@@ -57,7 +58,7 @@ class GeoJsonController(val context: DSLContext) {
   @Cacheable("layers_rivers")
   @RequestMapping("/layers/rivers", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun getLayerRivers(): ResponseEntity<String> {
+  fun getRivers(): ResponseEntity<String> {
     val innerQuery =
         select(RIVERS.HYDRO_ID.`as`("id"), RIVERS.GEOM.`as`("geometry"), RIVERS.STREAM_ORDER)
             .from(RIVERS)
@@ -71,7 +72,7 @@ class GeoJsonController(val context: DSLContext) {
   @Cacheable("surface_water_management_units_layer")
   @RequestMapping("/layers/surface_water_mgmt", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun getLayerSurfaceWaterManagementUnits(): ResponseEntity<String> {
+  fun getSurfaceWaterManagementUnits(): ResponseEntity<String> {
     val innerQuery =
         select(
                 CATCHMENTS.ID.`as`("id"),
@@ -93,7 +94,7 @@ class GeoJsonController(val context: DSLContext) {
   @Cacheable("surface_water_management_sub_units_layer")
   @RequestMapping("/layers/surface_water_mgmt_sub", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun getLayerSurfaceWaterManagementSubUnits(): ResponseEntity<String> {
+  fun getSurfaceWaterManagementSubUnits(): ResponseEntity<String> {
     val innerQuery =
         select(
                 CATCHMENTS.ID.`as`("id"),
@@ -107,6 +108,22 @@ class GeoJsonController(val context: DSLContext) {
             .on(ALLOCATION_AMOUNTS.ID.eq(CATCHMENTS.ID))
             .where(
                 ALLOCATION_AMOUNTS.MANAGEMENT_UNIT_TYPE.eq(ManagementUnitType.MANAGEMENT_SUB_UNIT))
+
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        .body(buildFeatureCollection(context, innerQuery))
+  }
+
+  @Cacheable("flow_management_sites")
+  @RequestMapping("/layers/flow_management_sites", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun getFlowManagementSites(): ResponseEntity<String> {
+    val innerQuery =
+        select(
+                SITES.ID.`as`("id"),
+                SITES.GEOM.`as`("geometry"),
+            )
+            .from(SITES)
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))

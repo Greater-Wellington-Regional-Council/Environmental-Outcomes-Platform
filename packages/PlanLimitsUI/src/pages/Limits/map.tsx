@@ -50,6 +50,7 @@ export default function LimitsMap({
     UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>
   ];
 }) {
@@ -181,6 +182,7 @@ export default function LimitsMap({
     riversGeoJson,
     surfaceWaterMgmtUnitsGeoJson,
     surfaceWaterMgmtSubUnitsGeoJson,
+    flowManagementSitesGeoJson,
   ] = queries;
 
   return (
@@ -383,27 +385,29 @@ export default function LimitsMap({
           </Source>
         )}
 
-        <Source type="geojson" data={sites}>
-          <Layer
-            id="flowSites"
-            type="symbol"
-            layout={{
-              'icon-image': 'marker_flow',
-            }}
-            paint={{
-              'icon-opacity': [
-                'case',
-                [
-                  '==',
-                  ['get', 'SITE_ID'],
-                  mouseState.flowRestrictionsManagementSiteId,
+        {flowManagementSitesGeoJson.data && (
+          <Source type="geojson" data={flowManagementSitesGeoJson.data}>
+            <Layer
+              id="flowSites"
+              type="symbol"
+              layout={{
+                'icon-image': 'marker_flow',
+              }}
+              paint={{
+                'icon-opacity': [
+                  'case',
+                  [
+                    '==',
+                    ['get', 'SITE_ID'],
+                    mouseState.flowRestrictionsManagementSiteId,
+                  ],
+                  1,
+                  0.5,
                 ],
-                1,
-                0.5,
-              ],
-            }}
-          />
-        </Source>
+              }}
+            />
+          </Source>
+        )}
 
         {pinnedLocation && (
           <Marker

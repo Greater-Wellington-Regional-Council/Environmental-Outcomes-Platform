@@ -18,6 +18,7 @@ import { useDebounce } from 'usehooks-ts';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import {
   fetchCouncilsGeoJson,
+  fetchFlowManagementSites,
   fetchRiversGeoJson,
   fetchSurfaceWaterManagementSubUnitsGeoJson,
   fetchSurfaceWaterManagementUnitsGeoJson,
@@ -115,6 +116,10 @@ export default function Limits() {
       {
         queryKey: ['surface_water_management_sub_units'],
         queryFn: fetchSurfaceWaterManagementSubUnitsGeoJson,
+      },
+      {
+        queryKey: ['flow_management_sites'],
+        queryFn: fetchFlowManagementSites,
       },
     ],
   });

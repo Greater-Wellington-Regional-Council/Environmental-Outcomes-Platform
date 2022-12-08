@@ -41,3 +41,8 @@ export const fetchSurfaceWaterManagementSubUnitsGeoJson =
       `${apiBasePath}/layers/surface_water_mgmt_sub`,
       defaultRequestInit
     ).then((result) => result.json());
+
+export const fetchFlowManagementSites = (): Promise<GeoJSON> =>
+  fetch(`${apiBasePath}/layers/flow_management_sites`, defaultRequestInit).then(
+    (result) => result.json()
+  );
