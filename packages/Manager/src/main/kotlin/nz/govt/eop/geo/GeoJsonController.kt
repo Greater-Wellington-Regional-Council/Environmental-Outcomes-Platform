@@ -77,6 +77,7 @@ class GeoJsonController(val context: DSLContext) {
                 CATCHMENTS.ID.`as`("id"),
                 CATCHMENTS.GEOM.`as`("geometry"),
                 ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT,
+                ALLOCATION_AMOUNTS.CATCHMENT_MANAGEMENT_UNIT,
                 ALLOCATION_AMOUNTS.AREA_DESCRIPTION,
                 ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT_UNIT)
             .from(CATCHMENTS)
@@ -98,6 +99,7 @@ class GeoJsonController(val context: DSLContext) {
                 CATCHMENTS.ID.`as`("id"),
                 CATCHMENTS.GEOM.`as`("geometry"),
                 ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT,
+                ALLOCATION_AMOUNTS.CATCHMENT_MANAGEMENT_UNIT,
                 ALLOCATION_AMOUNTS.AREA_DESCRIPTION,
                 ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT_UNIT)
             .from(CATCHMENTS)
