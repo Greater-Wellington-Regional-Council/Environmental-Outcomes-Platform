@@ -71,6 +71,8 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
               GroundwaterZones.GROUNDWATER_ZONES.CATEGORY,
               GroundwaterZones.GROUNDWATER_ZONES.DEPTH,
               GroundwaterZones.GROUNDWATER_ZONES.NOTES,
+              GroundwaterZones.GROUNDWATER_ZONES.GROUNDWATER_ZONE,
+              GroundwaterZones.GROUNDWATER_ZONES.ALLOCATION_AMOUNT_ID,
               GroundwaterZones.GROUNDWATER_ZONES.GEOM)
           .values(
               DSL.value(feature.id as String),
@@ -78,6 +80,8 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
               DSL.value(feature.properties.get("Category") as String),
               DSL.value(feature.properties.get("Depth") as String),
               DSL.value(feature.properties.get("Description") as String),
+              DSL.value(feature.properties.get("Zone") as String),
+              DSL.value(feature.properties.get("AllocationAmountID") as Int),
               DSL.field(
                   "ST_GeomFromGeoJSON(?)",
                   ByteArray::class.java,

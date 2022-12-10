@@ -47,6 +47,8 @@ class GisDataFetcherTest(
     testFeature.setProperty("Category", "Category A")
     testFeature.setProperty("Depth", "0-20 m")
     testFeature.setProperty("Description", "Category A (0-20 m)")
+    testFeature.setProperty("Zone", "Middle Wairarapa groundwater management zone")
+    testFeature.setProperty("AllocationAmountID", 14)
     testFeature.setId("1")
     testFeature.setGeometry(geometry)
 
