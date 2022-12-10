@@ -93,15 +93,16 @@ CREATE INDEX
 
 CREATE TABLE
   groundwater_zones (
-    id VARCHAR NOT NULL,
-    NAME VARCHAR NOT NULL,
-    category VARCHAR NOT NULL,
-    DEPTH VARCHAR NOT NULL,
-    notes VARCHAR NOT NULL,
-    geom GEOMETRY NOT NULL,
-    catchment_id INTEGER,
-    site_id INTEGER,
-    groundwater_zone VARCHAR UNIQUE,
+    id VARCHAR NULL,
+    NAME VARCHAR NULL,
+    category VARCHAR NULL,
+    DEPTH VARCHAR NULL,
+    notes VARCHAR NULL,
+    geom GEOMETRY NULL,
+    catchment_id INTEGER NULL,
+    site_id INTEGER NULL,
+    groundwater_zone VARCHAR,
+    allocation_amount_id INTEGER,
     PRIMARY KEY (id)
   );
 

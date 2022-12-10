@@ -143,5 +143,12 @@ jooq {
 
 tasks.named<nu.studer.gradle.jooq.JooqGenerate>("generateJooq") {
   dependsOn("flywayMigrate")
+
+  // declare Flyway migration scripts as inputs on the jOOQ task
+  inputs
+      .files(fileTree("src/**/resources/db/migration"))
+      .withPropertyName("migrations")
+      .withPathSensitivity(PathSensitivity.RELATIVE)
+
   allInputsDeclared.set(true)
 }
