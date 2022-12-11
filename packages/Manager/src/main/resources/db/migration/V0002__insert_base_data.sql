@@ -748,7 +748,7 @@ VALUES
     'Mangatarere Stream and tributaries, Mangatarere Category A groundwater and Mangatarere Category B groundwater (stream depletion)',
     'Mangatarere Stream and tributaries',
     NULL,
-    257905,
+    258982,
     '{}',
     110,
     'L/s',
