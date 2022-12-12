@@ -19,6 +19,7 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import {
   fetchCouncilsGeoJson,
   fetchFlowManagementSites,
+  fetchMinimumFlowLimitBoundaries,
   fetchRiversGeoJson,
   fetchSurfaceWaterManagementSubUnitsGeoJson,
   fetchSurfaceWaterManagementUnitsGeoJson,
@@ -49,9 +50,10 @@ export type MouseState = {
   surfaceWaterMgmtUnitDescription?: string | null;
   surfaceWaterMgmtSubUnitId: string;
   surfaceWaterMgmtSubUnitDescription?: string | null;
+  minimumFlowLimitId: string | null;
   flowRestrictionsLevel?: string | null;
   flowRestrictionsManagementSiteName?: string | null;
-  flowRestrictionsManagementSiteId: string;
+  flowRestrictionsManagementSiteId?: string | null;
   allocationLimit?: string | null;
 };
 
@@ -120,6 +122,10 @@ export default function Limits() {
       {
         queryKey: ['flow_management_sites'],
         queryFn: fetchFlowManagementSites,
+      },
+      {
+        queryKey: ['minimum_flow_limit_boundaries'],
+        queryFn: fetchMinimumFlowLimitBoundaries,
       },
     ],
   });

@@ -3,14 +3,15 @@ package nz.govt.eop.geo
 import java.util.concurrent.TimeUnit
 import nz.govt.eop.si.jooq.ManagementUnitType
 import nz.govt.eop.si.jooq.tables.AllocationAmounts.Companion.ALLOCATION_AMOUNTS
-import nz.govt.eop.si.jooq.tables.Catchments.Companion.CATCHMENTS
 import nz.govt.eop.si.jooq.tables.CouncilBoundaries.Companion.COUNCIL_BOUNDARIES
+import nz.govt.eop.si.jooq.tables.MinimumFlowLimitBoundaries.Companion.MINIMUM_FLOW_LIMIT_BOUNDARIES
+import nz.govt.eop.si.jooq.tables.MinimumFlowLimits.Companion.MINIMUM_FLOW_LIMITS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
 import nz.govt.eop.si.jooq.tables.Sites.Companion.SITES
+import nz.govt.eop.si.jooq.tables.SurfaceWaterManagementBoundaries.Companion.SURFACE_WATER_MANAGEMENT_BOUNDARIES
 import nz.govt.eop.si.jooq.tables.WhaituaBoundaries.Companion.WHAITUA_BOUNDARIES
 import org.jooq.*
 import org.jooq.impl.DSL.*
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.CacheControl
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody
 @Controller
 class GeoJsonController(val context: DSLContext) {
 
-  @Cacheable("layers_councils")
   @RequestMapping("/layers/councils", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getRegionalCouncils(): ResponseEntity<String> {
@@ -38,7 +38,6 @@ class GeoJsonController(val context: DSLContext) {
         .body(buildFeatureCollection(context, innerQuery))
   }
 
-  @Cacheable("layers_whaitua")
   @RequestMapping("/layers/whaitua", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getWhaitua(): ResponseEntity<String> {
@@ -55,7 +54,6 @@ class GeoJsonController(val context: DSLContext) {
         .body(buildFeatureCollection(context, innerQuery))
   }
 
-  @Cacheable("layers_rivers")
   @RequestMapping("/layers/rivers", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getRivers(): ResponseEntity<String> {
@@ -69,22 +67,21 @@ class GeoJsonController(val context: DSLContext) {
         .body(buildFeatureCollection(context, innerQuery))
   }
 
-  @Cacheable("surface_water_management_units_layer")
   @RequestMapping("/layers/surface_water_mgmt", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getSurfaceWaterManagementUnits(): ResponseEntity<String> {
     val innerQuery =
         select(
-                CATCHMENTS.ID.`as`("id"),
-                CATCHMENTS.GEOM.`as`("geometry"),
+                SURFACE_WATER_MANAGEMENT_BOUNDARIES.ID.`as`("id"),
+                SURFACE_WATER_MANAGEMENT_BOUNDARIES.GEOM.`as`("geometry"),
                 ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT,
                 ALLOCATION_AMOUNTS.SURFACEWATER_SUBUNIT_NAME.`as`("name"),
                 ALLOCATION_AMOUNTS.CATCHMENT_MANAGEMENT_UNIT,
                 ALLOCATION_AMOUNTS.AREA_DESCRIPTION,
                 ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT_UNIT)
-            .from(CATCHMENTS)
+            .from(SURFACE_WATER_MANAGEMENT_BOUNDARIES)
             .join(ALLOCATION_AMOUNTS)
-            .on(ALLOCATION_AMOUNTS.ID.eq(CATCHMENTS.ID))
+            .on(ALLOCATION_AMOUNTS.ID.eq(SURFACE_WATER_MANAGEMENT_BOUNDARIES.ID))
             .where(ALLOCATION_AMOUNTS.MANAGEMENT_UNIT_TYPE.eq(ManagementUnitType.MANAGEMENT_UNIT))
 
     return ResponseEntity.ok()
@@ -92,22 +89,21 @@ class GeoJsonController(val context: DSLContext) {
         .body(buildFeatureCollection(context, innerQuery))
   }
 
-  @Cacheable("surface_water_management_sub_units_layer")
   @RequestMapping("/layers/surface_water_mgmt_sub", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getSurfaceWaterManagementSubUnits(): ResponseEntity<String> {
     val innerQuery =
         select(
-                CATCHMENTS.ID.`as`("id"),
-                CATCHMENTS.GEOM.`as`("geometry"),
+                SURFACE_WATER_MANAGEMENT_BOUNDARIES.ID.`as`("id"),
+                SURFACE_WATER_MANAGEMENT_BOUNDARIES.GEOM.`as`("geometry"),
                 ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT,
                 ALLOCATION_AMOUNTS.SURFACEWATER_SUBUNIT_NAME.`as`("name"),
                 ALLOCATION_AMOUNTS.CATCHMENT_MANAGEMENT_UNIT,
                 ALLOCATION_AMOUNTS.AREA_DESCRIPTION,
                 ALLOCATION_AMOUNTS.ALLOCATION_AMOUNT_UNIT)
-            .from(CATCHMENTS)
+            .from(SURFACE_WATER_MANAGEMENT_BOUNDARIES)
             .join(ALLOCATION_AMOUNTS)
-            .on(ALLOCATION_AMOUNTS.ID.eq(CATCHMENTS.ID))
+            .on(ALLOCATION_AMOUNTS.ID.eq(SURFACE_WATER_MANAGEMENT_BOUNDARIES.ID))
             .where(
                 ALLOCATION_AMOUNTS.MANAGEMENT_UNIT_TYPE.eq(ManagementUnitType.MANAGEMENT_SUB_UNIT))
 
@@ -116,7 +112,6 @@ class GeoJsonController(val context: DSLContext) {
         .body(buildFeatureCollection(context, innerQuery))
   }
 
-  @Cacheable("flow_management_sites")
   @RequestMapping("/layers/flow_management_sites", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getFlowManagementSites(): ResponseEntity<String> {
@@ -126,6 +121,28 @@ class GeoJsonController(val context: DSLContext) {
                 SITES.GEOM.`as`("geometry"),
             )
             .from(SITES)
+
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        .body(buildFeatureCollection(context, innerQuery))
+  }
+
+  @RequestMapping(
+      "/layers/minimum_flow_limit_boundaries", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun getMinimumFlowLimitBoundaries(): ResponseEntity<String> {
+    val innerQuery =
+        select(
+                MINIMUM_FLOW_LIMIT_BOUNDARIES.ID.`as`("id"),
+                MINIMUM_FLOW_LIMIT_BOUNDARIES.GEOM.`as`("geometry"),
+                MINIMUM_FLOW_LIMITS.PLAN_MANAGEMENT_POINT_NAME.`as`("name"),
+                MINIMUM_FLOW_LIMITS.PLAN_MINIMUM_FLOW_VALUE,
+                MINIMUM_FLOW_LIMITS.PLAN_MINIMUM_FLOW_UNIT,
+                MINIMUM_FLOW_LIMITS.SITE_ID,
+            )
+            .from(MINIMUM_FLOW_LIMIT_BOUNDARIES)
+            .join(MINIMUM_FLOW_LIMITS)
+            .on(MINIMUM_FLOW_LIMITS.ID.eq(MINIMUM_FLOW_LIMIT_BOUNDARIES.ID))
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))

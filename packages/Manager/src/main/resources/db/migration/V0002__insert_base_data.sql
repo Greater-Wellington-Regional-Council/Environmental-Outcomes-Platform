@@ -1,102 +1,122 @@
 INSERT INTO
-  sites (siteid_hilltop, NAME, geom)
+  sites (id, siteid_hilltop, NAME, geom)
 VALUES
   (
+    1,
     434,
     'Hutt River at Birchville',
     ST_GeomFromText ('POINT(175.09076014 -41.10017595)', 4326)
   ),
   (
+    2,
     454,
     'Hutt River at Kaitoke',
     ST_GeomFromText ('POINT(175.19123118 -41.05101129)', 4326)
   ),
   (
+    3,
     597,
     'Kopuaranga at Palmers Bridge',
     ST_GeomFromText ('POINT(175.67185573 -40.81893375)', 4326)
   ),
   (
+    4,
     706,
     'Mangaone Stream at Ratanui',
     ST_GeomFromText ('POINT(175.15669569 -40.82742334)', 4326)
   ),
   (
+    5,
     758,
     'Mangatarere River at Gorge',
     ST_GeomFromText ('POINT(175.51186713 -40.93499383)', 4326)
   ),
   (
+    6,
     978,
     'Orongorongo River at Truss Bridge',
     ST_GeomFromText ('POINT(175.0326634 -41.29704076)', 4326)
   ),
   (
+    7,
     1012,
     'Otaki River at Pukehinau',
     ST_GeomFromText ('POINT(175.19957526 -40.8220466)', 4326)
   ),
   (
+    8,
     1045,
     'Otukura Stream at Weir',
     ST_GeomFromText ('POINT(175.36738907 -41.18728715)', 4326)
   ),
   (
+    9,
     1093,
     'Papawai Stream at Fabians Road',
     ST_GeomFromText ('POINT(175.47431592 -41.09518572)', 4326)
   ),
   (
+    10,
     1136,
     'Parkvale Stream at Renalls Weir',
     ST_GeomFromText ('POINT(175.54166084 -41.07801993)', 4326)
   ),
   (
+    11,
     1518,
     'Ruamahanga River at Waihenga Bridge',
     ST_GeomFromText ('POINT(175.43999678 -41.19685836)', 4326)
   ),
   (
+    12,
     1521,
     'Ruamahanga River at Wardells',
     ST_GeomFromText ('POINT(175.67236373 -41.00481677)', 4326)
   ),
   (
+    13,
     2368,
     'Tauherenikau at Gorge',
     ST_GeomFromText ('POINT(175.35741926 -41.06814004)', 4326)
   ),
   (
+    14,
     2528,
     'Waikanae River at Water Treatment Plant',
     ST_GeomFromText ('POINT(175.07274447 -40.88809773)', 4326)
   ),
   (
+    15,
     2559,
     'Waingawa River at Kaituna',
     ST_GeomFromText ('POINT(175.5229277 -40.88669021)', 4326)
   ),
   (
+    16,
     2588,
     'Wainuiomata River at Leonard Wood Park',
     ST_GeomFromText ('POINT(174.94738309 -41.28400515)', 4326)
   ),
   (
+    17,
     2589,
     'Wainuiomata River at Manuka Track',
     ST_GeomFromText ('POINT(175.00892684 -41.25677265)', 4326)
   ),
   (
+    18,
     2609,
     'Waiohine River at Gorge',
     ST_GeomFromText ('POINT(175.40011859 -41.01636817)', 4326)
   ),
   (
+    19,
     2634,
     'Waipoua River at Mikimiki Bridge',
     ST_GeomFromText ('POINT(175.61744894 -40.84517651)', 4326)
   ),
   (
+    20,
     2666,
     'Waitohu Stream at Water Supply Intake',
     ST_GeomFromText ('POINT(175.21423898 -40.76666669)', 4326)
@@ -108,10 +128,11 @@ INSERT INTO
     plan_management_point_name,
     plan_minimum_flow_value,
     plan_minimum_flow_unit,
-    siteid_hilltop,
+    site_id,
     plan_table,
     plan_version,
-    hydro_id
+    hydro_id,
+    excluded_hydro_ids
   )
 VALUES
   (
@@ -119,210 +140,231 @@ VALUES
     'Mangatarere River at Gorge',
     240,
     'L/s',
-    758,
+    5,
     7.1,
     'final appeals version 2022',
-    257409
+    257409,
+    '{}'
   ),
   (
     'Between the confluence with the Waiohine River and the Belvedere Road bridge',
     'Mangatarere River at Gorge',
     200,
     'L/s',
-    758,
+    5,
     7.1,
     'final appeals version 2022',
-    257905
+    258982,
+    '{257409}'
   ),
   (
     'Kopuaranga River upstream of the confluence with the Ruamāhanga River',
     'Palmers',
     270,
     'L/s',
-    597,
+    3,
     7.1,
     'final appeals version 2022',
-    254602
+    254602,
+    '{}'
   ),
   (
     'Waipoua River upstream of the confluence with the Ruamāhanga River',
     'Mikimiki Bridge',
     250,
     'L/s',
-    2634,
+    19,
     7.1,
     'final appeals version 2022',
-    256291
+    256291,
+    '{}'
   ),
   (
     'Waingawa River upstream of the confluence with the Ruamāhanga River',
     'Kaituna',
     1100,
     'L/s',
-    2559,
+    15,
     7.1,
     'final appeals version 2022',
-    257578
+    257578,
+    '{256291, 254602}'
   ),
   (
     'Parkvale Stream upstream of the confluence with the Ruamāhanga River',
     'Renalls Weir recorder',
     100,
     'L/s',
-    1136,
+    10,
     7.1,
     'final appeals version 2022',
-    259497
+    259497,
+    '{}'
   ),
   (
     'Waiohine River upstream of the confluence with the Ruamāhanga River',
     'Gorge recorder',
     2300,
     'L/s',
-    2609,
+    18,
     7.1,
     'final appeals version 2022',
-    260015
+    260015,
+    '{258982}'
   ),
   (
     'Papawai Stream upstream of the confluence with the Ruamāhanga River',
     'Fabians Road recorder',
     180,
     'L/s',
-    1093,
+    9,
     7.1,
     'final appeals version 2022',
-    260343
+    260343,
+    '{}'
   ),
   (
     'Upper and Middle Ruamāhanga River upstream of the confluence with the Waiohine River',
     'Wardells ',
     2400,
     'L/s',
-    1521,
+    12,
     7.1,
     'final appeals version 2022',
-    259960
+    259960,
+    '{259497, 257578, 256291, 254602}'
   ),
   (
     'Otukura Stream upstream of the confluence with Dock/Stonestead Creek',
     'Weir recorder ',
     95,
     'L/s',
-    1045,
+    8,
     7.1,
     'final appeals version 2022',
-    262397
+    262397,
+    '{}'
   ),
   (
     'Tauherenikau River upstream of Lake Wairarapa',
     'Gorge recorder',
     1100,
     'L/s',
-    2368,
+    13,
     7.1,
     'final appeals version 2022',
-    261930
+    261930,
+    '{}'
   ),
   (
     'Lower Ruamāhanga River between the boundary with the coastal marine area and the Waiohine River confluence ',
     'Waihenga recorder',
     8500,
     'L/s',
-    1518,
+    11,
     7.1,
     'final appeals version 2022',
-    267143
+    267143,
+    '{260015, 261930, 262397, 260343, 258982, 259960}'
   ),
   (
     'Te Awa Kairangi/Hutt River Upstream of the confluence with the Pakuratahi River',
     'Kaitoke water supply intake',
     600,
     'L/s',
-    454,
+    2,
     8.1,
     'final appeals version 2022',
-    258639
+    258639,
+    '{}'
   ),
   (
     'Te Awa Kairangi/Hutt River Downstream of the confluence with the Pakuratahi River',
     'Birchville recorder ',
     1200,
     'L/s',
-    434,
+    1,
     8.1,
     'final appeals version 2022',
-    263323
+    263323,
+    '{258639}'
   ),
   (
     'Wainuiomata River Between Manuka Track and the confluence with Georges Creek ',
     'Manuka recorder',
     100,
     'L/s',
-    2589,
+    17,
     8.1,
     'final appeals version 2022',
-    264063
+    264063,
+    '{}'
   ),
   (
     'Wainuiomata River Between Georges Creek and the boundary of the coastal marine area',
     'Leonard Wood Park recorder',
     300,
     'L/s',
-    2588,
+    16,
     8.1,
     'final appeals version 2022',
-    267323
+    267323,
+    '{264063}'
   ),
   (
     'Orongorongo River upstream of the boundary with the coastal marine area',
     'Truss Bridge recorder',
     100,
     'L/s',
-    978,
+    6,
     8.1,
     'final appeals version 2022',
-    267384
+    267384,
+    '{}'
   ),
   (
     'Waitohu Stream upstream of the coastal marine area boundary',
     'KCDC Water Supply Intake recorder ',
     140,
     'L/s',
-    2666,
+    20,
     10.1,
     'final appeals version 2022',
-    249434
+    249434,
+    '{}'
   ),
   (
     'Ōtaki River upstream of the coastal marine area boundary',
     'Pukehinau recorder',
     2550,
     'L/s',
-    1012,
+    7,
     10.1,
     'final appeals version 2022',
-    250291
+    250291,
+    '{}'
   ),
   (
     'Mangaone Stream upstream of the coastal marine area boundary',
     'Ratanui recorder',
     22,
     'L/s',
-    706,
+    4,
     10.1,
     'final appeals version 2022',
-    251029
+    251029,
+    '{}'
   ),
   (
     'Waikanae River upstream of the coastal marine area boundary ',
     'WTP recorder',
     750,
     'L/s',
-    2528,
+    14,
     10.1,
     'final appeals version 2022',
-    253589
+    253589,
+    '{}'
   );
 
 INSERT INTO
@@ -341,7 +383,6 @@ INSERT INTO
     catchment_management_unit,
     plan_version,
     plan_table,
-    created_at,
     groundwaterzone_id
   )
 VALUES
@@ -355,12 +396,11 @@ VALUES
     NULL,
     NULL,
     480000,
-    'm 3 /year',
+    'm³/year',
     TRUE,
     'Upper Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     4
   ),
   (
@@ -373,12 +413,11 @@ VALUES
     NULL,
     NULL,
     1900000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Upper Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     1
   ),
   (
@@ -391,12 +430,11 @@ VALUES
     NULL,
     NULL,
     3550000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Upper Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     6
   ),
   (
@@ -409,12 +447,11 @@ VALUES
     NULL,
     NULL,
     1200000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     8
   ),
   (
@@ -427,12 +464,11 @@ VALUES
     NULL,
     NULL,
     1400000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     9
   ),
   (
@@ -445,12 +481,11 @@ VALUES
     NULL,
     NULL,
     350000,
-    'm 3 /year',
+    'm³/year',
     TRUE,
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     10
   ),
   (
@@ -463,12 +498,11 @@ VALUES
     NULL,
     NULL,
     1550000,
-    'm 3 /year',
+    'm³/year',
     TRUE,
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     10
   ),
   (
@@ -481,12 +515,11 @@ VALUES
     NULL,
     NULL,
     2300000,
-    'm 3 /year',
+    'm³/year',
     TRUE,
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     11
   ),
   (
@@ -499,12 +532,11 @@ VALUES
     NULL,
     NULL,
     6600000,
-    'm 3 /year',
+    'm³/year',
     TRUE,
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     15
   ),
   (
@@ -517,12 +549,11 @@ VALUES
     NULL,
     NULL,
     3300000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     17
   ),
   (
@@ -535,12 +566,11 @@ VALUES
     NULL,
     NULL,
     6750000,
-    'm 3 /year',
+    'm³/year',
     TRUE,
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     18
   ),
   (
@@ -553,12 +583,11 @@ VALUES
     NULL,
     NULL,
     650000,
-    'm 3 /year',
+    'm³/year',
     TRUE,
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     19
   ),
   (
@@ -571,12 +600,11 @@ VALUES
     NULL,
     NULL,
     800000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     21
   ),
   (
@@ -589,12 +617,11 @@ VALUES
     NULL,
     NULL,
     650000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     22
   ),
   (
@@ -607,12 +634,11 @@ VALUES
     NULL,
     NULL,
     2100000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.5,
-    '2022-12-10',
     23
   ),
   (
@@ -630,7 +656,6 @@ VALUES
     'Ruamāhanga River catchment above the Lake Wairarapa outflow',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     NULL
   ),
   (
@@ -648,7 +673,6 @@ VALUES
     'Upper Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     7
   ),
   (
@@ -666,7 +690,6 @@ VALUES
     'Upper Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     2
   ),
   (
@@ -684,7 +707,6 @@ VALUES
     'Upper Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     3
   ),
   (
@@ -702,7 +724,6 @@ VALUES
     'Upper Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     5
   ),
   (
@@ -720,7 +741,6 @@ VALUES
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     NULL
   ),
   (
@@ -738,7 +758,6 @@ VALUES
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     NULL
   ),
   (
@@ -756,7 +775,6 @@ VALUES
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     12
   ),
   (
@@ -774,7 +792,6 @@ VALUES
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     13
   ),
   (
@@ -792,7 +809,6 @@ VALUES
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     NULL
   ),
   (
@@ -810,7 +826,6 @@ VALUES
     'Middle Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     14
   ),
   (
@@ -828,7 +843,6 @@ VALUES
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     20
   ),
   (
@@ -846,7 +860,6 @@ VALUES
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.3,
-    '2022-12-10',
     24
   ),
   (
@@ -864,7 +877,6 @@ VALUES
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.4,
-    '2022-12-10',
     NULL
   ),
   (
@@ -882,7 +894,6 @@ VALUES
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.4,
-    '2022-12-10',
     NULL
   ),
   (
@@ -900,7 +911,6 @@ VALUES
     'Lower Ruamāhanga',
     'final appeals version 2022',
     7.4,
-    '2022-12-10',
     16
   ),
   (
@@ -918,7 +928,6 @@ VALUES
     'Te Awa Kairangi/Hutt River',
     'final appeals version 2022',
     8.2,
-    '2022-12-10',
     34
   ),
   (
@@ -936,7 +945,6 @@ VALUES
     'Wainuiomata River',
     'final appeals version 2022',
     8.2,
-    '2022-12-10',
     NULL
   ),
   (
@@ -954,7 +962,6 @@ VALUES
     'Orongorongo River',
     'final appeals version 2022',
     8.2,
-    '2022-12-10',
     NULL
   ),
   (
@@ -967,12 +974,11 @@ VALUES
     NULL,
     NULL,
     770000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Wellington Harbour and Hutt Valley Whaitua',
     'final appeals version 2022',
     8.3,
-    '2022-12-10',
     33
   ),
   (
@@ -985,12 +991,11 @@ VALUES
     NULL,
     NULL,
     36500000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Wellington Harbour and Hutt Valley Whaitua',
     'final appeals version 2022',
     8.3,
-    '2022-12-10',
     32
   ),
   (
@@ -1008,7 +1013,6 @@ VALUES
     'Waitohu Stream and tributaries',
     'final appeals version 2022',
     10.2,
-    '2022-12-10',
     27
   ),
   (
@@ -1026,7 +1030,6 @@ VALUES
     'Ōtaki',
     'final appeals version 2022',
     10.2,
-    '2022-12-10',
     25
   ),
   (
@@ -1044,7 +1047,6 @@ VALUES
     'Mangaone Stream and tributaries',
     'final appeals version 2022',
     10.2,
-    '2022-12-10',
     NULL
   ),
   (
@@ -1062,7 +1064,6 @@ VALUES
     'Waikanae River and tributaries',
     'final appeals version 2022',
     10.2,
-    '2022-12-10',
     31
   ),
   (
@@ -1075,12 +1076,11 @@ VALUES
     NULL,
     NULL,
     1229000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Raumati',
     'final appeals version 2022',
     10.3,
-    '2022-12-10',
     30
   ),
   (
@@ -1093,12 +1093,11 @@ VALUES
     NULL,
     NULL,
     2710000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Waikanae',
     'final appeals version 2022',
     10.3,
-    '2022-12-10',
     29
   ),
   (
@@ -1111,12 +1110,11 @@ VALUES
     NULL,
     NULL,
     1620000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Te Horo',
     'final appeals version 2022',
     10.3,
-    '2022-12-10',
     26
   ),
   (
@@ -1129,11 +1127,10 @@ VALUES
     NULL,
     NULL,
     1080000,
-    'm 3 /year',
+    'm³/year',
     FALSE,
     'Waitohu',
     'final appeals version 2022',
     10.3,
-    '2022-12-10',
     28
   );

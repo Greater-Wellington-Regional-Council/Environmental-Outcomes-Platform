@@ -6,7 +6,7 @@ import { ViewState } from 'react-map-gl';
 import { PinnedLocation, ViewLocation } from './locationString';
 import { GeoJSON } from 'geojson';
 import { MouseState } from './index';
-import { QueriesResults, UseQueryResult } from '@tanstack/react-query';
+import { UseQueryResult } from '@tanstack/react-query';
 
 export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
 
@@ -16,6 +16,7 @@ type Props = {
   initialPinnedLocation?: PinnedLocation;
   setCurrentPinnedLocation: (pinnedLocation?: PinnedLocation) => void;
   queries: [
+    UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
@@ -53,6 +54,7 @@ export default function Limitszz({
     surfaceWaterMgmtUnitDescription: null,
     surfaceWaterMgmtSubUnitId: 'NONE',
     surfaceWaterMgmtSubUnitDescription: null,
+    minimumFlowLimitId: null,
     flowRestrictionsLevel: null,
     flowRestrictionsManagementSiteName: null,
     flowRestrictionsManagementSiteId: '0',

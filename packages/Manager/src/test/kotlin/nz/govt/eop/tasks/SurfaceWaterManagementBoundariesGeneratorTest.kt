@@ -13,8 +13,10 @@ import org.springframework.test.context.jdbc.Sql
 
 @ActiveProfiles("test")
 @SpringBootTest
-@Sql("RecCatchmentGeneratorTest-data.sql")
-class RecCatchmentGeneratorTest(@Autowired val underTest: RecCatchmentGenerator) {
+@Sql("SurfaceWaterManagementBoundariesGeneratorTest-data.sql")
+class SurfaceWaterManagementBoundariesGeneratorTest(
+    @Autowired val underTest: SurfaceWaterManagementBoundariesGenerator
+) {
 
   companion object {
     @JvmStatic

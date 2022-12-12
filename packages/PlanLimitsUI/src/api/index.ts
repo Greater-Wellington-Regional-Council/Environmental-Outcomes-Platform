@@ -46,3 +46,9 @@ export const fetchFlowManagementSites = (): Promise<GeoJSON> =>
   fetch(`${apiBasePath}/layers/flow_management_sites`, defaultRequestInit).then(
     (result) => result.json()
   );
+
+export const fetchMinimumFlowLimitBoundaries = (): Promise<GeoJSON> =>
+  fetch(
+    `${apiBasePath}/layers/minimum_flow_limit_boundaries`,
+    defaultRequestInit
+  ).then((result) => result.json());
