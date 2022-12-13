@@ -19,6 +19,7 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import {
   fetchCouncilsGeoJson,
   fetchFlowManagementSites,
+  fetchGroundwaterZoneBoundaries,
   fetchMinimumFlowLimitBoundaries,
   fetchRiversGeoJson,
   fetchSurfaceWaterManagementSubUnitsGeoJson,
@@ -126,6 +127,10 @@ export default function Limits() {
       {
         queryKey: ['minimum_flow_limit_boundaries'],
         queryFn: fetchMinimumFlowLimitBoundaries,
+      },
+      {
+        queryKey: ['groundwater_zone_boundaries'],
+        queryFn: fetchGroundwaterZoneBoundaries,
       },
     ],
   });

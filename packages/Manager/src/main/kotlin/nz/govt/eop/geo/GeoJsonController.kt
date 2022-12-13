@@ -4,6 +4,8 @@ import java.util.concurrent.TimeUnit
 import nz.govt.eop.si.jooq.ManagementUnitType
 import nz.govt.eop.si.jooq.tables.AllocationAmounts.Companion.ALLOCATION_AMOUNTS
 import nz.govt.eop.si.jooq.tables.CouncilBoundaries.Companion.COUNCIL_BOUNDARIES
+import nz.govt.eop.si.jooq.tables.GroundwaterZones
+import nz.govt.eop.si.jooq.tables.GroundwaterZones.Companion.GROUNDWATER_ZONES
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimitBoundaries.Companion.MINIMUM_FLOW_LIMIT_BOUNDARIES
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimits.Companion.MINIMUM_FLOW_LIMITS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
@@ -143,6 +145,22 @@ class GeoJsonController(val context: DSLContext) {
             .from(MINIMUM_FLOW_LIMIT_BOUNDARIES)
             .join(MINIMUM_FLOW_LIMITS)
             .on(MINIMUM_FLOW_LIMITS.ID.eq(MINIMUM_FLOW_LIMIT_BOUNDARIES.ID))
+
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        .body(buildFeatureCollection(context, innerQuery))
+  }
+
+  @RequestMapping(
+      "/layers/groundwater_zone_boundaries", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun getGroundwaterZoneBoundaries(): ResponseEntity<String> {
+    val innerQuery =
+        select(
+                GROUNDWATER_ZONES.ID.`as`("id"),
+                GROUNDWATER_ZONES.GEOM.`as`("geometry"),
+            )
+            .from(GROUNDWATER_ZONES);
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))

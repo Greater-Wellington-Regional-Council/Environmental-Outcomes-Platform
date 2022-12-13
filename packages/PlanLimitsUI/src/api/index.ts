@@ -52,3 +52,9 @@ export const fetchMinimumFlowLimitBoundaries = (): Promise<GeoJSON> =>
     `${apiBasePath}/layers/minimum_flow_limit_boundaries`,
     defaultRequestInit
   ).then((result) => result.json());
+
+export const fetchGroundwaterZoneBoundaries = (): Promise<GeoJSON> =>
+  fetch(
+    `${apiBasePath}/layers/groundwater_zone_boundaries`,
+    defaultRequestInit
+  ).then((result) => result.json());

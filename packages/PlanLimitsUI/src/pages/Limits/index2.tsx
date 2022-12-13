@@ -22,6 +22,7 @@ type Props = {
     UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
+    UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>
   ];
 };

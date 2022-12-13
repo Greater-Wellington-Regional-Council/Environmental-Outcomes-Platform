@@ -10,8 +10,6 @@ import Map, {
   ViewState,
 } from 'react-map-gl';
 
-import { groundWater } from '../../mock-data/ground-water';
-
 import 'maplibre-gl/dist/maplibre-gl.css';
 import LayerControl from '../../components/map/LayerControl';
 import { MouseState } from './index';
@@ -45,6 +43,7 @@ export default function LimitsMap({
   setCurrentPinnedLocation: (value?: PinnedLocation) => void;
   waterTakeFilter: WaterTakeFilter;
   queries: [
+    UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
     UseQueryResult<GeoJSON>,
@@ -86,8 +85,6 @@ export default function LimitsMap({
           layer: string
         ) => features.find((feat) => feat.layer.id === layer)?.id as string;
 
-        console.log(result);
-
         const council = findFeature(result, 'councils', 'name');
         const whaitua = findFeature(result, 'whaitua', 'name');
         const whaituaId = findFeatureId(result, 'whaitua');
@@ -111,8 +108,7 @@ export default function LimitsMap({
         const gw00 = findFeature(result, 'groundWater', 'category00');
         const gw20 = findFeature(result, 'groundWater', 'category20');
         const gw30 = findFeature(result, 'groundWater', 'category30');
-        const groundWaterId =
-          findFeature(result, 'groundWater', 'OBJECTID') || 'NONE';
+        const groundWaterId = findFeatureId(result, 'groundWater');
         const groundWaterZone = findFeature(result, 'groundWater', 'Zone');
         const site = findFeature(result, 'flowSites', 'Name');
 
@@ -208,6 +204,7 @@ export default function LimitsMap({
     surfaceWaterMgmtSubUnitsGeoJson,
     flowManagementSitesGeoJson,
     minimumFlowLimitBoundariesGeoJson,
+    groundwaterZoneBoundariesGeoJson,
   ] = queries;
 
   return (
@@ -311,27 +308,33 @@ export default function LimitsMap({
           </Source>
         )}
 
-        <Source id="groundWaterGeoJson" type="geojson" data={groundWater}>
-          <Layer
-            id="groundWater"
-            type="fill"
-            paint={{
-              'fill-opacity': 0,
-            }}
-          />
-          {['Ground', 'Combined'].includes(waterTakeFilter) && (
+        {groundwaterZoneBoundariesGeoJson.data && (
+          <Source
+            id="groundWaterGeoJson"
+            type="geojson"
+            data={groundwaterZoneBoundariesGeoJson.data}
+          >
             <Layer
-              id="groundWater-highlight"
+              id="groundWater"
               type="fill"
-              filter={['in', 'OBJECTID', mouseState.groundWaterId]}
               paint={{
-                'fill-outline-color': '#484896',
-                'fill-color': '#33ff99',
-                'fill-opacity': 0.5,
+                'fill-opacity': 0,
               }}
             />
-          )}
-        </Source>
+            {['Ground', 'Combined'].includes(waterTakeFilter) && (
+              <Layer
+                id="groundWater-highlight"
+                type="fill"
+                filter={['==', ['id'], mouseState.groundWaterId]}
+                paint={{
+                  'fill-outline-color': '#484896',
+                  'fill-color': '#33ff99',
+                  'fill-opacity': 0.5,
+                }}
+              />
+            )}
+          </Source>
+        )}
 
         {surfaceWaterMgmtUnitsGeoJson.data && (
           <Source
