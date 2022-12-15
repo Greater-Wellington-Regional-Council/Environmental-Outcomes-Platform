@@ -4,7 +4,7 @@ import Button from '../Button';
 
 const LOCAL_STORAGE_KEY = 'disclaimer-agreed';
 
-export default function Disclosure() {
+export default function Disclaimer() {
   let [isOpen, setIsOpen] = useState(
     () => !Boolean(window.localStorage.getItem(LOCAL_STORAGE_KEY))
   );

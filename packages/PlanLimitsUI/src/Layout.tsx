@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
-import Disclosure from './components/Disclosure';
+import Disclaimer from './components/Disclaimer';
 
 export default function Layout() {
   return (
     <>
-      <Disclosure />
+      <Disclaimer />
       <div className="flex flex-1 items-stretch overflow-hidden">
         <Outlet />
       </div>
