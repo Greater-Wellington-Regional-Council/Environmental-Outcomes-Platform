@@ -13,25 +13,19 @@ import {
   PinnedLocation,
   ViewLocation,
 } from './locationString';
-import Limitszz from './index2';
 import { useDebounce } from 'usehooks-ts';
-import { useQueries, UseQueryResult } from '@tanstack/react-query';
-import {
-  fetchCouncilsGeoJson,
-  fetchFlowManagementSites,
-  fetchGroundwaterZoneBoundaries,
-  fetchMinimumFlowLimitBoundaries,
-  fetchRiversGeoJson,
-  fetchSurfaceWaterManagementSubUnitsGeoJson,
-  fetchSurfaceWaterManagementUnitsGeoJson,
-  fetchWhaituaGeoJson,
-} from '../../api';
+import { useGeoJsonQueries } from '../../api';
+import { ViewState } from 'react-map-gl';
+import Map from './map';
+import Sidebar from './sidebar';
 
 export const defaultViewLocation = {
   latitude: -41,
   longitude: 175.35,
   zoom: 8,
 };
+
+export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
 
 export type MouseState = {
   position: {
@@ -55,21 +49,6 @@ export type MouseState = {
   flowRestrictionsManagementSiteId?: string | null;
   allocationLimit?: string | null;
 };
-
-export type GeoJsonQueries = [
-  UseQueryResult<Awaited<ReturnType<typeof fetchCouncilsGeoJson>>>,
-  UseQueryResult<Awaited<ReturnType<typeof fetchWhaituaGeoJson>>>,
-  UseQueryResult<Awaited<ReturnType<typeof fetchRiversGeoJson>>>,
-  UseQueryResult<
-    Awaited<ReturnType<typeof fetchSurfaceWaterManagementUnitsGeoJson>>
-  >,
-  UseQueryResult<
-    Awaited<ReturnType<typeof fetchSurfaceWaterManagementSubUnitsGeoJson>>
-  >,
-  UseQueryResult<Awaited<ReturnType<typeof fetchFlowManagementSites>>>,
-  UseQueryResult<Awaited<ReturnType<typeof fetchMinimumFlowLimitBoundaries>>>,
-  UseQueryResult<Awaited<ReturnType<typeof fetchGroundwaterZoneBoundaries>>>
-];
 
 export const loader: LoaderFunction = ({ params, request }) => {
   const url = new URL(request.url);
@@ -111,50 +90,69 @@ export default function Limits() {
     }
   }, [debouncedValue, pinnedLocation]);
 
-  const geoJsonQueries: GeoJsonQueries = useQueries({
-    queries: [
-      {
-        queryKey: ['councils'],
-        queryFn: fetchCouncilsGeoJson,
-      },
-      {
-        queryKey: ['whaitua'],
-        queryFn: fetchWhaituaGeoJson,
-      },
-      {
-        queryKey: ['rivers'],
-        queryFn: fetchRiversGeoJson,
-      },
-      {
-        queryKey: ['surface_water_management_units'],
-        queryFn: fetchSurfaceWaterManagementUnitsGeoJson,
-      },
-      {
-        queryKey: ['surface_water_management_sub_units'],
-        queryFn: fetchSurfaceWaterManagementSubUnitsGeoJson,
-      },
-      {
-        queryKey: ['flow_management_sites'],
-        queryFn: fetchFlowManagementSites,
-      },
-      {
-        queryKey: ['minimum_flow_limit_boundaries'],
-        queryFn: fetchMinimumFlowLimitBoundaries,
-      },
-      {
-        queryKey: ['groundwater_zone_boundaries'],
-        queryFn: fetchGroundwaterZoneBoundaries,
-      },
-    ],
+  const geoJsonQueries = useGeoJsonQueries();
+
+  const [waterTakeFilter, setWaterTakeFilter] =
+    React.useState<WaterTakeFilter>('Combined');
+
+  const [mouseState, setMouseState] = React.useState<MouseState>({
+    position: {
+      lng: 0,
+      lat: 0,
+    },
+    council: null,
+    whaituaId: 'NONE',
+    groundWaterId: 'NONE',
+    groundWaterZones: [],
+    surfaceWaterMgmtUnitId: 'NONE',
+    surfaceWaterMgmtSubUnitId: 'NONE',
+    minimumFlowLimitId: 'NONE',
+    flowRestrictionsManagementSiteId: 'NONE',
+
+    whaitua: null,
+    site: null,
+    surfaceWaterMgmtUnitDescription: null,
+    surfaceWaterMgmtSubUnitDescription: null,
+    flowRestrictionsLevel: null,
+    flowRestrictionsManagementSiteName: null,
+    allocationLimit: null,
   });
 
+  const [viewState, storeViewState] = useState<ViewState>({
+    ...initialViewLocation,
+    bearing: 0,
+    pitch: 30,
+    padding: {
+      left: 0,
+      top: 0,
+      bottom: 0,
+      right: 0,
+    },
+  });
+
+  const setViewState = (value: ViewState) => {
+    setCurrentViewLocation(value);
+    storeViewState(value);
+  };
+
   return (
-    <Limitszz
-      initialLocation={initialViewLocation}
-      setCurrentViewLocation={setCurrentViewLocation}
-      initialPinnedLocation={initialPinnedLocation}
-      setCurrentPinnedLocation={setPinnedLocation}
-      queries={geoJsonQueries}
-    />
+    <>
+      <Map
+        mouseState={mouseState}
+        setMouseState={setMouseState}
+        viewState={viewState}
+        setViewState={setViewState}
+        initialPinnedLocation={initialPinnedLocation}
+        setCurrentPinnedLocation={setPinnedLocation}
+        waterTakeFilter={waterTakeFilter}
+        queries={geoJsonQueries}
+      />
+      <Sidebar
+        mouseState={mouseState}
+        waterTakeFilter={waterTakeFilter}
+        setWaterTakeFilter={setWaterTakeFilter}
+        queries={geoJsonQueries}
+      />
+    </>
   );
 }

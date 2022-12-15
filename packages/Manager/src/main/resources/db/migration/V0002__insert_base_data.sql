@@ -1134,15 +1134,3 @@ VALUES
     10.3,
     28
   );
-
-INSERT INTO
-  groundwater_zone_allocations (
-    groundwater_zone_id,
-    surface_water_allocation_id,
-    groundwater_allocation_id
-  )
-VALUES
-  ('2', 23, 8),
-  ('7', 23, 8),
-  ('16', 23, 8),
-  ('21', 23, 8);

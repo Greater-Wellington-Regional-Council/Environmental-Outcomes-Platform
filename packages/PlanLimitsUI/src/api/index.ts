@@ -1,4 +1,5 @@
 import { FeatureCollection, Geometry } from 'geojson';
+import { useQueries, UseQueryResult } from '@tanstack/react-query';
 
 const determineBackendUri = (hostname: string) => {
   switch (hostname) {
@@ -70,3 +71,56 @@ export const fetchGroundwaterZoneBoundaries = (): Promise<
     `${apiBasePath}/layers/groundwater_zone_boundaries`,
     defaultRequestInit
   ).then((result) => result.json());
+
+export type GeoJsonQueries = [
+  UseQueryResult<Awaited<ReturnType<typeof fetchCouncilsGeoJson>>>,
+  UseQueryResult<Awaited<ReturnType<typeof fetchWhaituaGeoJson>>>,
+  UseQueryResult<Awaited<ReturnType<typeof fetchRiversGeoJson>>>,
+  UseQueryResult<
+    Awaited<ReturnType<typeof fetchSurfaceWaterManagementUnitsGeoJson>>
+  >,
+  UseQueryResult<
+    Awaited<ReturnType<typeof fetchSurfaceWaterManagementSubUnitsGeoJson>>
+  >,
+  UseQueryResult<Awaited<ReturnType<typeof fetchFlowManagementSites>>>,
+  UseQueryResult<Awaited<ReturnType<typeof fetchMinimumFlowLimitBoundaries>>>,
+  UseQueryResult<Awaited<ReturnType<typeof fetchGroundwaterZoneBoundaries>>>
+];
+
+export const useGeoJsonQueries = (): GeoJsonQueries =>
+  useQueries({
+    queries: [
+      {
+        queryKey: ['councils'],
+        queryFn: fetchCouncilsGeoJson,
+      },
+      {
+        queryKey: ['whaitua'],
+        queryFn: fetchWhaituaGeoJson,
+      },
+      {
+        queryKey: ['rivers'],
+        queryFn: fetchRiversGeoJson,
+      },
+      {
+        queryKey: ['surface_water_management_units'],
+        queryFn: fetchSurfaceWaterManagementUnitsGeoJson,
+      },
+      {
+        queryKey: ['surface_water_management_sub_units'],
+        queryFn: fetchSurfaceWaterManagementSubUnitsGeoJson,
+      },
+      {
+        queryKey: ['flow_management_sites'],
+        queryFn: fetchFlowManagementSites,
+      },
+      {
+        queryKey: ['minimum_flow_limit_boundaries'],
+        queryFn: fetchMinimumFlowLimitBoundaries,
+      },
+      {
+        queryKey: ['groundwater_zone_boundaries'],
+        queryFn: fetchGroundwaterZoneBoundaries,
+      },
+    ],
+  });

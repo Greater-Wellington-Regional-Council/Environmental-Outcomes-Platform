@@ -182,14 +182,3 @@ CREATE TABLE
 
 CREATE INDEX
   ON raw_rec_rivers_names (ingested_at DESC);
-
-CREATE TABLE
-  groundwater_zone_allocations (
-    groundwater_zone_id VARCHAR NULL,
-    surface_water_allocation_id INTEGER NOT NULL,
-    groundwater_allocation_id INTEGER NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (groundwater_zone_id),
-    FOREIGN KEY (surface_water_allocation_id) REFERENCES allocation_amounts (id),
-    FOREIGN KEY (groundwater_allocation_id) REFERENCES allocation_amounts (id)
-  )

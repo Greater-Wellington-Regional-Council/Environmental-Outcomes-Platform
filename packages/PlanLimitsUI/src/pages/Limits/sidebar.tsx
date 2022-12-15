@@ -1,8 +1,8 @@
 import React from 'react';
-import { GeoJsonQueries, MouseState } from './index';
+import { MouseState, WaterTakeFilter } from './index';
 import Button from '../../components/Button';
-import { WaterTakeFilter } from './index2';
 import GroundwaterLimits from './GroundwaterLimits';
+import { GeoJsonQueries } from '../../api';
 
 const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   <div className="col-span-2">

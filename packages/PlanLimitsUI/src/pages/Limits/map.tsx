@@ -12,13 +12,13 @@ import Map, {
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import LayerControl from '../../components/map/LayerControl';
-import { GeoJsonQueries, MouseState } from './index';
+import { MouseState, WaterTakeFilter } from './index';
 import mapboxgl from 'mapbox-gl';
 import { PinnedLocation } from './locationString';
 import Button from '../../components/Button';
-import { WaterTakeFilter } from './index2';
 
 import marker from '../../images/marker_flow.svg';
+import { GeoJsonQueries } from '../../api';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 

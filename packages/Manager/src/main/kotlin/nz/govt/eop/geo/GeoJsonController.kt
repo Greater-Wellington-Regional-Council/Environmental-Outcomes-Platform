@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit
 import nz.govt.eop.si.jooq.ManagementUnitType
 import nz.govt.eop.si.jooq.tables.AllocationAmounts.Companion.ALLOCATION_AMOUNTS
 import nz.govt.eop.si.jooq.tables.CouncilBoundaries.Companion.COUNCIL_BOUNDARIES
-import nz.govt.eop.si.jooq.tables.GroundwaterZoneAllocations.Companion.GROUNDWATER_ZONE_ALLOCATIONS
 import nz.govt.eop.si.jooq.tables.GroundwaterZones.Companion.GROUNDWATER_ZONES
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimitBoundaries.Companion.MINIMUM_FLOW_LIMIT_BOUNDARIES
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimits.Companion.MINIMUM_FLOW_LIMITS
@@ -172,16 +171,14 @@ class GeoJsonController(val context: DSLContext) {
                 allocationAmountsGroundwater.ALLOCATION_AMOUNT_UNIT.`as`("groundwater_allocation_amount_unit"),
             )
             .from(GROUNDWATER_ZONES)
-            .join(GROUNDWATER_ZONE_ALLOCATIONS)
-            .on(GROUNDWATER_ZONE_ALLOCATIONS.GROUNDWATER_ZONE_ID.eq(GROUNDWATER_ZONES.ID))
-            .join(allocationAmountsSurfaceWater)
-            .on(
-                allocationAmountsSurfaceWater.ID.eq(
-                    GROUNDWATER_ZONE_ALLOCATIONS.SURFACE_WATER_ALLOCATION_ID))
             .join(allocationAmountsGroundwater)
             .on(
-                allocationAmountsGroundwater.ID.eq(
-                    GROUNDWATER_ZONE_ALLOCATIONS.GROUNDWATER_ALLOCATION_ID))
+                GROUNDWATER_ZONES.ALLOCATION_AMOUNT_ID.eq(
+                    allocationAmountsGroundwater.GROUNDWATERZONE_ID))
+            .join(allocationAmountsSurfaceWater)
+            .on(
+                allocationAmountsGroundwater.PARENT_SURFACEWATERSUBUNIT_ID.eq(
+                    allocationAmountsSurfaceWater.ID))
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
@@ -214,6 +211,7 @@ class GeoJsonController(val context: DSLContext) {
             field("geometry"),
             inline("properties"),
             field("to_jsonb(inputs) - 'id' - 'geometry'"))
+
 
     val result =
         dslContext
