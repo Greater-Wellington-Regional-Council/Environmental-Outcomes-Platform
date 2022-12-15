@@ -2,8 +2,17 @@ import { useState } from 'react';
 import { Dialog } from '@headlessui/react';
 import Button from '../Button';
 
+const LOCAL_STORAGE_KEY = 'disclaimer-agreed';
+
 export default function Disclosure() {
-  let [isOpen, setIsOpen] = useState(true);
+  let [isOpen, setIsOpen] = useState(
+    () => !Boolean(window.localStorage.getItem(LOCAL_STORAGE_KEY))
+  );
+
+  function handleAgree() {
+    localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
+    setIsOpen(false);
+  }
 
   return (
     <Dialog
@@ -71,10 +80,7 @@ export default function Disclosure() {
             </ol>
           </div>
           <div className="flex justify-end">
-            <Button
-              onClick={() => setIsOpen(false)}
-              text={'Agree and continue'}
-            ></Button>
+            <Button onClick={handleAgree} text={'Agree and continue'}></Button>
           </div>
         </Dialog.Panel>
       </div>
