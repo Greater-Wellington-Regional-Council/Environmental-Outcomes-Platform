@@ -1,8 +1,10 @@
 import { Outlet } from 'react-router-dom';
+import Disclosure from './components/Disclosure';
 
 export default function Layout() {
   return (
     <>
+      <Disclosure />
       <div className="flex flex-1 items-stretch overflow-hidden">
         <Outlet />
       </div>
