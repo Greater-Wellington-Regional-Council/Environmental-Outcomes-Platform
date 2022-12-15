@@ -8,8 +8,8 @@ export default function Disclosure() {
   return (
     <Dialog
       open={isOpen}
-      // onClose is a required prop of Dialog, but we don't want to take any
-      // action, so make it a no-op
+      // onClose is a required prop of Dialog to handle a user pressing escape or
+      // clicking outside the dialog. We don't want to take any, so it's no-op.
       onClose={() => {}}
       className="relative z-50"
     >
@@ -22,8 +22,7 @@ export default function Disclosure() {
           <Dialog.Title className="text-xl mb-4">
             Greater Wellington Freshwater Plan Limits Viewer
           </Dialog.Title>
-
-          <p className="mb-2 uppercase">Conditions of use</p>
+          <h3 className="mb-2 uppercase">Conditions of use</h3>
           <p className="mb-4">
             Your use of this website is subject to the following conditions and
             all applicable laws. By accessing and browsing this website you
@@ -67,7 +66,7 @@ export default function Disclosure() {
               <li className="mb-2 text-sm">
                 Your use of this website and the terms shall be governed by the
                 laws of New Zealand without reference to principles of conflict
-                laws
+                laws.
               </li>
             </ol>
           </div>
