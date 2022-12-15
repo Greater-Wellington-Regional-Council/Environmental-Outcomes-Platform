@@ -165,10 +165,14 @@ class GeoJsonController(val context: DSLContext) {
                 GROUNDWATER_ZONES.NAME,
                 GROUNDWATER_ZONES.DEPTH,
                 GROUNDWATER_ZONES.CATEGORY,
-                allocationAmountsSurfaceWater.ALLOCATION_AMOUNT.`as`("surface_water_allocation_amount"),
-                allocationAmountsSurfaceWater.ALLOCATION_AMOUNT_UNIT.`as`("surface_water_allocation_amount_unit"),
-                allocationAmountsGroundwater.ALLOCATION_AMOUNT.`as`("groundwater_allocation_amount"),
-                allocationAmountsGroundwater.ALLOCATION_AMOUNT_UNIT.`as`("groundwater_allocation_amount_unit"),
+                allocationAmountsSurfaceWater.ALLOCATION_AMOUNT.`as`(
+                    "surface_water_allocation_amount"),
+                allocationAmountsSurfaceWater.ALLOCATION_AMOUNT_UNIT.`as`(
+                    "surface_water_allocation_amount_unit"),
+                allocationAmountsGroundwater.ALLOCATION_AMOUNT.`as`(
+                    "groundwater_allocation_amount"),
+                allocationAmountsGroundwater.ALLOCATION_AMOUNT_UNIT.`as`(
+                    "groundwater_allocation_amount_unit"),
             )
             .from(GROUNDWATER_ZONES)
             .join(allocationAmountsGroundwater)
@@ -211,7 +215,6 @@ class GeoJsonController(val context: DSLContext) {
             field("geometry"),
             inline("properties"),
             field("to_jsonb(inputs) - 'id' - 'geometry'"))
-
 
     val result =
         dslContext
