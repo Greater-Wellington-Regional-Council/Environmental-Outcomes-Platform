@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { ViewState } from 'react-map-gl';
 
 import { PinnedLocation, ViewLocation } from './locationString';
-import { GeoJSON } from 'geojson';
-import { MouseState } from './index';
+import { FeatureCollection, GeoJSON } from 'geojson';
+import { GeoJsonQueries, MouseState } from './index';
 import { UseQueryResult } from '@tanstack/react-query';
 
 export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
@@ -15,16 +15,7 @@ type Props = {
   setCurrentViewLocation: (viewLocation: ViewLocation) => void;
   initialPinnedLocation?: PinnedLocation;
   setCurrentPinnedLocation: (pinnedLocation?: PinnedLocation) => void;
-  queries: [
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>
-  ];
+  queries: GeoJsonQueries;
 };
 
 export default function Limitszz({
@@ -45,20 +36,17 @@ export default function Limitszz({
     council: null,
     whaitua: null,
     whaituaId: 'NONE',
-    gw00: null,
-    gw20: null,
-    gw30: null,
-    groundWaterZone: null,
     groundWaterId: 'NONE',
+    groundWaterZones: [],
     site: null,
     surfaceWaterMgmtUnitId: 'NONE',
     surfaceWaterMgmtUnitDescription: null,
     surfaceWaterMgmtSubUnitId: 'NONE',
     surfaceWaterMgmtSubUnitDescription: null,
-    minimumFlowLimitId: null,
+    minimumFlowLimitId: 'NONE',
     flowRestrictionsLevel: null,
     flowRestrictionsManagementSiteName: null,
-    flowRestrictionsManagementSiteId: '0',
+    flowRestrictionsManagementSiteId: 'NONE',
     allocationLimit: null,
   });
 
@@ -95,6 +83,7 @@ export default function Limitszz({
         mouseState={mouseState}
         waterTakeFilter={waterTakeFilter}
         setWaterTakeFilter={setWaterTakeFilter}
+        queries={queries}
       />
     </>
   );

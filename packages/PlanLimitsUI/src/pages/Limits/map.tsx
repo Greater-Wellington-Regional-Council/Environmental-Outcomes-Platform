@@ -12,16 +12,13 @@ import Map, {
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import LayerControl from '../../components/map/LayerControl';
-import { MouseState } from './index';
+import { GeoJsonQueries, MouseState } from './index';
 import mapboxgl from 'mapbox-gl';
 import { PinnedLocation } from './locationString';
 import Button from '../../components/Button';
 import { WaterTakeFilter } from './index2';
 
 import marker from '../../images/marker_flow.svg';
-
-import { GeoJSON } from 'geojson';
-import { UseQueryResult } from '@tanstack/react-query';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 
@@ -42,16 +39,7 @@ export default function LimitsMap({
   initialPinnedLocation?: PinnedLocation;
   setCurrentPinnedLocation: (value?: PinnedLocation) => void;
   waterTakeFilter: WaterTakeFilter;
-  queries: [
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>,
-    UseQueryResult<GeoJSON>
-  ];
+  queries: GeoJsonQueries;
 }) {
   const [mapRenderCount, setMapRenderCount] = React.useState(0);
   const [showImagery, setShowImagery] = React.useState(false);
@@ -64,6 +52,7 @@ export default function LimitsMap({
     PinnedLocation | undefined
   >(initialPinnedLocation);
 
+  // TODO simplify me
   const changesCallback = React.useCallback(
     (map: MapRef | null) => {
       if (highlightLocation && map) {
@@ -87,7 +76,7 @@ export default function LimitsMap({
 
         const council = findFeature(result, 'councils', 'name');
         const whaitua = findFeature(result, 'whaitua', 'name');
-        const whaituaId = findFeatureId(result, 'whaitua');
+        const whaituaId = findFeatureId(result, 'whaitua') || 'NONE';
 
         const surfaceWaterMgmtUnitId =
           findFeatureId(result, 'surfaceWaterMgmtUnits') || 'NONE';
@@ -105,22 +94,20 @@ export default function LimitsMap({
           'name'
         );
 
-        const gw00 = findFeature(result, 'groundWater', 'category00');
-        const gw20 = findFeature(result, 'groundWater', 'category20');
-        const gw30 = findFeature(result, 'groundWater', 'category30');
-        const groundWaterId = findFeatureId(result, 'groundWater');
-        const groundWaterZone = findFeature(result, 'groundWater', 'Zone');
+        const groundWaterId = findFeatureId(result, 'groundWater') || 'NONE';
+        const groundWaterZoneName = findFeature(result, 'groundWater', 'name');
+        const groundWaterZones = result
+          .filter((value) => value.layer.id === 'groundWater')
+          .map((item) => item.id as number);
+
         const site = findFeature(result, 'flowSites', 'Name');
 
-        const minimumFlowLimitId = findFeatureId(
-          result,
-          'minimumFlowLimitBoundaries'
-        );
-        const flowRestrictionsManagementSiteId = findFeature(
-          result,
-          'minimumFlowLimitBoundaries',
-          'site_id'
-        );
+        const minimumFlowLimitId =
+          findFeatureId(result, 'minimumFlowLimitBoundaries') || 'NONE';
+
+        const flowRestrictionsManagementSiteId =
+          findFeature(result, 'minimumFlowLimitBoundaries', 'site_id') ||
+          'NONE';
         const flowRestrictionsManagementSiteName = findFeature(
           result,
           'minimumFlowLimitBoundaries',
@@ -167,11 +154,9 @@ export default function LimitsMap({
           council,
           whaitua,
           whaituaId,
-          gw00,
-          gw20,
-          gw30,
           groundWaterId,
-          groundWaterZone,
+          groundWaterZoneName,
+          groundWaterZones,
           site,
           surfaceWaterMgmtUnitId,
           surfaceWaterMgmtUnitDescription,

@@ -1,4 +1,4 @@
-import { GeoJSON } from 'geojson';
+import { FeatureCollection, Geometry } from 'geojson';
 
 const determineBackendUri = (hostname: string) => {
   switch (hostname) {
@@ -15,45 +15,57 @@ const defaultRequestInit: RequestInit = {
 
 const apiBasePath = determineBackendUri(window.location.hostname);
 
-export const fetchCouncilsGeoJson = (): Promise<GeoJSON> =>
+export const fetchCouncilsGeoJson = (): Promise<FeatureCollection> =>
   fetch(`${apiBasePath}/layers/councils`, defaultRequestInit).then((result) =>
     result.json()
   );
 
-export const fetchWhaituaGeoJson = (): Promise<GeoJSON> =>
+export const fetchWhaituaGeoJson = (): Promise<FeatureCollection> =>
   fetch(`${apiBasePath}/layers/whaitua`, defaultRequestInit).then((result) =>
     result.json()
   );
 
-export const fetchRiversGeoJson = (): Promise<GeoJSON> =>
+export const fetchRiversGeoJson = (): Promise<FeatureCollection> =>
   fetch(`${apiBasePath}/layers/rivers`, defaultRequestInit).then((result) =>
     result.json()
   );
 
-export const fetchSurfaceWaterManagementUnitsGeoJson = (): Promise<GeoJSON> =>
-  fetch(`${apiBasePath}/layers/surface_water_mgmt`, defaultRequestInit).then(
-    (result) => result.json()
-  );
+export const fetchSurfaceWaterManagementUnitsGeoJson =
+  (): Promise<FeatureCollection> =>
+    fetch(`${apiBasePath}/layers/surface_water_mgmt`, defaultRequestInit).then(
+      (result) => result.json()
+    );
 
 export const fetchSurfaceWaterManagementSubUnitsGeoJson =
-  (): Promise<GeoJSON> =>
+  (): Promise<FeatureCollection> =>
     fetch(
       `${apiBasePath}/layers/surface_water_mgmt_sub`,
       defaultRequestInit
     ).then((result) => result.json());
 
-export const fetchFlowManagementSites = (): Promise<GeoJSON> =>
+export const fetchFlowManagementSites = (): Promise<FeatureCollection> =>
   fetch(`${apiBasePath}/layers/flow_management_sites`, defaultRequestInit).then(
     (result) => result.json()
   );
 
-export const fetchMinimumFlowLimitBoundaries = (): Promise<GeoJSON> =>
+export const fetchMinimumFlowLimitBoundaries = (): Promise<FeatureCollection> =>
   fetch(
     `${apiBasePath}/layers/minimum_flow_limit_boundaries`,
     defaultRequestInit
   ).then((result) => result.json());
 
-export const fetchGroundwaterZoneBoundaries = (): Promise<GeoJSON> =>
+export type GroundwaterZoneBoundariesProperties = {
+  category: 'Category A' | 'Category B' | 'Category C';
+  depth: string;
+  surface_water_allocation_amount: string;
+  surface_water_allocation_amount_unit: string;
+  groundwater_allocation_amount: string;
+  groundwater_allocation_amount_unit: string;
+};
+
+export const fetchGroundwaterZoneBoundaries = (): Promise<
+  FeatureCollection<Geometry, GroundwaterZoneBoundariesProperties>
+> =>
   fetch(
     `${apiBasePath}/layers/groundwater_zone_boundaries`,
     defaultRequestInit

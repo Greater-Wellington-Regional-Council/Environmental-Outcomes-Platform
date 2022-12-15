@@ -15,7 +15,7 @@ import {
 } from './locationString';
 import Limitszz from './index2';
 import { useDebounce } from 'usehooks-ts';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQueries, UseQueryResult } from '@tanstack/react-query';
 import {
   fetchCouncilsGeoJson,
   fetchFlowManagementSites,
@@ -41,11 +41,9 @@ export type MouseState = {
   council?: string | null;
   whaitua?: string | null;
   whaituaId: string;
-  gw00?: string | null;
-  gw20?: string | null;
-  gw30?: string | null;
   groundWaterId: string;
-  groundWaterZone?: string | null;
+  groundWaterZoneName?: string;
+  groundWaterZones: Array<number>;
   site?: string | null;
   surfaceWaterMgmtUnitId: string;
   surfaceWaterMgmtUnitDescription?: string | null;
@@ -57,6 +55,21 @@ export type MouseState = {
   flowRestrictionsManagementSiteId?: string | null;
   allocationLimit?: string | null;
 };
+
+export type GeoJsonQueries = [
+  UseQueryResult<Awaited<ReturnType<typeof fetchCouncilsGeoJson>>>,
+  UseQueryResult<Awaited<ReturnType<typeof fetchWhaituaGeoJson>>>,
+  UseQueryResult<Awaited<ReturnType<typeof fetchRiversGeoJson>>>,
+  UseQueryResult<
+    Awaited<ReturnType<typeof fetchSurfaceWaterManagementUnitsGeoJson>>
+  >,
+  UseQueryResult<
+    Awaited<ReturnType<typeof fetchSurfaceWaterManagementSubUnitsGeoJson>>
+  >,
+  UseQueryResult<Awaited<ReturnType<typeof fetchFlowManagementSites>>>,
+  UseQueryResult<Awaited<ReturnType<typeof fetchMinimumFlowLimitBoundaries>>>,
+  UseQueryResult<Awaited<ReturnType<typeof fetchGroundwaterZoneBoundaries>>>
+];
 
 export const loader: LoaderFunction = ({ params, request }) => {
   const url = new URL(request.url);
@@ -98,7 +111,7 @@ export default function Limits() {
     }
   }, [debouncedValue, pinnedLocation]);
 
-  const geoJsonQueries = useQueries({
+  const geoJsonQueries: GeoJsonQueries = useQueries({
     queries: [
       {
         queryKey: ['councils'],

@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 import nz.govt.eop.si.jooq.ManagementUnitType
 import nz.govt.eop.si.jooq.tables.AllocationAmounts.Companion.ALLOCATION_AMOUNTS
 import nz.govt.eop.si.jooq.tables.CouncilBoundaries.Companion.COUNCIL_BOUNDARIES
-import nz.govt.eop.si.jooq.tables.GroundwaterZones
+import nz.govt.eop.si.jooq.tables.GroundwaterZoneAllocations.Companion.GROUNDWATER_ZONE_ALLOCATIONS
 import nz.govt.eop.si.jooq.tables.GroundwaterZones.Companion.GROUNDWATER_ZONES
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimitBoundaries.Companion.MINIMUM_FLOW_LIMIT_BOUNDARIES
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimits.Companion.MINIMUM_FLOW_LIMITS
@@ -155,12 +155,33 @@ class GeoJsonController(val context: DSLContext) {
       "/layers/groundwater_zone_boundaries", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getGroundwaterZoneBoundaries(): ResponseEntity<String> {
+
+    val allocationAmountsSurfaceWater = ALLOCATION_AMOUNTS.`as`("swa")
+    val allocationAmountsGroundwater = ALLOCATION_AMOUNTS.`as`("gwa")
+
     val innerQuery =
         select(
                 GROUNDWATER_ZONES.ID.`as`("id"),
                 GROUNDWATER_ZONES.GEOM.`as`("geometry"),
+                GROUNDWATER_ZONES.NAME,
+                GROUNDWATER_ZONES.DEPTH,
+                GROUNDWATER_ZONES.CATEGORY,
+                allocationAmountsSurfaceWater.ALLOCATION_AMOUNT.`as`("surface_water_allocation_amount"),
+                allocationAmountsSurfaceWater.ALLOCATION_AMOUNT_UNIT.`as`("surface_water_allocation_amount_unit"),
+                allocationAmountsGroundwater.ALLOCATION_AMOUNT.`as`("groundwater_allocation_amount"),
+                allocationAmountsGroundwater.ALLOCATION_AMOUNT_UNIT.`as`("groundwater_allocation_amount_unit"),
             )
-            .from(GROUNDWATER_ZONES);
+            .from(GROUNDWATER_ZONES)
+            .join(GROUNDWATER_ZONE_ALLOCATIONS)
+            .on(GROUNDWATER_ZONE_ALLOCATIONS.GROUNDWATER_ZONE_ID.eq(GROUNDWATER_ZONES.ID))
+            .join(allocationAmountsSurfaceWater)
+            .on(
+                allocationAmountsSurfaceWater.ID.eq(
+                    GROUNDWATER_ZONE_ALLOCATIONS.SURFACE_WATER_ALLOCATION_ID))
+            .join(allocationAmountsGroundwater)
+            .on(
+                allocationAmountsGroundwater.ID.eq(
+                    GROUNDWATER_ZONE_ALLOCATIONS.GROUNDWATER_ALLOCATION_ID))
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))

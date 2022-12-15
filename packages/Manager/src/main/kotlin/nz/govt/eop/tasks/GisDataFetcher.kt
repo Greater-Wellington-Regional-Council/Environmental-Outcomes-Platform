@@ -44,7 +44,7 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
               WhaituaBoundaries.WHAITUA_BOUNDARIES.NAME,
               WhaituaBoundaries.WHAITUA_BOUNDARIES.GEOM)
           .values(
-              DSL.value(feature.properties.get("Name") as String),
+              DSL.value((feature.properties["Name"] as String).trim()),
               DSL.field(
                   "ST_GeomFromGeoJSON(?)",
                   ByteArray::class.java,
@@ -75,13 +75,13 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
               GroundwaterZones.GROUNDWATER_ZONES.ALLOCATION_AMOUNT_ID,
               GroundwaterZones.GROUNDWATER_ZONES.GEOM)
           .values(
-              DSL.value(feature.id as String),
-              DSL.value(feature.properties.get("Name") as String),
-              DSL.value(feature.properties.get("Category") as String),
-              DSL.value(feature.properties.get("Depth") as String),
-              DSL.value(feature.properties.get("Description") as String),
-              DSL.value(feature.properties.get("Zone") as String),
-              DSL.value(feature.properties.get("AllocationAmountID") as Int),
+              DSL.value((feature.id as String).trim()),
+              DSL.value((feature.properties["Name"] as String).trim()),
+              DSL.value((feature.properties["Category"] as String).trim()),
+              DSL.value((feature.properties["Depth"] as String).trim()),
+              DSL.value((feature.properties["Description"] as String).trim()),
+              DSL.value((feature.properties["Zone"] as String).trim()),
+              DSL.value(feature.properties["AllocationAmountID"] as Int),
               DSL.field(
                   "ST_GeomFromGeoJSON(?)",
                   ByteArray::class.java,

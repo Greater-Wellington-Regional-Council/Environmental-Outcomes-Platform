@@ -1,7 +1,8 @@
 import React from 'react';
-import { MouseState } from './index';
+import { GeoJsonQueries, MouseState } from './index';
 import Button from '../../components/Button';
 import { WaterTakeFilter } from './index2';
+import GroundwaterLimits from './GroundwaterLimits';
 
 const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   <div className="col-span-2">
@@ -14,10 +15,12 @@ export default function Sidebar({
   mouseState,
   waterTakeFilter,
   setWaterTakeFilter,
+  queries,
 }: {
   mouseState: MouseState;
   waterTakeFilter: WaterTakeFilter;
   setWaterTakeFilter: (value: WaterTakeFilter) => void;
+  queries: GeoJsonQueries;
 }) {
   return (
     <aside className="w-[36rem] overflow-y-auto border-l border-gray-200 bg-white">
@@ -91,8 +94,8 @@ export default function Sidebar({
                   'What spatial groundwater catchment management unit am I in?'
                 }
                 text={
-                  mouseState.groundWaterZone
-                    ? mouseState.groundWaterZone
+                  mouseState.groundWaterZoneName
+                    ? mouseState.groundWaterZoneName
                     : 'None'
                 }
               />
@@ -131,80 +134,17 @@ export default function Sidebar({
                           If taking Surface Water:&nbsp;
                         </span>
                         <span>{mouseState.allocationLimit}</span>
+                        <br />
                       </>
                     )}
-                    {['Ground', 'Combined'].includes(waterTakeFilter) && (
-                      <>
-                        {mouseState.gw00 && mouseState.gw00 === 'A' ? (
-                          <>
-                            <br />
-                            <span className={'font-medium'}>
-                              If taking groundwater from a bore (screen 0-20m
-                              deep):&nbsp;
-                            </span>
-                            <span>{mouseState.allocationLimit}</span>
-                          </>
-                        ) : (
-                          mouseState.gw00 === 'B' && (
-                            <>
-                              {' '}
-                              <>
-                                <br />
-                                <span className={'font-medium'}>
-                                  If taking groundwater from a bore (screen
-                                  00-20m deep):&nbsp;
-                                </span>
-                                <span>{mouseState.allocationLimit}</span>
-                                <br />
-                                <span className={'font-medium'}>
-                                  If taking groundwater from a bore (screen
-                                  00-20m deep):&nbsp;
-                                </span>
-                                <span>2,300,000 (m3/year)</span>
-                              </>
-                            </>
-                          )
-                        )}
-                        {mouseState.gw20 && mouseState.gw20 === 'C' ? (
-                          <>
-                            <br />
-                            <span className={'font-medium'}>
-                              If taking groundwater from a bore (screen 20-30m
-                              deep):&nbsp;
-                            </span>
-                            <span>2,300,000 (m3/year)</span>
-                          </>
-                        ) : (
-                          mouseState.gw20 === 'B' && (
-                            <>
-                              <br />
-                              <span className={'font-medium'}>
-                                If taking groundwater from a bore (screen 20-30m
-                                deep):&nbsp;
-                              </span>
-                              <span>{mouseState.allocationLimit}</span>
-                              <br />
-                              <span className={'font-medium'}>
-                                If taking groundwater from a bore (screen 20-30m
-                                deep):&nbsp;
-                              </span>
-                              <span>2,300,000 (m3/year)</span>
-                            </>
-                          )
-                        )}
-
-                        {mouseState.gw30 && (
-                          <>
-                            <br />
-                            <span className={'font-medium'}>
-                              If taking groundwater from a bore (screen 30m+
-                              deep:&nbsp;
-                            </span>
-                            <span>2,300,000 (m3/year)</span>
-                          </>
-                        )}
-                      </>
-                    )}
+                    {['Ground', 'Combined'].includes(waterTakeFilter) &&
+                      mouseState.groundWaterId !== 'NONE' &&
+                      queries[7].data && (
+                        <GroundwaterLimits
+                          activeZonesIds={mouseState.groundWaterZones}
+                          groundWaterZoneGeoJson={queries[7].data}
+                        />
+                      )}
                   </>
                 ) : (
                   'None'
