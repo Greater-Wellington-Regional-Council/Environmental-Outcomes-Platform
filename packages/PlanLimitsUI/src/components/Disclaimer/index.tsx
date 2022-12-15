@@ -4,13 +4,19 @@ import Button from '../Button';
 
 const LOCAL_STORAGE_KEY = 'disclaimer-agreed';
 
+export function saveDisclaimerAgreed() {
+  localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
+}
+
+export function loadDisclaimerAgreed() {
+  return !Boolean(window.localStorage.getItem(LOCAL_STORAGE_KEY));
+}
+
 export default function Disclaimer() {
-  let [isOpen, setIsOpen] = useState(
-    () => !Boolean(window.localStorage.getItem(LOCAL_STORAGE_KEY))
-  );
+  let [isOpen, setIsOpen] = useState(loadDisclaimerAgreed());
 
   function handleAgree() {
-    localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
+    saveDisclaimerAgreed();
     setIsOpen(false);
   }
 
