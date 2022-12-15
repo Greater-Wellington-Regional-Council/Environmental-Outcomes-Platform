@@ -5,6 +5,10 @@ const determineBackendUri = (hostname: string) => {
   switch (hostname) {
     case 'plan-limits.gw-eop-dev.tech':
       return 'https://data.gw-eop-dev.tech';
+    case 'plan-limits.gw-eop-stage.tech':
+      return 'https://data.gw-eop-stage.tech';
+    case 'app.eop.gw.govt.nz':
+      return 'https://data.eop.gw.govt.nz';
     default:
       return 'http://localhost:8080';
   }
