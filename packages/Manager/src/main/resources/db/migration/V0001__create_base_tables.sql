@@ -124,7 +124,6 @@ CREATE TABLE
     plan_version VARCHAR NULL,
     plan_table NUMERIC NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    groundwaterzone_id INTEGER NULL,
     PRIMARY KEY (id)
   );
 
