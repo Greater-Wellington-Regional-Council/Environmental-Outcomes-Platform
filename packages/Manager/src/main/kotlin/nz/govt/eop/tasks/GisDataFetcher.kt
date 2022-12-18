@@ -81,7 +81,7 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
               DSL.value((feature.properties["Depth"] as String).trim()),
               DSL.value((feature.properties["Description"] as String).trim()),
               DSL.value((feature.properties["Zone"] as String).trim()),
-              DSL.value(feature.properties["AllocationAmountID"] as Int),
+              DSL.value(feature.properties["AllocationAmount_Groundwater_ID"] as Int),
               DSL.field(
                   "ST_GeomFromGeoJSON(?)",
                   ByteArray::class.java,
