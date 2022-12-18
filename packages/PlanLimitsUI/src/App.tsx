@@ -1,12 +1,38 @@
-import { Outlet } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouteObject,
+  RouterProvider,
+  redirect,
+} from 'react-router-dom';
+import Layout from './Layout';
+import Limits, { defaultViewLocation, loader } from './pages/Limits';
+import React from 'react';
+import { createLocationString } from './pages/Limits/locationString';
+
+export const routes: RouteObject[] = [
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        loader: () =>
+          redirect(`/limits/${createLocationString(defaultViewLocation)}`),
+      },
+      {
+        path: '/limits',
+        loader: () =>
+          redirect(`/limits/${createLocationString(defaultViewLocation)}`),
+      },
+      {
+        path: '/limits/:location',
+        loader: loader,
+        element: <Limits />,
+      },
+    ],
+  },
+];
 
 export default function App() {
-  return (
-    <>
-      <div className="flex flex-1 items-stretch overflow-hidden">
-        <Outlet />
-      </div>
-      <div className="hidden">{import.meta.env.VITE_GIT_SHA}</div>
-    </>
-  );
+  return <RouterProvider router={createBrowserRouter(routes)} />;
 }
