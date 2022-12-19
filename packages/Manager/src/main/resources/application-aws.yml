@@ -13,3 +13,4 @@ spring:
 logging:
   level:
     io.awspring.cloud: DEBUG
+    org.jooq: INFO
