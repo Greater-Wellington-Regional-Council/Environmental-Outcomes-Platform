@@ -17,7 +17,7 @@ import mapboxgl from 'mapbox-gl';
 import { PinnedLocation } from './locationString';
 import Button from '../../components/Button';
 
-import marker from '../../images/marker_flow.svg';
+import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
@@ -51,6 +51,10 @@ export default function LimitsMap({
   const [highlightLocation, setHighlightLocation] = React.useState<
     PinnedLocation | undefined
   >(initialPinnedLocation);
+
+  const [flowMarkerImageAdded, setFlowMarkerImageAdded] = React.useState(false);
+  const [flowMarkerImageLoading, setFlowMarkerImageLoading] =
+    React.useState(false);
 
   // TODO simplify me
   const changesCallback = React.useCallback(
@@ -170,12 +174,15 @@ export default function LimitsMap({
         });
       }
 
-      if (map) {
-        if (!map.hasImage('marker_flow')) {
-          const img = new Image(20, 20);
-          img.onload = () => map.addImage('marker_flow', img);
-          img.src = marker;
-        }
+      // TODO: Move this out of main rendering callback and extract to hook/HOC
+      if (map && !map.hasImage('marker_flow') && !flowMarkerImageLoading) {
+        setFlowMarkerImageLoading(true);
+        const img = new Image(20, 20);
+        img.onload = () => {
+          map.addImage('marker_flow', img);
+          setFlowMarkerImageAdded(true);
+        };
+        img.src = flowMarkerImage;
       }
     },
     [highlightLocation, mapRenderCount, waterTakeFilter]
@@ -439,7 +446,7 @@ export default function LimitsMap({
           </Source>
         )}
 
-        {flowManagementSitesGeoJson.data && (
+        {flowManagementSitesGeoJson.data && flowMarkerImageAdded && (
           <Source
             id="flowManagementSitesGeoJson"
             type="geojson"
