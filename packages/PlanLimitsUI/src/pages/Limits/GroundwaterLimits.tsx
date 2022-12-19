@@ -21,11 +21,11 @@ export default function GroundwaterLimits({
 
   return (
     <>
-      {activeFeatures.map(function (feature) {
+      {activeFeatures.map(function (feature, index) {
         switch (feature.properties.category) {
           case 'Category A':
             return (
-              <>
+              <React.Fragment key={index}>
                 <span className={'font-medium'}>
                   If taking groundwater from a bore (screen{' '}
                   {feature.properties.depth} deep):&nbsp;
@@ -35,11 +35,11 @@ export default function GroundwaterLimits({
                   {feature.properties.surface_water_allocation_amount_unit}
                 </span>
                 <br />
-              </>
+              </React.Fragment>
             );
           case 'Category B':
             return (
-              <>
+              <React.Fragment key={index}>
                 <span className={'font-medium'}>
                   If taking groundwater from a bore (screen{' '}
                   {feature.properties.depth} deep, stream depleting):&nbsp;
@@ -58,11 +58,11 @@ export default function GroundwaterLimits({
                   {feature.properties.groundwater_allocation_amount_unit}
                 </span>
                 <br />
-              </>
+              </React.Fragment>
             );
           case 'Category C':
             return (
-              <>
+              <React.Fragment key={index}>
                 <span className={'font-medium'}>
                   If taking groundwater from a bore (screen{' '}
                   {feature.properties.depth} deep):&nbsp;
@@ -72,7 +72,7 @@ export default function GroundwaterLimits({
                   {feature.properties.groundwater_allocation_amount_unit}
                 </span>
                 <br />
-              </>
+              </React.Fragment>
             );
         }
       })}
