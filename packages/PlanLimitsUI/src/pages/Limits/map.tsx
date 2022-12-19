@@ -229,7 +229,6 @@ export default function LimitsMap({
           });
         }}
         onRender={() => setMapRenderCount(mapRenderCount + 1)}
-        interactiveLayerIds={['groundWater']}
         {...viewState}
       >
         <NavigationControl position="top-left" visualizePitch={true} />
