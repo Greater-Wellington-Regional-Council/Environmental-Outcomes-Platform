@@ -61,7 +61,7 @@ class GeoJsonController(val context: DSLContext) {
     val innerQuery =
         select(RIVERS.HYDRO_ID.`as`("id"), RIVERS.GEOM.`as`("geometry"), RIVERS.STREAM_ORDER)
             .from(RIVERS)
-            .where(RIVERS.STREAM_ORDER.ge(3))
+            .where(RIVERS.STREAM_ORDER.ge(4))
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
