@@ -21,6 +21,10 @@ import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
+const EMPTY_GEO_JSON_DATA = {
+  type: 'FeatureCollection' as 'FeatureCollection',
+  features: [],
+};
 
 export default function LimitsMap({
   mouseState,
@@ -247,228 +251,224 @@ export default function LimitsMap({
           />
         </LayerControl>
 
-        {councilsGeoJson.data && (
-          <Source
-            id="councilsGeoJson"
-            type="geojson"
-            data={councilsGeoJson.data}
-          >
-            <Layer
-              id="councils"
-              type="fill"
-              paint={{
-                'fill-opacity': 0,
-              }}
-            />
-            <Layer
-              type="line"
-              paint={{
-                'line-color': 'green',
-                'line-width': 2,
-              }}
-            />
-          </Source>
-        )}
+        <Source
+          id="councilsGeoJson"
+          type="geojson"
+          data={councilsGeoJson.data || EMPTY_GEO_JSON_DATA}
+        >
+          <Layer
+            id="councils"
+            type="fill"
+            paint={{
+              'fill-opacity': 0,
+            }}
+          />
+          <Layer
+            type="line"
+            paint={{
+              'line-color': 'green',
+              'line-width': 2,
+            }}
+          />
+        </Source>
 
-        {whaituaGeoJson.data && (
-          <Source id="whaituaGeoJson" type="geojson" data={whaituaGeoJson.data}>
+        <Source
+          id="whaituaGeoJson"
+          type="geojson"
+          data={whaituaGeoJson.data || EMPTY_GEO_JSON_DATA}
+        >
+          <Layer
+            id="whaitua"
+            type="fill"
+            paint={{
+              'fill-opacity': 0,
+            }}
+          />
+          <Layer
+            id="whaitua-highlight"
+            filter={['==', ['id'], mouseState.whaituaId]}
+            type="fill"
+            paint={{
+              'fill-outline-color': '#484896',
+              'fill-color': '#6e599f',
+              'fill-opacity': 0.1,
+            }}
+          />
+          <Layer
+            type="line"
+            paint={{
+              'line-color': 'green',
+              'line-width': 2,
+            }}
+          />
+        </Source>
+
+        <Source
+          id="groundWaterGeoJson"
+          type="geojson"
+          data={groundwaterZoneBoundariesGeoJson.data || EMPTY_GEO_JSON_DATA}
+        >
+          <Layer
+            id="groundWater"
+            type="fill"
+            paint={{
+              'fill-opacity': 0,
+            }}
+          />
+          {['Ground', 'Combined'].includes(waterTakeFilter) && (
             <Layer
-              id="whaitua"
+              id="groundWater-highlight"
               type="fill"
+              filter={['==', ['id'], mouseState.groundWaterId]}
               paint={{
-                'fill-opacity': 0,
+                'fill-outline-color': '#484896',
+                'fill-color': '#33ff99',
+                'fill-opacity': 0.5,
               }}
             />
+          )}
+        </Source>
+
+        <Source
+          id="surfaceWaterMgmtUnitsGeoJson"
+          type="geojson"
+          data={surfaceWaterMgmtUnitsGeoJson.data || EMPTY_GEO_JSON_DATA}
+        >
+          <Layer
+            id="surfaceWaterMgmtUnits"
+            type="fill"
+            paint={{
+              'fill-opacity': 0,
+            }}
+          />
+          {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <Layer
-              id="whaitua-highlight"
-              filter={['==', ['id'], mouseState.whaituaId]}
+              id="surfaceWaterMgmtUnits-highlight"
               type="fill"
+              filter={['==', ['id'], mouseState.surfaceWaterMgmtUnitId]}
               paint={{
                 'fill-outline-color': '#484896',
                 'fill-color': '#6e599f',
-                'fill-opacity': 0.1,
+                'fill-opacity': 0.4,
               }}
             />
-            <Layer
-              type="line"
-              paint={{
-                'line-color': 'green',
-                'line-width': 2,
-              }}
-            />
-          </Source>
-        )}
+          )}
+        </Source>
 
-        {groundwaterZoneBoundariesGeoJson.data && (
-          <Source
-            id="groundWaterGeoJson"
-            type="geojson"
-            data={groundwaterZoneBoundariesGeoJson.data}
-          >
+        <Source
+          id="surfaceWaterMgmtSubUnitsGeoJson"
+          type="geojson"
+          data={surfaceWaterMgmtSubUnitsGeoJson.data || EMPTY_GEO_JSON_DATA}
+        >
+          <Layer
+            id="surfaceWaterMgmtSubUnits"
+            type="fill"
+            paint={{
+              'fill-opacity': 0,
+            }}
+          />
+          {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <Layer
-              id="groundWater"
+              id="surfaceWaterMgmtSubUnits-highlight"
               type="fill"
+              filter={['==', ['id'], mouseState.surfaceWaterMgmtSubUnitId]}
               paint={{
-                'fill-opacity': 0,
+                'fill-outline-color': '#484896',
+                'fill-color': '#6e599f',
+                'fill-opacity': 0.3,
               }}
             />
-            {['Ground', 'Combined'].includes(waterTakeFilter) && (
-              <Layer
-                id="groundWater-highlight"
-                type="fill"
-                filter={['==', ['id'], mouseState.groundWaterId]}
-                paint={{
-                  'fill-outline-color': '#484896',
-                  'fill-color': '#33ff99',
-                  'fill-opacity': 0.5,
-                }}
-              />
-            )}
-          </Source>
-        )}
+          )}
+        </Source>
 
-        {surfaceWaterMgmtUnitsGeoJson.data && (
-          <Source
-            id="surfaceWaterMgmtUnitsGeoJson"
-            type="geojson"
-            data={surfaceWaterMgmtUnitsGeoJson.data}
-          >
+        <Source
+          id="riversGeoJson"
+          type="geojson"
+          data={riversGeoJson.data || EMPTY_GEO_JSON_DATA}
+        >
+          <Layer
+            id="rivers"
+            type="line"
+            paint={{
+              'line-width': ['+', 0, ['get', 'stream_order']],
+              'line-color': [
+                'match',
+                ['get', 'stream_order'],
+                1,
+                '#9bc4e2',
+                2,
+                '#9bc4e2',
+                3,
+                '#9bc4e2',
+                4,
+                '#17569B',
+                5,
+                '#17569B',
+                6,
+                '#17569B',
+                7,
+                '#17569B',
+                8,
+                '#17569B',
+                '#17569B',
+              ],
+            }}
+          />
+        </Source>
+
+        <Source
+          id="minimumFlowLimitBoundariesGeoJson"
+          type="geojson"
+          data={minimumFlowLimitBoundariesGeoJson.data || EMPTY_GEO_JSON_DATA}
+        >
+          <Layer
+            id="minimumFlowLimitBoundaries"
+            type="fill"
+            paint={{
+              'fill-outline-color': 'black',
+              'fill-color': '#FFFFFF',
+              'fill-opacity': 0.0,
+            }}
+          />
+          {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <Layer
-              id="surfaceWaterMgmtUnits"
+              id="minimumFlowLimitBoundaries-highlight"
               type="fill"
+              filter={['==', ['id'], mouseState.minimumFlowLimitId]}
               paint={{
-                'fill-opacity': 0,
+                'fill-outline-color': '#484896',
+                'fill-color': '#6e599f',
+                'fill-opacity': 0.3,
               }}
             />
-            {['Surface', 'Combined'].includes(waterTakeFilter) && (
-              <Layer
-                id="surfaceWaterMgmtUnits-highlight"
-                type="fill"
-                filter={['==', ['id'], mouseState.surfaceWaterMgmtUnitId]}
-                paint={{
-                  'fill-outline-color': '#484896',
-                  'fill-color': '#6e599f',
-                  'fill-opacity': 0.4,
-                }}
-              />
-            )}
-          </Source>
-        )}
+          )}
+        </Source>
 
-        {surfaceWaterMgmtSubUnitsGeoJson.data && (
-          <Source
-            id="surfaceWaterMgmtSubUnitsGeoJson"
-            type="geojson"
-            data={surfaceWaterMgmtSubUnitsGeoJson.data}
-          >
-            <Layer
-              id="surfaceWaterMgmtSubUnits"
-              type="fill"
-              paint={{
-                'fill-opacity': 0,
-              }}
-            />
-            {['Surface', 'Combined'].includes(waterTakeFilter) && (
-              <Layer
-                id="surfaceWaterMgmtSubUnits-highlight"
-                type="fill"
-                filter={['==', ['id'], mouseState.surfaceWaterMgmtSubUnitId]}
-                paint={{
-                  'fill-outline-color': '#484896',
-                  'fill-color': '#6e599f',
-                  'fill-opacity': 0.3,
-                }}
-              />
-            )}
-          </Source>
-        )}
-
-        {riversGeoJson.data && (
-          <Source id="riversGeoJson" type="geojson" data={riversGeoJson.data}>
-            <Layer
-              id="rivers"
-              type="line"
-              paint={{
-                'line-width': ['+', 0, ['get', 'stream_order']],
-                'line-color': [
-                  'match',
-                  ['get', 'stream_order'],
-                  1,
-                  '#9bc4e2',
-                  2,
-                  '#9bc4e2',
-                  3,
-                  '#9bc4e2',
-                  4,
-                  '#17569B',
-                  5,
-                  '#17569B',
-                  6,
-                  '#17569B',
-                  7,
-                  '#17569B',
-                  8,
-                  '#17569B',
-                  '#17569B',
-                ],
-              }}
-            />
-          </Source>
-        )}
-
-        {minimumFlowLimitBoundariesGeoJson.data && (
-          <Source
-            id="minimumFlowLimitBoundariesGeoJson"
-            type="geojson"
-            data={minimumFlowLimitBoundariesGeoJson.data}
-          >
-            <Layer
-              id="minimumFlowLimitBoundaries"
-              type="fill"
-              paint={{
-                'fill-outline-color': 'black',
-                'fill-color': '#FFFFFF',
-                'fill-opacity': 0.0,
-              }}
-            />
-            {['Surface', 'Combined'].includes(waterTakeFilter) && (
-              <Layer
-                id="minimumFlowLimitBoundaries-highlight"
-                type="fill"
-                filter={['==', ['id'], mouseState.minimumFlowLimitId]}
-                paint={{
-                  'fill-outline-color': '#484896',
-                  'fill-color': '#6e599f',
-                  'fill-opacity': 0.3,
-                }}
-              />
-            )}
-          </Source>
-        )}
-
-        {flowManagementSitesGeoJson.data && flowMarkerImageAdded && (
-          <Source
-            id="flowManagementSitesGeoJson"
-            type="geojson"
-            data={flowManagementSitesGeoJson.data}
-          >
-            <Layer
-              id="flowSites"
-              type="symbol"
-              layout={{
-                'icon-image': 'marker_flow',
-              }}
-              paint={{
-                'icon-opacity': [
-                  'case',
-                  ['==', ['id'], mouseState.flowRestrictionsManagementSiteId],
-                  1,
-                  0.5,
-                ],
-              }}
-            />
-          </Source>
-        )}
+        <Source
+          id="flowManagementSitesGeoJson"
+          type="geojson"
+          data={
+            flowManagementSitesGeoJson.data && flowMarkerImageAdded
+              ? flowManagementSitesGeoJson.data
+              : EMPTY_GEO_JSON_DATA
+          }
+        >
+          <Layer
+            id="flowSites"
+            type="symbol"
+            layout={{
+              'icon-image': 'marker_flow',
+            }}
+            paint={{
+              'icon-opacity': [
+                'case',
+                ['==', ['id'], mouseState.flowRestrictionsManagementSiteId],
+                1,
+                0.5,
+              ],
+            }}
+          />
+        </Source>
 
         {pinnedLocation && (
           <Marker
