@@ -2,6 +2,7 @@ import { FeatureCollection, Geometry } from 'geojson';
 import React from 'react';
 
 import { GroundwaterZoneBoundariesProperties } from '../../api';
+import waterQuantity from './WaterQuantity';
 
 type Props = {
   activeZonesIds: Array<number>;
@@ -21,18 +22,25 @@ export default function GroundwaterLimits({
 
   return (
     <>
-      {activeFeatures.map(function (feature, index) {
-        switch (feature.properties.category) {
+      {activeFeatures.map((feature, index) => {
+        const {
+          groundwater_allocation_amount: gwAllocationAmount,
+          groundwater_allocation_amount_unit: gwAllocationUnit,
+          depth,
+          category,
+          surface_water_allocation_amount_unit: swAllocationUnit,
+          surface_water_allocation_amount: swAllocationAmount,
+        } = feature.properties;
+
+        switch (category) {
           case 'Category A':
             return (
               <React.Fragment key={index}>
                 <span className={'font-medium'}>
-                  If taking groundwater from a bore (screen{' '}
-                  {feature.properties.depth} deep):&nbsp;
+                  If taking groundwater from a bore (screen {depth} deep):&nbsp;
                 </span>
                 <span>
-                  {feature.properties.surface_water_allocation_amount}{' '}
-                  {feature.properties.surface_water_allocation_amount_unit}
+                  {waterQuantity(swAllocationAmount, swAllocationUnit)}
                 </span>
                 <br />
               </React.Fragment>
@@ -41,21 +49,18 @@ export default function GroundwaterLimits({
             return (
               <React.Fragment key={index}>
                 <span className={'font-medium'}>
-                  If taking groundwater from a bore (screen{' '}
-                  {feature.properties.depth} deep, stream depleting):&nbsp;
+                  If taking groundwater from a bore (screen {depth} deep, stream
+                  depleting):&nbsp;
                 </span>
                 <span>
-                  {feature.properties.surface_water_allocation_amount}{' '}
-                  {feature.properties.surface_water_allocation_amount_unit}
+                  {waterQuantity(swAllocationAmount, swAllocationUnit)}
                 </span>
                 <br />
                 <span className={'font-medium'}>
-                  If taking groundwater from a bore (screen{' '}
-                  {feature.properties.depth} deep):&nbsp;
+                  If taking groundwater from a bore (screen {depth} deep):&nbsp;
                 </span>
                 <span>
-                  {feature.properties.groundwater_allocation_amount}{' '}
-                  {feature.properties.groundwater_allocation_amount_unit}
+                  {waterQuantity(gwAllocationAmount, gwAllocationUnit)}
                 </span>
                 <br />
               </React.Fragment>
@@ -64,12 +69,10 @@ export default function GroundwaterLimits({
             return (
               <React.Fragment key={index}>
                 <span className={'font-medium'}>
-                  If taking groundwater from a bore (screen{' '}
-                  {feature.properties.depth} deep):&nbsp;
+                  If taking groundwater from a bore (screen {depth} deep):&nbsp;
                 </span>
                 <span>
-                  {feature.properties.groundwater_allocation_amount}{' '}
-                  {feature.properties.groundwater_allocation_amount_unit}
+                  {waterQuantity(gwAllocationAmount, gwAllocationUnit)}
                 </span>
                 <br />
               </React.Fragment>

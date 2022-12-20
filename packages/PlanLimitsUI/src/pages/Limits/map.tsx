@@ -19,6 +19,7 @@ import Button from '../../components/Button';
 
 import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
+import waterQuantity from './WaterQuantity';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
@@ -121,11 +122,25 @@ export default function LimitsMap({
           'minimumFlowLimitBoundaries',
           'name'
         );
-        const flowRestrictionsLevel = findFeature(
+
+        const flowRestrictionsAmount = findFeature(
           result,
           'minimumFlowLimitBoundaries',
           'plan_minimum_flow_value'
         );
+
+        const flowRestrictionsUnit = findFeature(
+          result,
+          'minimumFlowLimitBoundaries',
+          'plan_minimum_flow_unit'
+        );
+
+        const flowRestrictionsLevel = flowRestrictionsAmount
+          ? waterQuantity(
+              Number(flowRestrictionsAmount),
+              flowRestrictionsUnit as string
+            )
+          : undefined;
 
         const allocationAmount =
           surfaceWaterMgmtSubUnitId === 'NONE'
@@ -150,7 +165,7 @@ export default function LimitsMap({
               );
 
         const allocationLimit = allocationAmount
-          ? `${allocationAmount} ${allocationUnits}`
+          ? waterQuantity(Number(allocationAmount), allocationUnits as string)
           : undefined;
 
         setMouseState({
