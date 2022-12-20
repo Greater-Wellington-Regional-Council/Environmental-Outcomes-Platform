@@ -62,9 +62,9 @@ export const fetchMinimumFlowLimitBoundaries = (): Promise<FeatureCollection> =>
 export type GroundwaterZoneBoundariesProperties = {
   category: 'Category A' | 'Category B' | 'Category C';
   depth: string;
-  surface_water_allocation_amount: string;
+  surface_water_allocation_amount: number;
   surface_water_allocation_amount_unit: string;
-  groundwater_allocation_amount: string;
+  groundwater_allocation_amount: number;
   groundwater_allocation_amount_unit: string;
 };
 
