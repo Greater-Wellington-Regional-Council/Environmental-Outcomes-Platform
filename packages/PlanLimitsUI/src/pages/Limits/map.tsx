@@ -304,6 +304,41 @@ export default function LimitsMap({
         </Source>
 
         <Source
+          id="riversGeoJson"
+          type="geojson"
+          data={riversGeoJson.data || EMPTY_GEO_JSON_DATA}
+        >
+          <Layer
+            id="rivers"
+            type="line"
+            paint={{
+              'line-width': ['+', 0, ['get', 'stream_order']],
+              'line-color': [
+                'match',
+                ['get', 'stream_order'],
+                1,
+                '#9bc4e2',
+                2,
+                '#9bc4e2',
+                3,
+                '#9bc4e2',
+                4,
+                '#17569B',
+                5,
+                '#17569B',
+                6,
+                '#17569B',
+                7,
+                '#17569B',
+                8,
+                '#17569B',
+                '#17569B',
+              ],
+            }}
+          />
+        </Source>
+
+        <Source
           id="groundWaterGeoJson"
           type="geojson"
           data={groundwaterZoneBoundariesGeoJson.data || EMPTY_GEO_JSON_DATA}
@@ -379,41 +414,6 @@ export default function LimitsMap({
               }}
             />
           )}
-        </Source>
-
-        <Source
-          id="riversGeoJson"
-          type="geojson"
-          data={riversGeoJson.data || EMPTY_GEO_JSON_DATA}
-        >
-          <Layer
-            id="rivers"
-            type="line"
-            paint={{
-              'line-width': ['+', 0, ['get', 'stream_order']],
-              'line-color': [
-                'match',
-                ['get', 'stream_order'],
-                1,
-                '#9bc4e2',
-                2,
-                '#9bc4e2',
-                3,
-                '#9bc4e2',
-                4,
-                '#17569B',
-                5,
-                '#17569B',
-                6,
-                '#17569B',
-                7,
-                '#17569B',
-                8,
-                '#17569B',
-                '#17569B',
-              ],
-            }}
-          />
         </Source>
 
         <Source
