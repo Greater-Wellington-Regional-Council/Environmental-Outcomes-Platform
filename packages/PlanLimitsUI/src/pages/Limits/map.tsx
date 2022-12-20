@@ -19,7 +19,7 @@ import Button from '../../components/Button';
 
 import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
-import waterQuantity from './WaterQuantity';
+import formatWaterQuantity from './formatWaterQuantity';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
@@ -136,7 +136,7 @@ export default function LimitsMap({
         );
 
         const flowRestrictionsLevel = flowRestrictionsAmount
-          ? waterQuantity(
+          ? formatWaterQuantity(
               Number(flowRestrictionsAmount),
               flowRestrictionsUnit as string
             )
@@ -165,7 +165,10 @@ export default function LimitsMap({
               );
 
         const allocationLimit = allocationAmount
-          ? waterQuantity(Number(allocationAmount), allocationUnits as string)
+          ? formatWaterQuantity(
+              Number(allocationAmount),
+              allocationUnits as string
+            )
           : undefined;
 
         setMouseState({

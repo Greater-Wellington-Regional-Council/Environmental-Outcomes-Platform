@@ -2,7 +2,7 @@ import { FeatureCollection, Geometry } from 'geojson';
 import React from 'react';
 
 import { GroundwaterZoneBoundariesProperties } from '../../api';
-import waterQuantity from './WaterQuantity';
+import formatWaterQuantity from './formatWaterQuantity';
 
 type Props = {
   activeZonesIds: Array<number>;
@@ -40,7 +40,7 @@ export default function GroundwaterLimits({
                   If taking groundwater from a bore (screen {depth} deep):&nbsp;
                 </span>
                 <span>
-                  {waterQuantity(swAllocationAmount, swAllocationUnit)}
+                  {formatWaterQuantity(swAllocationAmount, swAllocationUnit)}
                 </span>
                 <br />
               </React.Fragment>
@@ -53,14 +53,14 @@ export default function GroundwaterLimits({
                   depleting):&nbsp;
                 </span>
                 <span>
-                  {waterQuantity(swAllocationAmount, swAllocationUnit)}
+                  {formatWaterQuantity(swAllocationAmount, swAllocationUnit)}
                 </span>
                 <br />
                 <span className={'font-medium'}>
                   If taking groundwater from a bore (screen {depth} deep):&nbsp;
                 </span>
                 <span>
-                  {waterQuantity(gwAllocationAmount, gwAllocationUnit)}
+                  {formatWaterQuantity(gwAllocationAmount, gwAllocationUnit)}
                 </span>
                 <br />
               </React.Fragment>
@@ -72,7 +72,7 @@ export default function GroundwaterLimits({
                   If taking groundwater from a bore (screen {depth} deep):&nbsp;
                 </span>
                 <span>
-                  {waterQuantity(gwAllocationAmount, gwAllocationUnit)}
+                  {formatWaterQuantity(gwAllocationAmount, gwAllocationUnit)}
                 </span>
                 <br />
               </React.Fragment>
