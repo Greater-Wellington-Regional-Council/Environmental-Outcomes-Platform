@@ -177,7 +177,7 @@ class GeoJsonController(val context: DSLContext) {
             .from(GROUNDWATER_ZONES)
             .join(allocationAmountsGroundwater)
             .on(GROUNDWATER_ZONES.ALLOCATION_AMOUNT_ID.eq(allocationAmountsGroundwater.ID))
-            .join(allocationAmountsSurfaceWater)
+            .leftJoin(allocationAmountsSurfaceWater)
             .on(
                 allocationAmountsGroundwater.PARENT_SURFACEWATERSUBUNIT_ID.eq(
                     allocationAmountsSurfaceWater.ID))
