@@ -1,9 +1,11 @@
 import React from 'react';
+import { useAtom } from 'jotai';
 import { MouseState, WaterTakeFilter } from './index';
 import Button from '../../components/Button';
 import GroundwaterLimits from './GroundwaterLimits';
 import { GeoJsonQueries } from '../../api';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
+import { showDisclaimerAtom } from '../../components/Disclaimer';
 
 const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   <div className="col-span-2">
@@ -23,6 +25,7 @@ export default function Sidebar({
   setWaterTakeFilter: (value: WaterTakeFilter) => void;
   queries: GeoJsonQueries;
 }) {
+  const [, setShowDisclaimer] = useAtom(showDisclaimerAtom);
   return (
     <>
       <header className="flex items-end px-6 py-4">
@@ -165,6 +168,7 @@ export default function Sidebar({
           Greater Wellington Freshwater Plan
         </a>
         <button
+          onClick={() => setShowDisclaimer(true)}
           className="text-sm underline"
         >
           Conditions of use

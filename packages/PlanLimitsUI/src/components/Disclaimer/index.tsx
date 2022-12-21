@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { atom, useAtom } from 'jotai';
 import { Dialog } from '@headlessui/react';
 import Button from '../Button';
 
@@ -9,20 +9,22 @@ export function saveDisclaimerAgreed() {
 }
 
 export function loadDisclaimerAgreed() {
-  return !Boolean(window.localStorage.getItem(LOCAL_STORAGE_KEY));
+  return window.localStorage.getItem(LOCAL_STORAGE_KEY) === 'true';
 }
 
+export const showDisclaimerAtom = atom(!loadDisclaimerAgreed());
+
 export default function Disclaimer() {
-  let [isOpen, setIsOpen] = useState(loadDisclaimerAgreed());
+  const [showDisclaimer, setShowDisclaimer] = useAtom(showDisclaimerAtom);
 
   function handleAgree() {
     saveDisclaimerAgreed();
-    setIsOpen(false);
+    setShowDisclaimer(false);
   }
 
   return (
     <Dialog
-      open={isOpen}
+      open={showDisclaimer}
       // onClose is a required prop of Dialog to handle a user pressing escape or
       // clicking outside the dialog. We don't want to take any, so it's no-op.
       onClose={() => {}}
@@ -35,7 +37,7 @@ export default function Disclaimer() {
       <div className="fixed inset-0 flex items-center justify-center">
         <Dialog.Panel className="mx-auto max-w-2xl rounded bg-white p-6">
           <Dialog.Title className="text-xl mb-4">
-            Greater Wellington Freshwater Plan Limits Viewer
+            Greater Wellington Freshwater plan limits
           </Dialog.Title>
           <h3 className="mb-2 uppercase">Conditions of use</h3>
           <p className="mb-4">
