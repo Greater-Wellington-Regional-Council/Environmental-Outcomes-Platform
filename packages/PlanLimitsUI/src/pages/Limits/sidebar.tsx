@@ -3,6 +3,7 @@ import { MouseState, WaterTakeFilter } from './index';
 import Button from '../../components/Button';
 import GroundwaterLimits from './GroundwaterLimits';
 import { GeoJsonQueries } from '../../api';
+import gwrcLogo from '../../images/gwrc-logo-header.svg';
 
 const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   <div className="col-span-2">
@@ -24,14 +25,17 @@ export default function Sidebar({
 }) {
   return (
     <>
-      <div className="px-6 py-4">
-        <h3 className="text-lg font-medium leading-6 text-gray-900">
-          Limits Information
-        </h3>
-        <p className="mt-1 max-w-2xl text-sm text-gray-500">
-          What plan limits apply here?
-        </p>
-      </div>
+      <header className="flex items-end px-6 py-4">
+        <h2 className="flex-1 text-2xl font-light uppercase tracking-wide">
+          Freshwater plan limits
+        </h2>
+        <img
+          alt="Greater Wellington Regional Council - logo"
+          className="h-10"
+          src={gwrcLogo}
+        ></img>
+      </header>
+
       <div className="border-t border-gray-200 px-6 py-4">
         <div className="pb-4 flex flex-row justify-around">
           <Button
@@ -152,6 +156,20 @@ export default function Sidebar({
           </div>
         </dl>
       </div>
+
+      <footer className="px-6 py-4 border-t flex">
+        <a
+          href="https://www.gw.govt.nz/your-region/plans-policies-and-bylaws/plans-and-reports/environmental-plans/regional-freshwater-plan"
+          className="text-sm flex-1 underline"
+        >
+          Greater Wellington Freshwater Plan
+        </a>
+        <button
+          className="text-sm underline"
+        >
+          Conditions of use
+        </button>
+      </footer>
     </>
   );
 }
