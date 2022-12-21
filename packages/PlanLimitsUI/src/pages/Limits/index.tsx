@@ -136,23 +136,27 @@ export default function Limits() {
   };
 
   return (
-    <>
-      <Map
-        mouseState={mouseState}
-        setMouseState={setMouseState}
-        viewState={viewState}
-        setViewState={setViewState}
-        initialPinnedLocation={initialPinnedLocation}
-        setCurrentPinnedLocation={setPinnedLocation}
-        waterTakeFilter={waterTakeFilter}
-        queries={geoJsonQueries}
-      />
-      <Sidebar
-        mouseState={mouseState}
-        waterTakeFilter={waterTakeFilter}
-        setWaterTakeFilter={setWaterTakeFilter}
-        queries={geoJsonQueries}
-      />
-    </>
+    <div className="flex">
+      <main className="flex-1">
+        <Map
+          mouseState={mouseState}
+          setMouseState={setMouseState}
+          viewState={viewState}
+          setViewState={setViewState}
+          initialPinnedLocation={initialPinnedLocation}
+          setCurrentPinnedLocation={setPinnedLocation}
+          waterTakeFilter={waterTakeFilter}
+          queries={geoJsonQueries}
+        />
+      </main>
+      <aside className="w-[36rem] h-screen overflow-y-scroll border-l border-gray-200">
+        <Sidebar
+          mouseState={mouseState}
+          waterTakeFilter={waterTakeFilter}
+          setWaterTakeFilter={setWaterTakeFilter}
+          queries={geoJsonQueries}
+        />
+      </aside>
+    </div>
   );
 }
