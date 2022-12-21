@@ -162,10 +162,10 @@ export default function Sidebar({
 
       <footer className="px-6 py-4 border-t flex">
         <a
-          href="https://www.gw.govt.nz/your-region/plans-policies-and-bylaws/plans-and-reports/environmental-plans/regional-freshwater-plan"
+          href="https://pnrp.gw.govt.nz/home/pnrp-final-appeals-version-2022"
           className="text-sm flex-1 underline"
         >
-          Greater Wellington Freshwater Plan
+          Natural Resource Plan Limits
         </a>
         <button
           onClick={() => setShowDisclaimer(true)}
