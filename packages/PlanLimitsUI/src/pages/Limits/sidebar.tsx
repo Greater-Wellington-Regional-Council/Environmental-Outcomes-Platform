@@ -29,8 +29,8 @@ export default function Sidebar({
   return (
     <>
       <header className="flex items-end px-6 py-4">
-        <h2 className="flex-1 text-2xl font-light uppercase tracking-wide">
-          Freshwater plan limits
+        <h2 className="flex-1 text-xl font-light uppercase tracking-wide">
+          Natural Resource Plan Limits
         </h2>
         <img
           alt="Greater Wellington Regional Council - logo"
