@@ -1,5 +1,6 @@
 import React from 'react';
 import maplibregl from 'maplibre-gl';
+import mapboxgl from 'mapbox-gl';
 import Map, {
   Layer,
   MapRef,
@@ -12,14 +13,15 @@ import Map, {
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import LayerControl from '../../components/map/LayerControl';
-import { MouseState, WaterTakeFilter } from './index';
-import mapboxgl from 'mapbox-gl';
+import { MouseState } from './index';
 import { PinnedLocation } from './locationString';
 import Button from '../../components/Button';
 
 import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
 import formatWaterQuantity from './formatWaterQuantity';
+import { useAtomValue } from 'jotai';
+import { showGroundwaterAtom, showSurfaceWaterAtom } from './atoms';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
@@ -34,7 +36,6 @@ export default function LimitsMap({
   setViewState,
   initialPinnedLocation,
   setCurrentPinnedLocation,
-  waterTakeFilter,
   queries,
 }: {
   mouseState: MouseState;
@@ -43,9 +44,11 @@ export default function LimitsMap({
   setViewState: (value: ViewState) => void;
   initialPinnedLocation?: PinnedLocation;
   setCurrentPinnedLocation: (value?: PinnedLocation) => void;
-  waterTakeFilter: WaterTakeFilter;
   queries: GeoJsonQueries;
 }) {
+  const showSurfaceWater = useAtomValue(showSurfaceWaterAtom);
+  const showGroundwater = useAtomValue(showGroundwaterAtom);
+
   const [mapRenderCount, setMapRenderCount] = React.useState(0);
   const [showImagery, setShowImagery] = React.useState(false);
 
@@ -207,7 +210,7 @@ export default function LimitsMap({
         img.src = flowMarkerImage;
       }
     },
-    [highlightLocation, mapRenderCount, waterTakeFilter]
+    [highlightLocation, mapRenderCount]
   );
 
   const [
@@ -367,7 +370,7 @@ export default function LimitsMap({
             'fill-opacity': 0,
           }}
         />
-        {['Ground', 'Combined'].includes(waterTakeFilter) && (
+        {showGroundwater && (
           <Layer
             id="groundWater-highlight"
             type="fill"
@@ -393,7 +396,7 @@ export default function LimitsMap({
             'fill-opacity': 0,
           }}
         />
-        {['Surface', 'Combined'].includes(waterTakeFilter) && (
+        {showSurfaceWater && (
           <Layer
             id="surfaceWaterMgmtUnits-highlight"
             type="fill"
@@ -419,7 +422,7 @@ export default function LimitsMap({
             'fill-opacity': 0,
           }}
         />
-        {['Surface', 'Combined'].includes(waterTakeFilter) && (
+        {showSurfaceWater && (
           <Layer
             id="surfaceWaterMgmtSubUnits-highlight"
             type="fill"
@@ -447,7 +450,7 @@ export default function LimitsMap({
             'fill-opacity': 0.0,
           }}
         />
-        {['Surface', 'Combined'].includes(waterTakeFilter) && (
+        {showSurfaceWater && (
           <Layer
             id="minimumFlowLimitBoundaries-highlight"
             type="fill"

@@ -25,8 +25,6 @@ export const defaultViewLocation = {
   zoom: 8,
 };
 
-export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
-
 export type MouseState = {
   position: {
     lng: number;
@@ -92,9 +90,6 @@ export default function Limits() {
 
   const geoJsonQueries = useGeoJsonQueries();
 
-  const [waterTakeFilter, setWaterTakeFilter] =
-    React.useState<WaterTakeFilter>('Combined');
-
   const [mouseState, setMouseState] = React.useState<MouseState>({
     position: {
       lng: 0,
@@ -145,17 +140,11 @@ export default function Limits() {
           setViewState={setViewState}
           initialPinnedLocation={initialPinnedLocation}
           setCurrentPinnedLocation={setPinnedLocation}
-          waterTakeFilter={waterTakeFilter}
           queries={geoJsonQueries}
         />
       </main>
       <aside className="w-[36rem] h-screen overflow-y-scroll border-l border-gray-200">
-        <Sidebar
-          mouseState={mouseState}
-          waterTakeFilter={waterTakeFilter}
-          setWaterTakeFilter={setWaterTakeFilter}
-          queries={geoJsonQueries}
-        />
+        <Sidebar mouseState={mouseState} queries={geoJsonQueries} />
       </aside>
     </div>
   );

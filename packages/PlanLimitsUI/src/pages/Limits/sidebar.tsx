@@ -1,11 +1,16 @@
 import React from 'react';
-import { useAtom } from 'jotai';
-import { MouseState, WaterTakeFilter } from './index';
+import { useAtom, useAtomValue } from 'jotai';
+import { MouseState } from './index';
 import Button from '../../components/Button';
 import GroundwaterLimits from './GroundwaterLimits';
 import { GeoJsonQueries } from '../../api';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
+import {
+  showGroundwaterAtom,
+  showSurfaceWaterAtom,
+  waterTakeFilterAtom,
+} from './atoms';
 
 const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   <div className="col-span-2">
@@ -16,15 +21,17 @@ const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
 
 export default function Sidebar({
   mouseState,
-  waterTakeFilter,
-  setWaterTakeFilter,
+
   queries,
 }: {
   mouseState: MouseState;
-  waterTakeFilter: WaterTakeFilter;
-  setWaterTakeFilter: (value: WaterTakeFilter) => void;
+
   queries: GeoJsonQueries;
 }) {
+  const [waterTakeFilter, setWaterTakeFilter] = useAtom(waterTakeFilterAtom);
+  const showSurfaceWater = useAtomValue(showSurfaceWaterAtom);
+  const showGroundwater = useAtomValue(showGroundwaterAtom);
+
   const [, setShowDisclaimer] = useAtom(showDisclaimerAtom);
   return (
     <>
@@ -73,7 +80,7 @@ export default function Sidebar({
             title="What Whaitua am I in?"
             text={mouseState.whaitua ? mouseState.whaitua : 'None'}
           />
-          {['Surface', 'Combined'].includes(waterTakeFilter) && (
+          {showSurfaceWater && (
             <>
               <LimitsListItem
                 title={
@@ -97,7 +104,7 @@ export default function Sidebar({
               />
             </>
           )}
-          {['Ground', 'Combined'].includes(waterTakeFilter) && (
+          {showGroundwater && (
             <LimitsListItem
               title={
                 'What spatial groundwater catchment management unit am I in?'
@@ -137,18 +144,17 @@ export default function Sidebar({
             <dd className="mt-1 text-gray-900">
               {mouseState.allocationLimit || mouseState.groundWaterId ? (
                 <>
-                  {mouseState.allocationLimit &&
-                    ['Surface', 'Combined'].includes(waterTakeFilter) && (
-                      <>
-                        <span className={'font-medium'}>
-                          If taking Surface Water:&nbsp;
-                        </span>
-                        <span>{mouseState.allocationLimit}</span>
-                        <br />
-                      </>
-                    )}
+                  {mouseState.allocationLimit && showSurfaceWater && (
+                    <>
+                      <span className={'font-medium'}>
+                        If taking Surface Water:&nbsp;
+                      </span>
+                      <span>{mouseState.allocationLimit}</span>
+                      <br />
+                    </>
+                  )}
                   {mouseState.groundWaterId !== 'NONE' &&
-                    ['Ground', 'Combined'].includes(waterTakeFilter) &&
+                    showGroundwater &&
                     queries[7].data && (
                       <GroundwaterLimits
                         activeZonesIds={mouseState.groundWaterZones}
