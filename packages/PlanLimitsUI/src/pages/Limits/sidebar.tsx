@@ -28,13 +28,16 @@ export default function Sidebar({
   const [, setShowDisclaimer] = useAtom(showDisclaimerAtom);
   return (
     <>
-      <header className="flex items-end px-6 py-4">
-        <h2 className="flex-1 text-xl font-light uppercase tracking-wide">
-          Natural Resource Plan Limits
-        </h2>
+      <header className="flex items-center px-6 py-4">
+        <div className="flex-1">
+          <h2 className="text-xl font-light uppercase tracking-wide">
+            Natural Resource Plan Limits
+          </h2>
+          <h3>Water Quantity Limits</h3>
+        </div>
         <img
+          className="h-12"
           alt="Greater Wellington Regional Council - logo"
-          className="h-10"
           src={gwrcLogo}
         ></img>
       </header>
