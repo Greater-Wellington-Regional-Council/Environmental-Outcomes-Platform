@@ -10,7 +10,7 @@ const determineBackendUri = (hostname: string) => {
     case 'app.eop.gw.govt.nz':
       return 'https://data.eop.gw.govt.nz';
     default:
-      return 'http://localhost:8080';
+      return 'http://studiy:8080';
   }
 };
 

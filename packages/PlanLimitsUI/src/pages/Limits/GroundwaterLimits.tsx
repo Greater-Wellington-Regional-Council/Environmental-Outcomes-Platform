@@ -1,25 +1,25 @@
 import { FeatureCollection, Geometry } from 'geojson';
 import React from 'react';
 
-import { GroundwaterZoneBoundariesProperties } from '../../api';
 import formatWaterQuantity from './formatWaterQuantity';
+import { useAtom } from 'jotai';
+import {
+  groundwaterZoneBoundariesDataAtom,
+  groundwaterZoneNameAtom,
+} from './atoms';
 
 type Props = {
   activeZonesIds: Array<number>;
-  groundWaterZoneGeoJson: FeatureCollection<
-    Geometry,
-    GroundwaterZoneBoundariesProperties
-  >;
 };
 
-export default function GroundwaterLimits({
-  activeZonesIds,
-  groundWaterZoneGeoJson,
-}: Props) {
-  const activeFeatures = groundWaterZoneGeoJson.features.filter((item) =>
-    activeZonesIds.includes(Number(item.id as string))
+export default function GroundwaterLimits({ activeZonesIds }: Props) {
+  const [groundwaterZoneBoundaries] = useAtom(
+    groundwaterZoneBoundariesDataAtom
   );
 
+  const activeFeatures = groundwaterZoneBoundaries.features.filter((item) =>
+    activeZonesIds.includes(Number(item.id as string))
+  );
   return (
     <>
       {activeFeatures.map((feature, index) => {

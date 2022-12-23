@@ -20,6 +20,8 @@ import Button from '../../components/Button';
 import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
 import formatWaterQuantity from './formatWaterQuantity';
+import { groundwaterIdAtom } from './atoms';
+import { useAtom } from 'jotai';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
@@ -48,6 +50,8 @@ export default function LimitsMap({
 }) {
   const [mapRenderCount, setMapRenderCount] = React.useState(0);
   const [showImagery, setShowImagery] = React.useState(false);
+
+  const [groundwaterId, setGroundwaterIdAtom] = useAtom(groundwaterIdAtom);
 
   const [pinnedLocation, storePinnedLocation] = React.useState(
     initialPinnedLocation
@@ -104,6 +108,8 @@ export default function LimitsMap({
         );
 
         const groundWaterId = findFeatureId(result, 'groundWater') || 'NONE';
+        setGroundwaterIdAtom(groundWaterId);
+
         const groundWaterZoneName = findFeature(result, 'groundWater', 'name');
         const groundWaterZones = result
           .filter((value) => value.layer.id === 'groundWater')
@@ -180,7 +186,6 @@ export default function LimitsMap({
           council,
           whaitua,
           whaituaId,
-          groundWaterId,
           groundWaterZoneName,
           groundWaterZones,
           site,
@@ -371,7 +376,7 @@ export default function LimitsMap({
           <Layer
             id="groundWater-highlight"
             type="fill"
-            filter={['==', ['id'], mouseState.groundWaterId]}
+            filter={['==', ['id'], groundwaterId]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#33ff99',

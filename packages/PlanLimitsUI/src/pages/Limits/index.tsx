@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import {
   LoaderFunction,
   redirect,
@@ -35,7 +35,6 @@ export type MouseState = {
   council?: string | null;
   whaitua?: string | null;
   whaituaId: string;
-  groundWaterId: string;
   groundWaterZoneName?: string;
   groundWaterZones: Array<number>;
   site?: string | null;
@@ -102,7 +101,6 @@ export default function Limits() {
     },
     council: null,
     whaituaId: 'NONE',
-    groundWaterId: 'NONE',
     groundWaterZones: [],
     surfaceWaterMgmtUnitId: 'NONE',
     surfaceWaterMgmtSubUnitId: 'NONE',
@@ -150,12 +148,14 @@ export default function Limits() {
         />
       </main>
       <aside className="w-[36rem] h-screen overflow-y-scroll border-l border-gray-200">
-        <Sidebar
-          mouseState={mouseState}
-          waterTakeFilter={waterTakeFilter}
-          setWaterTakeFilter={setWaterTakeFilter}
-          queries={geoJsonQueries}
-        />
+        <Suspense fallback={'POOP'}>
+          <Sidebar
+            mouseState={mouseState}
+            waterTakeFilter={waterTakeFilter}
+            setWaterTakeFilter={setWaterTakeFilter}
+            queries={geoJsonQueries}
+          />
+        </Suspense>
       </aside>
     </div>
   );

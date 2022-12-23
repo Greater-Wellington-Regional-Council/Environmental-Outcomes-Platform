@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useAtom } from 'jotai';
 import { MouseState, WaterTakeFilter } from './index';
 import Button from '../../components/Button';
@@ -6,6 +6,7 @@ import GroundwaterLimits from './GroundwaterLimits';
 import { GeoJsonQueries } from '../../api';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
+import { groundwaterIdAtom, groundwaterZoneNameAtom } from './atoms';
 
 const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   <div className="col-span-2">
@@ -26,6 +27,9 @@ export default function Sidebar({
   queries: GeoJsonQueries;
 }) {
   const [, setShowDisclaimer] = useAtom(showDisclaimerAtom);
+
+  const [groundwaterId] = useAtom(groundwaterIdAtom);
+  const [groundwaterZoneName] = useAtom(groundwaterZoneNameAtom);
   return (
     <>
       <header className="flex items-center px-6 py-4">
@@ -67,101 +71,97 @@ export default function Sidebar({
           />
         </div>
 
-        <h3 className="font-semibold pb-2">Area</h3>
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-4 pb-4">
-          <LimitsListItem
-            title="What Whaitua am I in?"
-            text={mouseState.whaitua ? mouseState.whaitua : 'None'}
-          />
-          {['Surface', 'Combined'].includes(waterTakeFilter) && (
-            <>
-              <LimitsListItem
-                title={
-                  'What spatial surface water catchment management unit am I in?'
-                }
-                text={
-                  mouseState.surfaceWaterMgmtUnitDescription
-                    ? mouseState.surfaceWaterMgmtUnitDescription
-                    : 'None'
-                }
-              />
-              <LimitsListItem
-                title={
-                  'What spatial surface water catchment management sub-unit am I in?'
-                }
-                text={
-                  mouseState.surfaceWaterMgmtSubUnitDescription
-                    ? mouseState.surfaceWaterMgmtSubUnitDescription
-                    : 'None'
-                }
-              />
-            </>
-          )}
-          {['Ground', 'Combined'].includes(waterTakeFilter) && (
+        <Suspense fallback={'Oh No!'}>
+          <h3 className="font-semibold pb-2">Area</h3>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-4 pb-4">
             <LimitsListItem
-              title={
-                'What spatial groundwater catchment management unit am I in?'
-              }
+              title="What Whaitua am I in?"
+              text={mouseState.whaitua ? mouseState.whaitua : 'None'}
+            />
+            {['Surface', 'Combined'].includes(waterTakeFilter) && (
+              <>
+                <LimitsListItem
+                  title={
+                    'What spatial surface water catchment management unit am I in?'
+                  }
+                  text={
+                    mouseState.surfaceWaterMgmtUnitDescription
+                      ? mouseState.surfaceWaterMgmtUnitDescription
+                      : 'None'
+                  }
+                />
+                <LimitsListItem
+                  title={
+                    'What spatial surface water catchment management sub-unit am I in?'
+                  }
+                  text={
+                    mouseState.surfaceWaterMgmtSubUnitDescription
+                      ? mouseState.surfaceWaterMgmtSubUnitDescription
+                      : 'None'
+                  }
+                />
+              </>
+            )}
+            {['Ground', 'Combined'].includes(waterTakeFilter) && (
+              <LimitsListItem
+                title={
+                  'What spatial groundwater catchment management unit am I in?'
+                }
+                text={groundwaterZoneName}
+              />
+            )}
+            <LimitsListItem
+              title={'What flow management site applies to me?'}
               text={
-                mouseState.groundWaterZoneName
-                  ? mouseState.groundWaterZoneName
+                mouseState.flowRestrictionsManagementSiteName
+                  ? mouseState.flowRestrictionsManagementSiteName
                   : 'None'
               }
             />
-          )}
-          <LimitsListItem
-            title={'What flow management site applies to me?'}
-            text={
-              mouseState.flowRestrictionsManagementSiteName
-                ? mouseState.flowRestrictionsManagementSiteName
-                : 'None'
-            }
-          />
-          <LimitsListItem
-            title={
-              'What (if any) minimum flow or restriction flow applies to me?'
-            }
-            text={
-              mouseState.flowRestrictionsLevel
-                ? mouseState.flowRestrictionsLevel
-                : 'None'
-            }
-          />
-        </dl>
-        <h3 className="font-semibold pb-2">Limits</h3>
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-4 pb-4">
-          <div className="col-span-2">
-            <dt className="font-medium text-gray-500">
-              What allocation limit applies to this unit?
-            </dt>
-            <dd className="mt-1 text-gray-900">
-              {mouseState.allocationLimit || mouseState.groundWaterId ? (
-                <>
-                  {mouseState.allocationLimit &&
-                    ['Surface', 'Combined'].includes(waterTakeFilter) && (
-                      <>
-                        <span className={'font-medium'}>
-                          If taking Surface Water:&nbsp;
-                        </span>
-                        <span>{mouseState.allocationLimit}</span>
-                        <br />
-                      </>
-                    )}
-                  {mouseState.groundWaterId !== 'NONE' &&
-                    ['Ground', 'Combined'].includes(waterTakeFilter) &&
-                    queries[7].data && (
-                      <GroundwaterLimits
-                        activeZonesIds={mouseState.groundWaterZones}
-                        groundWaterZoneGeoJson={queries[7].data}
-                      />
-                    )}
-                </>
-              ) : (
-                'None'
-              )}
-            </dd>
-          </div>
-        </dl>
+            <LimitsListItem
+              title={
+                'What (if any) minimum flow or restriction flow applies to me?'
+              }
+              text={
+                mouseState.flowRestrictionsLevel
+                  ? mouseState.flowRestrictionsLevel
+                  : 'None'
+              }
+            />
+          </dl>
+          <h3 className="font-semibold pb-2">Limits</h3>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-4 pb-4">
+            <div className="col-span-2">
+              <dt className="font-medium text-gray-500">
+                What allocation limit applies to this unit?
+              </dt>
+              <dd className="mt-1 text-gray-900">
+                {mouseState.allocationLimit || groundwaterId ? (
+                  <>
+                    {mouseState.allocationLimit &&
+                      ['Surface', 'Combined'].includes(waterTakeFilter) && (
+                        <>
+                          <span className={'font-medium'}>
+                            If taking Surface Water:&nbsp;
+                          </span>
+                          <span>{mouseState.allocationLimit}</span>
+                          <br />
+                        </>
+                      )}
+                    {groundwaterId !== 'NONE' &&
+                      ['Ground', 'Combined'].includes(waterTakeFilter) && (
+                        <GroundwaterLimits
+                          activeZonesIds={mouseState.groundWaterZones}
+                        />
+                      )}
+                  </>
+                ) : (
+                  'None'
+                )}
+              </dd>
+            </div>
+          </dl>
+        </Suspense>
       </div>
 
       <footer className="px-6 py-4 border-t flex">
