@@ -135,19 +135,20 @@ export default function Sidebar({
               What allocation limit applies to this unit?
             </dt>
             <dd className="mt-1 text-gray-900">
-              {mouseState.allocationLimit ? (
+              {mouseState.allocationLimit || mouseState.groundWaterId ? (
                 <>
-                  {['Surface', 'Combined'].includes(waterTakeFilter) && (
-                    <>
-                      <span className={'font-medium'}>
-                        If taking Surface Water:&nbsp;
-                      </span>
-                      <span>{mouseState.allocationLimit}</span>
-                      <br />
-                    </>
-                  )}
-                  {['Ground', 'Combined'].includes(waterTakeFilter) &&
-                    mouseState.groundWaterId !== 'NONE' &&
+                  {mouseState.allocationLimit &&
+                    ['Surface', 'Combined'].includes(waterTakeFilter) && (
+                      <>
+                        <span className={'font-medium'}>
+                          If taking Surface Water:&nbsp;
+                        </span>
+                        <span>{mouseState.allocationLimit}</span>
+                        <br />
+                      </>
+                    )}
+                  {mouseState.groundWaterId !== 'NONE' &&
+                    ['Ground', 'Combined'].includes(waterTakeFilter) &&
                     queries[7].data && (
                       <GroundwaterLimits
                         activeZonesIds={mouseState.groundWaterZones}
