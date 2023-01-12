@@ -1,4 +1,5 @@
 CREATE DATABASE eop_dev;
+
 CREATE DATABASE eop_test;
 
 
@@ -9,12 +10,14 @@ CREATE EXTENSION postgis;
 
 REVOKE ALL PRIVILEGES ON SCHEMA public FROM PUBLIC;
 
-CREATE USER eop_manager_migrations_user WITH password 'password' NOINHERIT;
+CREATE USER eop_manager_migrations_user WITH PASSWORD 'password' NOINHERIT;
+
 GRANT ALL ON SCHEMA public TO eop_manager_migrations_user WITH GRANT OPTION;
 
-CREATE USER eop_manager_app_user WITH password 'password' NOINHERIT;
+CREATE USER eop_manager_app_user WITH PASSWORD 'password' NOINHERIT;
 
 CREATE ROLE developers NOINHERIT;
+
 
 \c eop_test
 CREATE EXTENSION postgis;

@@ -1,5 +1,7 @@
-INSERT INTO
-  council_boundaries (id, NAME, geom)
+INSERT INTO council_boundaries
+  (
+    id, NAME, geom
+  )
 VALUES
   (
     1,
