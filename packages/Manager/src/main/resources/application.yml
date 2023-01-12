@@ -3,11 +3,13 @@ spring:
     banner-mode: off
   datasource:
     url: jdbc:postgresql://${CONFIG_DATABASE_HOST:localhost}:${CONFIG_DATABASE_PORT:5432}/${CONFIG_DATABASE_NAME:eop_dev}
-    username: ${CONFIG_DATABASE_USERNAME:postgres}
+    username: ${CONFIG_DATABASE_USERNAME:eop_manager_app_user}
     password: ${CONFIG_DATABASE_PASSWORD:password}
 
   flyway:
     locations: classpath:/db/migration,classpath:/db/migration-dev
+    user: ${CONFIG_DATABASE_MIGRATIONS_USERNAME:eop_manager_migrations_user}
+    password: ${CONFIG_DATABASE_MIGRATIONS_PASSWORD:password}
 
 server:
   compression:
