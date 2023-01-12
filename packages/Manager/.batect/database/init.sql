@@ -14,5 +14,7 @@ GRANT ALL ON SCHEMA public TO eop_manager_migrations_user WITH GRANT OPTION;
 
 CREATE USER eop_manager_app_user WITH password 'password' NOINHERIT;
 
+CREATE ROLE developers NOINHERIT;
+
 \c eop_test
 CREATE EXTENSION postgis;
