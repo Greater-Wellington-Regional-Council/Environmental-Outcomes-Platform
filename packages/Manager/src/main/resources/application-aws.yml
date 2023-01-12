@@ -2,7 +2,7 @@
 # this enables pulling in configuration from AWS Secrets manager
 spring:
   config:
-    import: aws-secretsmanager:EOPManagerConfig # When deployed to AWS this will load from the Secrets
+    import: aws-secretsmanager:EOPManagerDBConfig # When deployed to AWS this will load from the Secrets
 
 logging:
   level:
