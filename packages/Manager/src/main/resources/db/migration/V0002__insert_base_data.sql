@@ -1,129 +1,131 @@
-INSERT INTO
-  sites (id, siteid_hilltop, NAME, geom)
+INSERT INTO sites
+  (
+    id, siteid_hilltop, NAME, geom
+  )
 VALUES
   (
     1,
     434,
     'Hutt River at Birchville',
-    ST_GeomFromText ('POINT(175.09076014 -41.10017595)', 4326)
+    ST_GeomFromText('POINT(175.09076014 -41.10017595)', 4326)
   ),
   (
     2,
     454,
     'Hutt River at Kaitoke',
-    ST_GeomFromText ('POINT(175.19123118 -41.05101129)', 4326)
+    ST_GeomFromText('POINT(175.19123118 -41.05101129)', 4326)
   ),
   (
     3,
     597,
     'Kopuaranga at Palmers Bridge',
-    ST_GeomFromText ('POINT(175.67185573 -40.81893375)', 4326)
+    ST_GeomFromText('POINT(175.67185573 -40.81893375)', 4326)
   ),
   (
     4,
     706,
     'Mangaone Stream at Ratanui',
-    ST_GeomFromText ('POINT(175.15669569 -40.82742334)', 4326)
+    ST_GeomFromText('POINT(175.15669569 -40.82742334)', 4326)
   ),
   (
     5,
     758,
     'Mangatarere River at Gorge',
-    ST_GeomFromText ('POINT(175.51186713 -40.93499383)', 4326)
+    ST_GeomFromText('POINT(175.51186713 -40.93499383)', 4326)
   ),
   (
     6,
     978,
     'Orongorongo River at Truss Bridge',
-    ST_GeomFromText ('POINT(175.0326634 -41.29704076)', 4326)
+    ST_GeomFromText('POINT(175.0326634 -41.29704076)', 4326)
   ),
   (
     7,
     1012,
     'Otaki River at Pukehinau',
-    ST_GeomFromText ('POINT(175.19957526 -40.8220466)', 4326)
+    ST_GeomFromText('POINT(175.19957526 -40.8220466)', 4326)
   ),
   (
     8,
     1045,
     'Otukura Stream at Weir',
-    ST_GeomFromText ('POINT(175.36738907 -41.18728715)', 4326)
+    ST_GeomFromText('POINT(175.36738907 -41.18728715)', 4326)
   ),
   (
     9,
     1093,
     'Papawai Stream at Fabians Road',
-    ST_GeomFromText ('POINT(175.47431592 -41.09518572)', 4326)
+    ST_GeomFromText('POINT(175.47431592 -41.09518572)', 4326)
   ),
   (
     10,
     1136,
     'Parkvale Stream at Renalls Weir',
-    ST_GeomFromText ('POINT(175.54166084 -41.07801993)', 4326)
+    ST_GeomFromText('POINT(175.54166084 -41.07801993)', 4326)
   ),
   (
     11,
     1518,
     'Ruamahanga River at Waihenga Bridge',
-    ST_GeomFromText ('POINT(175.43999678 -41.19685836)', 4326)
+    ST_GeomFromText('POINT(175.43999678 -41.19685836)', 4326)
   ),
   (
     12,
     1521,
     'Ruamahanga River at Wardells',
-    ST_GeomFromText ('POINT(175.67236373 -41.00481677)', 4326)
+    ST_GeomFromText('POINT(175.67236373 -41.00481677)', 4326)
   ),
   (
     13,
     2368,
     'Tauherenikau at Gorge',
-    ST_GeomFromText ('POINT(175.35741926 -41.06814004)', 4326)
+    ST_GeomFromText('POINT(175.35741926 -41.06814004)', 4326)
   ),
   (
     14,
     2528,
     'Waikanae River at Water Treatment Plant',
-    ST_GeomFromText ('POINT(175.07274447 -40.88809773)', 4326)
+    ST_GeomFromText('POINT(175.07274447 -40.88809773)', 4326)
   ),
   (
     15,
     2559,
     'Waingawa River at Kaituna',
-    ST_GeomFromText ('POINT(175.5229277 -40.88669021)', 4326)
+    ST_GeomFromText('POINT(175.5229277 -40.88669021)', 4326)
   ),
   (
     16,
     2588,
     'Wainuiomata River at Leonard Wood Park',
-    ST_GeomFromText ('POINT(174.94738309 -41.28400515)', 4326)
+    ST_GeomFromText('POINT(174.94738309 -41.28400515)', 4326)
   ),
   (
     17,
     2589,
     'Wainuiomata River at Manuka Track',
-    ST_GeomFromText ('POINT(175.00892684 -41.25677265)', 4326)
+    ST_GeomFromText('POINT(175.00892684 -41.25677265)', 4326)
   ),
   (
     18,
     2609,
     'Waiohine River at Gorge',
-    ST_GeomFromText ('POINT(175.40011859 -41.01636817)', 4326)
+    ST_GeomFromText('POINT(175.40011859 -41.01636817)', 4326)
   ),
   (
     19,
     2634,
     'Waipoua River at Mikimiki Bridge',
-    ST_GeomFromText ('POINT(175.61744894 -40.84517651)', 4326)
+    ST_GeomFromText('POINT(175.61744894 -40.84517651)', 4326)
   ),
   (
     20,
     2666,
     'Waitohu Stream at Water Supply Intake',
-    ST_GeomFromText ('POINT(175.21423898 -40.76666669)', 4326)
+    ST_GeomFromText('POINT(175.21423898 -40.76666669)', 4326)
   );
 
-INSERT INTO
-  minimum_flow_limits (
+INSERT INTO minimum_flow_limits
+  (
     plan_description,
     plan_management_point_name,
     plan_minimum_flow_value,
@@ -367,8 +369,8 @@ VALUES
     '{}'
   );
 
-INSERT INTO
-  allocation_amounts (
+INSERT INTO allocation_amounts
+  (
     id,
     take_type,
     management_unit_type,

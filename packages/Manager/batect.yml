@@ -33,7 +33,7 @@ tasks:
 
 containers:
   build-env:
-    build_directory: .batect/build-env
+    image: eclipse-temurin:17
     volumes:
       - local: .
         container: /code

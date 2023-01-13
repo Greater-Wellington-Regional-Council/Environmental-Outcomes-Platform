@@ -2,13 +2,7 @@
 # this enables pulling in configuration from AWS Secrets manager
 spring:
   config:
-    import: aws-secretsmanager:RDSDBConfig # When deployed to AWS this will load from the Secrets
-  datasource:
-    # The property names for the DB values are not ideal. i.e. port should be CONFIG_DATABASE_PORT
-    # But this is reusing the secrets that Gruntworks uses, so going with their format
-    url: jdbc:postgresql://${CONFIG_DATABASE_HOST}:${port}/${dbname}
-    username: ${username}
-    password: ${password}
+    import: aws-secretsmanager:EOPManagerDBConfig # When deployed to AWS this will load from the Secrets
 
 logging:
   level:
