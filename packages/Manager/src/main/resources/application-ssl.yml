@@ -1,0 +1,8 @@
+server:
+  ssl:
+    enabled: true
+    key-store: file:${CONFIG_KEYSTORE_PATH}
+    key-store-password: ${CONFIG_KEYSTORE_PASSWORD}
+    key-store-type: pkcs12
+    key-alias: ${CONFIG_KEYSTORE_KEY}
+    key-password: ${CONFIG_KEYSTORE_PASSWORD}
