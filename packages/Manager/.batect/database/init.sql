@@ -22,6 +22,9 @@ GRANT ALL ON SCHEMA public TO eop_manager_migrations_user WITH GRANT OPTION;
 -- App / Developers will be granted access by the migrations user in migration scripts
 CREATE USER eop_manager_app_user WITH PASSWORD 'password' NOINHERIT;
 
+-- Access from tileserver is restricted to specific resources via permission grants in migrations.
+CREATE USER eop_tileserver_user WITH PASSWORD 'password' NOINHERIT;
+
 CREATE ROLE developers NOINHERIT;
 
 
