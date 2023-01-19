@@ -18,7 +18,7 @@ export default function compileLimitsTable(
       'Surface water',
       BLANK_CELL_CHAR,
       BLANK_CELL_CHAR,
-      allocationLimit,
+      <>{allocationLimit}</>,
       surfaceWaterMgmtUnitLimit,
     ],
   ];
