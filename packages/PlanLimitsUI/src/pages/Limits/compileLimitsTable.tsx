@@ -3,8 +3,15 @@ import type { GroundwaterZoneBoundariesProperties } from '../../api';
 import type { FeatureCollection, Geometry } from 'geojson';
 
 const BLANK_CELL_CHAR = '-';
+const HEADERS = ['Type', 'Bore screen depth', 'Category'];
+const LIMIT_HEADERS = ['Allocation limit'];
+const LIMIT_HEADERS_WITH_CATCHMENT = [
+  'Sub-unit Allocation Limit',
+  'Catchment Management Unit Allocation Limit',
+];
 
 export default function compileLimitsTable(
+  showCatchmentUnitLimit: boolean,
   allocationLimit: string | null | undefined,
   surfaceWaterMgmtUnitLimit: string | null | undefined,
   activeZonesIds: Array<number>,
@@ -13,7 +20,10 @@ export default function compileLimitsTable(
     GroundwaterZoneBoundariesProperties
   >
 ) {
-  const table = [
+  const headers = HEADERS.concat(
+    showCatchmentUnitLimit ? LIMIT_HEADERS_WITH_CATCHMENT : LIMIT_HEADERS
+  );
+  const rows = [
     [
       'Surface water',
       BLANK_CELL_CHAR,
@@ -44,7 +54,7 @@ export default function compileLimitsTable(
         feature.swAllocationAmount,
         feature.swAllocationUnit
       );
-      table.push([
+      rows.push([
         'Groundwater',
         feature.depth,
         feature.category,
@@ -56,7 +66,7 @@ export default function compileLimitsTable(
   activeFeatures
     .filter((feature) => feature.category === 'Category B')
     .forEach((feature) => {
-      table.push([
+      rows.push([
         'Groundwater',
         feature.depth,
         feature.category,
@@ -77,8 +87,14 @@ export default function compileLimitsTable(
         feature.gwAllocationAmount,
         feature.gwAllocationUnit
       );
-      table.push(['Groundwater', feature.depth, feature.category, limit, '-']);
+      rows.push(['Groundwater', feature.depth, feature.category, limit, '-']);
     });
 
-  return table;
+  const showFootnote = Boolean(rows.find((row) => row[2] === 'Category B'));
+
+  if (!showCatchmentUnitLimit) {
+    rows.forEach((row) => row.pop());
+  }
+
+  return { rows, headers, showFootnote };
 }
