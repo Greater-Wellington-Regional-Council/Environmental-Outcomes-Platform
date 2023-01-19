@@ -2,7 +2,6 @@ import React from 'react';
 import { useAtom } from 'jotai';
 import { MouseState, WaterTakeFilter } from './index';
 import Button from '../../components/Button';
-import GroundwaterLimits from './GroundwaterLimits';
 import LimitsTable from './LimitsTable';
 import { GeoJsonQueries } from '../../api';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
@@ -130,41 +129,6 @@ export default function Sidebar({
           />
         </dl>
         <h3 className="font-semibold pb-2">Limits</h3>
-
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-4 pb-4">
-          <div className="col-span-2">
-            <dt className="font-medium text-gray-500">
-              What allocation limit applies to this unit?
-            </dt>
-            <dd className="mt-1 text-gray-900">
-              {mouseState.allocationLimit || mouseState.groundWaterId ? (
-                <>
-                  {mouseState.allocationLimit &&
-                    ['Surface', 'Combined'].includes(waterTakeFilter) && (
-                      <>
-                        <span className={'font-medium'}>
-                          If taking Surface Water:&nbsp;
-                        </span>
-                        <span>{mouseState.allocationLimit}</span>
-                        <br />
-                      </>
-                    )}
-                  {mouseState.groundWaterId !== 'NONE' &&
-                    ['Ground', 'Combined'].includes(waterTakeFilter) &&
-                    queries[7].data && (
-                      <GroundwaterLimits
-                        activeZonesIds={mouseState.groundWaterZones}
-                        groundWaterZoneGeoJson={queries[7].data}
-                      />
-                    )}
-                </>
-              ) : (
-                'None'
-              )}
-            </dd>
-          </div>
-        </dl>
-
         {mouseState.allocationLimit && queries[7].data && (
           <LimitsTable
             showCatchmentUnitLimit={[16, 29].includes(
