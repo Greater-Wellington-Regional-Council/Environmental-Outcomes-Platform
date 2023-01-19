@@ -164,6 +164,17 @@ export default function LimitsMap({
                 'allocation_amount_unit'
               );
 
+        const surfaceWaterMgmtUnitLimit = formatWaterQuantity(
+          Number(
+            findFeature(result, 'surfaceWaterMgmtUnits', 'allocation_amount')
+          ),
+          findFeature(
+            result,
+            'surfaceWaterMgmtUnits',
+            'allocation_amount_unit'
+          ) as string
+        );
+
         const allocationLimit = allocationAmount
           ? formatWaterQuantity(
               Number(allocationAmount),
@@ -193,6 +204,7 @@ export default function LimitsMap({
           flowRestrictionsLevel,
           flowRestrictionsManagementSiteName,
           flowRestrictionsManagementSiteId,
+          surfaceWaterMgmtUnitLimit,
         });
       }
 

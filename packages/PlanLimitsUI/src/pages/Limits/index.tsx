@@ -48,6 +48,7 @@ export type MouseState = {
   flowRestrictionsManagementSiteName?: string | null;
   flowRestrictionsManagementSiteId?: string | null;
   allocationLimit?: string | null;
+  surfaceWaterMgmtUnitLimit?: string | null;
 };
 
 export const loader: LoaderFunction = ({ params, request }) => {
@@ -116,6 +117,7 @@ export default function Limits() {
     flowRestrictionsLevel: null,
     flowRestrictionsManagementSiteName: null,
     allocationLimit: null,
+    surfaceWaterMgmtUnitLimit: null,
   });
 
   const [viewState, storeViewState] = useState<ViewState>({
