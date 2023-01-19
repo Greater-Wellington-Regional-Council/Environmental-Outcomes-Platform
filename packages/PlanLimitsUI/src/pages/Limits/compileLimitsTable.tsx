@@ -20,13 +20,7 @@ export default function compileLimitsTable(
     GroundwaterZoneBoundariesProperties
   >
 ) {
-  // TODO: What is the best way to capture this requirement to show Catchement Level
-  // limits for particular units?
-  const showCatchmentUnitLimit = [16, 29].includes(surfaceWaterMgmtUnitId);
-
-  const headers = HEADERS.concat(
-    showCatchmentUnitLimit ? LIMIT_HEADERS_WITH_CATCHMENT : LIMIT_HEADERS
-  );
+  let showFootnote = false;
   const rows = [
     [
       'Surface water',
@@ -70,6 +64,7 @@ export default function compileLimitsTable(
   activeFeatures
     .filter((feature) => feature.category === 'Category B')
     .forEach((feature) => {
+      showFootnote = true;
       rows.push([
         'Groundwater',
         feature.depth,
@@ -94,8 +89,15 @@ export default function compileLimitsTable(
       rows.push(['Groundwater', feature.depth, 'C', limit, '-']);
     });
 
-  const showFootnote = Boolean(rows.find((row) => row[2] === 'B'));
+  // TODO: What is the best way to capture this requirement to show Catchement Level
+  // limits for particular units?
+  const showCatchmentUnitLimit = [16, 29].includes(surfaceWaterMgmtUnitId);
 
+  const headers = HEADERS.concat(
+    showCatchmentUnitLimit ? LIMIT_HEADERS_WITH_CATCHMENT : LIMIT_HEADERS
+  );
+
+  // If we don't need to show the Catchment Unit limit, strip it from the results
   if (!showCatchmentUnitLimit) {
     rows.forEach((row) => row.pop());
   }
