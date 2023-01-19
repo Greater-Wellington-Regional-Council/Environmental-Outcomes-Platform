@@ -11,7 +11,7 @@ const LIMIT_HEADERS_WITH_CATCHMENT = [
 ];
 
 export default function compileLimitsTable(
-  showCatchmentUnitLimit: boolean,
+  surfaceWaterMgmtUnitId: number,
   allocationLimit: string | null | undefined,
   surfaceWaterMgmtUnitLimit: string | null | undefined,
   activeZonesIds: Array<number>,
@@ -20,6 +20,10 @@ export default function compileLimitsTable(
     GroundwaterZoneBoundariesProperties
   >
 ) {
+  // TODO: What is the best way to capture this requirement to show Catchement Level
+  // limits for particular units?
+  const showCatchmentUnitLimit = [16, 29].includes(surfaceWaterMgmtUnitId);
+
   const headers = HEADERS.concat(
     showCatchmentUnitLimit ? LIMIT_HEADERS_WITH_CATCHMENT : LIMIT_HEADERS
   );

@@ -131,9 +131,7 @@ export default function Sidebar({
         <h3 className="font-semibold pb-2">Limits</h3>
         {mouseState.allocationLimit && queries[7].data && (
           <LimitsTable
-            showCatchmentUnitLimit={[16, 29].includes(
-              Number(mouseState.surfaceWaterMgmtUnitId)
-            )}
+            surfaceWaterMgmtUnitId={Number(mouseState.surfaceWaterMgmtUnitId)}
             surfaceWaterMgmtUnitLimit={mouseState.surfaceWaterMgmtUnitLimit}
             allocationLimit={mouseState.allocationLimit}
             activeZonesIds={mouseState.groundWaterZones}

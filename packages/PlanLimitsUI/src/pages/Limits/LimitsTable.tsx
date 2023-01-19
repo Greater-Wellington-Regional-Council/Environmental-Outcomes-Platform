@@ -5,7 +5,7 @@ import { GroundwaterZoneBoundariesProperties } from '../../api';
 import compileLimitsTable from './compileLimitsTable';
 
 type Props = {
-  showCatchmentUnitLimit: boolean;
+  surfaceWaterMgmtUnitId: number;
   allocationLimit: string | null | undefined;
   surfaceWaterMgmtUnitLimit: string | null | undefined;
   activeZonesIds: number[];
@@ -16,14 +16,14 @@ type Props = {
 };
 
 export default function LimitsTable({
-  showCatchmentUnitLimit,
+  surfaceWaterMgmtUnitId,
   allocationLimit,
   surfaceWaterMgmtUnitLimit,
   activeZonesIds,
   groundWaterZoneGeoJson,
 }: Props) {
   const { headers, rows, showFootnote } = compileLimitsTable(
-    showCatchmentUnitLimit,
+    surfaceWaterMgmtUnitId,
     allocationLimit,
     surfaceWaterMgmtUnitLimit,
     activeZonesIds,
