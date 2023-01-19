@@ -57,7 +57,7 @@ export default function compileLimitsTable(
       rows.push([
         'Groundwater',
         feature.depth,
-        feature.category,
+        'A',
         limit,
         surfaceWaterMgmtUnitLimit,
       ]);
@@ -69,9 +69,9 @@ export default function compileLimitsTable(
       rows.push([
         'Groundwater',
         feature.depth,
-        feature.category,
+        'B',
         <>
-          See Table 4.1 in PNRP
+          See Table 4.1 of PNRP
           <sup>
             <a href="#PNRP">1</a>
           </sup>
@@ -87,10 +87,10 @@ export default function compileLimitsTable(
         feature.gwAllocationAmount,
         feature.gwAllocationUnit
       );
-      rows.push(['Groundwater', feature.depth, feature.category, limit, '-']);
+      rows.push(['Groundwater', feature.depth, 'C', limit, '-']);
     });
 
-  const showFootnote = Boolean(rows.find((row) => row[2] === 'Category B'));
+  const showFootnote = Boolean(rows.find((row) => row[2] === 'B'));
 
   if (!showCatchmentUnitLimit) {
     rows.forEach((row) => row.pop());
