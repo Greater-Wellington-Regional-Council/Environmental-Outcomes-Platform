@@ -12,8 +12,8 @@ const LIMIT_HEADERS_WITH_CATCHMENT = [
 
 export default function compileLimitsTable(
   surfaceWaterMgmtUnitId: number,
-  allocationLimit: string | null | undefined,
   surfaceWaterMgmtUnitLimit: string | null | undefined,
+  surfaceWaterMgmtSubUnitLimit: string | null | undefined,
   activeZonesIds: Array<number>,
   groundWaterZoneGeoJson: FeatureCollection<
     Geometry,
@@ -32,7 +32,7 @@ export default function compileLimitsTable(
       'Surface water',
       BLANK_CELL_CHAR,
       BLANK_CELL_CHAR,
-      <>{allocationLimit}</>,
+      <>{surfaceWaterMgmtSubUnitLimit || surfaceWaterMgmtUnitLimit}</>,
       surfaceWaterMgmtUnitLimit,
     ],
   ];

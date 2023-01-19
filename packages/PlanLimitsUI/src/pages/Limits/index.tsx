@@ -47,8 +47,8 @@ export type MouseState = {
   flowRestrictionsLevel?: string | null;
   flowRestrictionsManagementSiteName?: string | null;
   flowRestrictionsManagementSiteId?: string | null;
-  allocationLimit?: string | null;
   surfaceWaterMgmtUnitLimit?: string | null;
+  surfaceWaterMgmtSubUnitLimit?: string | null;
 };
 
 export const loader: LoaderFunction = ({ params, request }) => {
@@ -109,15 +109,14 @@ export default function Limits() {
     surfaceWaterMgmtSubUnitId: 'NONE',
     minimumFlowLimitId: 'NONE',
     flowRestrictionsManagementSiteId: 'NONE',
-
     whaitua: null,
     site: null,
     surfaceWaterMgmtUnitDescription: null,
     surfaceWaterMgmtSubUnitDescription: null,
     flowRestrictionsLevel: null,
     flowRestrictionsManagementSiteName: null,
-    allocationLimit: null,
     surfaceWaterMgmtUnitLimit: null,
+    surfaceWaterMgmtSubUnitLimit: null,
   });
 
   const [viewState, storeViewState] = useState<ViewState>({

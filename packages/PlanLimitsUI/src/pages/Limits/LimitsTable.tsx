@@ -6,8 +6,8 @@ import compileLimitsTable from './compileLimitsTable';
 
 type Props = {
   surfaceWaterMgmtUnitId: number;
-  allocationLimit: string | null | undefined;
   surfaceWaterMgmtUnitLimit: string | null | undefined;
+  surfaceWaterMgmtSubUnitLimit: string | null | undefined;
   activeZonesIds: number[];
   groundWaterZoneGeoJson: FeatureCollection<
     Geometry,
@@ -17,15 +17,15 @@ type Props = {
 
 export default function LimitsTable({
   surfaceWaterMgmtUnitId,
-  allocationLimit,
   surfaceWaterMgmtUnitLimit,
+  surfaceWaterMgmtSubUnitLimit,
   activeZonesIds,
   groundWaterZoneGeoJson,
 }: Props) {
   const { headers, rows, showFootnote } = compileLimitsTable(
     surfaceWaterMgmtUnitId,
-    allocationLimit,
     surfaceWaterMgmtUnitLimit,
+    surfaceWaterMgmtSubUnitLimit,
     activeZonesIds,
     groundWaterZoneGeoJson
   );
