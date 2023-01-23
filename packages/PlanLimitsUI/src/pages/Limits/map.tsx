@@ -221,7 +221,6 @@ export default function LimitsMap({
   const [
     councilsGeoJson,
     whaituaGeoJson,
-    riversGeoJson,
     surfaceWaterMgmtUnitsGeoJson,
     surfaceWaterMgmtSubUnitsGeoJson,
     flowManagementSitesGeoJson,

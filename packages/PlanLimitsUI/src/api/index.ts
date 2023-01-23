@@ -30,11 +30,6 @@ export const fetchWhaituaGeoJson = (): Promise<FeatureCollection> =>
     result.json()
   );
 
-export const fetchRiversGeoJson = (): Promise<FeatureCollection> =>
-  fetch(`${apiBasePath}/layers/rivers`, defaultRequestInit).then((result) =>
-    result.json()
-  );
-
 export const fetchSurfaceWaterManagementUnitsGeoJson =
   (): Promise<FeatureCollection> =>
     fetch(`${apiBasePath}/layers/surface_water_mgmt`, defaultRequestInit).then(
@@ -79,7 +74,6 @@ export const fetchGroundwaterZoneBoundaries = (): Promise<
 export type GeoJsonQueries = [
   UseQueryResult<Awaited<ReturnType<typeof fetchCouncilsGeoJson>>>,
   UseQueryResult<Awaited<ReturnType<typeof fetchWhaituaGeoJson>>>,
-  UseQueryResult<Awaited<ReturnType<typeof fetchRiversGeoJson>>>,
   UseQueryResult<
     Awaited<ReturnType<typeof fetchSurfaceWaterManagementUnitsGeoJson>>
   >,
@@ -101,10 +95,6 @@ export const useGeoJsonQueries = (): GeoJsonQueries =>
       {
         queryKey: ['whaitua'],
         queryFn: fetchWhaituaGeoJson,
-      },
-      {
-        queryKey: ['rivers'],
-        queryFn: fetchRiversGeoJson,
       },
       {
         queryKey: ['surface_water_management_units'],
