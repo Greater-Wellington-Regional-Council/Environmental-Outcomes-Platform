@@ -16,6 +16,7 @@ import { MouseState, WaterTakeFilter } from './index';
 import mapboxgl from 'mapbox-gl';
 import { PinnedLocation } from './locationString';
 import Button from '../../components/Button';
+import RiverTilesSource from './RiverTilesSource';
 
 import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
@@ -228,35 +229,6 @@ export default function LimitsMap({
     groundwaterZoneBoundariesGeoJson,
   ] = queries;
 
-  let tileServerHost;
-  switch (window.location.hostname) {
-    case 'plan-limits.gw-eop-dev.tech':
-      tileServerHost = 'https://tiles.gw-eop-dev.tech';
-      break;
-    case 'plan-limits.gw-eop-stage.tech':
-      tileServerHost = 'https://tiles.gw-eop-stage.tech';
-      break;
-    case 'app.eop.gw.govt.nz':
-      tileServerHost = 'https://tiles.eop.gw.govt.nz';
-      break;
-    default:
-      tileServerHost = 'http://127.0.0.1:7800';
-  }
-
-  let minStreamOrder;
-  if (viewState.zoom <= 8) {
-    minStreamOrder = 6;
-  } else if (viewState.zoom <= 11) {
-    minStreamOrder = 4;
-  } else {
-    minStreamOrder = 3;
-  }
-
-  const streamOrderFilter = encodeURIComponent(
-    `stream_order >= ${minStreamOrder}`
-  );
-  const riverTilesUrl = `${tileServerHost}/public.river_tile_features/{z}/{x}/{y}.pbf?filter=${streamOrderFilter}`;
-
   return (
     <Map
       ref={changesCallback}
@@ -356,38 +328,7 @@ export default function LimitsMap({
         />
       </Source>
 
-      {/* riversGeoJson */}
-      <Source id="rivers" type="vector" tiles={[riverTilesUrl]}>
-        <Layer
-          id="river-line"
-          type="line"
-          source-layer="public.river_tile_features"
-          paint={{
-            'line-width': ['+', 0, ['get', 'stream_order']],
-            'line-color': [
-              'match',
-              ['get', 'stream_order'],
-              1,
-              '#9bc4e2',
-              2,
-              '#9bc4e2',
-              3,
-              '#9bc4e2',
-              4,
-              '#17569B',
-              5,
-              '#17569B',
-              6,
-              '#17569B',
-              7,
-              '#17569B',
-              8,
-              '#17569B',
-              '#17569B',
-            ],
-          }}
-        />
-      </Source>
+      <RiverTilesSource zoom={viewState.zoom} />
 
       <Source
         id="groundWaterGeoJson"
