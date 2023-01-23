@@ -1,4 +1,3 @@
-
 tasks:
   clean:
     description: Clean all outputs
@@ -31,6 +30,13 @@ tasks:
     run:
       container: dev-database
 
+  runDev:
+    description: Run all services required for local development
+    run:
+      container: tileserver
+    dependencies:
+      - dev-database
+
 containers:
   build-env:
     image: eclipse-temurin:17
@@ -62,3 +68,11 @@ containers:
     build_directory: .batect/database
     environment:
       POSTGRES_PASSWORD: password
+
+  tileserver:
+    image: pramsey/pg_tileserv:20221019
+    environment:
+      DATABASE_URL: postgres://eop_tileserver_user:password@dev-database:5432/eop_dev
+    ports:
+      - local: 7800
+        container: 7800
