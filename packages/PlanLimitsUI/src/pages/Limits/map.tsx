@@ -16,6 +16,7 @@ import { MouseState, WaterTakeFilter } from './index';
 import mapboxgl from 'mapbox-gl';
 import { PinnedLocation } from './locationString';
 import Button from '../../components/Button';
+import RiverTilesSource from './RiverTilesSource';
 
 import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
@@ -220,7 +221,6 @@ export default function LimitsMap({
   const [
     councilsGeoJson,
     whaituaGeoJson,
-    riversGeoJson,
     surfaceWaterMgmtUnitsGeoJson,
     surfaceWaterMgmtSubUnitsGeoJson,
     flowManagementSitesGeoJson,
@@ -327,40 +327,7 @@ export default function LimitsMap({
         />
       </Source>
 
-      <Source
-        id="riversGeoJson"
-        type="geojson"
-        data={riversGeoJson.data || EMPTY_GEO_JSON_DATA}
-      >
-        <Layer
-          id="rivers"
-          type="line"
-          paint={{
-            'line-width': ['+', 0, ['get', 'stream_order']],
-            'line-color': [
-              'match',
-              ['get', 'stream_order'],
-              1,
-              '#9bc4e2',
-              2,
-              '#9bc4e2',
-              3,
-              '#9bc4e2',
-              4,
-              '#17569B',
-              5,
-              '#17569B',
-              6,
-              '#17569B',
-              7,
-              '#17569B',
-              8,
-              '#17569B',
-              '#17569B',
-            ],
-          }}
-        />
-      </Source>
+      <RiverTilesSource zoom={viewState.zoom} />
 
       <Source
         id="groundWaterGeoJson"

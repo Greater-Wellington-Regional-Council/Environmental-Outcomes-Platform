@@ -26,8 +26,8 @@ with plugins for Kotlin and Gradle also works (though support for running inline
 ### Running
 
 * Start two terminal sessions
-* In one session run start an instance of Postgres:
-  ```./batect runDatabase```
+* In one session, start services required for development (the database and tilserver)
+  ```./batect runDev```
 * In a second session start the application ```./gradlew bootRun```
 
 ### Code Formatting

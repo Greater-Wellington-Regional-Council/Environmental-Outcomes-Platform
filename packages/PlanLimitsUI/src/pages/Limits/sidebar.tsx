@@ -129,7 +129,7 @@ export default function Sidebar({
           />
         </dl>
         <h3 className="font-semibold pb-2">Limits</h3>
-        {mouseState.surfaceWaterMgmtUnitLimit && queries[7].data && (
+        {mouseState.surfaceWaterMgmtUnitLimit && queries[6].data && (
           <LimitsTable
             waterTakeFilter={waterTakeFilter}
             surfaceWaterMgmtUnitId={Number(mouseState.surfaceWaterMgmtUnitId)}
@@ -138,7 +138,7 @@ export default function Sidebar({
               mouseState.surfaceWaterMgmtSubUnitLimit
             }
             activeZonesIds={mouseState.groundWaterZones}
-            groundWaterZoneGeoJson={queries[7].data}
+            groundWaterZoneGeoJson={queries[6].data}
           />
         )}
       </div>
