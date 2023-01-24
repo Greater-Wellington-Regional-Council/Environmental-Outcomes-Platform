@@ -25,6 +25,11 @@ CREATE USER eop_manager_app_user WITH PASSWORD 'password' NOINHERIT;
 -- Access from tileserver is restricted to specific resources via permission grants in migrations.
 CREATE USER eop_tileserver_user WITH PASSWORD 'password' NOINHERIT;
 
+-- This grant is also done in migrations. We duplicate it here to avoid the tileserver
+-- not being able to connect the db in our batect runDev command, since this is
+-- run pre-migrations in dev
+GRANT USAGE ON SCHEMA public TO eop_tileserver_user;
+
 CREATE ROLE developers NOINHERIT;
 
 
