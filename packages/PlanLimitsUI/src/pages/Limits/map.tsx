@@ -142,32 +142,38 @@ export default function LimitsMap({
             )
           : undefined;
 
-        const allocationAmount =
+        const surfaceWaterMgmtSubUnitLimit =
           surfaceWaterMgmtSubUnitId === 'NONE'
-            ? findFeature(result, 'surfaceWaterMgmtUnits', 'allocation_amount')
-            : findFeature(
-                result,
-                'surfaceWaterMgmtSubUnits',
-                'allocation_amount'
+            ? undefined
+            : formatWaterQuantity(
+                Number(
+                  findFeature(
+                    result,
+                    'surfaceWaterMgmtSubUnits',
+                    'allocation_amount'
+                  )
+                ),
+                findFeature(
+                  result,
+                  'surfaceWaterMgmtSubUnits',
+                  'allocation_amount_unit'
+                ) as string
               );
 
-        const allocationUnits =
-          surfaceWaterMgmtSubUnitId === 'NONE'
-            ? findFeature(
+        const surfaceWaterMgmtUnitLimitAmount = findFeature(
+          result,
+          'surfaceWaterMgmtUnits',
+          'allocation_amount'
+        );
+
+        const surfaceWaterMgmtUnitLimit = surfaceWaterMgmtUnitLimitAmount
+          ? formatWaterQuantity(
+              Number(surfaceWaterMgmtUnitLimitAmount),
+              findFeature(
                 result,
                 'surfaceWaterMgmtUnits',
                 'allocation_amount_unit'
-              )
-            : findFeature(
-                result,
-                'surfaceWaterMgmtSubUnits',
-                'allocation_amount_unit'
-              );
-
-        const allocationLimit = allocationAmount
-          ? formatWaterQuantity(
-              Number(allocationAmount),
-              allocationUnits as string
+              ) as string
             )
           : undefined;
 
@@ -189,10 +195,11 @@ export default function LimitsMap({
           surfaceWaterMgmtSubUnitId,
           surfaceWaterMgmtSubUnitDescription,
           minimumFlowLimitId,
-          allocationLimit,
           flowRestrictionsLevel,
           flowRestrictionsManagementSiteName,
           flowRestrictionsManagementSiteId,
+          surfaceWaterMgmtUnitLimit,
+          surfaceWaterMgmtSubUnitLimit,
         });
       }
 
