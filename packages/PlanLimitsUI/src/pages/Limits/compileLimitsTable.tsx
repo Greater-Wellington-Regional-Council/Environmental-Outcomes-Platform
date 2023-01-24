@@ -4,9 +4,10 @@ import type { FeatureCollection, Geometry } from 'geojson';
 import type { WaterTakeFilter } from './';
 
 const BLANK_CELL_CHAR = '-';
-const HEADERS = ['Type', 'Bore screen depth', 'Category'];
-const LIMIT_HEADERS = ['Allocation limit'];
-const LIMIT_HEADERS_WITH_CATCHMENT = [
+const HEADERS = [
+  'Type',
+  'Bore screen depth',
+  'Category',
   'Sub-unit Allocation Limit',
   'Catchment Management Unit Allocation Limit',
 ];
@@ -30,7 +31,11 @@ export default function compileLimitsTable(
       'Surface water',
       BLANK_CELL_CHAR,
       BLANK_CELL_CHAR,
-      <>{surfaceWaterMgmtSubUnitLimit || surfaceWaterMgmtUnitLimit}</>,
+      <>
+        {surfaceWaterMgmtSubUnitLimit
+          ? surfaceWaterMgmtSubUnitLimit
+          : BLANK_CELL_CHAR}
+      </>,
       surfaceWaterMgmtUnitLimit,
     ]);
   }
@@ -82,7 +87,6 @@ export default function compileLimitsTable(
               <a href="#PNRP">1</a>
             </sup>
           </>,
-          '-',
         ]);
       });
 
@@ -97,20 +101,5 @@ export default function compileLimitsTable(
       });
   }
 
-  // TODO: What is the best way to capture this requirement to show Catchement Level
-  // limits for particular units?
-  const showCatchmentUnitLimit = [16, 29].includes(surfaceWaterMgmtUnitId);
-  // const showCatchmentUnitLimit =
-  // surfaceWaterMgmtSubUnitLimit && surfaceWaterMgmtUnitLimit;
-
-  const headers = HEADERS.concat(
-    showCatchmentUnitLimit ? LIMIT_HEADERS_WITH_CATCHMENT : LIMIT_HEADERS
-  );
-
-  // If we don't need to show the Catchment Unit limit, strip it from the results
-  if (!showCatchmentUnitLimit) {
-    rows.forEach((row) => row.pop());
-  }
-
-  return { rows, headers, showFootnote };
+  return { rows, headers: HEADERS, showFootnote };
 }

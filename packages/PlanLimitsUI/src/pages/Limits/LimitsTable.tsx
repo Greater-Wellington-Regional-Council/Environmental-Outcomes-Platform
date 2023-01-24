@@ -58,7 +58,16 @@ export default function LimitsTable({
           {rows.map((row, rowIndex) => (
             <tr key={rowIndex}>
               {row.map((cell, cellIndex) => (
-                <td key={cellIndex} className="border p-2 text-left text-sm">
+                <td
+                  colSpan={
+                    // For Category B limits where where we note to refer to the
+                    // table, span the note across the unit and sub-unit column.
+                    // TODO: decouple this display logic from the structure of the data
+                    cellIndex === 3 && row[cellIndex - 1] === 'B' ? 2 : 1
+                  }
+                  key={cellIndex}
+                  className="border p-2 text-left text-sm"
+                >
                   {cell}
                 </td>
               ))}
