@@ -9,7 +9,7 @@ function determineTileServerHost(hostname: string) {
     case 'app.eop.gw.govt.nz':
       return 'https://tiles.eop.gw.govt.nz';
     default:
-      return 'http://127.0.0.1:7800';
+      return 'http://localhost:7800';
   }
 }
 
