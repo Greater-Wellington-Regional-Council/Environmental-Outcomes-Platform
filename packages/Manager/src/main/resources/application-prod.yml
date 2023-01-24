@@ -1,3 +1,7 @@
 spring:
   flyway:
     locations: classpath:/db/migration # In production don't want to pick up test migrations
+
+logging:
+  level:
+    org.jooq: INFO

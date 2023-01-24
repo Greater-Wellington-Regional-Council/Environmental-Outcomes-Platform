@@ -2,10 +2,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 
 plugins {
-  id("org.springframework.boot") version "2.7.5"
-  id("io.spring.dependency-management") version "1.0.11.RELEASE"
-  kotlin("jvm") version "1.7.10"
-  kotlin("plugin.spring") version "1.7.10"
+  id("org.springframework.boot") version "2.7.7"
+  id("io.spring.dependency-management") version "1.0.15.RELEASE"
+  kotlin("jvm") version "1.7.22"
+  kotlin("plugin.spring") version "1.7.22"
   id("com.diffplug.spotless") version "6.11.0"
   id("org.flywaydb.flyway") version "9.1.6"
   id("nu.studer.jooq") version "8.0"
@@ -28,7 +28,6 @@ dependencies {
 
   runtimeOnly("org.springframework.boot:spring-boot-devtools")
   runtimeOnly("org.postgresql:postgresql")
-  runtimeOnly("io.awspring.cloud:spring-cloud-starter-aws-secrets-manager-config:2.4.2")
 
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -46,6 +45,8 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-assertions-core:5.5.4")
 }
+
+tasks.getByName<Jar>("jar") { enabled = false }
 
 tasks.withType<KotlinCompile> {
   kotlinOptions {

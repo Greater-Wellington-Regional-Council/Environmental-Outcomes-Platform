@@ -20,3 +20,4 @@ logging:
   level:
     org.jooq.Constants: OFF
     org.jooq: DEBUG
+
