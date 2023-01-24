@@ -131,6 +131,7 @@ export default function Sidebar({
         <h3 className="font-semibold pb-2">Limits</h3>
         {mouseState.surfaceWaterMgmtUnitLimit && queries[7].data && (
           <LimitsTable
+            waterTakeFilter={waterTakeFilter}
             surfaceWaterMgmtUnitId={Number(mouseState.surfaceWaterMgmtUnitId)}
             surfaceWaterMgmtUnitLimit={mouseState.surfaceWaterMgmtUnitLimit}
             surfaceWaterMgmtSubUnitLimit={
