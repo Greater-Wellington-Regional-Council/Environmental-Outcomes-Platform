@@ -30,16 +30,21 @@ export default function Sidebar({
     <>
       <header className="flex items-center px-6 py-4">
         <div className="flex-1">
-          <h2 className="text-xl font-light uppercase tracking-wide">
-            Natural Resource Plan Limits
+          <h2 className="text-xl font-light">
+            Proposed Natural Resource Plan Limits
           </h2>
           <h3>Water Quantity Limits</h3>
         </div>
-        <img
-          className="h-12"
-          alt="Greater Wellington Regional Council - logo"
-          src={gwrcLogo}
-        ></img>
+        <a
+          href="https://www.gw.govt.nz/"
+          title="Go to the Greater Wellington website"
+        >
+          <img
+            className="h-10"
+            alt="Greater Wellington Logo"
+            src={gwrcLogo}
+          ></img>
+        </a>
       </header>
 
       <div className="border-t border-gray-200 px-6 py-4">
@@ -145,6 +150,7 @@ export default function Sidebar({
 
       <footer className="px-6 py-4 border-t flex">
         <a
+          target="_blank"
           href="https://pnrp.gw.govt.nz/home/pnrp-final-appeals-version-2022"
           className="text-sm flex-1 underline"
         >
