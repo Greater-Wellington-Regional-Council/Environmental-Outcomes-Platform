@@ -3,6 +3,7 @@ package nz.govt.eop.geo
 import java.util.concurrent.TimeUnit
 import org.jooq.*
 import org.jooq.impl.DSL.*
+import org.json.JSONObject
 import org.springframework.http.CacheControl
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -11,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
-class GeoJsonController(val context: DSLContext, val queries: GeoJsonQueries) {
+class GeoJsonController(
+    val context: DSLContext,
+    val queries: GeoJsonQueries,
+    val manifest: GeoJsonQueryManifest
+) {
 
   @RequestMapping("/layers/councils", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
@@ -75,5 +80,12 @@ class GeoJsonController(val context: DSLContext, val queries: GeoJsonQueries) {
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
         .body(queries.groundwaterZoneBoundaries())
+  }
+
+  @RequestMapping("/manifest", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun getManifest(): ResponseEntity<String> {
+    val manifest = manifest.get()
+    return ResponseEntity.ok().body(JSONObject(manifest).toString())
   }
 }
