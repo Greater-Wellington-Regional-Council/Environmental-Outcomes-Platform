@@ -1,9 +1,10 @@
 import React from 'react';
+import { FeatureCollection, Geometry } from 'geojson';
 import { useAtom } from 'jotai';
 import { MouseState, WaterTakeFilter } from './index';
 import Button from '../../components/Button';
 import LimitsTable from './LimitsTable';
-import { GeoJsonQueries } from '../../api';
+import { GeoJsonQueries, GroundwaterZoneBoundariesProperties } from '../../api';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
 
@@ -143,7 +144,12 @@ export default function Sidebar({
               mouseState.surfaceWaterMgmtSubUnitLimit
             }
             activeZonesIds={mouseState.groundWaterZones}
-            groundWaterZoneGeoJson={queries[6].data}
+            groundWaterZoneGeoJson={
+              queries[6].data as FeatureCollection<
+                Geometry,
+                GroundwaterZoneBoundariesProperties
+              >
+            }
           />
         )}
       </div>
