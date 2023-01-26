@@ -3,7 +3,6 @@ package nz.govt.eop.geo
 import java.util.concurrent.TimeUnit
 import org.jooq.*
 import org.jooq.impl.DSL.*
-import org.json.JSONObject
 import org.springframework.http.CacheControl
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -84,8 +83,7 @@ class GeoJsonController(
 
   @RequestMapping("/manifest", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun getManifest(): ResponseEntity<String> {
-    val manifest = manifest.get()
-    return ResponseEntity.ok().body(JSONObject(manifest).toString())
+  fun getManifest(): ResponseEntity<Map<String, String>> {
+    return ResponseEntity.ok().body(manifest.get())
   }
 }

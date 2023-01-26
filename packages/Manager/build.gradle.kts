@@ -42,8 +42,6 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-spring:4.43.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.43.0")
 
-  implementation("org.json:json:20220924")
-
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-assertions-core:5.5.4")
 }

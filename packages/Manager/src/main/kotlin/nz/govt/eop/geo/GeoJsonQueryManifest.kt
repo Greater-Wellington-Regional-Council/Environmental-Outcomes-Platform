@@ -2,6 +2,7 @@ package nz.govt.eop.geo
 
 import java.math.BigInteger
 import java.security.MessageDigest
+import java.time.Instant
 import mu.KotlinLogging
 import org.jooq.*
 import org.jooq.impl.DSL.*
@@ -18,32 +19,27 @@ class GeoJsonQueryManifest(@Autowired val queries: GeoJsonQueries) {
   private val logger = KotlinLogging.logger {}
 
   @Cacheable(cacheNames = arrayOf(MANIFEST_CACHE_KEY))
-  fun get(): HashMap<String, String> {
-    logger.info { "GeoJsonQueryManifest.get" }
+  fun get(): Map<String, String> {
     return generate()
   }
 
   @CachePut(cacheNames = arrayOf(MANIFEST_CACHE_KEY))
-  fun update(): HashMap<String, String> {
-    logger.info { "GeoJsonQueryManifest.update" }
+  fun update(): Map<String, String> {
     return generate()
   }
 
-  private fun generate(): HashMap<String, String> {
-    val map = HashMap<String, String>()
-    // TODO: Format as JSON
-    map.put("updatedAt", System.currentTimeMillis().toString())
-    map.put("/layers/councils", generateHash(queries.councils()))
-    map.put("/layers/whaitua", generateHash(queries.whaitua()))
-    map.put("/layers/surface_water_mgmt", generateHash(queries.surfaceWaterManagementUnits()))
-    map.put(
-        "/layers/surface_water_mgmt_sub", generateHash(queries.surfaceWaterManagementSubUnits()))
-    map.put("/layers/flow_management_sites", generateHash(queries.flowManagementSites()))
-    map.put(
-        "/layers/minimum_flow_limit_boundaries", generateHash(queries.minimumFlowLimitBoundaries()))
-    map.put(
-        "/layers/groundwater_zone_boundaries", generateHash(queries.groundwaterZoneBoundaries()))
-    return map
+  private fun generate(): Map<String, String> {
+    return mapOf(
+        "updatedAt" to Instant.now().toString(),
+        "/layers/councils" to generateHash(queries.councils()),
+        "/layers/whaitua" to generateHash(queries.whaitua()),
+        "/layers/surface_water_mgmt" to generateHash(queries.surfaceWaterManagementUnits()),
+        "/layers/surface_water_mgmt_sub" to generateHash(queries.surfaceWaterManagementSubUnits()),
+        "/layers/flow_management_sites" to generateHash(queries.flowManagementSites()),
+        "/layers/minimum_flow_limit_boundaries" to
+            generateHash(queries.minimumFlowLimitBoundaries()),
+        "/layers/groundwater_zone_boundaries" to generateHash(queries.groundwaterZoneBoundaries()),
+    )
   }
 
   private fun generateHash(value: String): String {
