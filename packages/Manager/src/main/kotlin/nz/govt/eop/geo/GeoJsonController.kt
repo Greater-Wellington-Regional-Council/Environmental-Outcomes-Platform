@@ -21,7 +21,7 @@ class GeoJsonController(
   @ResponseBody
   fun getRegionalCouncils(): ResponseEntity<String> {
     return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
         .body(queries.councils())
   }
 
@@ -30,7 +30,7 @@ class GeoJsonController(
   fun getWhaitua(): ResponseEntity<String> {
 
     return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
         .body(queries.whaitua())
   }
 
