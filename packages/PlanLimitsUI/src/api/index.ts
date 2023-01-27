@@ -42,11 +42,11 @@ export function useGeoJsonQueries() {
   const queries = [
     '/layers/councils',
     '/layers/whaitua',
-    '/layers/surface_water_mgmt',
-    '/layers/surface_water_mgmt_sub',
-    '/layers/flow_management_sites',
-    '/layers/flow_management_sites',
-    '/layers/groundwater_zone_boundaries',
+    '/layers/surface-water-management-units',
+    '/layers/surface-water-management-sub-units',
+    '/layers/flow-management-sites',
+    '/layers/flow-limits',
+    '/layers/groundwater-zones',
   ].map((path) => {
     return {
       // This defers execution until the manifest query has loaded

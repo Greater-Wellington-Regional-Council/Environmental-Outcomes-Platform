@@ -33,12 +33,13 @@ class GeoJsonQueryManifest(@Autowired val queries: GeoJsonQueries) {
         "updatedAt" to Instant.now().toString(),
         "/layers/councils" to generateHash(queries.councils()),
         "/layers/whaitua" to generateHash(queries.whaitua()),
-        "/layers/surface_water_mgmt" to generateHash(queries.surfaceWaterManagementUnits()),
-        "/layers/surface_water_mgmt_sub" to generateHash(queries.surfaceWaterManagementSubUnits()),
-        "/layers/flow_management_sites" to generateHash(queries.flowManagementSites()),
-        "/layers/minimum_flow_limit_boundaries" to
-            generateHash(queries.minimumFlowLimitBoundaries()),
-        "/layers/groundwater_zone_boundaries" to generateHash(queries.groundwaterZoneBoundaries()),
+        "/layers/surface-water-management-units" to
+            generateHash(queries.surfaceWaterManagementUnits()),
+        "/layers/surface-water-management-sub-units" to
+            generateHash(queries.surfaceWaterManagementSubUnits()),
+        "/layers/flow-management-sites" to generateHash(queries.flowManagementSites()),
+        "/layers/flow-limits" to generateHash(queries.flowLimits()),
+        "/layers/groundwater-zones" to generateHash(queries.getGroundwaterZones()),
     )
   }
 

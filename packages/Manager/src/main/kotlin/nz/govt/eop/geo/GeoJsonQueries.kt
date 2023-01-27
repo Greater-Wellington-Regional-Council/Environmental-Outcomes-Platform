@@ -85,7 +85,7 @@ class GeoJsonQueries(@Autowired val context: DSLContext) {
     return buildFeatureCollection(context, innerQuery)
   }
 
-  fun minimumFlowLimitBoundaries(): String {
+  fun flowLimits(): String {
     val innerQuery =
         select(
                 MINIMUM_FLOW_LIMIT_BOUNDARIES.ID.`as`("id"),
@@ -102,7 +102,7 @@ class GeoJsonQueries(@Autowired val context: DSLContext) {
     return buildFeatureCollection(context, innerQuery)
   }
 
-  fun groundwaterZoneBoundaries(): String {
+  fun getGroundwaterZones(): String {
     val allocationAmountsSurfaceWater = ALLOCATION_AMOUNTS.`as`("swa")
     val allocationAmountsGroundwater = ALLOCATION_AMOUNTS.`as`("gwa")
 

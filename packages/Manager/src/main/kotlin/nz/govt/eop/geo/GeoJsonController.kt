@@ -34,7 +34,8 @@ class GeoJsonController(
         .body(queries.whaitua())
   }
 
-  @RequestMapping("/layers/surface_water_mgmt", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @RequestMapping(
+      "/layers/surface-water-management-units", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getSurfaceWaterManagementUnits(): ResponseEntity<String> {
 
@@ -43,7 +44,8 @@ class GeoJsonController(
         .body(queries.surfaceWaterManagementUnits())
   }
 
-  @RequestMapping("/layers/surface_water_mgmt_sub", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @RequestMapping(
+      "/layers/surface-water-management-sub-units", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getSurfaceWaterManagementSubUnits(): ResponseEntity<String> {
 
@@ -52,7 +54,7 @@ class GeoJsonController(
         .body(queries.surfaceWaterManagementSubUnits())
   }
 
-  @RequestMapping("/layers/flow_management_sites", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @RequestMapping("/layers/flow-management-sites", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getFlowManagementSites(): ResponseEntity<String> {
 
@@ -61,24 +63,22 @@ class GeoJsonController(
         .body(queries.flowManagementSites())
   }
 
-  @RequestMapping(
-      "/layers/minimum_flow_limit_boundaries", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @RequestMapping("/layers/flow-limits", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun getMinimumFlowLimitBoundaries(): ResponseEntity<String> {
+  fun getFlowLimits(): ResponseEntity<String> {
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.minimumFlowLimitBoundaries())
+        .body(queries.flowLimits())
   }
 
-  @RequestMapping(
-      "/layers/groundwater_zone_boundaries", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @RequestMapping("/layers/groundwater-zones", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun getGroundwaterZoneBoundaries(): ResponseEntity<String> {
+  fun getGroundwaterZones(): ResponseEntity<String> {
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.groundwaterZoneBoundaries())
+        .body(queries.getGroundwaterZones())
   }
 
   @RequestMapping("/manifest", produces = [MediaType.APPLICATION_JSON_VALUE])
