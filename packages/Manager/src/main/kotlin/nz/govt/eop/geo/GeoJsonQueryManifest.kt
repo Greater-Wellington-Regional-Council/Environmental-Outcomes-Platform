@@ -3,7 +3,6 @@ package nz.govt.eop.geo
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.time.Instant
-import mu.KotlinLogging
 import org.jooq.*
 import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,8 +14,6 @@ const val MANIFEST_CACHE_KEY = "QUERY_MANIFEST"
 
 @Component
 class GeoJsonQueryManifest(@Autowired val queries: GeoJsonQueries) {
-
-  private val logger = KotlinLogging.logger {}
 
   @Cacheable(cacheNames = arrayOf(MANIFEST_CACHE_KEY))
   fun get(): Map<String, String> {
