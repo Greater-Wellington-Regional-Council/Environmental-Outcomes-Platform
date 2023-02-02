@@ -7,6 +7,7 @@ import LimitsTable from './LimitsTable';
 import { GeoJsonQueries, GroundwaterZoneBoundariesProperties } from '../../api';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 
 const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
   <div className="col-span-2">
@@ -154,14 +155,26 @@ export default function Sidebar({
         )}
       </div>
 
-      <footer className="px-6 py-4 border-t flex">
-        <a
-          target="_blank"
-          href="https://pnrp.gw.govt.nz/home/pnrp-final-appeals-version-2022"
-          className="text-sm flex-1 underline"
-        >
-          Natural Resource Plan Limits
-        </a>
+      <footer className="px-6 py-4 border-t flex items-start">
+        <div className="flex-1">
+          <a
+            target="_blank"
+            href="https://pnrp.gw.govt.nz/home/pnrp-final-appeals-version-2022"
+            className="text-sm underline"
+          >
+            Proposed Natural Resource Plan
+            <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
+          </a>
+          <br />
+          <a
+            target="_blank"
+            href="http://pnrp.gw.govt.nz/assets/Uploads/Chapter-5.5-Rules-Water-Allocation-Appeal-version-2022.pdf"
+            className="text-sm underline"
+          >
+            Water allocation rules
+            <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
+          </a>
+        </div>
         <button
           onClick={() => setShowDisclaimer(true)}
           className="text-sm underline"
