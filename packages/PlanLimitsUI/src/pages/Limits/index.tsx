@@ -35,7 +35,6 @@ export type MouseState = {
   council?: string | null;
   whaitua?: string | null;
   whaituaId: string;
-  groundWaterId: string;
   groundWaterZoneName?: string;
   groundWaterZones: Array<number>;
   site?: string | null;
@@ -103,7 +102,6 @@ export default function Limits() {
     },
     council: null,
     whaituaId: 'NONE',
-    groundWaterId: 'NONE',
     groundWaterZones: [],
     surfaceWaterMgmtUnitId: 'NONE',
     surfaceWaterMgmtSubUnitId: 'NONE',

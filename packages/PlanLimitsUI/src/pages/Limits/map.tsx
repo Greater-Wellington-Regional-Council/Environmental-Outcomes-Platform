@@ -104,11 +104,18 @@ export default function LimitsMap({
           'name'
         );
 
-        const groundWaterId = findFeatureId(result, 'groundWater') || 'NONE';
-        const groundWaterZoneName = findFeature(result, 'groundWater', 'name');
-        const groundWaterZones = result
-          .filter((value) => value.layer.id === 'groundWater')
-          .map((item) => item.id as number);
+        const groundWaterZonesData = result.filter(
+          (value) => value.layer.id === 'groundWater'
+        );
+        const groundWaterZones = groundWaterZonesData.map(
+          (item) => item.id as number
+        );
+        const groundWaterZoneName = [
+          // Contructing then destructuring from a Set leaves us with unique values
+          ...new Set(
+            groundWaterZonesData.map((item) => item.properties!['name'])
+          ),
+        ].join(', ');
 
         const site = findFeature(result, 'flowSites', 'Name');
 
@@ -187,7 +194,6 @@ export default function LimitsMap({
           council,
           whaitua,
           whaituaId,
-          groundWaterId,
           groundWaterZoneName,
           groundWaterZones,
           site,
@@ -345,7 +351,7 @@ export default function LimitsMap({
           <Layer
             id="groundWater-highlight"
             type="fill"
-            filter={['==', ['id'], mouseState.groundWaterId]}
+            filter={['in', ['id'], ['literal', mouseState.groundWaterZones]]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#33ff99',
