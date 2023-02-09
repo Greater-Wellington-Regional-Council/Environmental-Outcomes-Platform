@@ -1,0 +1,39 @@
+project_name: nz-govt-eop-ingest-api
+
+tasks:
+  build:
+    description: Build the application.
+    run:
+      container: java-build-env
+      command: ./gradlew bootJar
+
+  check:
+    description: Run tests and checks.
+    run:
+      container: java-build-env
+      command: ./gradlew check --console=verbose
+
+  run:
+    description: Run the application.
+    prerequisites:
+      - build
+    run:
+      container: ingest-api-service
+      ports:
+        - local: 8080
+          container: 8080
+
+  shell:
+    description: Start a shell in the development environment.
+    run:
+      container: java-build-env
+      command: bash
+
+containers:
+  ingest-api-service:
+    build_directory: ./
+
+include:
+  - type: git
+    repo: https://github.com/batect/java-bundle.git
+    ref: 0.6.0
