@@ -29,6 +29,9 @@ dependencies {
   testImplementation("org.springframework.kafka:spring-kafka-test")
 }
 
+// Don't repackage build in a "-plain" Jar
+tasks.getByName<Jar>("jar") { enabled = false }
+
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = listOf("-Xjsr305=strict")
