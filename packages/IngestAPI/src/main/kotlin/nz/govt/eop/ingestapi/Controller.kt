@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 data class IngestResponse(val receivedAt: String, val ingestID: String)
 
 @RestController
-class IngestAPIController {
+class Controller(val producer: Producer) {
   @GetMapping("/allocations", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun allocations(): IngestResponse {
     return IngestResponse(

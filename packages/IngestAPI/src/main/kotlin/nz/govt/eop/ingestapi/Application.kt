@@ -7,7 +7,7 @@ import kotlin.io.path.writeBytes
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication class IngestApiApplication
+@SpringBootApplication class Application
 
 private const val ENV_CONFIG_KEYSTORE_CONTENT = "CONFIG_KEYSTORE_CONTENT"
 private const val PROP_CONFIG_KEYSTORE_PATH = "CONFIG_KEYSTORE_PATH"
@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
   if (System.getenv(ENV_CONFIG_KEYSTORE_CONTENT) != null) {
     storeKeystoreFromEnvironment()
   }
-  runApplication<IngestApiApplication>(*args)
+  runApplication<Application>(*args)
 }
 
 /**
