@@ -1,0 +1,10 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      auto-offset-reset: earliest
+
+server:
+  compression:
+    enabled: true
+    mime-types: application/json

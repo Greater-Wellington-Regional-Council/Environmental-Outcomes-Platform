@@ -12,6 +12,7 @@ data class IngestResponse(val receivedAt: String, val ingestID: String)
 class Controller(val producer: Producer) {
   @GetMapping("/allocations", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun allocations(): IngestResponse {
+    producer.produce("The message")
     return IngestResponse(
         receivedAt = Instant.now().toString(),
         ingestID = UUID.randomUUID().toString(),
