@@ -12,7 +12,14 @@ import org.springframework.security.web.SecurityFilterChain
 class SecurityConfig(@Value("\${ingestApi.usersJSON}") private val usersJSON: String) {
   @Bean
   fun filterChain(http: HttpSecurity): SecurityFilterChain {
-    http.authorizeHttpRequests().anyRequest().authenticated().and().httpBasic()
+    http
+        .authorizeHttpRequests()
+        .requestMatchers("/actuator/health")
+        .permitAll()
+        .anyRequest()
+        .authenticated()
+        .and()
+        .httpBasic()
     return http.build()
   }
 
