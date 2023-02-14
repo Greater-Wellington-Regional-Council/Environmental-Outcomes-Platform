@@ -8,3 +8,6 @@ server:
   compression:
     enabled: true
     mime-types: application/json
+
+ingestApi:
+  usersJSON: '[{"id": "gw", "token": "12345"}]'

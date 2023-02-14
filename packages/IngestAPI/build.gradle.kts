@@ -18,15 +18,18 @@ repositories { mavenCentral() }
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
+  implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("io.micrometer:micrometer-tracing-bridge-brave")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.kafka:spring-kafka")
+  implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
   developmentOnly("org.springframework.boot:spring-boot-devtools")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
+  testImplementation("org.springframework.security:spring-security-test")
 }
 
 // Don't repackage build in a "-plain" Jar
@@ -39,7 +42,10 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-tasks.withType<Test> { useJUnitPlatform() }
+tasks.withType<Test> {
+  useJUnitPlatform()
+  this.testLogging { this.showStandardStreams = true }
+}
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   kotlin { ktfmt() }
