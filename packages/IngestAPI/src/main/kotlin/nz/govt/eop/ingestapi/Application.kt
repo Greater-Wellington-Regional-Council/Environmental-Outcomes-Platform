@@ -4,10 +4,21 @@ import java.nio.file.Files
 import java.util.Base64
 import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
+import org.apache.kafka.clients.admin.NewTopic
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Bean
+import org.springframework.kafka.config.TopicBuilder
 
-@SpringBootApplication class Application
+@SpringBootApplication
+class Application {
+
+  // TODO: Configure paritions/replicas per env
+  @Bean
+  fun createTopic(): NewTopic {
+    return TopicBuilder.name("test-topic").partitions(1).replicas(1).build()
+  }
+}
 
 private const val ENV_CONFIG_KEYSTORE_CONTENT = "CONFIG_KEYSTORE_CONTENT"
 private const val PROP_CONFIG_KEYSTORE_PATH = "CONFIG_KEYSTORE_PATH"
