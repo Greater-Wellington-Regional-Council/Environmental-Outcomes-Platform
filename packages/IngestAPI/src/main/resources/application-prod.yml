@@ -1,0 +1,12 @@
+spring:
+  kafka:
+    bootstrap-servers: b-1.kafkaeopdev.7hlel8.c3.kafka.ap-southeast-2.amazonaws.com:9096,b-2.kafkaeopdev.7hlel8.c3.kafka.ap-southeast-2.amazonaws.com:9096,b-3.kafkaeopdev.7hlel8.c3.kafka.ap-southeast-2.amazonaws.com:9096
+    properties:
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: SCRAM-SHA-512
+        jaas:
+          config: org.apache.kafka.common.security.scram.ScramLoginModule required username="ingest-api" password="qDRkDXbeGminQknEowbJuxxyGJzfgZnR";
+    consumer:
+      auto-offset-reset: earliest

@@ -18,7 +18,7 @@ class Controller(val producer: Producer) {
 
   @GetMapping("/allocations", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun allocations(@AuthenticationPrincipal apiUser: UserDetails): IngestResponse {
-    // producer.produce("The message")
+    producer.produce("The message")
     logger.info { "Ingest called by ${apiUser.username}" }
     return IngestResponse(
         receivedAt = Instant.now().toString(),
