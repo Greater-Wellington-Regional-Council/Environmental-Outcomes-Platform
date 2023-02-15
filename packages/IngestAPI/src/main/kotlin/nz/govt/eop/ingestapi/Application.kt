@@ -13,10 +13,14 @@ import org.springframework.kafka.config.TopicBuilder
 @SpringBootApplication
 class Application {
 
-  // TODO: Configure paritions/replicas per env
+  
   @Bean
   fun createTopic(): NewTopic {
-    return TopicBuilder.name("test-topic").partitions(1).replicas(1).build()
+    // TODO: Switch these based on Spring profile, or exctract to config
+    // Dev
+    // return TopicBuilder.name("test-topic").partitions(4).replicas(2).build()
+    // Prod
+    return TopicBuilder.name("test-topic").partitions(4).replicas(2).build()
   }
 }
 
