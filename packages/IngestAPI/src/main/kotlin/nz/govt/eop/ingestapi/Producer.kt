@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component
 class Producer(private val kafkaTemplate: KafkaTemplate<String, String>) {
 
   fun produce(message: String) {
-    kafkaTemplate.send("test-topic", message)
+    kafkaTemplate.send(WATER_ALLOCATION_TOPIC_NAME, message)
   }
 }

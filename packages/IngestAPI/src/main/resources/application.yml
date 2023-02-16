@@ -11,3 +11,4 @@ server:
 
 ingestApi:
   usersJSON: '[{"id": "gw", "token": "12345"}]'
+  topicReplicas: 1

@@ -10,3 +10,6 @@ spring:
           config: org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_SASL_USERNAME}" password="${KAFKA_SASL_PASSWORD}";
     consumer:
       auto-offset-reset: earliest
+
+ingestApi:
+  topicReplicas: 2

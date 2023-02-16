@@ -16,8 +16,8 @@ class Controller(val producer: Producer) {
 
   private val logger = KotlinLogging.logger {}
 
-  @GetMapping("/allocations", produces = [MediaType.APPLICATION_JSON_VALUE])
-  fun allocations(@AuthenticationPrincipal apiUser: UserDetails): IngestResponse {
+  @GetMapping("/water-allocations", produces = [MediaType.APPLICATION_JSON_VALUE])
+  fun waterAllocations(@AuthenticationPrincipal apiUser: UserDetails): IngestResponse {
     producer.produce("The message")
     logger.info { "Ingest called by ${apiUser.username}" }
     return IngestResponse(

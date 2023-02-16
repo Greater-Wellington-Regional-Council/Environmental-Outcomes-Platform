@@ -8,19 +8,20 @@ import org.apache.kafka.clients.admin.NewTopic
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.config.TopicBuilder
 
 @SpringBootApplication
 class Application {
 
-  
   @Bean
-  fun createTopic(): NewTopic {
-    // TODO: Switch these based on Spring profile, or exctract to config
-    // Dev
-    // return TopicBuilder.name("test-topic").partitions(4).replicas(2).build()
-    // Prod
-    return TopicBuilder.name("test-topic").partitions(4).replicas(2).build()
+  fun createWaterAllocationTopic(
+      @Value("\${ingestApi.topicReplicas}") topicReplicas: Int
+  ): NewTopic {
+    return TopicBuilder.name(WATER_ALLOCATION_TOPIC_NAME)
+        .partitions(4)
+        .replicas(topicReplicas)
+        .build()
   }
 }
 
