@@ -10,7 +10,7 @@ class Consumer {
   private val logger = KotlinLogging.logger {}
 
   @KafkaListener(topics = [WATER_ALLOCATION_TOPIC_NAME], groupId = "debug-consumer")
-  fun processMessage(message: String) {
-    logger.info { "Consumed $message" }
+  fun processMessage(allocation: IngestedWaterAllocation) {
+    logger.info { "Consumed $allocation" }
   }
 }

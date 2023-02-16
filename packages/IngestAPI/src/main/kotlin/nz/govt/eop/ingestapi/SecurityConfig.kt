@@ -20,6 +20,7 @@ class SecurityConfig(@Value("\${ingestApi.usersJSON}") private val usersJSON: St
         .authenticated()
         .and()
         .httpBasic()
+    http.csrf().disable()
     return http.build()
   }
 
