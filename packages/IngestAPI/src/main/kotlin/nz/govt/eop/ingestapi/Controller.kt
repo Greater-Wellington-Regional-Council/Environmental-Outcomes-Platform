@@ -3,6 +3,7 @@ package nz.govt.eop.ingestapi
 import java.time.Instant
 import java.util.UUID
 import mu.KotlinLogging
+import mu.withLoggingContext
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -28,9 +29,11 @@ class Controller(private val producer: Producer) {
     val ingestId = UUID.randomUUID().toString()
     val receivedAt = Instant.now().toString()
 
-    logger.info { "Recieved ${allocations.size} allocations" }
-    producer.produce(allocations, ingestId, receivedAt)
-    logger.info { "Ingested ${allocations.size} allocations" }
+    withLoggingContext("ingestId" to ingestId) {
+      logger.info { "Recieved ${allocations.size} allocations" }
+      producer.produce(allocations, ingestId, receivedAt)
+      logger.info { "Ingested ${allocations.size} allocations" }
+    }
 
     return IngestResponse(
         ingestId = ingestId,
