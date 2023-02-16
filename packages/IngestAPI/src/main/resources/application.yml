@@ -10,5 +10,5 @@ server:
     mime-types: application/json
 
 ingestApi:
-  usersJSON: '[{"id": "gw", "token": "12345"}]'
+  usersJSON: '{"gw": "test-api-token"}'
   topicReplicas: 1
