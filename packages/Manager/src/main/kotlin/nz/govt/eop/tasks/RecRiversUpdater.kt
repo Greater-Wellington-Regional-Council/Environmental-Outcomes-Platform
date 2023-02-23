@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import nz.govt.eop.si.jooq.tables.RawRecFeaturesRivers.Companion.RAW_REC_FEATURES_RIVERS
+import nz.govt.eop.si.jooq.tables.RecRiversModifications.Companion.REC_RIVERS_MODIFICATIONS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
@@ -36,15 +37,39 @@ class RecRiversUpdater(val context: DSLContext) {
             .fetchOne(DSL.max(RAW_REC_FEATURES_RIVERS.INGESTED_AT))
             ?: return false
 
+    val lastCreatedRiverModification =
+        context
+            .select(DSL.max(REC_RIVERS_MODIFICATIONS.CREATED_AT))
+            .from(REC_RIVERS_MODIFICATIONS)
+            .fetchOne(DSL.max(REC_RIVERS_MODIFICATIONS.CREATED_AT))
+
     val lastCreatedRiver =
         context.select(DSL.max(RIVERS.CREATED_AT)).from(RIVERS).fetchOne(DSL.max(RIVERS.CREATED_AT))
 
-    return lastCreatedRiver == null || lastCreatedRiver.isBefore(lastIngestedRiver)
+    return lastCreatedRiver == null ||
+        lastCreatedRiver.isBefore(lastIngestedRiver) ||
+        (lastCreatedRiverModification != null &&
+            lastCreatedRiver.isBefore(lastCreatedRiverModification))
   }
 
   private fun refresh() {
     logger.info { "RAW Rivers data has been updated since last processed, re-processing now" }
     context.deleteFrom(RIVERS).execute()
+
+    context
+        .insertInto(RIVERS)
+        .select(
+            context
+                .select(
+                    REC_RIVERS_MODIFICATIONS.HYDRO_ID,
+                    REC_RIVERS_MODIFICATIONS.NEXT_HYDRO_ID,
+                    REC_RIVERS_MODIFICATIONS.NZ_SEGMENT,
+                    REC_RIVERS_MODIFICATIONS.IS_HEADWATER,
+                    REC_RIVERS_MODIFICATIONS.STREAM_ORDER,
+                    REC_RIVERS_MODIFICATIONS.GEOM,
+                    DSL.field("NOW()"))
+                .from(REC_RIVERS_MODIFICATIONS))
+        .execute()
 
     context
         .insertInto(RIVERS)
@@ -74,7 +99,10 @@ class RecRiversUpdater(val context: DSLContext) {
                         .`as`("stream_order"),
                     DSL.field("st_geomfromgeojson(data -> 'geometry')", ByteArray::class.java)
                         .`as`("path"))
-                .from(RAW_REC_FEATURES_RIVERS))
+                .from(RAW_REC_FEATURES_RIVERS)
+                .where(
+                    DSL.field("(data -> 'properties' -> 'HydroID')::INT", Int::class.java)
+                        .notIn(context.select(RIVERS.HYDRO_ID).from(RIVERS))))
         .execute()
   }
 }
