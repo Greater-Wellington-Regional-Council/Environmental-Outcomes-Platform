@@ -19,7 +19,7 @@ class Application {
       @Value("\${ingestApi.topicReplicas}") topicReplicas: Int
   ): NewTopic {
     return TopicBuilder.name(WATER_ALLOCATION_TOPIC_NAME)
-        .partitions(4)
+        .partitions(1)
         .replicas(topicReplicas)
         .build()
   }
