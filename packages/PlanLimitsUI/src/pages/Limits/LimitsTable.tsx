@@ -61,15 +61,7 @@ export default function LimitsTable({
             <tr key={rowIndex}>
               {row.map((cell, cellIndex) => (
                 <td
-                  colSpan={
-                    // For Category B limits where where we note to refer to the
-                    // table, span the note across the unit and sub-unit column.
-                    // TODO: decouple this display logic from the structure of the data
-                    (cellIndex === 3 && row[cellIndex - 1] === 'B') ||
-                    cell === SURFACE_WATER_DEFAULT_RULE
-                      ? 2
-                      : 1
-                  }
+                  colSpan={cellIndex === 3 && row.length === 4 ? 2 : 1}
                   key={cellIndex}
                   className="border p-2 text-left text-sm"
                 >
