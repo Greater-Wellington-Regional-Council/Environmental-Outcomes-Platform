@@ -2,9 +2,7 @@ import { FeatureCollection, Geometry } from 'geojson';
 import React from 'react';
 
 import { GroundwaterZoneBoundariesProperties } from '../../api';
-import compileLimitsTable, {
-  SURFACE_WATER_DEFAULT_RULE,
-} from './compileLimitsTable';
+import compileLimitsTable from './compileLimitsTable';
 import type { WaterTakeFilter } from './';
 
 type Props = {

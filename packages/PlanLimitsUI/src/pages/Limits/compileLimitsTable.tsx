@@ -5,7 +5,7 @@ import type { WaterTakeFilter } from './';
 
 const BLANK_CELL_CHAR = '-';
 
-export const GROUNDWATER_CATEGORY_B_RULE = (
+const GROUNDWATER_CATEGORY_B_RULE = (
   <>
     See Table 4.1 of PNRP
     <sup>
@@ -14,7 +14,7 @@ export const GROUNDWATER_CATEGORY_B_RULE = (
   </>
 );
 
-export const SURFACE_WATER_DEFAULT_RULE = (
+const SURFACE_WATER_DEFAULT_RULE = (
   <>
     Refer to Policy P121 of PRNP
     <sup>
