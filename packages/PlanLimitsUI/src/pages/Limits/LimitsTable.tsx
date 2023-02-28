@@ -59,12 +59,7 @@ export default function LimitsTable({
             <tr key={rowIndex}>
               {row.map((cell, cellIndex) => (
                 <td
-                  colSpan={
-                    // For Category B limits where where we note to refer to the
-                    // table, span the note across the unit and sub-unit column.
-                    // TODO: decouple this display logic from the structure of the data
-                    cellIndex === 3 && row[cellIndex - 1] === 'B' ? 2 : 1
-                  }
+                  colSpan={cellIndex === 3 && row.length === 4 ? 2 : 1}
                   key={cellIndex}
                   className="border p-2 text-left text-sm"
                 >
@@ -76,18 +71,32 @@ export default function LimitsTable({
         </tbody>
       </table>
       {showFootnote && (
-        <div className="mt-3">
-          <a title="#PNRP">
-            <sup>1</sup>
-          </a>
-          <a
-            target="_blank"
-            href="https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=52"
-            className="text-sm flex-1 underline"
-          >
-            Table 4.1 of the Proposed Natural Resource Plan Limits
-          </a>
-        </div>
+        <>
+          <div className="mt-3">
+            <a title="#PNRP41">
+              <sup>1</sup>
+            </a>
+            <a
+              target="_blank"
+              href="https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=52"
+              className="text-sm flex-1 underline"
+            >
+              Table 4.1 of the Proposed Natural Resource Plan Limits
+            </a>
+          </div>
+          <div>
+            <a title="#PNRP121">
+              <sup>2</sup>
+            </a>
+            <a
+              target="_blank"
+              href="https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=59"
+              className="text-sm flex-1 underline"
+            >
+              Policy P121 of the Proposed Natural Resource Plan Limits
+            </a>
+          </div>
+        </>
       )}
     </>
   );

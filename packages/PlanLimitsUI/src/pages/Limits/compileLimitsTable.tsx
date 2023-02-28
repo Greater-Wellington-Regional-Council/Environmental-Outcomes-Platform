@@ -4,6 +4,25 @@ import type { FeatureCollection, Geometry } from 'geojson';
 import type { WaterTakeFilter } from './';
 
 const BLANK_CELL_CHAR = '-';
+
+const GROUNDWATER_CATEGORY_B_RULE = (
+  <>
+    See Table 4.1 of PNRP
+    <sup>
+      <a href="#PNRP41">1</a>
+    </sup>
+  </>
+);
+
+const SURFACE_WATER_DEFAULT_RULE = (
+  <>
+    Refer to Policy P121 of PRNP
+    <sup>
+      <a href="#PRNP121">2</a>
+    </sup>
+  </>
+);
+
 const HEADERS = [
   'Type',
   'Bore screen depth',
@@ -27,17 +46,27 @@ export default function compileLimitsTable(
   const rows = [];
 
   if (['Combined', 'Surface'].includes(waterTakeFilter)) {
-    rows.push([
-      'Surface water',
-      BLANK_CELL_CHAR,
-      BLANK_CELL_CHAR,
-      <>
-        {surfaceWaterMgmtSubUnitLimit
-          ? surfaceWaterMgmtSubUnitLimit
-          : BLANK_CELL_CHAR}
-      </>,
-      surfaceWaterMgmtUnitLimit,
-    ]);
+    if (!surfaceWaterMgmtUnitLimit && !surfaceWaterMgmtSubUnitLimit) {
+      showFootnote = true;
+      rows.push([
+        'Surface water',
+        BLANK_CELL_CHAR,
+        BLANK_CELL_CHAR,
+        SURFACE_WATER_DEFAULT_RULE,
+      ]);
+    } else {
+      rows.push([
+        'Surface water',
+        BLANK_CELL_CHAR,
+        BLANK_CELL_CHAR,
+        <>
+          {surfaceWaterMgmtSubUnitLimit
+            ? surfaceWaterMgmtSubUnitLimit
+            : BLANK_CELL_CHAR}
+        </>,
+        surfaceWaterMgmtUnitLimit,
+      ]);
+    }
   }
 
   if (['Combined', 'Ground'].includes(waterTakeFilter)) {
@@ -60,17 +89,28 @@ export default function compileLimitsTable(
     activeFeatures
       .filter((feature) => feature.category === 'Category A')
       .forEach((feature) => {
-        const limit = formatWaterQuantity(
-          feature.swAllocationAmount,
-          feature.swAllocationUnit
-        );
-        rows.push([
-          'Groundwater',
-          feature.depth,
-          'A',
-          limit,
-          surfaceWaterMgmtUnitLimit,
-        ]);
+        if (!feature.swAllocationAmount && !surfaceWaterMgmtUnitLimit) {
+          rows.push([
+            'Groundwater',
+            feature.depth,
+            'A',
+            SURFACE_WATER_DEFAULT_RULE,
+          ]);
+        } else {
+          const limit = feature.swAllocationAmount
+            ? formatWaterQuantity(
+                feature.swAllocationAmount,
+                feature.swAllocationUnit
+              )
+            : BLANK_CELL_CHAR;
+          rows.push([
+            'Groundwater',
+            feature.depth,
+            'A',
+            limit,
+            surfaceWaterMgmtUnitLimit,
+          ]);
+        }
       });
 
     activeFeatures
@@ -81,12 +121,7 @@ export default function compileLimitsTable(
           'Groundwater',
           feature.depth,
           'B',
-          <>
-            See Table 4.1 of PNRP
-            <sup>
-              <a href="#PNRP">1</a>
-            </sup>
-          </>,
+          GROUNDWATER_CATEGORY_B_RULE,
         ]);
       });
 
