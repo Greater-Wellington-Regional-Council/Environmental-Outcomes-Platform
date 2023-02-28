@@ -4,14 +4,14 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 
 data class IngestedWaterAllocation(
-    val id: String,
+    val areaId: String,
     val amount: Int,
     val ingestId: String,
     val receivedAt: String
 ) {
   companion object {
     fun create(allocation: WaterAllocation, ingestId: String, receivedAt: String) =
-        IngestedWaterAllocation(allocation.id, allocation.amount, ingestId, receivedAt)
+        IngestedWaterAllocation(allocation.areaId, allocation.amount, ingestId, receivedAt)
   }
 }
 
@@ -22,7 +22,7 @@ class Producer(private val kafkaTemplate: KafkaTemplate<String, IngestedWaterAll
     for (allocation in allocations) {
       kafkaTemplate.send(
           WATER_ALLOCATION_TOPIC_NAME,
-          allocation.id,
+          allocation.areaId,
           IngestedWaterAllocation.create(allocation, ingestId, receivedAt))
     }
   }
