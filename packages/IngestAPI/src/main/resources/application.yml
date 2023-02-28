@@ -9,7 +9,7 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
         spring:
-          json.trusted.packages: nz.govt.eop.ingestapi
+          json.trusted.packages: nz.govt.eop.messages
           deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer

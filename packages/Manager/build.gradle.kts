@@ -30,6 +30,7 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql")
 
   implementation("org.springframework.boot:spring-boot-starter-web")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
@@ -42,8 +43,11 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-spring:4.43.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.43.0")
 
+  implementation("org.springframework.kafka:spring-kafka")
+
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-assertions-core:5.5.4")
+  testImplementation("org.springframework.kafka:spring-kafka-test")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }
