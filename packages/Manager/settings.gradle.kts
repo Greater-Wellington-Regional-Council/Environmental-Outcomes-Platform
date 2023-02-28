@@ -1,1 +1,1 @@
-rootProject.name = "EOP-Manager"
+rootProject.name = "Manager"
