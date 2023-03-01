@@ -79,17 +79,21 @@ export default function compileLimitsTable(
             feature.properties.groundwater_allocation_amount_unit,
           depth: feature.properties.depth,
           category: feature.properties.category,
-          swAllocationUnit:
-            feature.properties.surface_water_allocation_amount_unit,
-          swAllocationAmount:
-            feature.properties.surface_water_allocation_amount,
+          swUnitAllocationUnit:
+            feature.properties.surface_water_unit_allocation_amount_unit,
+          swUnitAllocationAmount:
+            feature.properties.surface_water_unit_allocation_amount,
+          swSubUnitAllocationUnit:
+            feature.properties.surface_water_sub_unit_allocation_amount_unit,
+          swSubUnitAllocationAmount:
+            feature.properties.surface_water_sub_unit_allocation_amount,
         };
       });
 
     activeFeatures
       .filter((feature) => feature.category === 'Category A')
       .forEach((feature) => {
-        if (!feature.swAllocationAmount && !surfaceWaterMgmtUnitLimit) {
+        if (!feature.swUnitAllocationAmount && !surfaceWaterMgmtUnitLimit) {
           rows.push([
             'Groundwater',
             feature.depth,
@@ -97,18 +101,25 @@ export default function compileLimitsTable(
             SURFACE_WATER_DEFAULT_RULE,
           ]);
         } else {
-          const limit = feature.swAllocationAmount
+          const swUnitLimit = feature.swUnitAllocationAmount
             ? formatWaterQuantity(
-                feature.swAllocationAmount,
-                feature.swAllocationUnit
+                feature.swUnitAllocationAmount,
+                feature.swUnitAllocationUnit
+              )
+            : BLANK_CELL_CHAR;
+
+          const swSubUnitLimit = feature.swSubUnitAllocationAmount
+            ? formatWaterQuantity(
+                feature.swSubUnitAllocationAmount,
+                feature.swSubUnitAllocationUnit
               )
             : BLANK_CELL_CHAR;
           rows.push([
             'Groundwater',
             feature.depth,
             'A',
-            limit,
-            surfaceWaterMgmtUnitLimit,
+            swSubUnitLimit,
+            swUnitLimit,
           ]);
         }
       });

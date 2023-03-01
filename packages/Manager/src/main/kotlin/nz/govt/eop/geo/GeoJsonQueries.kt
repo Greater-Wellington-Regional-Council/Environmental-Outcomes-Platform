@@ -103,7 +103,8 @@ class GeoJsonQueries(@Autowired val context: DSLContext) {
   }
 
   fun getGroundwaterZones(): String {
-    val allocationAmountsSurfaceWater = ALLOCATION_AMOUNTS.`as`("swa")
+    val allocationAmountsSurfaceWaterUnit = ALLOCATION_AMOUNTS.`as`("swau")
+    val allocationAmountsSurfaceWaterSubUnit = ALLOCATION_AMOUNTS.`as`("swas")
     val allocationAmountsGroundwater = ALLOCATION_AMOUNTS.`as`("gwa")
 
     val innerQuery =
@@ -113,10 +114,14 @@ class GeoJsonQueries(@Autowired val context: DSLContext) {
                 GROUNDWATER_ZONES.NAME,
                 GROUNDWATER_ZONES.DEPTH,
                 GROUNDWATER_ZONES.CATEGORY,
-                allocationAmountsSurfaceWater.ALLOCATION_AMOUNT.`as`(
-                    "surface_water_allocation_amount"),
-                allocationAmountsSurfaceWater.ALLOCATION_AMOUNT_UNIT.`as`(
-                    "surface_water_allocation_amount_unit"),
+                allocationAmountsSurfaceWaterUnit.ALLOCATION_AMOUNT.`as`(
+                    "surface_water_unit_allocation_amount"),
+                allocationAmountsSurfaceWaterUnit.ALLOCATION_AMOUNT_UNIT.`as`(
+                    "surface_water_unit_allocation_amount_unit"),
+                allocationAmountsSurfaceWaterSubUnit.ALLOCATION_AMOUNT.`as`(
+                    "surface_water_sub_unit_allocation_amount"),
+                allocationAmountsSurfaceWaterSubUnit.ALLOCATION_AMOUNT_UNIT.`as`(
+                    "surface_water_sub_unit_allocation_amount_unit"),
                 allocationAmountsGroundwater.ALLOCATION_AMOUNT.`as`(
                     "groundwater_allocation_amount"),
                 allocationAmountsGroundwater.ALLOCATION_AMOUNT_UNIT.`as`(
@@ -125,10 +130,14 @@ class GeoJsonQueries(@Autowired val context: DSLContext) {
             .from(GROUNDWATER_ZONES)
             .join(allocationAmountsGroundwater)
             .on(GROUNDWATER_ZONES.ALLOCATION_AMOUNT_ID.eq(allocationAmountsGroundwater.ID))
-            .leftJoin(allocationAmountsSurfaceWater)
+            .leftJoin(allocationAmountsSurfaceWaterUnit)
+            .on(
+                allocationAmountsGroundwater.PARENT_SURFACEWATER_UNIT_ID.eq(
+                    allocationAmountsSurfaceWaterUnit.ID))
+            .leftJoin(allocationAmountsSurfaceWaterSubUnit)
             .on(
                 allocationAmountsGroundwater.PARENT_SURFACEWATERSUBUNIT_ID.eq(
-                    allocationAmountsSurfaceWater.ID))
+                    allocationAmountsSurfaceWaterSubUnit.ID))
 
     return buildFeatureCollection(context, innerQuery)
   }
