@@ -14,7 +14,7 @@ const GROUNDWATER_CATEGORY_B_RULE = (
   </>
 );
 
-const SURFACE_WATER_DEFAULT_RULE = (
+const DEFAULT_RULE = (
   <>
     Refer to Policy P121 of PRNP
     <sup>
@@ -52,7 +52,7 @@ export default function compileLimitsTable(
         'Surface water',
         BLANK_CELL_CHAR,
         BLANK_CELL_CHAR,
-        SURFACE_WATER_DEFAULT_RULE,
+        DEFAULT_RULE,
       ]);
     } else {
       rows.push([
@@ -90,61 +90,61 @@ export default function compileLimitsTable(
         };
       });
 
-    activeFeatures
-      .filter((feature) => feature.category === 'Category A')
-      .forEach((feature) => {
-        if (!feature.swUnitAllocationAmount && !surfaceWaterMgmtUnitLimit) {
+    if (activeFeatures.length === 0) {
+      showFootnote = true;
+      rows.push(['Groundwater', 'All Depths', BLANK_CELL_CHAR, DEFAULT_RULE]);
+    } else {
+      activeFeatures
+        .filter((feature) => feature.category === 'Category A')
+        .forEach((feature) => {
+          if (!feature.swUnitAllocationAmount && !surfaceWaterMgmtUnitLimit) {
+            rows.push(['Groundwater', feature.depth, 'A', DEFAULT_RULE]);
+          } else {
+            const swUnitLimit = feature.swUnitAllocationAmount
+              ? formatWaterQuantity(
+                  feature.swUnitAllocationAmount,
+                  feature.swUnitAllocationUnit
+                )
+              : BLANK_CELL_CHAR;
+
+            const swSubUnitLimit = feature.swSubUnitAllocationAmount
+              ? formatWaterQuantity(
+                  feature.swSubUnitAllocationAmount,
+                  feature.swSubUnitAllocationUnit
+                )
+              : BLANK_CELL_CHAR;
+            rows.push([
+              'Groundwater',
+              feature.depth,
+              'A',
+              swSubUnitLimit,
+              swUnitLimit,
+            ]);
+          }
+        });
+
+      activeFeatures
+        .filter((feature) => feature.category === 'Category B')
+        .forEach((feature) => {
+          showFootnote = true;
           rows.push([
             'Groundwater',
             feature.depth,
-            'A',
-            SURFACE_WATER_DEFAULT_RULE,
+            'B',
+            GROUNDWATER_CATEGORY_B_RULE,
           ]);
-        } else {
-          const swUnitLimit = feature.swUnitAllocationAmount
-            ? formatWaterQuantity(
-                feature.swUnitAllocationAmount,
-                feature.swUnitAllocationUnit
-              )
-            : BLANK_CELL_CHAR;
+        });
 
-          const swSubUnitLimit = feature.swSubUnitAllocationAmount
-            ? formatWaterQuantity(
-                feature.swSubUnitAllocationAmount,
-                feature.swSubUnitAllocationUnit
-              )
-            : BLANK_CELL_CHAR;
-          rows.push([
-            'Groundwater',
-            feature.depth,
-            'A',
-            swSubUnitLimit,
-            swUnitLimit,
-          ]);
-        }
-      });
-
-    activeFeatures
-      .filter((feature) => feature.category === 'Category B')
-      .forEach((feature) => {
-        showFootnote = true;
-        rows.push([
-          'Groundwater',
-          feature.depth,
-          'B',
-          GROUNDWATER_CATEGORY_B_RULE,
-        ]);
-      });
-
-    activeFeatures
-      .filter((feature) => feature.category === 'Category C')
-      .forEach((feature) => {
-        const limit = formatWaterQuantity(
-          feature.gwAllocationAmount,
-          feature.gwAllocationUnit
-        );
-        rows.push(['Groundwater', feature.depth, 'C', limit, '-']);
-      });
+      activeFeatures
+        .filter((feature) => feature.category === 'Category C')
+        .forEach((feature) => {
+          const limit = formatWaterQuantity(
+            feature.gwAllocationAmount,
+            feature.gwAllocationUnit
+          );
+          rows.push(['Groundwater', feature.depth, 'C', limit, '-']);
+        });
+    }
   }
 
   return { rows, headers: HEADERS, showFootnote };
