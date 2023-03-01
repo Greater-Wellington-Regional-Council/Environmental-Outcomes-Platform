@@ -27,6 +27,11 @@ class Consumer(@Autowired val context: DSLContext) {
             WATER_ALLOCATIONS.LAST_UPDATED_INGEST_ID,
             WATER_ALLOCATIONS.UPDATED_AT)
         .values(allocation.areaId, allocation.amount, allocation.ingestId, LocalDateTime.now())
+        .onConflict(WATER_ALLOCATIONS.AREA_ID)
+        .doUpdate()
+        .set(WATER_ALLOCATIONS.AMOUNT, allocation.amount)
+        .set(WATER_ALLOCATIONS.LAST_UPDATED_INGEST_ID, allocation.ingestId)
+        .set(WATER_ALLOCATIONS.UPDATED_AT, LocalDateTime.now())
         .execute()
     logger.info { "Consumed $allocation" }
   }
