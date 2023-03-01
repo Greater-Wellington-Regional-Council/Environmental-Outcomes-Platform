@@ -72,6 +72,13 @@ export default function compileLimitsTable(
   if (['Combined', 'Ground'].includes(waterTakeFilter)) {
     const activeFeatures = groundWaterZoneGeoJson.features
       .filter((item) => activeZonesIds.includes(Number(item.id as string)))
+      .sort((a, b) => {
+        // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
+        const alphabet = '0123456789>';
+        const first = a.properties.depth.charAt(0);
+        const second = b.properties.depth.charAt(1);
+        return alphabet.indexOf(first) - alphabet.indexOf(second);
+      })
       .map((feature) => {
         return {
           gwAllocationAmount: feature.properties.groundwater_allocation_amount,
