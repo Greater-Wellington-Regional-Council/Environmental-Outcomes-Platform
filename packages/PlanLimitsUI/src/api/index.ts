@@ -1,5 +1,5 @@
-import { FeatureCollection, Geometry } from 'geojson';
-import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { FeatureCollection } from 'geojson';
+import { useQueries, useQuery } from '@tanstack/react-query';
 
 const determineBackendUri = (hostname: string) => {
   switch (hostname) {
@@ -7,7 +7,7 @@ const determineBackendUri = (hostname: string) => {
       return 'https://data.gw-eop-dev.tech';
     case 'plan-limits.gw-eop-stage.tech':
       return 'https://data.gw-eop-stage.tech';
-    case 'app.eop.gw.govt.nz':
+    case 'plan-limits.eop.gw.govt.nz':
       return 'https://data.eop.gw.govt.nz';
     default:
       return 'http://localhost:8080';
