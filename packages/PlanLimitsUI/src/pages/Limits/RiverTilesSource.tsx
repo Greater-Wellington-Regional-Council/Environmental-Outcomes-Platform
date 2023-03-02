@@ -6,7 +6,7 @@ function determineTileServerHost(hostname: string) {
       return 'https://tiles.gw-eop-dev.tech';
     case 'plan-limits.gw-eop-stage.tech':
       return 'https://tiles.gw-eop-stage.tech';
-    case 'app.eop.gw.govt.nz':
+    case 'plan-limits.eop.gw.govt.nz':
       return 'https://tiles.eop.gw.govt.nz';
     default:
       return 'http://localhost:7800';
