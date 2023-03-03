@@ -11,7 +11,7 @@ SET hydro_id = 259613
 WHERE id=6;
 
 UPDATE minimum_flow_limits
-SET excluded_hydro_ids='{260015,261930,262397,260343,258982,259960,262349,262,268}' 
+SET excluded_hydro_ids='{260015,261930,262397,260343,258982,259960,262349,265528}' 
 WHERE id=12;
 
 UPDATE minimum_flow_limits
