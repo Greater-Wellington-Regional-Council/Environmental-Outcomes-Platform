@@ -38,6 +38,7 @@ export default function LimitsTable({
 
   return (
     <>
+      <h3 className="text-lg uppercase mb-2 tracking-wider">Limits</h3>
       <table className="border-collapse border">
         <thead>
           <tr>
