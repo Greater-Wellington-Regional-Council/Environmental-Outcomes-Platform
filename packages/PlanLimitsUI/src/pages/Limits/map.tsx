@@ -22,6 +22,8 @@ import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
 import formatWaterQuantity from './formatWaterQuantity';
 
+import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
+
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
   type: 'FeatureCollection' as 'FeatureCollection',
@@ -125,11 +127,9 @@ export default function LimitsMap({
         const flowRestrictionsManagementSiteId =
           findFeature(result, 'minimumFlowLimitBoundaries', 'site_id') ||
           'NONE';
-        const flowRestrictionsManagementSiteName = findFeature(
-          result,
-          'minimumFlowLimitBoundaries',
-          'name'
-        );
+        const flowRestrictionsManagementSiteName =
+          findFeature(result, 'minimumFlowLimitBoundaries', 'name') ||
+          defaultFlowLimitAndSite(whaituaId);
 
         const flowRestrictionsAmount = findFeature(
           result,
@@ -148,7 +148,7 @@ export default function LimitsMap({
               Number(flowRestrictionsAmount),
               flowRestrictionsUnit as string
             )
-          : undefined;
+          : defaultFlowLimitAndSite(whaituaId);
 
         const surfaceWaterMgmtSubUnitLimit =
           surfaceWaterMgmtSubUnitId === 'NONE'

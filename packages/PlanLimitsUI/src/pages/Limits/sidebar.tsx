@@ -9,10 +9,16 @@ import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 
-const LimitsListItem = ({ title, text }: { title: string; text: string }) => (
-  <div className="col-span-2">
-    <dt className="font-medium text-gray-500">{title}</dt>
-    <dd className="mt-1 text-gray-900">{text}</dd>
+const LimitsListItem = ({
+  title,
+  text,
+}: {
+  title: string;
+  text: string | JSX.Element;
+}) => (
+  <div className="mb-4">
+    <dt className="font-semibold">{title}</dt>
+    <dd>{text}</dd>
   </div>
 );
 
@@ -32,10 +38,10 @@ export default function Sidebar({
     <>
       <header className="flex items-center px-6 py-4">
         <div className="flex-1">
-          <h2 className="text-xl font-light">
+          <h1 className="text-xl font-light">
             Proposed Natural Resource Plan Limits
-          </h2>
-          <h3>Water Quantity Limits</h3>
+          </h1>
+          <h2>Water Quantity Limits</h2>
         </div>
         <a
           href="https://www.gw.govt.nz/"
@@ -74,18 +80,16 @@ export default function Sidebar({
           />
         </div>
 
-        <h3 className="font-semibold pb-2">Area</h3>
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-4 pb-4">
+        <h3 className="text-lg uppercase mb-2 tracking-wider">Area</h3>
+        <dl className="mb-6">
           <LimitsListItem
-            title="What Whaitua am I in?"
+            title="Whaitua"
             text={mouseState.whaitua ? mouseState.whaitua : 'None'}
           />
           {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <>
               <LimitsListItem
-                title={
-                  'What spatial surface water catchment management unit am I in?'
-                }
+                title={'Surface Water Catchment Unit'}
                 text={
                   mouseState.surfaceWaterMgmtUnitDescription
                     ? mouseState.surfaceWaterMgmtUnitDescription
@@ -93,9 +97,7 @@ export default function Sidebar({
                 }
               />
               <LimitsListItem
-                title={
-                  'What spatial surface water catchment management sub-unit am I in?'
-                }
+                title={'Surface Water Catchment Sub-unit'}
                 text={
                   mouseState.surfaceWaterMgmtSubUnitDescription
                     ? mouseState.surfaceWaterMgmtSubUnitDescription
@@ -106,9 +108,7 @@ export default function Sidebar({
           )}
           {['Ground', 'Combined'].includes(waterTakeFilter) && (
             <LimitsListItem
-              title={
-                'What spatial groundwater catchment management unit am I in?'
-              }
+              title={'Groundwater Catchment Unit'}
               text={
                 mouseState.groundWaterZoneName
                   ? mouseState.groundWaterZoneName
@@ -117,7 +117,7 @@ export default function Sidebar({
             />
           )}
           <LimitsListItem
-            title={'What flow management site applies to me?'}
+            title={'Flow Management Site'}
             text={
               mouseState.flowRestrictionsManagementSiteName
                 ? mouseState.flowRestrictionsManagementSiteName
@@ -125,9 +125,7 @@ export default function Sidebar({
             }
           />
           <LimitsListItem
-            title={
-              'What (if any) minimum flow or restriction flow applies to me?'
-            }
+            title={'Minimum Flow or Restriction Flow'}
             text={
               mouseState.flowRestrictionsLevel
                 ? mouseState.flowRestrictionsLevel
@@ -135,7 +133,6 @@ export default function Sidebar({
             }
           />
         </dl>
-        <h3 className="font-semibold pb-2">Limits</h3>
         {mouseState.whaitua && queries[6].data && (
           <LimitsTable
             waterTakeFilter={waterTakeFilter}

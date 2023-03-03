@@ -43,8 +43,8 @@ export type MouseState = {
   surfaceWaterMgmtSubUnitId: string;
   surfaceWaterMgmtSubUnitDescription?: string | null;
   minimumFlowLimitId: string | null;
-  flowRestrictionsLevel?: string | null;
-  flowRestrictionsManagementSiteName?: string | null;
+  flowRestrictionsLevel?: string | JSX.Element | null;
+  flowRestrictionsManagementSiteName?: string | JSX.Element | null;
   flowRestrictionsManagementSiteId?: string | null;
   surfaceWaterMgmtUnitLimit?: string | null;
   surfaceWaterMgmtSubUnitLimit?: string | null;
