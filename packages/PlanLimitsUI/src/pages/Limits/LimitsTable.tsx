@@ -15,6 +15,7 @@ type Props = {
     Geometry,
     GroundwaterZoneBoundariesProperties
   >;
+  whaituaId: string;
 };
 
 export default function LimitsTable({
@@ -24,6 +25,7 @@ export default function LimitsTable({
   surfaceWaterMgmtSubUnitLimit,
   activeZonesIds,
   groundWaterZoneGeoJson,
+  whaituaId,
 }: Props) {
   const { headers, rows, showFootnote } = compileLimitsTable(
     waterTakeFilter,
@@ -31,7 +33,8 @@ export default function LimitsTable({
     surfaceWaterMgmtUnitLimit,
     surfaceWaterMgmtSubUnitLimit,
     activeZonesIds,
-    groundWaterZoneGeoJson
+    groundWaterZoneGeoJson,
+    whaituaId
   );
 
   if (rows.length === 0) return <></>;

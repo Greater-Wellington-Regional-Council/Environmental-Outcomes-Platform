@@ -40,7 +40,8 @@ export default function compileLimitsTable(
   groundWaterZoneGeoJson: FeatureCollection<
     Geometry,
     GroundwaterZoneBoundariesProperties
-  >
+  >,
+  whaituaId: string
 ) {
   let showFootnote = false;
   const rows = [];
@@ -62,6 +63,8 @@ export default function compileLimitsTable(
         <>
           {surfaceWaterMgmtSubUnitLimit
             ? surfaceWaterMgmtSubUnitLimit
+            : whaituaId.toString() === '4'
+            ? DEFAULT_RULE
             : BLANK_CELL_CHAR}
         </>,
         surfaceWaterMgmtUnitLimit,
