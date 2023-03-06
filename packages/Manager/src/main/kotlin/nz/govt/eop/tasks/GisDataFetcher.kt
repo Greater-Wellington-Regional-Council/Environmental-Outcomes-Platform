@@ -41,9 +41,11 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
       context
           .insertInto(
               WhaituaBoundaries.WHAITUA_BOUNDARIES,
+              WhaituaBoundaries.WHAITUA_BOUNDARIES.ID,
               WhaituaBoundaries.WHAITUA_BOUNDARIES.NAME,
               WhaituaBoundaries.WHAITUA_BOUNDARIES.GEOM)
           .values(
+              DSL.value(Integer.valueOf(feature.id)),
               DSL.value((feature.properties["Name"] as String).trim()),
               DSL.field(
                   "ST_GeomFromGeoJSON(?)",
