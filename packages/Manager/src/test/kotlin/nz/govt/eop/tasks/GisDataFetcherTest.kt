@@ -25,14 +25,14 @@ class GisDataFetcherTest(
 
   fun constructTestWhaituaData(): FeatureCollection {
 
-    var geometry = MultiPolygon(Polygon(LngLatAlt(174.90323294337531, -40.88914027923949)))
+    val geometry = MultiPolygon(Polygon(LngLatAlt(174.90323294337531, -40.88914027923949)))
 
-    var testFeature = Feature()
+    val testFeature = Feature()
     testFeature.setProperty("Name", "Kāpiti Whaitua")
     testFeature.setId("5")
     testFeature.setGeometry(geometry)
 
-    var testFeatureCollection = FeatureCollection()
+    val testFeatureCollection = FeatureCollection()
     testFeatureCollection.add(testFeature)
 
     return testFeatureCollection
@@ -40,9 +40,9 @@ class GisDataFetcherTest(
 
   fun constructTestGroundwaterData(): FeatureCollection {
 
-    var geometry = MultiPolygon(Polygon(LngLatAlt(174.90323294337531, -40.88914027923949)))
+    val geometry = MultiPolygon(Polygon(LngLatAlt(174.90323294337531, -40.88914027923949)))
 
-    var testFeature = Feature()
+    val testFeature = Feature()
     testFeature.setProperty("Name", "Middle Ruamāhanga")
     testFeature.setProperty("Category", "Category A")
     testFeature.setProperty("Depth", "0-20 m")
@@ -52,10 +52,8 @@ class GisDataFetcherTest(
     testFeature.setId("1")
     testFeature.setGeometry(geometry)
 
-    var testFeatureCollection = FeatureCollection()
+    val testFeatureCollection = FeatureCollection()
     testFeatureCollection.add(testFeature)
-
-    println(testFeatureCollection)
 
     return testFeatureCollection
   }
@@ -66,10 +64,10 @@ class GisDataFetcherTest(
     // GIVEN
     context.truncate(WHAITUA_BOUNDARIES).execute()
 
-    var whaitua_geojson = constructTestWhaituaData()
+    val geoJsonData = constructTestWhaituaData()
 
     // WHEN
-    gisDataFetcher.materialiseWhaituaGeoJson(featureCollection = whaitua_geojson)
+    gisDataFetcher.materialiseWhaituaGeoJson(geoJsonData)
 
     // THEN
     val first = context.select(DSL.count()).from(WHAITUA_BOUNDARIES).first()
@@ -85,10 +83,10 @@ class GisDataFetcherTest(
     // GIVEN
     context.truncate(GROUNDWATER_ZONES).execute()
 
-    val groundwater_geojson = constructTestGroundwaterData()
+    val geoJsonData = constructTestGroundwaterData()
 
     // WHEN
-    gisDataFetcher.materialiseGroundwaterGeoJson(groundwater_geojson)
+    gisDataFetcher.materialiseGroundwaterGeoJson(geoJsonData)
 
     // THEN
     val first = context.select(DSL.count()).from(GROUNDWATER_ZONES).first()
