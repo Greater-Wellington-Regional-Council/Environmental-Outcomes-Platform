@@ -10,7 +10,6 @@ import nz.govt.eop.si.jooq.tables.SurfaceWaterManagementBoundaries.Companion.SUR
 import nz.govt.eop.si.jooq.tables.Watersheds.Companion.WATERSHEDS
 import org.jooq.DSLContext
 import org.jooq.impl.DSL.*
-import org.jooq.impl.SQLDataType.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -75,69 +74,30 @@ class SurfaceWaterManagementBoundariesGenerator(@Autowired val context: DSLConte
         context
             .select(
                 ALLOCATION_AMOUNTS.ID,
-                ALLOCATION_AMOUNTS.HYDRO_ID,
+                ALLOCATION_AMOUNTS.HYDRO_IDS,
                 ALLOCATION_AMOUNTS.EXCLUDED_HYDRO_IDS)
             .from(ALLOCATION_AMOUNTS)
-            .where(ALLOCATION_AMOUNTS.HYDRO_ID.isNotNull)
+            .where(ALLOCATION_AMOUNTS.HYDRO_IDS.isNotNull)
             .fetch()
 
     allocationAmountsToProcess.forEach {
       val id = it.get(ALLOCATION_AMOUNTS.ID)!!
-      val hydroId = it.get(ALLOCATION_AMOUNTS.HYDRO_ID)!!
-      val excludedHydroIds = it.get(ALLOCATION_AMOUNTS.EXCLUDED_HYDRO_IDS)!!
-      val catchmentTree = selectCatchmentTree(hydroId, excludedHydroIds.toSet())
-      insertCatchmentFromWatersheds(id, hydroId, excludedHydroIds.toSet(), catchmentTree)
+      val hydroIds = it.get(ALLOCATION_AMOUNTS.HYDRO_IDS)!!.filterNotNull()
+      val excludedHydroIds = it.get(ALLOCATION_AMOUNTS.EXCLUDED_HYDRO_IDS)!!.filterNotNull()
+      val catchmentTree = selectRecCatchmentTree(context, hydroIds, excludedHydroIds)
+      insertCatchmentFromWatersheds(id, catchmentTree)
     }
   }
 
-  fun selectCatchmentTree(hydroId: Int, excludedHydroIds: Set<Int?>): Set<Int> {
-    val cte =
-        name("r")
-            .fields(
-                "hydro_id",
-            )
-            .`as`(
-                select(RIVERS.HYDRO_ID)
-                    .from(RIVERS)
-                    .where(
-                        RIVERS.NEXT_HYDRO_ID.eq(hydroId), RIVERS.HYDRO_ID.notIn(excludedHydroIds))
-                    .unionAll(
-                        select(
-                                RIVERS.HYDRO_ID,
-                            )
-                            .from(RIVERS)
-                            .join(table(name("r")))
-                            .on(field(name("r", "hydro_id"), INTEGER).eq(RIVERS.NEXT_HYDRO_ID))
-                            .where(RIVERS.HYDRO_ID.notIn(excludedHydroIds))))
-
-    return context
-        .withRecursive(cte)
-        .selectFrom(cte)
-        .fetch { it.get("hydro_id") as Int }
-        .toSet()
-        .plus(hydroId)
-  }
-
-  fun insertCatchmentFromWatersheds(
-      id: Int,
-      startHydroId: Int,
-      excludedHydroIds: Set<Int?>,
-      segments: Set<Int>
-  ) {
+  fun insertCatchmentFromWatersheds(id: Int, segments: Set<Int>) {
     context
         .insertInto(
             SURFACE_WATER_MANAGEMENT_BOUNDARIES,
             SURFACE_WATER_MANAGEMENT_BOUNDARIES.ID,
-            SURFACE_WATER_MANAGEMENT_BOUNDARIES.HYDRO_ID,
-            SURFACE_WATER_MANAGEMENT_BOUNDARIES.EXCLUDED_HYDRO_IDS,
             SURFACE_WATER_MANAGEMENT_BOUNDARIES.GEOM)
         .select(
             context
-                .select(
-                    inline(id),
-                    inline(startHydroId),
-                    inline(excludedHydroIds.toTypedArray()),
-                    field("ST_UNION( geom )", ByteArray::class.java))
+                .select(inline(id), field("ST_UNION( geom )", ByteArray::class.java))
                 .from(
                     context
                         .select(WATERSHEDS.GEOM)
