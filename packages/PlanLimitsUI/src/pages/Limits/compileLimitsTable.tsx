@@ -37,7 +37,7 @@ export default function compileLimitsTable(
   surfaceWaterMgmtUnitLimit: string | null | undefined,
   surfaceWaterMgmtSubUnitLimit: string | null | undefined,
   activeZonesIds: Array<number>,
-  groundWaterZoneGeoJson: FeatureCollection<
+  groundwaterZoneGeoJson: FeatureCollection<
     Geometry,
     GroundwaterZoneBoundariesProperties
   >,
@@ -73,7 +73,7 @@ export default function compileLimitsTable(
   }
 
   if (['Combined', 'Ground'].includes(waterTakeFilter)) {
-    const activeFeatures = groundWaterZoneGeoJson.features
+    const activeFeatures = groundwaterZoneGeoJson.features
       .filter((item) => activeZonesIds.includes(Number(item.id as string)))
       .sort((a, b) => {
         // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
