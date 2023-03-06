@@ -56,6 +56,8 @@ export default function compileLimitsTable(
         DEFAULT_RULE,
       ]);
     } else {
+      // Whaitua '4', the Waiarapa is hard coded here, because its uses 2 levels of surface water units
+      // and in areas where there is no value at the 'sub unit' level P121 applies
       rows.push([
         'Surface water',
         BLANK_CELL_CHAR,
