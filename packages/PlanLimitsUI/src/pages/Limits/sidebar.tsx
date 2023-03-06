@@ -148,6 +148,7 @@ export default function Sidebar({
                 GroundwaterZoneBoundariesProperties
               >
             }
+            whaituaId={mouseState.whaituaId}
           />
         )}
       </div>

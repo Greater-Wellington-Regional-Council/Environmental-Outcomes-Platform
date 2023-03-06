@@ -37,10 +37,11 @@ export default function compileLimitsTable(
   surfaceWaterMgmtUnitLimit: string | null | undefined,
   surfaceWaterMgmtSubUnitLimit: string | null | undefined,
   activeZonesIds: Array<number>,
-  groundWaterZoneGeoJson: FeatureCollection<
+  groundwaterZoneGeoJson: FeatureCollection<
     Geometry,
     GroundwaterZoneBoundariesProperties
-  >
+  >,
+  whaituaId: string
 ) {
   let showFootnote = false;
   const rows = [];
@@ -55,6 +56,8 @@ export default function compileLimitsTable(
         DEFAULT_RULE,
       ]);
     } else {
+      // Whaitua '4', the Waiarapa is hard coded here, because its uses 2 levels of surface water units
+      // and in areas where there is no value at the 'sub unit' level P121 applies
       rows.push([
         'Surface water',
         BLANK_CELL_CHAR,
@@ -62,6 +65,8 @@ export default function compileLimitsTable(
         <>
           {surfaceWaterMgmtSubUnitLimit
             ? surfaceWaterMgmtSubUnitLimit
+            : whaituaId.toString() === '4'
+            ? DEFAULT_RULE
             : BLANK_CELL_CHAR}
         </>,
         surfaceWaterMgmtUnitLimit,
@@ -70,7 +75,7 @@ export default function compileLimitsTable(
   }
 
   if (['Combined', 'Ground'].includes(waterTakeFilter)) {
-    const activeFeatures = groundWaterZoneGeoJson.features
+    const activeFeatures = groundwaterZoneGeoJson.features
       .filter((item) => activeZonesIds.includes(Number(item.id as string)))
       .sort((a, b) => {
         // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
