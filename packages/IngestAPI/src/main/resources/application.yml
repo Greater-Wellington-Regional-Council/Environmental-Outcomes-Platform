@@ -1,4 +1,6 @@
 spring:
+  main:
+    banner-mode: "off"
   kafka:
     bootstrap-servers: localhost:29092
     consumer:
