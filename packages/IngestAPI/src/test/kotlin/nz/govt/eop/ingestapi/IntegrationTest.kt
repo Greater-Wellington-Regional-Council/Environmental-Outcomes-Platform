@@ -52,7 +52,7 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                    """[{"id":  "1", "amount": 1}, {"id":  "2", "amount": 2}, {"id":  "3", "amount": 3}]"""))
+                    """{"ingestId": "1", "allocations": [{"areaId":  "1", "amount": 1}, {"areaId":  "2", "amount": 2}, {"areaId":  "3", "amount": 3}]}"""))
         .andExpect(status().isOk)
 
     // THEN
