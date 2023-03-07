@@ -21,31 +21,24 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ActiveProfiles("test")
+@EmbeddedKafka(
+    partitions = 1,
+    bootstrapServersProperty = "spring.kafka.bootstrap-servers",
+    topics = [WATER_ALLOCATION_TOPIC_NAME])
 @SpringBootTest
 @AutoConfigureMockMvc
-@EmbeddedKafka(
-    partitions = 1, brokerProperties = ["listeners=PLAINTEXT://localhost:29092", "port=29092"])
 class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: EmbeddedKafkaBroker) {
-
   @Test
   fun `Should reject invalid auth`() {
-    // GIVEN
-
-    // WHEN
     mvc.perform(
             post("/water-allocations")
-                .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "WRONG TOKEN"))
+                .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "WRONG TOKENs"))
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isUnauthorized)
-
-    // THEN
   }
 
   @Test
   fun `Should reject invalid data`() {
-    // GIVEN
-
-    // WHEN
     mvc.perform(
             post("/water-allocations")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
@@ -53,16 +46,11 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                 .content(
                     """{"notIngestId": "1", "allocations": [{"areaId":  "1", "amount": 1}]}"""))
         .andExpect(status().isBadRequest)
-
-    // THEN
   }
 
   @Test
   fun `Should post records to Kafka Topic`() {
-    // GIVEN
     val consumer = createKafkaConsumer(broker)
-
-    // WHEN
     mvc.perform(
             post("/water-allocations")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
@@ -70,8 +58,6 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                 .content(
                     """{"ingestId": "1", "allocations": [{"areaId":  "1", "amount": 1}, {"areaId":  "2", "amount": 2}, {"areaId":  "3", "amount": 3}]}"""))
         .andExpect(status().isOk)
-
-    // THEN
 
     val records = KafkaTestUtils.getRecords(consumer)
     records.shouldNotBeNull()

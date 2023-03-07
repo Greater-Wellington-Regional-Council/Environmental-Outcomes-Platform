@@ -9,11 +9,15 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
 import org.springframework.kafka.config.TopicBuilder
 
 @SpringBootApplication
 class Application {
 
+  // Topics are created in test via EmbeddedKafka config. This helps avoid race
+  // conditions and retries when EmbeddedKafka is not be ready, and speeds up boot.
+  @Profile("!test")
   @Bean
   fun createWaterAllocationTopic(
       @Value("\${ingestApi.topicReplicas}") topicReplicas: Int
