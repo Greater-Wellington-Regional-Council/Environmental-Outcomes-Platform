@@ -42,6 +42,22 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
   }
 
   @Test
+  fun `Should reject invalid data`() {
+    // GIVEN
+
+    // WHEN
+    mvc.perform(
+            post("/water-allocations")
+                .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """{"notIngestId": "1", "allocations": [{"areaId":  "1", "amount": 1}]}"""))
+        .andExpect(status().isBadRequest)
+
+    // THEN
+  }
+
+  @Test
   fun `Should post records to Kafka Topic`() {
     // GIVEN
     val consumer = createKafkaConsumer(broker)
