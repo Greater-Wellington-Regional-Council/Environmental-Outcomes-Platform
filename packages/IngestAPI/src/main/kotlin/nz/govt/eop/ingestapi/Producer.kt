@@ -12,7 +12,7 @@ class Producer(private val kafkaTemplate: KafkaTemplate<String, WaterAllocationM
       kafkaTemplate.send(
           WATER_ALLOCATION_TOPIC_NAME,
           allocation.areaId,
-          WaterAllocationMessage.create(allocation, ingestId, receivedAt))
+          WaterAllocationMessage(allocation, ingestId, receivedAt))
     }
   }
 }

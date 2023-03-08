@@ -8,8 +8,9 @@ data class WaterAllocationMessage(
     val ingestId: String,
     val receivedAt: String
 ) {
-  companion object {
-    fun create(allocation: WaterAllocation, ingestId: String, receivedAt: String) =
-        WaterAllocationMessage(allocation.areaId, allocation.amount, ingestId, receivedAt)
-  }
+  constructor(
+      allocation: WaterAllocation,
+      ingestId: String,
+      receivedAt: String
+  ) : this(allocation.areaId, allocation.amount, ingestId, receivedAt) {}
 }
