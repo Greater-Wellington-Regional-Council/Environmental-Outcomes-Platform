@@ -3,12 +3,16 @@ package nz.govt.eop.ingestapi
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.stereotype.Component
 
-class APIUserService(private val usersJSON: String) : UserDetailsService {
+@Component
+class APIUserService(@Value("\${ingestApi.usersJSON}") private val usersJSON: String) :
+    UserDetailsService {
 
   private val logger = KotlinLogging.logger {}
   // username is key, API Token is value

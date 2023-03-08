@@ -17,6 +17,8 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 repositories { mavenCentral() }
 
 dependencies {
+  developmentOnly("org.springframework.boot:spring-boot-devtools")
+
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-web")
@@ -26,10 +28,11 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.kafka:spring-kafka")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
-  developmentOnly("org.springframework.boot:spring-boot-devtools")
+
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.springframework.security:spring-security-test")
+  testImplementation("io.kotest:kotest-assertions-core:5.5.4")
 }
 
 // Don't repackage build in a "-plain" Jar

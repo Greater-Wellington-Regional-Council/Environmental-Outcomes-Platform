@@ -1,0 +1,4 @@
+logging:
+  level:
+    root: WARN
+    nz.govt.eop: INFO
