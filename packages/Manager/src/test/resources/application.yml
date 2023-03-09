@@ -5,6 +5,7 @@ spring:
     url: jdbc:postgresql://${CONFIG_DATABASE_HOST:localhost}:${CONFIG_DATABASE_PORT:5432}/eop_test
     username: postgres
     password: password
+
   kafka:
     bootstrap-servers: localhost:29092
     consumer:
@@ -15,9 +16,14 @@ spring:
         spring:
           json.trusted.packages: nz.govt.eop.messages
           deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+          spring.json.use.type.headers: false
+          json.value.default.type: nz.govt.eop.messages.WaterAllocationMessage
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          spring.json.add.type.headers: false
 
 logging:
   level:
