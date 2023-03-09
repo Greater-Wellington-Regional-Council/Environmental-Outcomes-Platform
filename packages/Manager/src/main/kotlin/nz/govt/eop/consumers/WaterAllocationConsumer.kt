@@ -2,10 +2,13 @@ package nz.govt.eop.consumers
 
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
+import java.util.function.BiFunction
 import mu.KotlinLogging
 import mu.withLoggingContext
 import nz.govt.eop.messages.WaterAllocationMessage
 import nz.govt.eop.si.jooq.tables.WaterAllocations.Companion.WATER_ALLOCATIONS
+import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.TopicPartition
 import org.jooq.*
 import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -76,6 +79,14 @@ class WaterAllocationConsumer(
   fun errorHandler(kafkaProperties: KafkaProperties): DefaultErrorHandler = run {
     val backOff = ExponentialBackOff(1000, 2.0)
     backOff.maxElapsedTime = 10000
-    DefaultErrorHandler(DeadLetterPublishingRecoverer(kafkaTemplate), backOff)
+
+    val destinationResolver =
+        BiFunction<ConsumerRecord<*, *>, Exception, TopicPartition> { t, _ ->
+          TopicPartition(t.topic() + ".manager-consumer.DLT", -1)
+        }
+
+    val deadLetterPublishingRecoverer =
+        DeadLetterPublishingRecoverer(kafkaTemplate, destinationResolver)
+    DefaultErrorHandler(deadLetterPublishingRecoverer, backOff)
   }
 }
