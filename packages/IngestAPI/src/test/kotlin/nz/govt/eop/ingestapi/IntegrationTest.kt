@@ -1,8 +1,8 @@
 package nz.govt.eop.ingestapi
 
-import nz.govt.eop.messages.WaterAllocationMessage
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
+import nz.govt.eop.messages.WaterAllocationMessage
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.junit.jupiter.api.Test
