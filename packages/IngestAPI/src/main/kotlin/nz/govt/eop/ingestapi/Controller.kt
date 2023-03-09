@@ -30,7 +30,7 @@ class Controller(private val producer: Producer) {
       @RequestBody requestBody: WaterAllocationsRequestBody
   ): IngestResponse {
 
-    val receivedAt = Instant.now().toString()
+    val receivedAt = Instant.now()
 
     withLoggingContext("ingestId" to requestBody.ingestId) {
       logger.info { "Recieved ${requestBody.allocations.size} allocations" }
@@ -40,7 +40,7 @@ class Controller(private val producer: Producer) {
 
     return IngestResponse(
         ingestId = requestBody.ingestId,
-        receivedAt = receivedAt,
+        receivedAt = receivedAt.toString(),
         recordsIngested = requestBody.allocations.size,
     )
   }
