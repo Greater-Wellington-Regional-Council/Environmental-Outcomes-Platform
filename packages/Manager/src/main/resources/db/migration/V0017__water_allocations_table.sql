@@ -4,7 +4,8 @@ CREATE TABLE water_allocations
   area_id                 VARCHAR NOT NULL UNIQUE,
   amount                  INTEGER NOT NULL,
   last_updated_ingest_id  VARCHAR NOT NULL,
-  created_at              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at              TIMESTAMP NOT NULL,
+  created_at              TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at              TIMESTAMPTZ NOT NULL,  
+  received_at             TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (id)
 );

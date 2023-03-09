@@ -1,6 +1,7 @@
 package nz.govt.eop.consumers
 
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import mu.KotlinLogging
 import mu.withLoggingContext
 import nz.govt.eop.messages.WaterAllocationMessage
@@ -30,23 +31,44 @@ class WaterAllocationConsumer(
   @KafkaListener(
       topics = [WATER_ALLOCATION_TOPIC_NAME], id = "nz.govt.eop.consumers.water-allocation")
   fun processMessage(allocation: WaterAllocationMessage) {
+
+    val recievedAtUTC = allocation.receivedAt.atOffset(ZoneOffset.UTC)
+    val now = OffsetDateTime.now()
+
     withLoggingContext("ingestId" to allocation.ingestId) {
-      logger.info { "Consuming water allocation for area_id:${allocation.areaId}" }
-      context
-          .insertInto(WATER_ALLOCATIONS)
-          .columns(
-              WATER_ALLOCATIONS.AREA_ID,
-              WATER_ALLOCATIONS.AMOUNT,
-              WATER_ALLOCATIONS.LAST_UPDATED_INGEST_ID,
-              WATER_ALLOCATIONS.UPDATED_AT)
-          .values(allocation.areaId, allocation.amount, allocation.ingestId, LocalDateTime.now())
-          .onConflict(WATER_ALLOCATIONS.AREA_ID)
-          .doUpdate()
-          .set(WATER_ALLOCATIONS.AMOUNT, allocation.amount)
-          .set(WATER_ALLOCATIONS.LAST_UPDATED_INGEST_ID, allocation.ingestId)
-          .set(WATER_ALLOCATIONS.UPDATED_AT, LocalDateTime.now())
-          .execute()
-      logger.info { "Consumed water allocation for area_id:${allocation.areaId}" }
+      logger.info { "Consuming allocation for area_id:${allocation.areaId}" }
+      val result =
+          context
+              .insertInto(WATER_ALLOCATIONS)
+              .columns(
+                  WATER_ALLOCATIONS.AREA_ID,
+                  WATER_ALLOCATIONS.AMOUNT,
+                  WATER_ALLOCATIONS.LAST_UPDATED_INGEST_ID,
+                  WATER_ALLOCATIONS.CREATED_AT,
+                  WATER_ALLOCATIONS.UPDATED_AT,
+                  WATER_ALLOCATIONS.RECEIVED_AT)
+              .values(
+                  allocation.areaId,
+                  allocation.amount,
+                  allocation.ingestId,
+                  now,
+                  now,
+                  recievedAtUTC)
+              .onConflict(WATER_ALLOCATIONS.AREA_ID)
+              .doUpdate()
+              .set(WATER_ALLOCATIONS.AMOUNT, allocation.amount)
+              .set(WATER_ALLOCATIONS.LAST_UPDATED_INGEST_ID, allocation.ingestId)
+              .set(WATER_ALLOCATIONS.UPDATED_AT, now)
+              .set(WATER_ALLOCATIONS.RECEIVED_AT, recievedAtUTC)
+              .where(WATER_ALLOCATIONS.RECEIVED_AT.lt(recievedAtUTC))
+              .execute()
+
+      if (result == 0) {
+        logger.warn {
+          "Old water allocation received for area_id:${allocation.areaId}, not updated."
+        }
+      }
+      logger.info { "Consumed allocation for area_id:${allocation.areaId}" }
     }
   }
 
