@@ -22,7 +22,7 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
 
   private val logger = KotlinLogging.logger {}
 
-  fun getGeoJson(url: URI): FeatureCollection {
+  private fun fetchFeatureCollection(url: URI): FeatureCollection {
     val resp = restTemplate.getForEntity(url, FeatureCollection::class.java)
     if (resp.statusCode == HttpStatus.OK) {
       return resp.body!!
@@ -31,10 +31,27 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
     }
   }
 
-  @Transactional
-  fun materialiseWhaituaGeoJson(featureCollection: FeatureCollection) {
-    logger.info { "Updating Whaitua database table .." }
+  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
+  @SchedulerLock(name = "updateWhaituaBoundaries")
+  fun updateWhaituaBoundaries() {
+    logger.info { startTaskMessage("updateWhaituaBoundaries") }
 
+    val url =
+        UriComponentsBuilder.newInstance()
+            .scheme("https")
+            .host("mapping.gw.govt.nz/arcgis/rest/services")
+            .path("/GW/NRPMap_P_operative/MapServer/119/query")
+            .query("where=1=1&outFields=*&f=geojson")
+            .build()
+            .toUri()
+
+    storeWhaituaBoundaries(fetchFeatureCollection(url))
+
+    logger.info { endTaskMessage("updateWhaituaBoundaries") }
+  }
+
+  @Transactional
+  fun storeWhaituaBoundaries(featureCollection: FeatureCollection) {
     context.deleteFrom(WhaituaBoundaries.WHAITUA_BOUNDARIES).execute()
 
     for (feature in featureCollection.features) {
@@ -53,14 +70,29 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
                   ObjectMapper().writeValueAsString(feature.geometry)))
           .execute()
     }
+  }
 
-    logger.info { "Finished updating Whaitua data." }
+  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
+  @SchedulerLock(name = "updateGroundwaterZones")
+  fun updateGroundwaterZones() {
+    logger.info { startTaskMessage("updateGroundwaterZones") }
+
+    val url =
+        UriComponentsBuilder.newInstance()
+            .scheme("https")
+            .host("services2.arcgis.com/RS7BXJAO6ksvblJm/arcgis/rest/services")
+            .path("/Groundwater_zones_in_the_Wellington_Region/FeatureServer/0/query")
+            .query("where=1=1&outFields=*&f=geojson")
+            .build()
+            .toUri()
+
+    storeGroundwaterZones(fetchFeatureCollection(url))
+
+    logger.info { endTaskMessage("updateGroundwaterZones") }
   }
 
   @Transactional
-  fun materialiseGroundwaterGeoJson(featureCollection: FeatureCollection) {
-    logger.info { "Updating Groundwater database table.." }
-
+  fun storeGroundwaterZones(featureCollection: FeatureCollection) {
     context.deleteFrom(GroundwaterZones.GROUNDWATER_ZONES).execute()
 
     for (feature in featureCollection.features) {
@@ -90,47 +122,5 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
                   ObjectMapper().writeValueAsString(feature.geometry)))
           .execute()
     }
-
-    logger.info { "Finished updating Groundwater Zones data." }
-  }
-
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
-  @SchedulerLock(name = "updateWhaituaBoundaries")
-  fun updateWhaituaBoundaries() {
-
-    logger.info { "Getting new Whaitua data .." }
-
-    val url =
-        UriComponentsBuilder.newInstance()
-            .scheme("https")
-            .host("mapping.gw.govt.nz/arcgis/rest/services")
-            .path("/GW/NRPMap_P_operative/MapServer/119/query")
-            .query("where=1=1&outFields=*&f=geojson")
-            .build()
-            .toUri()
-
-    val whaitua_geojson = getGeoJson(url)
-
-    materialiseWhaituaGeoJson(whaitua_geojson)
-  }
-
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
-  @SchedulerLock(name = "updateGroundwaterZones")
-  fun updateGroundwaterZones() {
-
-    logger.info { "Getting new Groundwater zone data .." }
-
-    val url =
-        UriComponentsBuilder.newInstance()
-            .scheme("https")
-            .host("services2.arcgis.com/RS7BXJAO6ksvblJm/arcgis/rest/services")
-            .path("/Groundwater_zones_in_the_Wellington_Region/FeatureServer/0/query")
-            .query("where=1=1&outFields=*&f=geojson")
-            .build()
-            .toUri()
-
-    val groundwater_geojson = getGeoJson(url)
-
-    materialiseGroundwaterGeoJson(groundwater_geojson)
   }
 }

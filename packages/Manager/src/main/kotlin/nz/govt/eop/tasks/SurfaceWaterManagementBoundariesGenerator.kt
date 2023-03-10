@@ -24,12 +24,8 @@ class SurfaceWaterManagementBoundariesGenerator(@Autowired val context: DSLConte
   @SchedulerLock(name = "checkSurfaceWaterManagementBoundaries")
   @Transactional
   fun checkSurfaceWaterManagementBoundaries() {
-    logger.debug { "Start task SurfaceWaterManagementBoundariesGenerator" }
-    val needsRefresh = doesDataNeedRefresh()
-    if (needsRefresh) {
-      refresh()
-    }
-    logger.debug { "End task SurfaceWaterManagementBoundariesGenerator" }
+    processDataRefresh(
+        logger, "checkSurfaceWaterManagementBoundaries", ::doesDataNeedRefresh, ::refresh)
   }
 
   private fun doesDataNeedRefresh(): Boolean {

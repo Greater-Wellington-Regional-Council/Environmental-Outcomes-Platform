@@ -24,12 +24,7 @@ class MinimumFlowLimitBoundariesGenerator(@Autowired val context: DSLContext) {
   @SchedulerLock(name = "checkMinimumFlowLimitBoundaries")
   @Transactional
   fun checkMinimumFlowLimitBoundaries() {
-    logger.debug { "Start task MinimumFlowLimitBoundariesGenerator" }
-    val needsRefresh = doesDataNeedRefresh()
-    if (needsRefresh) {
-      refresh()
-    }
-    logger.debug { "End task MinimumFlowLimitBoundariesGenerator" }
+    processDataRefresh(logger, "checkMinimumFlowLimitBoundaries", ::doesDataNeedRefresh, ::refresh)
   }
 
   private fun doesDataNeedRefresh(): Boolean {
@@ -90,7 +85,7 @@ class MinimumFlowLimitBoundariesGenerator(@Autowired val context: DSLContext) {
     }
   }
 
-  fun insertCatchmentFromWatersheds(id: Int, segments: Set<Int>) {
+  private fun insertCatchmentFromWatersheds(id: Int, segments: Set<Int>) {
     context
         .insertInto(
             MINIMUM_FLOW_LIMIT_BOUNDARIES,

@@ -24,7 +24,6 @@ fun main(args: Array<String>) {
   if (System.getenv(ENV_CONFIG_KEYSTORE_CONTENT) != null) {
     storeKeystoreFromEnvironment()
   }
-
   runApplication<Application>(*args)
 }
 
