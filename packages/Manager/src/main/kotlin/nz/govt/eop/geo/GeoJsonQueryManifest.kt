@@ -3,8 +3,6 @@ package nz.govt.eop.geo
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.time.Instant
-import org.jooq.*
-import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
@@ -15,12 +13,12 @@ const val MANIFEST_CACHE_KEY = "QUERY_MANIFEST"
 @Component
 class GeoJsonQueryManifest(@Autowired val queries: GeoJsonQueries) {
 
-  @Cacheable(cacheNames = arrayOf(MANIFEST_CACHE_KEY))
+  @Cacheable(cacheNames = [MANIFEST_CACHE_KEY])
   fun get(): Map<String, String> {
     return generate()
   }
 
-  @CachePut(cacheNames = arrayOf(MANIFEST_CACHE_KEY))
+  @CachePut(cacheNames = [MANIFEST_CACHE_KEY])
   fun update(): Map<String, String> {
     return generate()
   }

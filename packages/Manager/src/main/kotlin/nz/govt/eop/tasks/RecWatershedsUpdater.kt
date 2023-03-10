@@ -18,15 +18,10 @@ class RecWatershedsUpdater(val context: DSLContext) {
   private val logger = KotlinLogging.logger {}
 
   @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
-  @SchedulerLock(name = "checkWatersheds")
+  @SchedulerLock(name = "watershedsUpdater")
   @Transactional
   fun checkWatersheds() {
-    logger.debug { "Start task RecWatershedsUpdater" }
-    val needsRefresh = doesDataNeedRefresh()
-    if (needsRefresh) {
-      refresh()
-    }
-    logger.debug { "End task RecWatershedsUpdater" }
+    processDataRefresh(logger, "watershedsUpdater", ::doesDataNeedRefresh, ::refresh)
   }
 
   private fun doesDataNeedRefresh(): Boolean {

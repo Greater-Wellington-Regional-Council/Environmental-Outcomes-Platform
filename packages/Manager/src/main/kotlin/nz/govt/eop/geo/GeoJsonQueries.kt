@@ -23,7 +23,6 @@ class GeoJsonQueries(@Autowired val context: DSLContext) {
                 COUNCIL_BOUNDARIES.GEOM.`as`("geometry"),
                 COUNCIL_BOUNDARIES.NAME)
             .from(COUNCIL_BOUNDARIES)
-
     return buildFeatureCollection(context, innerQuery)
   }
 

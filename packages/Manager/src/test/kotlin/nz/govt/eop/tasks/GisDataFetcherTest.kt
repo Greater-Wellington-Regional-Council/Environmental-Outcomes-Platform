@@ -67,7 +67,7 @@ class GisDataFetcherTest(
     val geoJsonData = constructTestWhaituaData()
 
     // WHEN
-    gisDataFetcher.materialiseWhaituaGeoJson(geoJsonData)
+    gisDataFetcher.storeWhaituaBoundaries(geoJsonData)
 
     // THEN
     val first = context.select(DSL.count()).from(WHAITUA_BOUNDARIES).first()
@@ -86,7 +86,7 @@ class GisDataFetcherTest(
     val geoJsonData = constructTestGroundwaterData()
 
     // WHEN
-    gisDataFetcher.materialiseGroundwaterGeoJson(geoJsonData)
+    gisDataFetcher.storeGroundwaterZones(geoJsonData)
 
     // THEN
     val first = context.select(DSL.count()).from(GROUNDWATER_ZONES).first()
