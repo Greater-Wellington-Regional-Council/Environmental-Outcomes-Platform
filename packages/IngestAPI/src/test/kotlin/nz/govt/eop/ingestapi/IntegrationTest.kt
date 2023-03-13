@@ -2,6 +2,7 @@ package nz.govt.eop.ingestapi
 
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
+import nz.govt.eop.messages.WaterAllocationMessage
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.junit.jupiter.api.Test
@@ -68,15 +69,15 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
 
   private fun createKafkaConsumer(
       broker: EmbeddedKafkaBroker
-  ): Consumer<String, IngestedWaterAllocation> {
+  ): Consumer<String, WaterAllocationMessage> {
     val consumerProps = KafkaTestUtils.consumerProps("test", "true", broker)
     consumerProps[JsonDeserializer.TRUSTED_PACKAGES] = "*"
 
     val cf =
-        DefaultKafkaConsumerFactory<String, IngestedWaterAllocation>(
+        DefaultKafkaConsumerFactory<String, WaterAllocationMessage>(
             consumerProps, StringDeserializer(), JsonDeserializer())
 
-    val consumer: Consumer<String, IngestedWaterAllocation> = cf.createConsumer()
+    val consumer: Consumer<String, WaterAllocationMessage> = cf.createConsumer()
     consumer.subscribe(listOf(WATER_ALLOCATION_TOPIC_NAME))
 
     return consumer

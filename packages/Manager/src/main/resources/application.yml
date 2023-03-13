@@ -11,6 +11,26 @@ spring:
     user: ${CONFIG_DATABASE_MIGRATIONS_USERNAME:eop_manager_migrations_user}
     password: ${CONFIG_DATABASE_MIGRATIONS_PASSWORD:password}
 
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring:
+          json.trusted.packages: nz.govt.eop.messages
+          deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+          spring.json.use.type.headers: false
+          # TODO: Configure this alongside consumers when we add more message types
+          json.value.default.type: nz.govt.eop.messages.WaterAllocationMessage
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring:
+          spring.json.add.type.headers: false
+
 server:
   compression:
     enabled: true
@@ -20,4 +40,3 @@ logging:
   level:
     org.jooq.Constants: OFF
     org.jooq: DEBUG
-

@@ -2,6 +2,16 @@ spring:
   flyway:
     locations: classpath:/db/migration # In production don't want to pick up test migrations
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_BROKERS}
+    properties:
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: SCRAM-SHA-512
+        jaas:
+          config: org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_SASL_USERNAME}" password="${KAFKA_SASL_PASSWORD}";
+
 logging:
   level:
     org.jooq: INFO
