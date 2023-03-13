@@ -27,5 +27,7 @@ spring:
 
 logging:
   level:
+    root: WARN
+    nz.govt.eop: INFO
     org.jooq.Constants: OFF
     org.jooq: DEBUG
