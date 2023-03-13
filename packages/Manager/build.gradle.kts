@@ -30,20 +30,18 @@ dependencies {
   runtimeOnly("org.postgresql:postgresql")
 
   implementation("org.springframework.boot:spring-boot-starter-web")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
-
+  implementation("org.springframework.kafka:spring-kafka")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.flywaydb:flyway-core")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:4.43.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.43.0")
-
-  implementation("org.springframework.kafka:spring-kafka")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-assertions-core:5.5.4")

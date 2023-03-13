@@ -26,10 +26,14 @@ class WaterAllocationConsumerTest(
     @Autowired val context: DSLContext
 ) {
   @Test
-  fun `Should create water allocations if they don't exist`() {
+  fun `Should create an allocation if it does not exist`() {
+    // GIVEN
     val message = WaterAllocationMessage("area-id-create", 100, "ingest-id", Instant.now())
+
+    // WHEN
     template.send(WATER_ALLOCATION_TOPIC_NAME, message.areaId, message)
 
+    // THEN
     val records = fetchWaterAllocations(message.areaId)
     records.size.shouldBe(1)
     val record = records.first()
@@ -38,13 +42,16 @@ class WaterAllocationConsumerTest(
   }
 
   @Test
-  fun `Should update water allocations if they exist`() {
+  fun `Should update an allocations if exists`() {
+    // GIVEN
     val firstMessage = WaterAllocationMessage("area-id-update", 100, "ingest-id-1", Instant.now())
-    template.send(WATER_ALLOCATION_TOPIC_NAME, firstMessage.areaId, firstMessage)
-
     val secondMessage = WaterAllocationMessage("area-id-update", 200, "ingest-id-2", Instant.now())
+
+    // WHEN
+    template.send(WATER_ALLOCATION_TOPIC_NAME, firstMessage.areaId, firstMessage)
     template.send(WATER_ALLOCATION_TOPIC_NAME, secondMessage.areaId, secondMessage)
 
+    // THEN
     val records = fetchWaterAllocations(firstMessage.areaId)
     records.size.shouldBe(1)
     val record = records.first()
@@ -53,17 +60,19 @@ class WaterAllocationConsumerTest(
   }
 
   @Test
-  fun `Should not update water allocations if an older allocation is received `() {
+  fun `Should not update an allocations if older data received `() {
+    // GIVEN
     val firstMessage =
         WaterAllocationMessage("area-id-no-update", 100, "ingest-id-1", Instant.now())
-    template.send(WATER_ALLOCATION_TOPIC_NAME, firstMessage.areaId, firstMessage)
-
     val yesterday = Instant.now().minus(1, ChronoUnit.DAYS)
     val secondMessage = WaterAllocationMessage("area-id-no-update", 200, "ingest-id-2", yesterday)
+
+    // WHEN
+    template.send(WATER_ALLOCATION_TOPIC_NAME, firstMessage.areaId, firstMessage)
     template.send(WATER_ALLOCATION_TOPIC_NAME, secondMessage.areaId, secondMessage)
 
+    // THEN
     val records = fetchWaterAllocations(firstMessage.areaId)
-
     records.size.shouldBe(1)
     val record = records.first()
     record.amount.shouldBe(firstMessage.amount)

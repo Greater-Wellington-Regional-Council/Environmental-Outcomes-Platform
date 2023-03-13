@@ -35,8 +35,8 @@ class WaterAllocationConsumer(
       topics = [WATER_ALLOCATION_TOPIC_NAME], id = "nz.govt.eop.consumers.water-allocation")
   fun processMessage(allocation: WaterAllocationMessage) {
 
-    val recievedAtUTC = allocation.receivedAt.atOffset(ZoneOffset.UTC)
-    val now = OffsetDateTime.now()
+    val receivedAtUTC = allocation.receivedAt.atOffset(ZoneOffset.UTC)
+    val now = OffsetDateTime.now(ZoneOffset.UTC)
 
     withLoggingContext("ingestId" to allocation.ingestId) {
       logger.info { "Consuming allocation for area_id:${allocation.areaId}" }
@@ -56,14 +56,14 @@ class WaterAllocationConsumer(
                   allocation.ingestId,
                   now,
                   now,
-                  recievedAtUTC)
+                  receivedAtUTC)
               .onConflict(WATER_ALLOCATIONS.AREA_ID)
               .doUpdate()
               .set(WATER_ALLOCATIONS.AMOUNT, allocation.amount)
               .set(WATER_ALLOCATIONS.LAST_UPDATED_INGEST_ID, allocation.ingestId)
               .set(WATER_ALLOCATIONS.UPDATED_AT, now)
-              .set(WATER_ALLOCATIONS.RECEIVED_AT, recievedAtUTC)
-              .where(WATER_ALLOCATIONS.RECEIVED_AT.lt(recievedAtUTC))
+              .set(WATER_ALLOCATIONS.RECEIVED_AT, receivedAtUTC)
+              .where(WATER_ALLOCATIONS.RECEIVED_AT.lt(receivedAtUTC))
               .execute()
 
       if (result == 0) {
