@@ -40,6 +40,9 @@ jobs:
           path: ${{ env.WORKING_DIR }}/.batect/caches
           key: batect-caches-${{ hashFiles(format('{0}/**/*.gradle.kts', env.WORKING_DIR)) }}
 
+      - name: Check app
+        run: ./batect check
+        
       - name: Build app
         run: ./batect build
 

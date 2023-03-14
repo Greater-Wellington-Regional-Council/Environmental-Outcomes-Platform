@@ -72,6 +72,9 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
   ): Consumer<String, WaterAllocationMessage> {
     val consumerProps = KafkaTestUtils.consumerProps("test", "true", broker)
     consumerProps[JsonDeserializer.TRUSTED_PACKAGES] = "*"
+    consumerProps[JsonDeserializer.VALUE_DEFAULT_TYPE] =
+        "nz.govt.eop.messages.WaterAllocationMessage"
+    consumerProps[JsonDeserializer.USE_TYPE_INFO_HEADERS] = "false"
 
     val cf =
         DefaultKafkaConsumerFactory<String, WaterAllocationMessage>(
