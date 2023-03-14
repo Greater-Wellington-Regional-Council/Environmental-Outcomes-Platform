@@ -46,6 +46,12 @@ jobs:
       - name: Build app
         run: ./batect build
 
+      - uses: actions/upload-artifact@v3
+        if: always()        
+        with:
+          name: reports
+          path: format('{0}/build/reports', env.WORKING_DIR)
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
