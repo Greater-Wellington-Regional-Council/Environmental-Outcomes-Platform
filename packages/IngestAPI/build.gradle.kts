@@ -6,6 +6,7 @@ plugins {
   kotlin("jvm") version "1.7.22"
   kotlin("plugin.spring") version "1.7.22"
   id("com.diffplug.spotless") version "6.14.1"
+  id("com.adarshr.test-logger") version "3.2.0"
 }
 
 group = "nz.govt.eop"
@@ -53,4 +54,11 @@ tasks.withType<Test> {
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   kotlin { ktfmt() }
   kotlinGradle { ktfmt() }
+}
+
+testlogger {
+  showStandardStreams = true
+  showPassedStandardStreams = false
+  showSkippedStandardStreams = false
+  showFailedStandardStreams = true
 }
