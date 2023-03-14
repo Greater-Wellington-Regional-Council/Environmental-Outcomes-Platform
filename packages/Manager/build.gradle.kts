@@ -9,6 +9,7 @@ plugins {
   id("com.diffplug.spotless") version "6.11.0"
   id("org.flywaydb.flyway") version "9.1.6"
   id("nu.studer.jooq") version "8.0"
+  id("com.adarshr.test-logger") version "3.2.0"
 }
 
 group = "nz.govt.eop"
@@ -89,6 +90,7 @@ jooq {
   configurations {
     create("main") {
       jooqConfiguration.apply {
+        logging = org.jooq.meta.jaxb.Logging.WARN
         jdbc.apply {
           driver = "org.postgresql.Driver"
           url = dbConfig["url"]
@@ -149,4 +151,11 @@ tasks.named<nu.studer.gradle.jooq.JooqGenerate>("generateJooq") {
       .withPathSensitivity(PathSensitivity.RELATIVE)
 
   allInputsDeclared.set(true)
+}
+
+testlogger {
+  showStandardStreams = true
+  showPassedStandardStreams = false
+  showSkippedStandardStreams = false
+  showFailedStandardStreams = true
 }

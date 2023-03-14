@@ -11,7 +11,7 @@ tasks:
     description: Run tests and checks.
     run:
       container: java-build-env
-      command: ./gradlew check --console=verbose
+      command: ./gradlew check
 
   runIngestAPI:
     description: Run the application.
