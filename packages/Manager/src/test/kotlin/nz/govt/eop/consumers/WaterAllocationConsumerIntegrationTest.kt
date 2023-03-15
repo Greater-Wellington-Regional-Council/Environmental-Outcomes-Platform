@@ -17,7 +17,7 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("test")
+@ActiveProfiles("test", "allocations-consumer")
 @SpringBootTest
 @EmbeddedKafka(
     partitions = 1,

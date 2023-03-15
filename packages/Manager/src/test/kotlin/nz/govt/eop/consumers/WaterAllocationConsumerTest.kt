@@ -15,14 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 
-// This test doesn't actually disable the Kafka listener, but it just doesn't use it.
 @ActiveProfiles("test")
 @SpringBootTest
 @Transactional
-class WaterAllocationConsumerTest(
-    @Autowired val consumer: WaterAllocationConsumer,
-    @Autowired val context: DSLContext
-) {
+class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
+
+  private val consumer = WaterAllocationConsumer(context)
 
   @BeforeEach
   fun setup() {
