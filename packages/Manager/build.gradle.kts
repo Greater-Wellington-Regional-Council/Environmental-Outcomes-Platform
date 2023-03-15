@@ -47,6 +47,7 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-assertions-core:5.5.4")
   testImplementation("org.springframework.kafka:spring-kafka-test")
+  testImplementation("org.awaitility:awaitility-kotlin:4.1.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }

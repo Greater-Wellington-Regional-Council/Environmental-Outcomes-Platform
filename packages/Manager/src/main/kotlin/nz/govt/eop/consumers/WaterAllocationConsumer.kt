@@ -2,32 +2,19 @@ package nz.govt.eop.consumers
 
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import java.util.function.BiFunction
 import mu.KotlinLogging
 import mu.withLoggingContext
 import nz.govt.eop.messages.WaterAllocationMessage
 import nz.govt.eop.si.jooq.tables.WaterAllocations.Companion.WATER_ALLOCATIONS
-import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.common.TopicPartition
 import org.jooq.*
-import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties
-import org.springframework.context.annotation.Bean
 import org.springframework.kafka.annotation.KafkaListener
-import org.springframework.kafka.core.KafkaTemplate
-import org.springframework.kafka.listener.DeadLetterPublishingRecoverer
-import org.springframework.kafka.listener.DefaultErrorHandler
 import org.springframework.stereotype.Component
-import org.springframework.util.backoff.ExponentialBackOff
 
 const val WATER_ALLOCATION_TOPIC_NAME = "water.allocation"
 
 @Component
-class WaterAllocationConsumer(
-    @Autowired val context: DSLContext,
-    private val kafkaTemplate: KafkaTemplate<String, WaterAllocationMessage>
-) {
+class WaterAllocationConsumer(@Autowired val context: DSLContext) {
 
   private val logger = KotlinLogging.logger {}
 
@@ -73,20 +60,5 @@ class WaterAllocationConsumer(
       }
       logger.info { "Consumed allocation for area_id:${allocation.areaId}" }
     }
-  }
-
-  @Bean
-  fun errorHandler(kafkaProperties: KafkaProperties): DefaultErrorHandler = run {
-    val backOff = ExponentialBackOff(1000, 2.0)
-    backOff.maxElapsedTime = 10000
-
-    val destinationResolver =
-        BiFunction<ConsumerRecord<*, *>, Exception, TopicPartition> { t, _ ->
-          TopicPartition(t.topic() + ".manager-consumer.DLT", -1)
-        }
-
-    val deadLetterPublishingRecoverer =
-        DeadLetterPublishingRecoverer(kafkaTemplate, destinationResolver)
-    DefaultErrorHandler(deadLetterPublishingRecoverer, backOff)
   }
 }

@@ -8,30 +8,34 @@ import nz.govt.eop.si.jooq.tables.WaterAllocations.Companion.WATER_ALLOCATIONS
 import nz.govt.eop.si.jooq.tables.records.WaterAllocationsRecord
 import org.jooq.DSLContext
 import org.jooq.Result
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.kafka.core.KafkaTemplate
-import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Transactional
 
+// This test doesn't actually disable the Kafka listener, but it just doesn't use it.
 @ActiveProfiles("test")
 @SpringBootTest
-@EmbeddedKafka(
-    partitions = 1,
-    bootstrapServersProperty = "spring.kafka.bootstrap-servers",
-    topics = [WATER_ALLOCATION_TOPIC_NAME])
+@Transactional
 class WaterAllocationConsumerTest(
-    @Autowired val template: KafkaTemplate<String, WaterAllocationMessage>,
+    @Autowired val consumer: WaterAllocationConsumer,
     @Autowired val context: DSLContext
 ) {
+
+  @BeforeEach
+  fun setup() {
+    context.truncate(WATER_ALLOCATIONS).execute()
+  }
+
   @Test
   fun `Should create an allocation if it does not exist`() {
     // GIVEN
     val message = WaterAllocationMessage("area-id-create", 100, "ingest-id", Instant.now())
 
     // WHEN
-    template.send(WATER_ALLOCATION_TOPIC_NAME, message.areaId, message)
+    consumer.processMessage(message)
 
     // THEN
     val records = fetchWaterAllocations(message.areaId)
@@ -48,8 +52,8 @@ class WaterAllocationConsumerTest(
     val secondMessage = WaterAllocationMessage("area-id-update", 200, "ingest-id-2", Instant.now())
 
     // WHEN
-    template.send(WATER_ALLOCATION_TOPIC_NAME, firstMessage.areaId, firstMessage)
-    template.send(WATER_ALLOCATION_TOPIC_NAME, secondMessage.areaId, secondMessage)
+    consumer.processMessage(firstMessage)
+    consumer.processMessage(secondMessage)
 
     // THEN
     val records = fetchWaterAllocations(firstMessage.areaId)
@@ -68,8 +72,8 @@ class WaterAllocationConsumerTest(
     val secondMessage = WaterAllocationMessage("area-id-no-update", 200, "ingest-id-2", yesterday)
 
     // WHEN
-    template.send(WATER_ALLOCATION_TOPIC_NAME, firstMessage.areaId, firstMessage)
-    template.send(WATER_ALLOCATION_TOPIC_NAME, secondMessage.areaId, secondMessage)
+    consumer.processMessage(firstMessage)
+    consumer.processMessage(secondMessage)
 
     // THEN
     val records = fetchWaterAllocations(firstMessage.areaId)
