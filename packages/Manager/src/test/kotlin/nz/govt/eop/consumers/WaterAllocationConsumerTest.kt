@@ -31,7 +31,8 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
   @Test
   fun `Should create an allocation if it does not exist`() {
     // GIVEN
-    val message = WaterAllocationMessage("area-id-create", BigDecimal("100.11"), "ingest-id", Instant.now())
+    val message =
+        WaterAllocationMessage("area-id-create", BigDecimal("100.11"), "ingest-id", Instant.now())
 
     // WHEN
     consumer.processMessage(message)
@@ -68,7 +69,8 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
   fun `Should not update an allocations if older data received `() {
     // GIVEN
     val firstMessage =
-        WaterAllocationMessage("area-id-no-update", BigDecimal("100.11"), "ingest-id-1", Instant.now())
+        WaterAllocationMessage(
+            "area-id-no-update", BigDecimal("100.11"), "ingest-id-1", Instant.now())
     val yesterday = Instant.now().minus(1, ChronoUnit.DAYS)
     val secondMessage =
         WaterAllocationMessage("area-id-no-update", BigDecimal("200.22"), "ingest-id-2", yesterday)
