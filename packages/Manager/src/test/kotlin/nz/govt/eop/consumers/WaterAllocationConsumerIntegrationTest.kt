@@ -1,6 +1,7 @@
 package nz.govt.eop.consumers
 
 import io.kotest.matchers.shouldBe
+import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
 import nz.govt.eop.messages.WaterAllocationMessage
@@ -36,7 +37,7 @@ class WaterAllocationConsumerIntegrationTest(
   @Test
   fun `Should process message from topic and store in DB`() {
     // GIVEN
-    val message = WaterAllocationMessage("area-id-create", 100, "ingest-id", Instant.now())
+    val message = WaterAllocationMessage("area-id-create", BigDecimal("100.11"), "ingest-id", Instant.now())
 
     // WHEN
     template.send(WATER_ALLOCATION_TOPIC_NAME, message.areaId, message)

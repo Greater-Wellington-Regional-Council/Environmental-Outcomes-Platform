@@ -45,7 +45,7 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                    """{"notIngestId": "1", "allocations": [{"areaId":  "1", "amount": 1}]}"""))
+                    """{"notIngestId": "1", "allocations": [{"areaId":  "1", "amount": 1.0}]}"""))
         .andExpect(status().isBadRequest)
   }
 
@@ -57,7 +57,7 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                    """{"ingestId": "1", "allocations": [{"areaId":  "1", "amount": 1}, {"areaId":  "2", "amount": 2}, {"areaId":  "3", "amount": 3}]}"""))
+                    """{"ingestId": "1", "allocations": [{"areaId":  "1", "amount": 1.0}, {"areaId":  "2", "amount": 2.0}, {"areaId":  "3", "amount": 3.0}]}"""))
         .andExpect(status().isOk)
 
     val records = KafkaTestUtils.getRecords(consumer)
