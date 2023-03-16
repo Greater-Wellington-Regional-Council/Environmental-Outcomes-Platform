@@ -29,3 +29,8 @@ server:
 ingestApi:
   usersJSON: '{"gw": "test-api-token"}'
   topicReplicas: 1
+
+logging:
+  level:
+    root: INFO
+    nz.govt.eop: INFO
