@@ -13,3 +13,9 @@ spring:
 
 ingestApi:
   topicReplicas: 2
+
+logging:
+  level:
+    root: WARN
+    nz.govt.eop: INFO
+    org.springframework.web.servlet.resource.ResourceHttpRequestHandler: ERROR # this logs WARN's for paths that are probably being scanned by bots

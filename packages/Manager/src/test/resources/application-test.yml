@@ -1,0 +1,20 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    url: jdbc:postgresql://${CONFIG_DATABASE_HOST:localhost}:${CONFIG_DATABASE_PORT:5432}/eop_test
+    username: postgres
+    password: password
+
+  flyway:
+    locations: classpath:/db/migration
+    user: postgres
+    password: password
+
+logging:
+  level:
+    root: WARN
+    nz.govt.eop: INFO
+    org.jooq.Constants: OFF
+    org.jooq: INFO

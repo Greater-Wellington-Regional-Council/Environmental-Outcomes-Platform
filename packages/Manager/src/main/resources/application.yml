@@ -28,7 +28,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-          spring.json.add.type.headers: false
+        spring.json.add.type.headers: false
 
 server:
   compression:
@@ -37,5 +37,7 @@ server:
 
 logging:
   level:
+    root: INFO
+    nz.govt.eop: INFO
     org.jooq.Constants: OFF
     org.jooq: DEBUG
