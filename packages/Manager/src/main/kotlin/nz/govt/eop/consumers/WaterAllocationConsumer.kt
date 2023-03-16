@@ -8,11 +8,13 @@ import nz.govt.eop.messages.WaterAllocationMessage
 import nz.govt.eop.si.jooq.tables.WaterAllocations.Companion.WATER_ALLOCATIONS
 import org.jooq.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
 
 const val WATER_ALLOCATION_TOPIC_NAME = "water.allocation"
 
+@Profile("allocations-consumer")
 @Component
 class WaterAllocationConsumer(@Autowired val context: DSLContext) {
 
