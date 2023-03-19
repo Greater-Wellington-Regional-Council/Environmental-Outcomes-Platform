@@ -1,5 +1,6 @@
 package nz.govt.eop.ingestapi
 
+import java.math.BigDecimal
 import java.time.Instant
 import mu.KotlinLogging
 import mu.withLoggingContext
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-data class WaterAllocation(val areaId: String, val amount: Int)
+data class WaterAllocation(val areaId: String, val amount: BigDecimal)
 
 data class WaterAllocationsRequestBody(
     val ingestId: String,

@@ -3,6 +3,7 @@ package nz.govt.eop.consumers
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
 import nz.govt.eop.messages.WaterAllocationMessage
@@ -41,8 +42,10 @@ class WaterAllocationConsumerErrorHandlerTest(
     val dltConsumer: Consumer<String, String> = cf.createConsumer()
     dltConsumer.subscribe(listOf("$WATER_ALLOCATION_TOPIC_NAME.manager-consumer.DLT"))
 
-    val firstMessage = WaterAllocationMessage("poison", 100, "ingest-id", Instant.now())
-    val secondMessage = WaterAllocationMessage("areaid", 100, "ingest-id", Instant.now())
+    val firstMessage =
+        WaterAllocationMessage("poison", BigDecimal("100.11"), "ingest-id", Instant.now())
+    val secondMessage =
+        WaterAllocationMessage("areaid", BigDecimal("100.11"), "ingest-id", Instant.now())
 
     // WHEN
     template.send(WATER_ALLOCATION_TOPIC_NAME, "poison", firstMessage)
