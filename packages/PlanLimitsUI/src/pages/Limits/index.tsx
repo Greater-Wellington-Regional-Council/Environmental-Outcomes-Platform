@@ -5,7 +5,7 @@ import {
   useLoaderData,
   useNavigate,
 } from 'react-router-dom';
-import { AppState, useAppState } from './useAppState';
+import { useAppState } from './useAppState';
 import {
   createLocationString,
   createPinnedLocationString,
