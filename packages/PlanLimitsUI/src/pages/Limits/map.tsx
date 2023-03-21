@@ -1,5 +1,7 @@
 import React from 'react';
+import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import Map, {
   Layer,
   MapRef,
@@ -9,20 +11,14 @@ import Map, {
   Source,
   ViewState,
 } from 'react-map-gl';
-
-import 'maplibre-gl/dist/maplibre-gl.css';
-import LayerControl from '../../components/map/LayerControl';
-import { AppState } from './useAppState';
-import { WaterTakeFilter } from './index';
-import mapboxgl from 'mapbox-gl';
-import { PinnedLocation } from './locationString';
-import Button from '../../components/Button';
-import RiverTilesSource from './RiverTilesSource';
-
-import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
-import formatWaterQuantity from './formatWaterQuantity';
-import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
+import LayerControl from '../../components/map/LayerControl';
+import Button from '../../components/Button';
+import { PinnedLocation } from './locationString';
+import RiverTilesSource from './RiverTilesSource';
+import type { AppState } from './useAppState';
+import type { WaterTakeFilter } from './index';
+import flowMarkerImage from '../../images/marker_flow.svg';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
@@ -41,7 +37,7 @@ export default function LimitsMap({
   queries,
 }: {
   appState: AppState;
-  setAppState: React.Dispatch<React.SetStateAction<AppState>>;
+  setAppState: (result: mapboxgl.MapboxGeoJSONFeature[]) => void;
   viewState: ViewState;
   setViewState: (value: ViewState) => void;
   initialPinnedLocation?: PinnedLocation;

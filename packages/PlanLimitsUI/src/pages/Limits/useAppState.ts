@@ -27,7 +27,7 @@ export type AppState = {
 
 export function useAppState(): [
   AppState,
-  React.Dispatch<React.SetStateAction<AppState>>
+  (result: mapboxgl.MapboxGeoJSONFeature[]) => void
 ] {
   const [appState, setAppState] = useState<AppState>({
     council: null,

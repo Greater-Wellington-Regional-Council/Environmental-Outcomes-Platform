@@ -1,14 +1,13 @@
-import React from 'react';
 import { FeatureCollection, Geometry } from 'geojson';
 import { useAtom } from 'jotai';
-import { AppState } from './useAppState';
-import { WaterTakeFilter } from './index';
-import Button from '../../components/Button';
-import LimitsTable from './LimitsTable';
 import { GeoJsonQueries, GroundwaterZoneBoundariesProperties } from '../../api';
-import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
+import LimitsTable from './LimitsTable';
+import Button from '../../components/Button';
+import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import type { AppState } from './useAppState';
+import type { WaterTakeFilter } from './index';
 
 const LimitsListItem = ({
   title,
@@ -137,17 +136,13 @@ export default function Sidebar({
         {appState.whaitua && queries[6].data && (
           <LimitsTable
             waterTakeFilter={waterTakeFilter}
-            surfaceWaterMgmtUnitId={Number(appState.surfaceWaterMgmtUnitId)}
-            surfaceWaterMgmtUnitLimit={appState.surfaceWaterMgmtUnitLimit}
-            surfaceWaterMgmtSubUnitLimit={appState.surfaceWaterMgmtSubUnitLimit}
-            activeZonesIds={appState.groundWaterZones}
+            appState={appState}
             groundWaterZoneGeoJson={
               queries[6].data as FeatureCollection<
                 Geometry,
                 GroundwaterZoneBoundariesProperties
               >
             }
-            whaituaId={appState.whaituaId}
           />
         )}
       </div>

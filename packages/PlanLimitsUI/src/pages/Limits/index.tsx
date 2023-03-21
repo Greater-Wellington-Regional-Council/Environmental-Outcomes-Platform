@@ -5,6 +5,8 @@ import {
   useLoaderData,
   useNavigate,
 } from 'react-router-dom';
+import { useDebounce } from 'usehooks-ts';
+import { ViewState } from 'react-map-gl';
 import { useAppState } from './useAppState';
 import {
   createLocationString,
@@ -14,9 +16,7 @@ import {
   PinnedLocation,
   ViewLocation,
 } from './locationString';
-import { useDebounce } from 'usehooks-ts';
 import { useGeoJsonQueries } from '../../api';
-import { ViewState } from 'react-map-gl';
 import Map from './map';
 import Sidebar from './sidebar';
 

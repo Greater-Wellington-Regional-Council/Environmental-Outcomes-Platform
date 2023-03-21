@@ -1,40 +1,27 @@
 import { FeatureCollection, Geometry } from 'geojson';
-import React from 'react';
-
-import { GroundwaterZoneBoundariesProperties } from '../../api';
 import compileLimitsTable from './compileLimitsTable';
+import type { GroundwaterZoneBoundariesProperties } from '../../api';
+import type { AppState } from './useAppState';
 import type { WaterTakeFilter } from './';
 
 type Props = {
   waterTakeFilter: WaterTakeFilter;
-  surfaceWaterMgmtUnitId: number;
-  surfaceWaterMgmtUnitLimit: string | null | undefined;
-  surfaceWaterMgmtSubUnitLimit: string | null | undefined;
-  activeZonesIds: number[];
+  appState: AppState;
   groundWaterZoneGeoJson: FeatureCollection<
     Geometry,
     GroundwaterZoneBoundariesProperties
   >;
-  whaituaId: string;
 };
 
 export default function LimitsTable({
   waterTakeFilter,
-  surfaceWaterMgmtUnitId,
-  surfaceWaterMgmtUnitLimit,
-  surfaceWaterMgmtSubUnitLimit,
-  activeZonesIds,
+  appState,
   groundWaterZoneGeoJson,
-  whaituaId,
 }: Props) {
   const { headers, rows, showFootnote } = compileLimitsTable(
     waterTakeFilter,
-    surfaceWaterMgmtUnitId,
-    surfaceWaterMgmtUnitLimit,
-    surfaceWaterMgmtSubUnitLimit,
-    activeZonesIds,
-    groundWaterZoneGeoJson,
-    whaituaId
+    appState,
+    groundWaterZoneGeoJson
   );
 
   if (rows.length === 0) return <></>;

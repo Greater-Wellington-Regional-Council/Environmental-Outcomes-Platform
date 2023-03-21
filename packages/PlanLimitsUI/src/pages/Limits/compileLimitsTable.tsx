@@ -1,6 +1,7 @@
 import formatWaterQuantity from './formatWaterQuantity';
-import type { GroundwaterZoneBoundariesProperties } from '../../api';
 import type { FeatureCollection, Geometry } from 'geojson';
+import type { GroundwaterZoneBoundariesProperties } from '../../api';
+import type { AppState } from './useAppState';
 import type { WaterTakeFilter } from './';
 
 const BLANK_CELL_CHAR = '-';
@@ -33,21 +34,20 @@ const HEADERS = [
 
 export default function compileLimitsTable(
   waterTakeFilter: WaterTakeFilter,
-  surfaceWaterMgmtUnitId: number,
-  surfaceWaterMgmtUnitLimit: string | null | undefined,
-  surfaceWaterMgmtSubUnitLimit: string | null | undefined,
-  activeZonesIds: Array<number>,
+  appState: AppState,
   groundwaterZoneGeoJson: FeatureCollection<
     Geometry,
     GroundwaterZoneBoundariesProperties
-  >,
-  whaituaId: string
+  >
 ) {
   let showFootnote = false;
   const rows = [];
 
   if (['Combined', 'Surface'].includes(waterTakeFilter)) {
-    if (!surfaceWaterMgmtUnitLimit && !surfaceWaterMgmtSubUnitLimit) {
+    if (
+      !appState.surfaceWaterMgmtUnitLimit &&
+      !appState.surfaceWaterMgmtSubUnitLimit
+    ) {
       showFootnote = true;
       rows.push([
         'Surface water',
@@ -63,20 +63,22 @@ export default function compileLimitsTable(
         BLANK_CELL_CHAR,
         BLANK_CELL_CHAR,
         <>
-          {surfaceWaterMgmtSubUnitLimit
-            ? surfaceWaterMgmtSubUnitLimit
-            : whaituaId.toString() === '4'
+          {appState.surfaceWaterMgmtSubUnitLimit
+            ? appState.surfaceWaterMgmtSubUnitLimit
+            : appState.whaituaId.toString() === '4'
             ? DEFAULT_RULE
             : BLANK_CELL_CHAR}
         </>,
-        surfaceWaterMgmtUnitLimit,
+        appState.surfaceWaterMgmtUnitLimit,
       ]);
     }
   }
 
   if (['Combined', 'Ground'].includes(waterTakeFilter)) {
     const activeFeatures = groundwaterZoneGeoJson.features
-      .filter((item) => activeZonesIds.includes(Number(item.id as string)))
+      .filter((item) =>
+        appState.groundWaterZones.includes(Number(item.id as string))
+      )
       .sort((a, b) => {
         // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
         const alphabet = '0123456789>';
@@ -109,7 +111,10 @@ export default function compileLimitsTable(
       activeFeatures
         .filter((feature) => feature.category === 'Category A')
         .forEach((feature) => {
-          if (!feature.swUnitAllocationAmount && !surfaceWaterMgmtUnitLimit) {
+          if (
+            !feature.swUnitAllocationAmount &&
+            !appState.surfaceWaterMgmtUnitLimit
+          ) {
             rows.push(['Groundwater', feature.depth, 'A', DEFAULT_RULE]);
           } else {
             const swUnitLimit = feature.swUnitAllocationAmount
