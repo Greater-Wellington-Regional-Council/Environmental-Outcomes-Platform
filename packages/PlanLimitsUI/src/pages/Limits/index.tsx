@@ -5,6 +5,7 @@ import {
   useLoaderData,
   useNavigate,
 } from 'react-router-dom';
+import { AppState, useAppState } from './useAppState';
 import {
   createLocationString,
   createPinnedLocationString,
@@ -26,29 +27,6 @@ export const defaultViewLocation = {
 };
 
 export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
-
-export type MouseState = {
-  position: {
-    lng: number;
-    lat: number;
-  };
-  council?: string | null;
-  whaitua?: string | null;
-  whaituaId: string;
-  groundWaterZoneName?: string;
-  groundWaterZones: Array<number>;
-  site?: string | null;
-  surfaceWaterMgmtUnitId: string;
-  surfaceWaterMgmtUnitDescription?: string | null;
-  surfaceWaterMgmtSubUnitId: string;
-  surfaceWaterMgmtSubUnitDescription?: string | null;
-  minimumFlowLimitId: string | null;
-  flowRestrictionsLevel?: string | JSX.Element | null;
-  flowRestrictionsManagementSiteName?: string | JSX.Element | null;
-  flowRestrictionsManagementSiteId?: string | null;
-  surfaceWaterMgmtUnitLimit?: string | null;
-  surfaceWaterMgmtSubUnitLimit?: string | null;
-};
 
 export const loader: LoaderFunction = ({ params, request }) => {
   const url = new URL(request.url);
@@ -95,27 +73,7 @@ export default function Limits() {
   const [waterTakeFilter, setWaterTakeFilter] =
     React.useState<WaterTakeFilter>('Combined');
 
-  const [mouseState, setMouseState] = React.useState<MouseState>({
-    position: {
-      lng: 0,
-      lat: 0,
-    },
-    council: null,
-    whaituaId: 'NONE',
-    groundWaterZones: [],
-    surfaceWaterMgmtUnitId: 'NONE',
-    surfaceWaterMgmtSubUnitId: 'NONE',
-    minimumFlowLimitId: 'NONE',
-    flowRestrictionsManagementSiteId: 'NONE',
-    whaitua: null,
-    site: null,
-    surfaceWaterMgmtUnitDescription: null,
-    surfaceWaterMgmtSubUnitDescription: null,
-    flowRestrictionsLevel: null,
-    flowRestrictionsManagementSiteName: null,
-    surfaceWaterMgmtUnitLimit: null,
-    surfaceWaterMgmtSubUnitLimit: null,
-  });
+  const [appState, setAppState] = useAppState();
 
   const [viewState, storeViewState] = useState<ViewState>({
     ...initialViewLocation,
@@ -138,8 +96,8 @@ export default function Limits() {
     <div className="flex">
       <main className="flex-1">
         <Map
-          mouseState={mouseState}
-          setMouseState={setMouseState}
+          appState={appState}
+          setAppState={setAppState}
           viewState={viewState}
           setViewState={setViewState}
           initialPinnedLocation={initialPinnedLocation}
@@ -150,7 +108,7 @@ export default function Limits() {
       </main>
       <aside className="w-[36rem] h-screen overflow-y-scroll border-l border-gray-200">
         <Sidebar
-          mouseState={mouseState}
+          appState={appState}
           waterTakeFilter={waterTakeFilter}
           setWaterTakeFilter={setWaterTakeFilter}
           queries={geoJsonQueries}

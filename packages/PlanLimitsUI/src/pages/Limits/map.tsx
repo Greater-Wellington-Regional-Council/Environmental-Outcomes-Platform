@@ -12,7 +12,8 @@ import Map, {
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 import LayerControl from '../../components/map/LayerControl';
-import { MouseState, WaterTakeFilter } from './index';
+import { AppState } from './useAppState';
+import { WaterTakeFilter } from './index';
 import mapboxgl from 'mapbox-gl';
 import { PinnedLocation } from './locationString';
 import Button from '../../components/Button';
@@ -31,8 +32,8 @@ const EMPTY_GEO_JSON_DATA = {
 };
 
 export default function LimitsMap({
-  mouseState,
-  setMouseState,
+  appState,
+  setAppState,
   viewState,
   setViewState,
   initialPinnedLocation,
@@ -40,8 +41,8 @@ export default function LimitsMap({
   waterTakeFilter,
   queries,
 }: {
-  mouseState: MouseState;
-  setMouseState: React.Dispatch<React.SetStateAction<MouseState>>;
+  appState: AppState;
+  setAppState: React.Dispatch<React.SetStateAction<AppState>>;
   viewState: ViewState;
   setViewState: (value: ViewState) => void;
   initialPinnedLocation?: PinnedLocation;
@@ -185,8 +186,8 @@ export default function LimitsMap({
             )
           : undefined;
 
-        setMouseState({
-          ...mouseState,
+        setAppState({
+          ...appState,
           position: {
             lng: highlightLocation.longitude,
             lat: highlightLocation.latitude,
@@ -316,7 +317,7 @@ export default function LimitsMap({
         />
         <Layer
           id="whaitua-highlight"
-          filter={['==', ['id'], mouseState.whaituaId]}
+          filter={['==', ['id'], appState.whaituaId]}
           type="fill"
           paint={{
             'fill-outline-color': '#484896',
@@ -351,7 +352,7 @@ export default function LimitsMap({
           <Layer
             id="groundWater-highlight"
             type="fill"
-            filter={['in', ['id'], ['literal', mouseState.groundWaterZones]]}
+            filter={['in', ['id'], ['literal', appState.groundWaterZones]]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#33ff99',
@@ -377,7 +378,7 @@ export default function LimitsMap({
           <Layer
             id="surfaceWaterMgmtUnits-highlight"
             type="fill"
-            filter={['==', ['id'], mouseState.surfaceWaterMgmtUnitId]}
+            filter={['==', ['id'], appState.surfaceWaterMgmtUnitId]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -403,7 +404,7 @@ export default function LimitsMap({
           <Layer
             id="surfaceWaterMgmtSubUnits-highlight"
             type="fill"
-            filter={['==', ['id'], mouseState.surfaceWaterMgmtSubUnitId]}
+            filter={['==', ['id'], appState.surfaceWaterMgmtSubUnitId]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -431,7 +432,7 @@ export default function LimitsMap({
           <Layer
             id="minimumFlowLimitBoundaries-highlight"
             type="fill"
-            filter={['==', ['id'], mouseState.minimumFlowLimitId]}
+            filter={['==', ['id'], appState.minimumFlowLimitId]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -459,7 +460,7 @@ export default function LimitsMap({
           paint={{
             'icon-opacity': [
               'case',
-              ['==', ['id'], mouseState.flowRestrictionsManagementSiteId],
+              ['==', ['id'], appState.flowRestrictionsManagementSiteId],
               1,
               0.5,
             ],
