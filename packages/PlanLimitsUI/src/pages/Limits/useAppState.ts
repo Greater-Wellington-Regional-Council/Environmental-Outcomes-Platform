@@ -56,6 +56,7 @@ export function useAppState(): [
     const whaitua = findFeature(result, 'whaitua', 'name');
     const whaituaId = findFeatureId(result, 'whaitua') || 'NONE';
 
+    // Surface water
     const surfaceWaterMgmtUnitId =
       findFeatureId(result, 'surfaceWaterMgmtUnits') || 'NONE';
     const surfaceWaterMgmtUnitDescription = findFeature(
@@ -71,54 +72,6 @@ export function useAppState(): [
       'surfaceWaterMgmtSubUnits',
       'name'
     );
-
-    const groundWaterZonesData = result
-      .filter((value) => value.layer.id === 'groundWater')
-      .sort((a, b) => {
-        // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
-        const alphabet = '0123456789>';
-        const first = a.properties?.depth.charAt(0);
-        const second = b.properties?.depth.charAt(1);
-        return alphabet.indexOf(first) - alphabet.indexOf(second);
-      });
-
-    const groundWaterZones = groundWaterZonesData.map(
-      (item) => item.id as number
-    );
-    const groundWaterZoneName = [
-      // Contructing then destructuring from a Set leaves us with unique values
-      ...new Set(groundWaterZonesData.map((item) => item.properties!['name'])),
-    ].join(', ');
-
-    const site = findFeature(result, 'flowSites', 'Name');
-
-    const minimumFlowLimitId =
-      findFeatureId(result, 'minimumFlowLimitBoundaries') || 'NONE';
-
-    const flowRestrictionsManagementSiteId =
-      findFeature(result, 'minimumFlowLimitBoundaries', 'site_id') || 'NONE';
-    const flowRestrictionsManagementSiteName =
-      findFeature(result, 'minimumFlowLimitBoundaries', 'name') ||
-      defaultFlowLimitAndSite(whaituaId);
-
-    const flowRestrictionsAmount = findFeature(
-      result,
-      'minimumFlowLimitBoundaries',
-      'plan_minimum_flow_value'
-    );
-
-    const flowRestrictionsUnit = findFeature(
-      result,
-      'minimumFlowLimitBoundaries',
-      'plan_minimum_flow_unit'
-    );
-
-    const flowRestrictionsLevel = flowRestrictionsAmount
-      ? formatWaterQuantity(
-          Number(flowRestrictionsAmount),
-          flowRestrictionsUnit as string
-        )
-      : defaultFlowLimitAndSite(whaituaId);
 
     const surfaceWaterMgmtSubUnitLimit =
       surfaceWaterMgmtSubUnitId === 'NONE'
@@ -161,31 +114,84 @@ export function useAppState(): [
       surfaceWaterMgmtSubUnitLimit
     );
 
+    // Groundwater
+    const groundWaterZonesData = result
+      .filter((value) => value.layer.id === 'groundWater')
+      .sort((a, b) => {
+        // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
+        const alphabet = '0123456789>';
+        const first = a.properties?.depth.charAt(0);
+        const second = b.properties?.depth.charAt(1);
+        return alphabet.indexOf(first) - alphabet.indexOf(second);
+      });
+
+    const groundWaterZones = groundWaterZonesData.map(
+      (item) => item.id as number
+    );
+    const groundWaterZoneName = [
+      // Contructing then destructuring from a Set leaves us with unique values
+      ...new Set(groundWaterZonesData.map((item) => item.properties!['name'])),
+    ].join(', ');
+
     const gwLimits = getGwLimits(
       groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[],
       surfaceWaterMgmtSubUnitLimit
     );
+
+    // Flow management
+    const site = findFeature(result, 'flowSites', 'Name');
+
+    const minimumFlowLimitId =
+      findFeatureId(result, 'minimumFlowLimitBoundaries') || 'NONE';
+
+    const flowRestrictionsManagementSiteId =
+      findFeature(result, 'minimumFlowLimitBoundaries', 'site_id') || 'NONE';
+    const flowRestrictionsManagementSiteName =
+      findFeature(result, 'minimumFlowLimitBoundaries', 'name') ||
+      defaultFlowLimitAndSite(whaituaId);
+
+    const flowRestrictionsAmount = findFeature(
+      result,
+      'minimumFlowLimitBoundaries',
+      'plan_minimum_flow_value'
+    );
+
+    const flowRestrictionsUnit = findFeature(
+      result,
+      'minimumFlowLimitBoundaries',
+      'plan_minimum_flow_unit'
+    );
+
+    const flowRestrictionsLevel = flowRestrictionsAmount
+      ? formatWaterQuantity(
+          Number(flowRestrictionsAmount),
+          flowRestrictionsUnit as string
+        )
+      : defaultFlowLimitAndSite(whaituaId);
 
     setAppState({
       ...appState,
       council,
       whaitua,
       whaituaId,
-      groundWaterZoneName,
-      groundWaterZones,
-      site,
+      // SW
       surfaceWaterMgmtUnitId,
       surfaceWaterMgmtUnitDescription,
       surfaceWaterMgmtSubUnitId,
       surfaceWaterMgmtSubUnitDescription,
+      surfaceWaterMgmtUnitLimit,
+      surfaceWaterMgmtSubUnitLimit,
+      swLimit,
+      // GW
+      groundWaterZoneName,
+      groundWaterZones,
+      gwLimits,
+      // Flow
+      site,
       minimumFlowLimitId,
       flowRestrictionsLevel,
       flowRestrictionsManagementSiteName,
       flowRestrictionsManagementSiteId,
-      surfaceWaterMgmtUnitLimit,
-      surfaceWaterMgmtSubUnitLimit,
-      swLimit,
-      gwLimits,
     });
   };
 
