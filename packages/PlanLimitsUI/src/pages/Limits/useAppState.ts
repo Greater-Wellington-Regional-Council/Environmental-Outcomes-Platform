@@ -5,28 +5,28 @@ import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
 
 export type AppState = {
   council?: string | null;
-  whaitua?: string | null;
   whaituaId: string;
-  groundWaterZoneName?: string;
-  groundWaterZones: Array<number>;
-  site?: string | null;
+  whaitua?: string | null;
   surfaceWaterMgmtUnitId: string;
   surfaceWaterMgmtUnitDescription?: string | null;
+  surfaceWaterMgmtUnitLimit?: string;
+  surfaceWaterMgmtUnitAllocated?: string;
+  surfaceWaterMgmtUnitAllocatedPercentage?: number;
+
   surfaceWaterMgmtSubUnitId: string;
   surfaceWaterMgmtSubUnitDescription?: string | null;
+  surfaceWaterMgmtSubUnitLimit?: string;
+  surfaceWaterMgmtSubUnitAllocated?: string;
+  surfaceWaterMgmtSubUnitAllocatedPercentage?: number;
+  swLimit?: SWLimit;
+  site?: string | null;
   minimumFlowLimitId: string | null;
+  flowRestrictionsManagementSiteId?: string | null;
   flowRestrictionsLevel?: string | JSX.Element | null;
   flowRestrictionsManagementSiteName?: string | JSX.Element | null;
-  flowRestrictionsManagementSiteId?: string | null;
-
-  surfaceWaterMgmtUnitLimit?: string;
-  surfaceWaterMgmtSubUnitLimit?: string;
-  swLimit?: SWLimit;
-
   gwLimits?: GWLimit[];
-
-  surfaceWaterUnitAllocatedAmount: string | null;
-  surfaceWaterSubUnitAllocatedAmount: string | null;
+  groundWaterZones: Array<number>;
+  groundWaterZoneName?: string;
 };
 
 export function useAppState(): [
@@ -36,19 +36,17 @@ export function useAppState(): [
   const [appState, setAppState] = useState<AppState>({
     council: null,
     whaituaId: 'NONE',
-    groundWaterZones: [],
+    whaitua: null,
     surfaceWaterMgmtUnitId: 'NONE',
+    surfaceWaterMgmtUnitDescription: null,
     surfaceWaterMgmtSubUnitId: 'NONE',
+    surfaceWaterMgmtSubUnitDescription: null,
+    site: null,
     minimumFlowLimitId: 'NONE',
     flowRestrictionsManagementSiteId: 'NONE',
-    whaitua: null,
-    site: null,
-    surfaceWaterMgmtUnitDescription: null,
-    surfaceWaterMgmtSubUnitDescription: null,
     flowRestrictionsLevel: null,
     flowRestrictionsManagementSiteName: null,
-    surfaceWaterUnitAllocatedAmount: null,
-    surfaceWaterSubUnitAllocatedAmount: null,
+    groundWaterZones: [],
   });
 
   const setAppStateFromResult = (result: mapboxgl.MapboxGeoJSONFeature[]) => {
@@ -56,7 +54,7 @@ export function useAppState(): [
     const whaitua = findFeature(result, 'whaitua', 'name');
     const whaituaId = findFeatureId(result, 'whaitua') || 'NONE';
 
-    // Surface water
+    // Surface water MgmtUnit
     const surfaceWaterMgmtUnitId =
       findFeatureId(result, 'surfaceWaterMgmtUnits') || 'NONE';
     const surfaceWaterMgmtUnitDescription = findFeature(
@@ -64,39 +62,11 @@ export function useAppState(): [
       'surfaceWaterMgmtUnits',
       'name'
     );
-
-    const surfaceWaterMgmtSubUnitId =
-      findFeatureId(result, 'surfaceWaterMgmtSubUnits') || 'NONE';
-    const surfaceWaterMgmtSubUnitDescription = findFeature(
-      result,
-      'surfaceWaterMgmtSubUnits',
-      'name'
-    );
-
-    const surfaceWaterMgmtSubUnitLimit =
-      surfaceWaterMgmtSubUnitId === 'NONE'
-        ? undefined
-        : formatWaterQuantity(
-            Number(
-              findFeature(
-                result,
-                'surfaceWaterMgmtSubUnits',
-                'allocation_amount'
-              )
-            ),
-            findFeature(
-              result,
-              'surfaceWaterMgmtSubUnits',
-              'allocation_amount_unit'
-            ) as string
-          );
-
     const surfaceWaterMgmtUnitLimitAmount = findFeature(
       result,
       'surfaceWaterMgmtUnits',
       'allocation_amount'
     );
-
     const surfaceWaterMgmtUnitLimit = surfaceWaterMgmtUnitLimitAmount
       ? formatWaterQuantity(
           Number(surfaceWaterMgmtUnitLimitAmount),
@@ -107,6 +77,82 @@ export function useAppState(): [
           ) as string
         )
       : undefined;
+
+    const surfaceWaterMgmtUnitAllocatedAmount = findFeature(
+      result,
+      'surfaceWaterMgmtUnits',
+      'allocated_amount'
+    );
+    const surfaceWaterMgmtUnitAllocated = surfaceWaterMgmtUnitAllocatedAmount
+      ? formatWaterQuantity(
+          Math.round(Number(surfaceWaterMgmtUnitAllocatedAmount)),
+          findFeature(
+            result,
+            'surfaceWaterMgmtUnits',
+            'allocation_amount_unit'
+          ) as string
+        )
+      : undefined;
+
+    let surfaceWaterMgmtUnitAllocatedPercentage =
+      surfaceWaterMgmtUnitLimitAmount && surfaceWaterMgmtUnitAllocatedAmount
+        ? Math.round(
+            (Number(surfaceWaterMgmtUnitAllocatedAmount) /
+              Number(surfaceWaterMgmtUnitLimitAmount)) *
+              100
+          )
+        : undefined;
+
+    // Surface water MgmtSubUnit
+    const surfaceWaterMgmtSubUnitId =
+      findFeatureId(result, 'surfaceWaterMgmtSubUnits') || 'NONE';
+    const surfaceWaterMgmtSubUnitDescription = findFeature(
+      result,
+      'surfaceWaterMgmtSubUnits',
+      'name'
+    );
+    const surfaceWaterMgmtSubUnitLimitAmount = findFeature(
+      result,
+      'surfaceWaterMgmtSubUnits',
+      'allocation_amount'
+    );
+    const surfaceWaterMgmtSubUnitLimit = surfaceWaterMgmtSubUnitLimitAmount
+      ? formatWaterQuantity(
+          Number(surfaceWaterMgmtSubUnitLimitAmount),
+          findFeature(
+            result,
+            'surfaceWaterMgmtSubUnits',
+            'allocation_amount_unit'
+          ) as string
+        )
+      : undefined;
+
+    const surfaceWaterMgmtSubUnitAllocatedAmount = findFeature(
+      result,
+      'surfaceWaterMgmtSubUnits',
+      'allocated_amount'
+    );
+    const surfaceWaterMgmtSubUnitAllocated =
+      surfaceWaterMgmtSubUnitAllocatedAmount
+        ? formatWaterQuantity(
+            Math.round(Number(surfaceWaterMgmtSubUnitAllocatedAmount)),
+            findFeature(
+              result,
+              'surfaceWaterMgmtSubUnits',
+              'allocation_amount_unit'
+            ) as string
+          )
+        : undefined;
+
+    let surfaceWaterMgmtSubUnitAllocatedPercentage =
+      surfaceWaterMgmtSubUnitLimitAmount &&
+      surfaceWaterMgmtSubUnitAllocatedAmount
+        ? Math.round(
+            (Number(surfaceWaterMgmtSubUnitAllocatedAmount) /
+              Number(surfaceWaterMgmtSubUnitLimitAmount)) *
+              100
+          )
+        : undefined;
 
     const swLimit = getSwLimit(
       whaituaId,
@@ -172,15 +218,21 @@ export function useAppState(): [
     setAppState({
       ...appState,
       council,
-      whaitua,
       whaituaId,
+      whaitua,
+
       // SW
       surfaceWaterMgmtUnitId,
       surfaceWaterMgmtUnitDescription,
+      surfaceWaterMgmtUnitLimit,
+      surfaceWaterMgmtUnitAllocated,
+      surfaceWaterMgmtUnitAllocatedPercentage,
       surfaceWaterMgmtSubUnitId,
       surfaceWaterMgmtSubUnitDescription,
-      surfaceWaterMgmtUnitLimit,
       surfaceWaterMgmtSubUnitLimit,
+      surfaceWaterMgmtSubUnitAllocated,
+      surfaceWaterMgmtSubUnitAllocatedPercentage,
+
       swLimit,
       // GW
       groundWaterZoneName,

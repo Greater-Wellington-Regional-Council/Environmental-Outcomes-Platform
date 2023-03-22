@@ -61,7 +61,13 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
               Sub-unit Allocation Limit
             </th>
             <th className="border p-2 text-left text-sm font-normal bg-gray-100">
+              Sub-unit Allocated
+            </th>
+            <th className="border p-2 text-left text-sm font-normal bg-gray-100">
               Catchment Management Unit Allocation Limit
+            </th>
+            <th className="border p-2 text-left text-sm font-normal bg-gray-100">
+              Catchment Management Unit Allocated
             </th>
           </tr>
         </thead>
@@ -83,9 +89,31 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                     : appState.swLimit?.subUnitLimit || BLANK_CELL_CHAR}
                 </td>
                 <td className="border p-2 text-left text-sm">
+                  {appState.surfaceWaterMgmtSubUnitAllocated ? (
+                    <>
+                      {appState.surfaceWaterMgmtSubUnitAllocated}
+                      <br />
+                      {appState.surfaceWaterMgmtSubUnitAllocatedPercentage}%
+                    </>
+                  ) : (
+                    BLANK_CELL_CHAR
+                  )}
+                </td>
+                <td className="border p-2 text-left text-sm">
                   {appState.swLimit?.useDefaultRuleForUnit
                     ? DEFAULT_RULE
                     : appState.swLimit?.unitLimit || BLANK_CELL_CHAR}
+                </td>
+                <td className="border p-2 text-left text-sm">
+                  {appState.surfaceWaterMgmtUnitAllocated ? (
+                    <>
+                      {appState.surfaceWaterMgmtUnitAllocated}
+                      <br />
+                      {appState.surfaceWaterMgmtUnitAllocatedPercentage}%
+                    </>
+                  ) : (
+                    BLANK_CELL_CHAR
+                  )}
                 </td>
               </tr>
             </>
