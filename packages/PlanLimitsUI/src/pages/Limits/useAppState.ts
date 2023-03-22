@@ -1,12 +1,7 @@
 import { useState } from 'react';
-import {
-  GroundwaterZoneBoundariesProperties,
-  useGeoJsonQueries,
-} from '../../api';
 import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
 import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
-import { Feature, Geometry } from 'geojson';
 
 export type AppState = {
   council?: string | null;
@@ -56,17 +51,6 @@ export function useAppState(): [
     surfaceWaterSubUnitAllocatedAmount: null,
   });
 
-  const geoJsonQueries = useGeoJsonQueries();
-  const [
-    councilsGeoJson,
-    whaituaGeoJson,
-    surfaceWaterMgmtUnitsGeoJson,
-    surfaceWaterMgmtSubUnitsGeoJson,
-    flowManagementSitesGeoJson,
-    minimumFlowLimitBoundariesGeoJson,
-    groundwaterZoneBoundariesGeoJson,
-  ] = geoJsonQueries;
-
   const setAppStateFromResult = (result: mapboxgl.MapboxGeoJSONFeature[]) => {
     const council = findFeature(result, 'councils', 'name');
     const whaitua = findFeature(result, 'whaitua', 'name');
@@ -93,8 +77,8 @@ export function useAppState(): [
       .sort((a, b) => {
         // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
         const alphabet = '0123456789>';
-        const first = a.properties.depth.charAt(0);
-        const second = b.properties.depth.charAt(1);
+        const first = a.properties?.depth.charAt(0);
+        const second = b.properties?.depth.charAt(1);
         return alphabet.indexOf(first) - alphabet.indexOf(second);
       });
 
@@ -178,7 +162,7 @@ export function useAppState(): [
     );
 
     const gwLimits = getGwLimits(
-      groundWaterZonesData,
+      groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[],
       surfaceWaterMgmtSubUnitLimit
     );
 
@@ -256,7 +240,7 @@ interface GWLimit {
 }
 
 function getGwLimits(
-  activeFeatures: Feature<Geometry, GroundwaterZoneBoundariesProperties>[],
+  activeFeatures: mapboxgl.MapboxGeoJSONFeature[],
   surfaceWaterMgmtUnitLimit?: string
 ) {
   const rows: GWLimit[] = [];
@@ -270,21 +254,21 @@ function getGwLimits(
   }
 
   activeFeatures
-    .filter((feature) => feature.properties.category === 'Category A')
+    .filter((feature) => feature.properties?.category === 'Category A')
     .forEach((feature) => {
       if (
-        !feature.properties.surface_water_unit_allocation_amount &&
+        !feature.properties?.surface_water_unit_allocation_amount &&
         !surfaceWaterMgmtUnitLimit
       ) {
         rows.push({
-          depth: feature.properties.depth,
+          depth: feature.properties?.depth,
           category: 'A',
           useDefaultRuleForSubUnit: true,
           useDefaultRuleForUnit: true,
         });
       } else {
         const unitLimit = feature.properties
-          .surface_water_unit_allocation_amount
+          ?.surface_water_unit_allocation_amount
           ? formatWaterQuantity(
               feature.properties.surface_water_unit_allocation_amount,
               feature.properties.surface_water_unit_allocation_amount_unit
@@ -292,14 +276,14 @@ function getGwLimits(
           : undefined;
 
         const subUnitLimit = feature.properties
-          .surface_water_sub_unit_allocation_amount
+          ?.surface_water_sub_unit_allocation_amount
           ? formatWaterQuantity(
               feature.properties.surface_water_sub_unit_allocation_amount,
               feature.properties.surface_water_sub_unit_allocation_amount_unit
             )
           : undefined;
         rows.push({
-          depth: feature.properties.depth,
+          depth: feature.properties?.depth,
           category: 'A',
           unitLimit,
           subUnitLimit,
@@ -310,10 +294,10 @@ function getGwLimits(
     });
 
   activeFeatures
-    .filter((feature) => feature.properties.category === 'Category B')
+    .filter((feature) => feature.properties?.category === 'Category B')
     .forEach((feature) => {
       rows.push({
-        depth: feature.properties.depth,
+        depth: feature.properties?.depth,
         category: 'B',
         useDefaultRuleForUnit: true,
         useDefaultRuleForSubUnit: true,
@@ -321,14 +305,14 @@ function getGwLimits(
     });
 
   activeFeatures
-    .filter((feature) => feature.properties.category === 'Category C')
+    .filter((feature) => feature.properties?.category === 'Category C')
     .forEach((feature) => {
       const limit = formatWaterQuantity(
-        feature.properties.groundwater_allocation_amount,
-        feature.properties.groundwater_allocation_amount_unit
+        feature.properties?.groundwater_allocation_amount,
+        feature.properties?.groundwater_allocation_amount_unit
       );
       rows.push({
-        depth: feature.properties.depth,
+        depth: feature.properties?.depth,
         category: 'C',
         subUnitLimit: limit,
         useDefaultRuleForSubUnit: false,
