@@ -3,6 +3,7 @@ import { useAtom } from 'jotai';
 import { GeoJsonQueries, GroundwaterZoneBoundariesProperties } from '../../api';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
 import LimitsTable from './LimitsTable';
+import LimitsTable2 from './LimitsTable2';
 import Button from '../../components/Button';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
@@ -134,16 +135,28 @@ export default function Sidebar({
           />
         </dl>
         {appState.whaitua && queries[6].data && (
-          <LimitsTable
-            waterTakeFilter={waterTakeFilter}
-            appState={appState}
-            groundWaterZoneGeoJson={
-              queries[6].data as FeatureCollection<
-                Geometry,
-                GroundwaterZoneBoundariesProperties
-              >
-            }
-          />
+          <>
+            <LimitsTable
+              waterTakeFilter={waterTakeFilter}
+              appState={appState}
+              groundWaterZoneGeoJson={
+                queries[6].data as FeatureCollection<
+                  Geometry,
+                  GroundwaterZoneBoundariesProperties
+                >
+              }
+            />
+            <LimitsTable2
+              waterTakeFilter={waterTakeFilter}
+              appState={appState}
+              groundWaterZoneGeoJson={
+                queries[6].data as FeatureCollection<
+                  Geometry,
+                  GroundwaterZoneBoundariesProperties
+                >
+              }
+            />
+          </>
         )}
       </div>
 

@@ -1,8 +1,12 @@
 import { useState } from 'react';
-import { useGeoJsonQueries } from '../../api';
+import {
+  GroundwaterZoneBoundariesProperties,
+  useGeoJsonQueries,
+} from '../../api';
 import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
 import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
+import { Feature, Geometry } from 'geojson';
 
 export type AppState = {
   council?: string | null;
@@ -19,8 +23,13 @@ export type AppState = {
   flowRestrictionsLevel?: string | JSX.Element | null;
   flowRestrictionsManagementSiteName?: string | JSX.Element | null;
   flowRestrictionsManagementSiteId?: string | null;
-  surfaceWaterMgmtUnitLimit?: string | null;
-  surfaceWaterMgmtSubUnitLimit?: string | null;
+
+  surfaceWaterMgmtUnitLimit?: string;
+  surfaceWaterMgmtSubUnitLimit?: string;
+  swLimit?: SWLimit;
+
+  gwLimits?: GWLimit[];
+
   surfaceWaterUnitAllocatedAmount: string | null;
   surfaceWaterSubUnitAllocatedAmount: string | null;
 };
@@ -43,8 +52,6 @@ export function useAppState(): [
     surfaceWaterMgmtSubUnitDescription: null,
     flowRestrictionsLevel: null,
     flowRestrictionsManagementSiteName: null,
-    surfaceWaterMgmtUnitLimit: null,
-    surfaceWaterMgmtSubUnitLimit: null,
     surfaceWaterUnitAllocatedAmount: null,
     surfaceWaterSubUnitAllocatedAmount: null,
   });
@@ -81,9 +88,16 @@ export function useAppState(): [
       'name'
     );
 
-    const groundWaterZonesData = result.filter(
-      (value) => value.layer.id === 'groundWater'
-    );
+    const groundWaterZonesData = result
+      .filter((value) => value.layer.id === 'groundWater')
+      .sort((a, b) => {
+        // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
+        const alphabet = '0123456789>';
+        const first = a.properties.depth.charAt(0);
+        const second = b.properties.depth.charAt(1);
+        return alphabet.indexOf(first) - alphabet.indexOf(second);
+      });
+
     const groundWaterZones = groundWaterZonesData.map(
       (item) => item.id as number
     );
@@ -157,6 +171,17 @@ export function useAppState(): [
         )
       : undefined;
 
+    const swLimit = getSwLimit(
+      whaituaId,
+      surfaceWaterMgmtUnitLimit,
+      surfaceWaterMgmtSubUnitLimit
+    );
+
+    const gwLimits = getGwLimits(
+      groundWaterZonesData,
+      surfaceWaterMgmtSubUnitLimit
+    );
+
     setAppState({
       ...appState,
       council,
@@ -175,6 +200,8 @@ export function useAppState(): [
       flowRestrictionsManagementSiteId,
       surfaceWaterMgmtUnitLimit,
       surfaceWaterMgmtSubUnitLimit,
+      swLimit,
+      gwLimits,
     });
   };
 
@@ -194,3 +221,120 @@ const findFeatureId = (
   features: mapboxgl.MapboxGeoJSONFeature[],
   layer: string
 ) => features.find((feat) => feat.layer.id === layer)?.id as string;
+
+interface SWLimit {
+  subUnitLimit?: string;
+  unitLimit?: string;
+  useDefaultRuleForUnit: boolean;
+  useDefaultRuleForSubUnit: boolean;
+}
+
+function getSwLimit(
+  whaituaId: string,
+  surfaceWaterMgmtUnitLimit?: string,
+  surfaceWaterMgmtSubUnitLimit?: string
+): SWLimit {
+  const stat = {
+    unitLimit: surfaceWaterMgmtUnitLimit,
+    subUnitLimit: surfaceWaterMgmtSubUnitLimit,
+    useDefaultRuleForUnit:
+      !surfaceWaterMgmtUnitLimit && !surfaceWaterMgmtSubUnitLimit,
+    useDefaultRuleForSubUnit:
+      (!surfaceWaterMgmtUnitLimit && !surfaceWaterMgmtSubUnitLimit) ||
+      (!surfaceWaterMgmtSubUnitLimit && whaituaId === '4'),
+  };
+  return stat;
+}
+
+interface GWLimit {
+  depth: string;
+  category?: string;
+  subUnitLimit?: string;
+  unitLimit?: string;
+  useDefaultRuleForUnit: boolean;
+  useDefaultRuleForSubUnit: boolean;
+}
+
+function getGwLimits(
+  activeFeatures: Feature<Geometry, GroundwaterZoneBoundariesProperties>[],
+  surfaceWaterMgmtUnitLimit?: string
+) {
+  const rows: GWLimit[] = [];
+  if (activeFeatures.length === 0) {
+    rows.push({
+      depth: 'All Depths',
+      useDefaultRuleForSubUnit: true,
+      useDefaultRuleForUnit: true,
+    });
+    return rows;
+  }
+
+  activeFeatures
+    .filter((feature) => feature.properties.category === 'Category A')
+    .forEach((feature) => {
+      if (
+        !feature.properties.surface_water_unit_allocation_amount &&
+        !surfaceWaterMgmtUnitLimit
+      ) {
+        rows.push({
+          depth: feature.properties.depth,
+          category: 'A',
+          useDefaultRuleForSubUnit: true,
+          useDefaultRuleForUnit: true,
+        });
+      } else {
+        const unitLimit = feature.properties
+          .surface_water_unit_allocation_amount
+          ? formatWaterQuantity(
+              feature.properties.surface_water_unit_allocation_amount,
+              feature.properties.surface_water_unit_allocation_amount_unit
+            )
+          : undefined;
+
+        const subUnitLimit = feature.properties
+          .surface_water_sub_unit_allocation_amount
+          ? formatWaterQuantity(
+              feature.properties.surface_water_sub_unit_allocation_amount,
+              feature.properties.surface_water_sub_unit_allocation_amount_unit
+            )
+          : undefined;
+        rows.push({
+          depth: feature.properties.depth,
+          category: 'A',
+          unitLimit,
+          subUnitLimit,
+          useDefaultRuleForSubUnit: false,
+          useDefaultRuleForUnit: false,
+        });
+      }
+    });
+
+  activeFeatures
+    .filter((feature) => feature.properties.category === 'Category B')
+    .forEach((feature) => {
+      rows.push({
+        depth: feature.properties.depth,
+        category: 'B',
+        useDefaultRuleForUnit: true,
+        useDefaultRuleForSubUnit: true,
+      });
+    });
+
+  activeFeatures
+    .filter((feature) => feature.properties.category === 'Category C')
+    .forEach((feature) => {
+      const limit = formatWaterQuantity(
+        feature.properties.groundwater_allocation_amount,
+        feature.properties.groundwater_allocation_amount_unit
+      );
+      rows.push({
+        depth: feature.properties.depth,
+        category: 'C',
+        subUnitLimit: limit,
+        useDefaultRuleForSubUnit: false,
+        useDefaultRuleForUnit: false,
+      });
+    });
+
+  return rows;
+}
