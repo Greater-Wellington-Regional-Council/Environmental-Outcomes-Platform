@@ -43,6 +43,7 @@ dependencies {
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:4.43.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.43.0")
+  implementation("net.postgis:postgis-jdbc:2021.1.0")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-assertions-core:5.5.4")
@@ -106,7 +107,8 @@ jooq {
             forcedTypes =
                 listOf(
                     ForcedType().apply {
-                      name = "blob"
+                      userType = "net.postgis.jdbc.geometry.Geometry"
+                      binding = "nz.govt.eop.si.jooq.PostgisGeometryBinding"
                       includeExpression = ".*"
                       includeTypes = "GEOMETRY"
                     },
@@ -130,6 +132,7 @@ jooq {
             isIndexes = false
             isKeys = false
             isTables = false
+            isSpatialTypes = false
 
             isPojosAsKotlinDataClasses = true
             isImmutablePojos = true

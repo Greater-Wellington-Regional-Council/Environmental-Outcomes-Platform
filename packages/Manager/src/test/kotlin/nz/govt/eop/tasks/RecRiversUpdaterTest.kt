@@ -3,6 +3,7 @@ package nz.govt.eop.tasks
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import java.time.LocalDateTime
+import net.postgis.jdbc.geometry.Geometry
 import nz.govt.eop.si.jooq.tables.RawRecFeaturesRivers.Companion.RAW_REC_FEATURES_RIVERS
 import nz.govt.eop.si.jooq.tables.RecRiversModifications.Companion.REC_RIVERS_MODIFICATIONS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
@@ -170,7 +171,7 @@ class RecRiversUpdaterTest(
             DSL.value(3),
             DSL.value(654321),
             DSL.value(4),
-            DSL.field("ST_GeomFromText('POINT(0 0)')", ByteArray::class.java),
+            DSL.field("ST_GeomFromText('POINT(0 0)')", Geometry::class.java),
             DSL.value(LocalDateTime.now()),
             DSL.value("TEST DATA"))
         .execute()

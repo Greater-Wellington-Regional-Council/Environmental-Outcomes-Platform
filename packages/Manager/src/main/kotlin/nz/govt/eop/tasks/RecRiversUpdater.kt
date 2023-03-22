@@ -3,6 +3,7 @@ package nz.govt.eop.tasks
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import net.postgis.jdbc.geometry.Geometry
 import nz.govt.eop.si.jooq.tables.RawRecFeaturesRivers.Companion.RAW_REC_FEATURES_RIVERS
 import nz.govt.eop.si.jooq.tables.RecRiversModifications.Companion.REC_RIVERS_MODIFICATIONS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
@@ -92,7 +93,7 @@ class RecRiversUpdater(val context: DSLContext) {
                         .`as`("is_headwater"),
                     DSL.field("(data -> 'properties' -> 'StreamOrde')::INT", Int::class.java)
                         .`as`("stream_order"),
-                    DSL.field("st_geomfromgeojson(data -> 'geometry')", ByteArray::class.java)
+                    DSL.field("st_geomfromgeojson(data -> 'geometry')", Geometry::class.java)
                         .`as`("path"))
                 .from(RAW_REC_FEATURES_RIVERS)
                 .where(
