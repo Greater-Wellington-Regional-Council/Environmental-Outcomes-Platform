@@ -13,6 +13,7 @@ import org.awaitility.Awaitility
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Profile
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.KafkaTemplate
@@ -22,7 +23,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils
 import org.springframework.stereotype.Component
 import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("test")
+@ActiveProfiles("test", "fake-consumer")
 @SpringBootTest
 @EmbeddedKafka(
     partitions = 1,
@@ -70,6 +71,7 @@ class WaterAllocationConsumerErrorHandlerTest(
   }
 }
 
+@Profile("fake-consumer")
 @Component
 class FakeConsumer {
 
