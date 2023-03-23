@@ -28,10 +28,15 @@ async function fetchFromAPI<T>(path: string): Promise<T> {
 export type GroundwaterZoneBoundariesProperties = {
   category: 'Category A' | 'Category B' | 'Category C';
   depth: string;
+  surface_water_unit_allocation_amount_id: number;
   surface_water_unit_allocation_amount: number;
   surface_water_unit_allocation_amount_unit: string;
+  surface_water_unit_allocated_amount: number;
+  surface_water_sub_unit_allocation_amount_id: number;
   surface_water_sub_unit_allocation_amount: number;
   surface_water_sub_unit_allocation_amount_unit: string;
+  surface_water_sub_unit_allocated_amount: number;
+  groundwater_allocation_amount_id: number;
   groundwater_allocation_amount: number;
   groundwater_allocation_amount_unit: string;
   groundwater_allocated_amount: number;

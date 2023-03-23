@@ -137,11 +137,11 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                       : gwLimit.subUnitLimit || BLANK_CELL_CHAR}
                   </td>
                   <td className="border p-2 text-left text-sm">
-                    {gwLimit.allocated ? (
+                    {gwLimit.subUnitAllocated ? (
                       <>
-                        {gwLimit.allocated}
+                        {gwLimit.subUnitAllocated.amount}
                         <br />
-                        {gwLimit.allocatedPercentage}%
+                        {gwLimit.subUnitAllocated.percentage}%
                       </>
                     ) : (
                       BLANK_CELL_CHAR
@@ -155,7 +155,15 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                       : gwLimit.unitLimit || BLANK_CELL_CHAR}
                   </td>
                   <td className="border p-2 text-left text-sm">
-                    {BLANK_CELL_CHAR}
+                    {gwLimit.unitAllocated ? (
+                      <>
+                        {gwLimit.unitAllocated.amount}
+                        <br />
+                        {gwLimit.unitAllocated.percentage}%
+                      </>
+                    ) : (
+                      BLANK_CELL_CHAR
+                    )}
                   </td>
                 </tr>
               ))}

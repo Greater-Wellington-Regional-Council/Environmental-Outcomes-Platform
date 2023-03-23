@@ -296,8 +296,14 @@ interface GWLimit {
   unitLimit?: string;
   useDefaultRuleForUnit: boolean;
   useDefaultRuleForSubUnit: boolean;
-  allocated?: string;
-  allocatedPercentage?: number;
+  unitAllocated?: {
+    amount?: string;
+    percentage?: number;
+  };
+  subUnitAllocated?: {
+    amount?: string;
+    percentage?: number;
+  };
 }
 
 function getGwLimits(
@@ -326,7 +332,6 @@ function getGwLimits(
           category: 'A',
           useDefaultRuleForSubUnit: true,
           useDefaultRuleForUnit: true,
-          allocated: feature.properties?.groundwater_allocated_amount,
         });
       } else {
         const unitLimit = feature.properties
@@ -352,11 +357,15 @@ function getGwLimits(
           subUnitLimit,
           useDefaultRuleForSubUnit: false,
           useDefaultRuleForUnit: false,
-          ...allocatedProps(
+          unitAllocated: allocatedProps(
+            feature.properties?.surface_water_unit_allocation_amount,
+            feature.properties?.surface_water_unit_allocated_amount,
+            feature.properties?.surface_water_unit_allocation_amount_unit
+          ),
+          subUnitAllocated: allocatedProps(
             feature.properties?.surface_water_sub_unit_allocation_amount,
-            // This should be feature.properties?.parent_surface_water_sub_unit_allocated_amount,
-            feature.properties?.groundwater_allocated_amount,
-            feature.properties?.groundwater_allocation_amount_unit
+            feature.properties?.surface_water_sub_unit_allocated_amount,
+            feature.properties?.surface_water_sub_unit_allocation_amount_unit
           ),
         });
       }
@@ -370,7 +379,7 @@ function getGwLimits(
         category: 'B',
         useDefaultRuleForUnit: true,
         useDefaultRuleForSubUnit: true,
-        ...allocatedProps(
+        subUnitAllocated: allocatedProps(
           feature.properties?.groundwater_allocation_amount,
           feature.properties?.groundwater_allocated_amount,
           feature.properties?.groundwater_allocation_amount_unit
@@ -392,7 +401,7 @@ function getGwLimits(
         subUnitLimit: limit,
         useDefaultRuleForSubUnit: false,
         useDefaultRuleForUnit: false,
-        ...allocatedProps(
+        subUnitAllocated: allocatedProps(
           feature.properties?.groundwater_allocation_amount,
           feature.properties?.groundwater_allocated_amount,
           feature.properties?.groundwater_allocation_amount_unit
@@ -408,15 +417,15 @@ function allocatedProps(
   allocatedAmount: string,
   unit: string
 ) {
-  let allocated;
-  let allocatedPercentage;
+  let amount;
+  let percentage;
   if (allocatedAmount && unit) {
-    allocated = formatWaterQuantity(Number(allocatedAmount), unit);
+    amount = formatWaterQuantity(Number(allocatedAmount), unit);
     if (limitAmount) {
-      allocatedPercentage = Math.round(
+      percentage = Math.round(
         (Number(allocatedAmount) / Number(limitAmount)) * 100
       );
     }
   }
-  return { allocated, allocatedPercentage };
+  return { amount, percentage };
 }
