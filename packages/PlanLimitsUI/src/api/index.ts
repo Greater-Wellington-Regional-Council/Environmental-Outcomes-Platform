@@ -34,6 +34,7 @@ export type GroundwaterZoneBoundariesProperties = {
   surface_water_sub_unit_allocation_amount_unit: string;
   groundwater_allocation_amount: number;
   groundwater_allocation_amount_unit: string;
+  groundwater_allocated_amount: number;
 };
 
 export function useGeoJsonQueries() {

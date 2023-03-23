@@ -137,11 +137,25 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                       : gwLimit.subUnitLimit || BLANK_CELL_CHAR}
                   </td>
                   <td className="border p-2 text-left text-sm">
+                    {gwLimit.allocated ? (
+                      <>
+                        {gwLimit.allocated}
+                        <br />
+                        {gwLimit.allocatedPercentage}%
+                      </>
+                    ) : (
+                      BLANK_CELL_CHAR
+                    )}
+                  </td>
+                  <td className="border p-2 text-left text-sm">
                     {gwLimit.useDefaultRuleForUnit
                       ? gwLimit.category === 'B'
                         ? GROUNDWATER_CATEGORY_B_RULE
                         : DEFAULT_RULE
                       : gwLimit.unitLimit || BLANK_CELL_CHAR}
+                  </td>
+                  <td className="border p-2 text-left text-sm">
+                    {BLANK_CELL_CHAR}
                   </td>
                 </tr>
               ))}

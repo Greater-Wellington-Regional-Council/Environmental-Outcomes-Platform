@@ -2,6 +2,7 @@ import { useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
 import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
+import { GroundwaterZoneBoundariesProperties } from '../../api';
 
 export type AppState = {
   council?: string | null;
@@ -295,6 +296,8 @@ interface GWLimit {
   unitLimit?: string;
   useDefaultRuleForUnit: boolean;
   useDefaultRuleForSubUnit: boolean;
+  allocated?: string;
+  allocatedPercentage?: number;
 }
 
 function getGwLimits(
@@ -323,6 +326,7 @@ function getGwLimits(
           category: 'A',
           useDefaultRuleForSubUnit: true,
           useDefaultRuleForUnit: true,
+          allocated: feature.properties?.groundwater_allocated_amount,
         });
       } else {
         const unitLimit = feature.properties
@@ -340,6 +344,7 @@ function getGwLimits(
               feature.properties.surface_water_sub_unit_allocation_amount_unit
             )
           : undefined;
+
         rows.push({
           depth: feature.properties?.depth,
           category: 'A',
@@ -347,6 +352,12 @@ function getGwLimits(
           subUnitLimit,
           useDefaultRuleForSubUnit: false,
           useDefaultRuleForUnit: false,
+          ...allocatedProps(
+            feature.properties?.surface_water_sub_unit_allocation_amount,
+            // This should be feature.properties?.parent_surface_water_sub_unit_allocated_amount,
+            feature.properties?.groundwater_allocated_amount,
+            feature.properties?.groundwater_allocation_amount_unit
+          ),
         });
       }
     });
@@ -359,6 +370,11 @@ function getGwLimits(
         category: 'B',
         useDefaultRuleForUnit: true,
         useDefaultRuleForSubUnit: true,
+        ...allocatedProps(
+          feature.properties?.groundwater_allocation_amount,
+          feature.properties?.groundwater_allocated_amount,
+          feature.properties?.groundwater_allocation_amount_unit
+        ),
       });
     });
 
@@ -369,14 +385,38 @@ function getGwLimits(
         feature.properties?.groundwater_allocation_amount,
         feature.properties?.groundwater_allocation_amount_unit
       );
+
       rows.push({
         depth: feature.properties?.depth,
         category: 'C',
         subUnitLimit: limit,
         useDefaultRuleForSubUnit: false,
         useDefaultRuleForUnit: false,
+        ...allocatedProps(
+          feature.properties?.groundwater_allocation_amount,
+          feature.properties?.groundwater_allocated_amount,
+          feature.properties?.groundwater_allocation_amount_unit
+        ),
       });
     });
 
   return rows;
+}
+
+function allocatedProps(
+  limitAmount: string,
+  allocatedAmount: string,
+  unit: string
+) {
+  let allocated;
+  let allocatedPercentage;
+  if (allocatedAmount && unit) {
+    allocated = formatWaterQuantity(Number(allocatedAmount), unit);
+    if (limitAmount) {
+      allocatedPercentage = Math.round(
+        (Number(allocatedAmount) / Number(limitAmount)) * 100
+      );
+    }
+  }
+  return { allocated, allocatedPercentage };
 }
