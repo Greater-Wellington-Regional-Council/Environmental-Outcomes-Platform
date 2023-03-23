@@ -313,7 +313,7 @@ function getGwLimits(
   const rows: GWLimit[] = [];
   if (activeFeatures.length === 0) {
     rows.push({
-      depth: 'All Depths',
+      depth: 'All',
       useDefaultRuleForSubUnit: true,
       useDefaultRuleForUnit: true,
     });

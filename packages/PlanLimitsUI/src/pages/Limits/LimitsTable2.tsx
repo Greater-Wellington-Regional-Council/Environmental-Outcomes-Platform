@@ -6,20 +6,20 @@ import type { WaterTakeFilter } from './';
 
 const BLANK_CELL_CHAR = '-';
 const GROUNDWATER_CATEGORY_B_RULE = (
-  <>
-    See Table 4.1 of PNRP
+  <span className="text-xs">
+    See 4.1 of PNRP
     <sup>
       <a href="#PNRP41">1</a>
     </sup>
-  </>
+  </span>
 );
 const DEFAULT_RULE = (
-  <>
-    Refer to Policy P121 of PRNP
+  <span className="text-xs">
+    See P121 of PRNP
     <sup>
       <a href="#PRNP121">2</a>
     </sup>
-  </>
+  </span>
 );
 
 type Props = {
@@ -48,26 +48,50 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
       <table className="border-collapse border">
         <thead>
           <tr>
-            <th className="border p-2 text-left text-sm font-normal bg-gray-100 w-28">
+            <th
+              rowSpan={2}
+              className="border p-2 text-left text-sm font-normal bg-gray-100"
+            >
               Type
             </th>
-            <th className="border p-2 text-left text-sm font-normal bg-gray-100">
-              Bore screen depth
+            <th
+              rowSpan={2}
+              className="border p-2 text-left text-sm font-normal bg-gray-100"
+            >
+              Depth
             </th>
-            <th className="border p-2 text-left text-sm font-normal bg-gray-100">
+            <th
+              rowSpan={2}
+              className="border p-2 text-left text-sm font-normal bg-gray-100"
+            >
               Category
             </th>
-            <th className="border p-2 text-left text-sm font-normal bg-gray-100">
-              Sub-unit Allocation Limit
+            <th
+              colSpan={2}
+              className="border p-2 text-center text-sm font-normal bg-gray-100"
+            >
+              Sub-unit
             </th>
-            <th className="border p-2 text-left text-sm font-normal bg-gray-100">
-              Sub-unit Allocated
+
+            <th
+              colSpan={2}
+              className="border p-2 text-center text-sm font-normal bg-gray-100"
+            >
+              Unit
             </th>
-            <th className="border p-2 text-left text-sm font-normal bg-gray-100">
-              Catchment Management Unit Allocation Limit
+          </tr>
+          <tr>
+            <th className="border p-1 text-left text-sm font-normal bg-gray-100">
+              Limit
             </th>
-            <th className="border p-2 text-left text-sm font-normal bg-gray-100">
-              Catchment Management Unit Allocated
+            <th className="border p-1 text-left text-sm font-normal bg-gray-100">
+              Allocated
+            </th>
+            <th className="border p-1 text-left text-sm font-normal bg-gray-100">
+              Limit
+            </th>
+            <th className="border p-1 text-left text-sm font-normal bg-gray-100">
+              Allocated
             </th>
           </tr>
         </thead>
@@ -76,7 +100,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
           {['Combined', 'Surface'].includes(waterTakeFilter) && (
             <>
               <tr>
-                <td className="border p-2 text-left text-sm">Surface water</td>
+                <td className="border p-2 text-left text-sm">Surface</td>
                 <td className="border p-2 text-left text-sm">
                   {BLANK_CELL_CHAR}
                 </td>
@@ -122,12 +146,12 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
             <>
               {appState.gwLimits?.map((gwLimit, index) => (
                 <tr key={index}>
-                  <td className="border p-2 text-left text-sm">Ground water</td>
+                  <td className="border p-2 text-left text-sm">Ground</td>
                   <td className="border p-2 text-left text-sm">
                     {gwLimit.depth}
                   </td>
                   <td className="border p-2 text-left text-sm">
-                    {gwLimit.category}
+                    {gwLimit.category || BLANK_CELL_CHAR}
                   </td>
                   <td className="border p-2 text-left text-sm">
                     {gwLimit.useDefaultRuleForSubUnit
