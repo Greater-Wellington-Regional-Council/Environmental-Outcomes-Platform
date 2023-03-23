@@ -136,7 +136,7 @@ export default function Sidebar({
         </dl>
         {appState.whaitua && queries[6].data && (
           <>
-            <LimitsTable
+            <LimitsTable2
               waterTakeFilter={waterTakeFilter}
               appState={appState}
               groundWaterZoneGeoJson={
@@ -146,7 +146,7 @@ export default function Sidebar({
                 >
               }
             />
-            <LimitsTable2
+            <LimitsTable
               waterTakeFilter={waterTakeFilter}
               appState={appState}
               groundWaterZoneGeoJson={
