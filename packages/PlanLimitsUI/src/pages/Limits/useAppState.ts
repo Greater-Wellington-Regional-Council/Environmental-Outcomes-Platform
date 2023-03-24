@@ -271,6 +271,8 @@ interface SWLimit {
   unitLimit?: string;
   useDefaultRuleForUnit: boolean;
   useDefaultRuleForSubUnit: boolean;
+  mergeUnit?: boolean;
+  mergeSubUnit?: boolean;
 }
 
 function getSwLimit(
@@ -307,6 +309,8 @@ interface GWLimit {
     amount?: string;
     percentage?: number;
   };
+  mergeUnit?: boolean;
+  mergeSubUnit?: boolean;
 }
 
 function getGwLimits(

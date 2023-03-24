@@ -43,7 +43,11 @@ function AllocatedAmount({
     <>
       {amount}
       <br />
-      <span className={percentage < 100 ? 'text-green-700' : 'text-red-700'}>
+      <span
+        className={
+          percentage && percentage < 100 ? 'text-green-700' : 'text-red-700'
+        }
+      >
         {percentage}%
       </span>
     </>
