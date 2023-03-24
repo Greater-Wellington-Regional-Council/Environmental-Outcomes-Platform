@@ -73,6 +73,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
   appState.gwLimits?.forEach((gwLimit) => {
     if (gwLimit.category === 'A') {
       if (
+        ['Combined'].includes(waterTakeFilter) &&
         gwLimit.parentSWSubUnitId &&
         gwLimit.parentSWSubUnitId.toString() ===
           appState.surfaceWaterMgmtSubUnitId.toString()
