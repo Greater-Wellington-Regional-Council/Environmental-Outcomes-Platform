@@ -4,6 +4,7 @@ import java.util.Collections
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import net.postgis.jdbc.geometry.Geometry
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimitBoundaries.Companion.MINIMUM_FLOW_LIMIT_BOUNDARIES
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimits.Companion.MINIMUM_FLOW_LIMITS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
@@ -93,7 +94,7 @@ class MinimumFlowLimitBoundariesGenerator(@Autowired val context: DSLContext) {
             MINIMUM_FLOW_LIMIT_BOUNDARIES.GEOM)
         .select(
             context
-                .select(inline(id), field("ST_UNION( geom )", ByteArray::class.java))
+                .select(inline(id), field("ST_UNION( geom )", Geometry::class.java))
                 .from(
                     context
                         .select(WATERSHEDS.GEOM)

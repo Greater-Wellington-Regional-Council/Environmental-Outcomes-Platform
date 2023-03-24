@@ -4,6 +4,7 @@ import java.util.Collections
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import net.postgis.jdbc.geometry.Geometry
 import nz.govt.eop.si.jooq.tables.AllocationAmounts.Companion.ALLOCATION_AMOUNTS
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
 import nz.govt.eop.si.jooq.tables.SurfaceWaterManagementBoundaries.Companion.SURFACE_WATER_MANAGEMENT_BOUNDARIES
@@ -93,7 +94,7 @@ class SurfaceWaterManagementBoundariesGenerator(@Autowired val context: DSLConte
             SURFACE_WATER_MANAGEMENT_BOUNDARIES.GEOM)
         .select(
             context
-                .select(inline(id), field("ST_UNION( geom )", ByteArray::class.java))
+                .select(inline(id), field("ST_UNION( geom )", Geometry::class.java))
                 .from(
                     context
                         .select(WATERSHEDS.GEOM)

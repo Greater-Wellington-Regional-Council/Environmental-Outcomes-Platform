@@ -3,6 +3,7 @@ package nz.govt.eop.tasks
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import net.postgis.jdbc.geometry.Geometry
 import nz.govt.eop.si.jooq.tables.RawRecFeaturesWatersheds.Companion.RAW_REC_FEATURES_WATERSHEDS
 import nz.govt.eop.si.jooq.tables.RecWatershedsModifications.Companion.REC_WATERSHEDS_MODIFICATIONS
 import nz.govt.eop.si.jooq.tables.Watersheds.Companion.WATERSHEDS
@@ -76,7 +77,7 @@ class RecWatershedsUpdater(val context: DSLContext) {
                         .`as`("hydro_id"),
                     DSL.field("(data -> 'properties' -> 'nzsegment')::INT", Int::class.java)
                         .`as`("nz_segment"),
-                    DSL.field("st_geomfromgeojson(data -> 'geometry')", ByteArray::class.java)
+                    DSL.field("st_geomfromgeojson(data -> 'geometry')", Geometry::class.java)
                         .`as`("path"))
                 .from(RAW_REC_FEATURES_WATERSHEDS)
                 .where(

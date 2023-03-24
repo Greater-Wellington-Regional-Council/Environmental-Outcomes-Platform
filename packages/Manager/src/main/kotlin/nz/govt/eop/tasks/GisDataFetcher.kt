@@ -5,6 +5,7 @@ import java.net.URI
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
+import net.postgis.jdbc.geometry.Geometry
 import nz.govt.eop.si.jooq.tables.GroundwaterZones
 import nz.govt.eop.si.jooq.tables.WhaituaBoundaries
 import org.geojson.FeatureCollection
@@ -66,7 +67,7 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
               DSL.value((feature.properties["Name"] as String).trim()),
               DSL.field(
                   "ST_GeomFromGeoJSON(?)",
-                  ByteArray::class.java,
+                  Geometry::class.java,
                   ObjectMapper().writeValueAsString(feature.geometry)))
           .execute()
     }
@@ -118,7 +119,7 @@ class GisDataFetcher(val context: DSLContext, val restTemplate: RestTemplate) {
               DSL.value(feature.properties["AllocationAmount_Groundwater_ID"] as Int),
               DSL.field(
                   "ST_GeomFromGeoJSON(?)",
-                  ByteArray::class.java,
+                  Geometry::class.java,
                   ObjectMapper().writeValueAsString(feature.geometry)))
           .execute()
     }
