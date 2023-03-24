@@ -15,6 +15,8 @@ module.exports = {
       black: colors.black,
       white: colors.white,
       gray: colors.gray,
+      red: colors.red,
+      green: colors.green,
       nui: '#174A5B',
       'nui-20': '#D1DBDE',
       cuba: '#E73C3E',

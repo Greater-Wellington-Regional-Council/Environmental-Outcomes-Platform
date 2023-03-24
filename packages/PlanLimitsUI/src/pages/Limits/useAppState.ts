@@ -8,6 +8,7 @@ export type AppState = {
   council?: string | null;
   whaituaId: string;
   whaitua?: string | null;
+
   surfaceWaterMgmtUnitId: string;
   surfaceWaterMgmtUnitDescription?: string | null;
   surfaceWaterMgmtUnitLimit?: string;
@@ -296,6 +297,8 @@ interface GWLimit {
   unitLimit?: string;
   useDefaultRuleForUnit: boolean;
   useDefaultRuleForSubUnit: boolean;
+  parentSWUnitId?: number;
+  parentSWSubUnitId?: number;
   unitAllocated?: {
     amount?: string;
     percentage?: number;
@@ -367,6 +370,10 @@ function getGwLimits(
             feature.properties?.surface_water_sub_unit_allocated_amount,
             feature.properties?.surface_water_sub_unit_allocation_amount_unit
           ),
+          parentSWUnitId:
+            feature.properties?.surface_water_unit_allocation_amount_id,
+          parentSWSubUnitId:
+            feature.properties?.surface_water_sub_unit_allocation_amount_id,
         });
       }
     });
@@ -384,6 +391,10 @@ function getGwLimits(
           feature.properties?.groundwater_allocated_amount,
           feature.properties?.groundwater_allocation_amount_unit
         ),
+        parentSWUnitId:
+          feature.properties?.surface_water_unit_allocation_amount_id,
+        parentSWSubUnitId:
+          feature.properties?.surface_water_sub_unit_allocation_amount_id,
       });
     });
 
@@ -406,6 +417,10 @@ function getGwLimits(
           feature.properties?.groundwater_allocated_amount,
           feature.properties?.groundwater_allocation_amount_unit
         ),
+        parentSWUnitId:
+          feature.properties?.surface_water_unit_allocation_amount_id,
+        parentSWSubUnitId:
+          feature.properties?.surface_water_sub_unit_allocation_amount_id,
       });
     });
 
@@ -420,7 +435,7 @@ function allocatedProps(
   let amount;
   let percentage;
   if (allocatedAmount && unit) {
-    amount = formatWaterQuantity(Number(allocatedAmount), unit);
+    amount = formatWaterQuantity(Math.round(Number(allocatedAmount)), unit);
     if (limitAmount) {
       percentage = Math.round(
         (Number(allocatedAmount) / Number(limitAmount)) * 100
