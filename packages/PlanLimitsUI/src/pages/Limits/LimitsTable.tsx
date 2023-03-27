@@ -70,17 +70,17 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
   let gwCatBSubUnitId: number;
   let gwCatCSubUnitRowSpan = 1;
   let gwCatCSubUnitId: number;
+
   appState.gwLimits?.forEach((gwLimit) => {
     if (gwLimit.category === 'A') {
       if (
         ['Combined'].includes(waterTakeFilter) &&
         gwLimit.parentSWSubUnitId &&
         gwLimit.parentSWSubUnitId.toString() ===
-          appState.surfaceWaterMgmtSubUnitId.toString()
+          appState?.surfaceWaterMgmtSubUnitId?.toString()
       ) {
-        console.log('Inc');
         swAndGWCatASubUnitRowSpan += 1;
-        // CHECK: This depends on consecutive Cat A gw limits having the parent SW sub unit.
+        // This depends on consecutive Cat A GW limits having the parent SW sub unit.
         gwLimit.mergeSubUnit = true;
         gwLimit.mergeUnit = false;
       }
@@ -91,7 +91,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
         gwCatBSubUnitId = gwLimit.parentSWSubUnitId;
       } else {
         if (gwCatBSubUnitId && gwCatBSubUnitId === gwLimit.parentSWSubUnitId) {
-          // CHECK: This depends on consecutive Cat A gw limits having the parent SW sub unit.
+          // This depends on consecutive Cat B GW limits having the parent SW sub unit.
           gwCatBSubUnitRowSpan += 1;
           gwLimit.mergeSubUnit = true;
           gwLimit.mergeUnit = true;
@@ -104,7 +104,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
         gwCatCSubUnitId = gwLimit.parentSWSubUnitId;
       } else {
         if (gwCatCSubUnitId && gwCatCSubUnitId === gwLimit.parentSWSubUnitId) {
-          // CHECK: This depends on consecutive Cat A gw limits having the parent SW sub unit.
+          // This depends on consecutive Cat C GW limits having the parent SW sub unit.
           gwCatCSubUnitRowSpan += 1;
           gwLimit.mergeSubUnit = true;
           gwLimit.mergeUnit = true;
@@ -112,8 +112,6 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
       }
     }
   });
-
-  console.log(swAndGWCatASubUnitRowSpan);
 
   return (
     <>
