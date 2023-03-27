@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("org.springframework.boot") version "3.0.2"
+  id("org.springframework.boot") version "3.0.5"
   id("io.spring.dependency-management") version "1.1.0"
   kotlin("jvm") version "1.7.22"
   kotlin("plugin.spring") version "1.7.22"
-  id("com.diffplug.spotless") version "6.14.1"
+  id("com.diffplug.spotless") version "6.17.0"
   id("com.adarshr.test-logger") version "3.2.0"
 }
 
@@ -20,6 +20,9 @@ repositories { mavenCentral() }
 dependencies {
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+  runtimeOnly("org.springframework.boot:spring-boot-devtools")
+  runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.3")
+
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-web")
@@ -28,12 +31,12 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.kafka:spring-kafka")
-  implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+  implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("io.kotest:kotest-assertions-core:5.5.4")
+  testImplementation("io.kotest:kotest-assertions-core:5.5.5")
 }
 
 // Don't repackage build in a "-plain" Jar

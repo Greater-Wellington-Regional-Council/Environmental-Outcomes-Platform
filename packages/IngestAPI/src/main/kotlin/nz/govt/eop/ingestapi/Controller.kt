@@ -34,7 +34,7 @@ class Controller(private val producer: Producer) {
     val receivedAt = Instant.now()
 
     withLoggingContext("ingestId" to requestBody.ingestId) {
-      logger.info { "Recieved ${requestBody.allocations.size} allocations" }
+      logger.info { "Received ${requestBody.allocations.size} allocations" }
       producer.produce(requestBody.allocations, requestBody.ingestId, receivedAt)
       logger.info { "Ingested ${requestBody.allocations.size} allocations" }
     }

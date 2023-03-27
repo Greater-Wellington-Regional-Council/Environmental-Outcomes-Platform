@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 
 plugins {
-  id("org.springframework.boot") version "2.7.7"
-  id("io.spring.dependency-management") version "1.0.15.RELEASE"
+  id("org.springframework.boot") version "3.0.5"
+  id("io.spring.dependency-management") version "1.1.0"
   kotlin("jvm") version "1.7.22"
   kotlin("plugin.spring") version "1.7.22"
-  id("com.diffplug.spotless") version "6.11.0"
+  id("com.diffplug.spotless") version "6.17.0"
   id("org.flywaydb.flyway") version "9.1.6"
   id("nu.studer.jooq") version "8.0"
   id("com.adarshr.test-logger") version "3.2.0"
@@ -29,26 +29,28 @@ dependencies {
 
   runtimeOnly("org.springframework.boot:spring-boot-devtools")
   runtimeOnly("org.postgresql:postgresql")
+  runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.3")
 
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.kafka:spring-kafka")
+  implementation("io.micrometer:micrometer-tracing-bridge-brave")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("org.flywaydb:flyway-core")
-  implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+  implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("net.javacrumbs.shedlock:shedlock-spring:4.43.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.43.0")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.2.0")
   implementation("net.postgis:postgis-jdbc:2021.1.0")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("io.kotest:kotest-assertions-core:5.5.4")
+  testImplementation("io.kotest:kotest-assertions-core:5.5.5")
   testImplementation("org.springframework.kafka:spring-kafka-test")
-  testImplementation("org.awaitility:awaitility-kotlin:4.1.0")
+  testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }

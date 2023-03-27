@@ -12,8 +12,10 @@ import org.jooq.impl.SQLDataType
  *
  * @param context
  * - The JOOQ context
+ *
  * @param hydroIds
  * - The river segments to start from
+ *
  * @param excludedHydroIds
  * - The river segments to indicate parts of the catchment which should be excluded
  */
