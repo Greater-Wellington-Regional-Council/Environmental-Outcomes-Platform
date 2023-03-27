@@ -3,17 +3,6 @@ spring:
     banner-mode: off
   kafka:
     bootstrap-servers: localhost:29092
-    consumer:
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      properties:
-        spring:
-          json.trusted.packages: nz.govt.eop.messages
-          deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-          json.use.type.headers: false
-          # TODO: Configure this alongside consumers when we add more message types
-          json.value.default.type: nz.govt.eop.messages.WaterAllocationMessage
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
