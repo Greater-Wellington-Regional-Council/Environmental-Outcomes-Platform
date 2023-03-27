@@ -9,13 +9,13 @@ export type AppState = {
   whaituaId: string;
   whaitua?: string | null;
 
-  surfaceWaterMgmtUnitId: string;
+  surfaceWaterMgmtUnitId: string | null;
   surfaceWaterMgmtUnitDescription?: string | null;
   surfaceWaterMgmtUnitLimit?: string;
   surfaceWaterMgmtUnitAllocated?: string;
   surfaceWaterMgmtUnitAllocatedPercentage?: number;
 
-  surfaceWaterMgmtSubUnitId: string;
+  surfaceWaterMgmtSubUnitId: string | null;
   surfaceWaterMgmtSubUnitDescription?: string | null;
   surfaceWaterMgmtSubUnitLimit?: string;
   surfaceWaterMgmtSubUnitAllocated?: string;
@@ -58,7 +58,7 @@ export function useAppState(): [
 
     // Surface water MgmtUnit
     const surfaceWaterMgmtUnitId =
-      findFeatureId(result, 'surfaceWaterMgmtUnits') || 'NONE';
+      findFeatureId(result, 'surfaceWaterMgmtUnits') || null;
     const surfaceWaterMgmtUnitDescription = findFeature(
       result,
       'surfaceWaterMgmtUnits',
@@ -107,7 +107,7 @@ export function useAppState(): [
 
     // Surface water MgmtSubUnit
     const surfaceWaterMgmtSubUnitId =
-      findFeatureId(result, 'surfaceWaterMgmtSubUnits') || 'NONE';
+      findFeatureId(result, 'surfaceWaterMgmtSubUnits') || null;
     const surfaceWaterMgmtSubUnitDescription = findFeature(
       result,
       'surfaceWaterMgmtSubUnits',
@@ -283,11 +283,16 @@ function getSwLimit(
   const stat = {
     unitLimit: surfaceWaterMgmtUnitLimit,
     subUnitLimit: surfaceWaterMgmtSubUnitLimit,
-    useDefaultRuleForUnit:
-      !surfaceWaterMgmtUnitLimit && !surfaceWaterMgmtSubUnitLimit,
+
+    useDefaultRuleForUnit: !surfaceWaterMgmtUnitLimit,
+
+    // Ruamahanga (Whaitua '4') uses 2 levels of surface water units. So in areas
+    //  where there is no value at the Subunit and there is a management unit,
+    // level P121 applies.
     useDefaultRuleForSubUnit:
-      (!surfaceWaterMgmtUnitLimit && !surfaceWaterMgmtSubUnitLimit) ||
-      (!surfaceWaterMgmtSubUnitLimit && whaituaId === '4'),
+      !surfaceWaterMgmtSubUnitLimit &&
+      whaituaId.toString() === '4' &&
+      Boolean(surfaceWaterMgmtUnitLimit),
   };
   return stat;
 }
@@ -321,7 +326,7 @@ function getGwLimits(
   if (activeFeatures.length === 0) {
     rows.push({
       depth: 'All',
-      useDefaultRuleForSubUnit: true,
+      useDefaultRuleForSubUnit: false,
       useDefaultRuleForUnit: true,
     });
     return rows;

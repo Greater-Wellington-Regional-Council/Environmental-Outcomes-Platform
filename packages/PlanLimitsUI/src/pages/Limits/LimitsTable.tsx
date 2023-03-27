@@ -55,7 +55,7 @@ function AllocatedAmount({
 }
 
 export default function LimitsTable({ waterTakeFilter, appState }: Props) {
-  if (!appState.swLimit || appState.gwLimits?.length === 0) return <></>;
+  if (!appState.swLimit && appState.gwLimits?.length === 0) return <></>;
 
   const showFootnote =
     appState.swLimit?.useDefaultRuleForSubUnit ||
