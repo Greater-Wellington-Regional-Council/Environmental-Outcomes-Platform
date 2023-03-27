@@ -29,6 +29,7 @@ dependencies {
 
   runtimeOnly("org.springframework.boot:spring-boot-devtools")
   runtimeOnly("org.postgresql:postgresql")
+  runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.3")
 
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
