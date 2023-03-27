@@ -66,6 +66,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
     );
 
   let swAndGWCatASubUnitRowSpan = 1;
+  let swAndGWCatAUnitRowSpan = 1;
   let gwCatBSubUnitRowSpan = 1;
   let gwCatBSubUnitId: number;
   let gwCatCSubUnitRowSpan = 1;
@@ -82,7 +83,16 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
         swAndGWCatASubUnitRowSpan += 1;
         // This depends on consecutive Cat A GW limits having the parent SW sub unit.
         gwLimit.mergeSubUnit = true;
-        gwLimit.mergeUnit = false;
+      }
+      if (
+        ['Combined'].includes(waterTakeFilter) &&
+        gwLimit.parentSWUnitId &&
+        gwLimit.parentSWUnitId.toString() ===
+          appState?.surfaceWaterMgmtUnitId?.toString()
+      ) {
+        swAndGWCatAUnitRowSpan += 1;
+        // This depends on consecutive Cat A GW limits having the parent SW sub unit.
+        gwLimit.mergeUnit = true;
       }
     }
 
@@ -197,12 +207,18 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                     }
                   />
                 </td>
-                <td className="border p-2 text-left text-sm">
+                <td
+                  rowSpan={swAndGWCatAUnitRowSpan}
+                  className="border p-2 text-left text-sm"
+                >
                   {appState.swLimit?.useDefaultRuleForUnit
                     ? DEFAULT_RULE
                     : appState.swLimit?.unitLimit || BLANK_CELL_CHAR}
                 </td>
-                <td className="border p-2 text-left text-sm">
+                <td
+                  rowSpan={swAndGWCatAUnitRowSpan}
+                  className="border p-2 text-left text-sm"
+                >
                   <AllocatedAmount
                     amount={appState.surfaceWaterMgmtUnitAllocated}
                     percentage={
