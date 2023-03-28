@@ -60,7 +60,6 @@ export default function LimitsMap({
   const [flowMarkerImageLoading, setFlowMarkerImageLoading] =
     React.useState(false);
 
-  // TODO simplify me
   const changesCallback = React.useCallback(
     (map: MapRef | null) => {
       if (highlightLocation && map) {

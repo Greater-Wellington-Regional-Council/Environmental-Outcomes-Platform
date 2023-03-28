@@ -146,7 +146,7 @@ export function useAppState(): [
           )
         : undefined;
 
-    let surfaceWaterMgmtSubUnitAllocatedPercentage =
+    const surfaceWaterMgmtSubUnitAllocatedPercentage =
       surfaceWaterMgmtSubUnitLimitAmount &&
       surfaceWaterMgmtSubUnitAllocatedAmount
         ? Math.round(
@@ -287,8 +287,8 @@ function getSwLimit(
     useDefaultRuleForUnit: !surfaceWaterMgmtUnitLimit,
 
     // Ruamahanga (Whaitua '4') uses 2 levels of surface water units. So in areas
-    //  where there is no value at the Subunit and there is a management unit,
-    // level P121 applies.
+    // where there is no value at the Subunit and there is a management unit,
+    // limit P121 applies.
     useDefaultRuleForSubUnit:
       !surfaceWaterMgmtSubUnitLimit &&
       whaituaId.toString() === '4' &&
@@ -338,7 +338,7 @@ function getGwLimits(
     .forEach((feature) => {
       if (
         !feature.properties?.surface_water_unit_allocation_amount &&
-        !surfaceWaterMgmtUnitLimit
+        !feature.properties?.surface_water_sub_unit_allocation_amount
       ) {
         rows.push({
           depth: feature.properties?.depth,

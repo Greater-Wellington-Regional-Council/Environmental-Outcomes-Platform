@@ -114,10 +114,6 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
     }
 
     if (gwLimit.category === 'C') {
-      console.log(
-        gwCatCAllocationAmountId,
-        gwLimit.groundwaterAllocationAmountId
-      );
       if (!gwCatCAllocationAmountId && gwLimit.groundwaterAllocationAmountId) {
         gwCatCAllocationAmountId = gwLimit.groundwaterAllocationAmountId;
       } else {
