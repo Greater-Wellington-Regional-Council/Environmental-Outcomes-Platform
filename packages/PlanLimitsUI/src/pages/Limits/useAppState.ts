@@ -398,7 +398,7 @@ function getGwLimits(
         category: 'B',
         useDefaultRuleForUnit: true,
         useDefaultRuleForSubUnit: true,
-        subUnitAllocated: allocatedProps(
+        unitAllocated: allocatedProps(
           feature.properties?.groundwater_allocation_amount,
           feature.properties?.groundwater_allocated_amount,
           feature.properties?.groundwater_allocation_amount_unit
@@ -423,10 +423,10 @@ function getGwLimits(
       rows.push({
         depth: feature.properties?.depth,
         category: 'C',
-        subUnitLimit: limit,
+        unitLimit: limit,
         useDefaultRuleForSubUnit: false,
         useDefaultRuleForUnit: false,
-        subUnitAllocated: allocatedProps(
+        unitAllocated: allocatedProps(
           feature.properties?.groundwater_allocation_amount,
           feature.properties?.groundwater_allocated_amount,
           feature.properties?.groundwater_allocation_amount_unit
