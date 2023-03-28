@@ -67,10 +67,11 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
 
   let swAndGWCatASubUnitRowSpan = 1;
   let swAndGWCatAUnitRowSpan = 1;
+
   let gwCatBSubUnitRowSpan = 1;
-  let gwCatBSubUnitId: number;
+  let gwCatBAllocationAmountId: number;
   let gwCatCSubUnitRowSpan = 1;
-  let gwCatCSubUnitId: number;
+  let gwCatCAllocationAmountId: number;
 
   appState.gwLimits?.forEach((gwLimit) => {
     if (gwLimit.category === 'A') {
@@ -97,10 +98,13 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
     }
 
     if (gwLimit.category === 'B') {
-      if (!gwCatBSubUnitId && gwLimit.parentSWSubUnitId) {
-        gwCatBSubUnitId = gwLimit.parentSWSubUnitId;
+      if (!gwCatBAllocationAmountId && gwLimit.groundwaterAllocationAmountId) {
+        gwCatBAllocationAmountId = gwLimit.groundwaterAllocationAmountId;
       } else {
-        if (gwCatBSubUnitId && gwCatBSubUnitId === gwLimit.parentSWSubUnitId) {
+        if (
+          gwCatBAllocationAmountId &&
+          gwCatBAllocationAmountId === gwLimit.groundwaterAllocationAmountId
+        ) {
           // This depends on consecutive Cat B GW limits having the parent SW sub unit.
           gwCatBSubUnitRowSpan += 1;
           gwLimit.mergeSubUnit = true;
@@ -110,10 +114,17 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
     }
 
     if (gwLimit.category === 'C') {
-      if (!gwCatCSubUnitId && gwLimit.parentSWSubUnitId) {
-        gwCatCSubUnitId = gwLimit.parentSWSubUnitId;
+      console.log(
+        gwCatCAllocationAmountId,
+        gwLimit.groundwaterAllocationAmountId
+      );
+      if (!gwCatCAllocationAmountId && gwLimit.groundwaterAllocationAmountId) {
+        gwCatCAllocationAmountId = gwLimit.groundwaterAllocationAmountId;
       } else {
-        if (gwCatCSubUnitId && gwCatCSubUnitId === gwLimit.parentSWSubUnitId) {
+        if (
+          gwCatCAllocationAmountId &&
+          gwCatCAllocationAmountId == gwLimit.groundwaterAllocationAmountId
+        ) {
           // This depends on consecutive Cat C GW limits having the parent SW sub unit.
           gwCatCSubUnitRowSpan += 1;
           gwLimit.mergeSubUnit = true;

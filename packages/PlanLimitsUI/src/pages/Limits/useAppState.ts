@@ -316,6 +316,7 @@ interface GWLimit {
   };
   mergeUnit?: boolean;
   mergeSubUnit?: boolean;
+  groundwaterAllocationAmountId?: number;
 }
 
 function getGwLimits(
@@ -383,6 +384,8 @@ function getGwLimits(
             feature.properties?.surface_water_unit_allocation_amount_id,
           parentSWSubUnitId:
             feature.properties?.surface_water_sub_unit_allocation_amount_id,
+          groundwaterAllocationAmountId:
+            feature.properties?.groundwater_allocation_amount_id,
         });
       }
     });
@@ -404,6 +407,8 @@ function getGwLimits(
           feature.properties?.surface_water_unit_allocation_amount_id,
         parentSWSubUnitId:
           feature.properties?.surface_water_sub_unit_allocation_amount_id,
+        groundwaterAllocationAmountId:
+          feature.properties?.groundwater_allocation_amount_id,
       });
     });
 
@@ -430,6 +435,8 @@ function getGwLimits(
           feature.properties?.surface_water_unit_allocation_amount_id,
         parentSWSubUnitId:
           feature.properties?.surface_water_sub_unit_allocation_amount_id,
+        groundwaterAllocationAmountId:
+          feature.properties?.groundwater_allocation_amount_id,
       });
     });
 
