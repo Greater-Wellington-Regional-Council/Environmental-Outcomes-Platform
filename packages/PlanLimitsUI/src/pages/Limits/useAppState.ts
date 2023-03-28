@@ -397,7 +397,7 @@ function getGwLimits(
         depth: feature.properties?.depth,
         category: 'B',
         useDefaultRuleForUnit: true,
-        useDefaultRuleForSubUnit: true,
+        useDefaultRuleForSubUnit: false,
         unitAllocated: allocatedProps(
           feature.properties?.groundwater_allocation_amount,
           feature.properties?.groundwater_allocated_amount,
