@@ -15,7 +15,7 @@ server:
     enabled: true
     mime-types: application/json
 
-ingest-api:
+ingest:
   topicReplicas: 1
   users:
     - username: gw
