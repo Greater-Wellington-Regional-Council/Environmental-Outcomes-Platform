@@ -1,13 +1,13 @@
-import React from 'react';
 import { FeatureCollection, Geometry } from 'geojson';
 import { useAtom } from 'jotai';
-import { MouseState, WaterTakeFilter } from './index';
-import Button from '../../components/Button';
-import LimitsTable from './LimitsTable';
 import { GeoJsonQueries, GroundwaterZoneBoundariesProperties } from '../../api';
-import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
+import LimitsTable from './LimitsTable';
+import Button from '../../components/Button';
+import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import type { AppState } from './useAppState';
+import type { WaterTakeFilter } from './index';
 
 const LimitsListItem = ({
   title,
@@ -23,12 +23,12 @@ const LimitsListItem = ({
 );
 
 export default function Sidebar({
-  mouseState,
+  appState,
   waterTakeFilter,
   setWaterTakeFilter,
   queries,
 }: {
-  mouseState: MouseState;
+  appState: AppState;
   waterTakeFilter: WaterTakeFilter;
   setWaterTakeFilter: (value: WaterTakeFilter) => void;
   queries: GeoJsonQueries;
@@ -84,23 +84,23 @@ export default function Sidebar({
         <dl className="mb-6">
           <LimitsListItem
             title="Whaitua"
-            text={mouseState.whaitua ? mouseState.whaitua : 'None'}
+            text={appState.whaitua ? appState.whaitua : 'None'}
           />
           {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <>
               <LimitsListItem
                 title={'Surface Water Catchment Unit'}
                 text={
-                  mouseState.surfaceWaterMgmtUnitDescription
-                    ? mouseState.surfaceWaterMgmtUnitDescription
+                  appState.surfaceWaterMgmtUnitDescription
+                    ? appState.surfaceWaterMgmtUnitDescription
                     : 'None'
                 }
               />
               <LimitsListItem
                 title={'Surface Water Catchment Sub-unit'}
                 text={
-                  mouseState.surfaceWaterMgmtSubUnitDescription
-                    ? mouseState.surfaceWaterMgmtSubUnitDescription
+                  appState.surfaceWaterMgmtSubUnitDescription
+                    ? appState.surfaceWaterMgmtSubUnitDescription
                     : 'None'
                 }
               />
@@ -110,8 +110,8 @@ export default function Sidebar({
             <LimitsListItem
               title={'Groundwater Catchment Unit'}
               text={
-                mouseState.groundWaterZoneName
-                  ? mouseState.groundWaterZoneName
+                appState.groundWaterZoneName
+                  ? appState.groundWaterZoneName
                   : 'None'
               }
             />
@@ -119,36 +119,30 @@ export default function Sidebar({
           <LimitsListItem
             title={'Flow Management Site'}
             text={
-              mouseState.flowRestrictionsManagementSiteName
-                ? mouseState.flowRestrictionsManagementSiteName
+              appState.flowRestrictionsManagementSiteName
+                ? appState.flowRestrictionsManagementSiteName
                 : 'None'
             }
           />
           <LimitsListItem
             title={'Minimum Flow or Restriction Flow'}
             text={
-              mouseState.flowRestrictionsLevel
-                ? mouseState.flowRestrictionsLevel
+              appState.flowRestrictionsLevel
+                ? appState.flowRestrictionsLevel
                 : 'None'
             }
           />
         </dl>
-        {mouseState.whaitua && queries[6].data && (
+        {appState.whaitua && queries[6].data && (
           <LimitsTable
             waterTakeFilter={waterTakeFilter}
-            surfaceWaterMgmtUnitId={Number(mouseState.surfaceWaterMgmtUnitId)}
-            surfaceWaterMgmtUnitLimit={mouseState.surfaceWaterMgmtUnitLimit}
-            surfaceWaterMgmtSubUnitLimit={
-              mouseState.surfaceWaterMgmtSubUnitLimit
-            }
-            activeZonesIds={mouseState.groundWaterZones}
+            appState={appState}
             groundWaterZoneGeoJson={
               queries[6].data as FeatureCollection<
                 Geometry,
                 GroundwaterZoneBoundariesProperties
               >
             }
-            whaituaId={mouseState.whaituaId}
           />
         )}
       </div>

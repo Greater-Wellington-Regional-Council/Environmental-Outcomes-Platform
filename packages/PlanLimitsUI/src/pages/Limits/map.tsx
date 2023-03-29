@@ -1,5 +1,7 @@
 import React from 'react';
+import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import Map, {
   Layer,
   MapRef,
@@ -9,20 +11,14 @@ import Map, {
   Source,
   ViewState,
 } from 'react-map-gl';
-
-import 'maplibre-gl/dist/maplibre-gl.css';
-import LayerControl from '../../components/map/LayerControl';
-import { MouseState, WaterTakeFilter } from './index';
-import mapboxgl from 'mapbox-gl';
-import { PinnedLocation } from './locationString';
-import Button from '../../components/Button';
-import RiverTilesSource from './RiverTilesSource';
-
-import flowMarkerImage from '../../images/marker_flow.svg';
 import { GeoJsonQueries } from '../../api';
-import formatWaterQuantity from './formatWaterQuantity';
-
-import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
+import LayerControl from '../../components/map/LayerControl';
+import Button from '../../components/Button';
+import { PinnedLocation } from './locationString';
+import RiverTilesSource from './RiverTilesSource';
+import type { AppState } from './useAppState';
+import type { WaterTakeFilter } from './index';
+import flowMarkerImage from '../../images/marker_flow.svg';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
@@ -31,8 +27,8 @@ const EMPTY_GEO_JSON_DATA = {
 };
 
 export default function LimitsMap({
-  mouseState,
-  setMouseState,
+  appState,
+  setAppState,
   viewState,
   setViewState,
   initialPinnedLocation,
@@ -40,8 +36,8 @@ export default function LimitsMap({
   waterTakeFilter,
   queries,
 }: {
-  mouseState: MouseState;
-  setMouseState: React.Dispatch<React.SetStateAction<MouseState>>;
+  appState: AppState;
+  setAppState: (result: mapboxgl.MapboxGeoJSONFeature[]) => void;
   viewState: ViewState;
   setViewState: (value: ViewState) => void;
   initialPinnedLocation?: PinnedLocation;
@@ -64,150 +60,13 @@ export default function LimitsMap({
   const [flowMarkerImageLoading, setFlowMarkerImageLoading] =
     React.useState(false);
 
-  // TODO simplify me
   const changesCallback = React.useCallback(
     (map: MapRef | null) => {
       if (highlightLocation && map) {
         const result = map.queryRenderedFeatures(
           map.project([highlightLocation.longitude, highlightLocation.latitude])
         );
-
-        const findFeature = (
-          features: mapboxgl.MapboxGeoJSONFeature[],
-          layer: string,
-          prop: string
-        ) =>
-          features.find((feat) => feat.layer.id === layer)?.properties?.[
-            prop
-          ] as string | undefined;
-
-        const findFeatureId = (
-          features: mapboxgl.MapboxGeoJSONFeature[],
-          layer: string
-        ) => features.find((feat) => feat.layer.id === layer)?.id as string;
-
-        const council = findFeature(result, 'councils', 'name');
-        const whaitua = findFeature(result, 'whaitua', 'name');
-        const whaituaId = findFeatureId(result, 'whaitua') || 'NONE';
-
-        const surfaceWaterMgmtUnitId =
-          findFeatureId(result, 'surfaceWaterMgmtUnits') || 'NONE';
-        const surfaceWaterMgmtUnitDescription = findFeature(
-          result,
-          'surfaceWaterMgmtUnits',
-          'name'
-        );
-
-        const surfaceWaterMgmtSubUnitId =
-          findFeatureId(result, 'surfaceWaterMgmtSubUnits') || 'NONE';
-        const surfaceWaterMgmtSubUnitDescription = findFeature(
-          result,
-          'surfaceWaterMgmtSubUnits',
-          'name'
-        );
-
-        const groundWaterZonesData = result.filter(
-          (value) => value.layer.id === 'groundWater'
-        );
-        const groundWaterZones = groundWaterZonesData.map(
-          (item) => item.id as number
-        );
-        const groundWaterZoneName = [
-          // Contructing then destructuring from a Set leaves us with unique values
-          ...new Set(
-            groundWaterZonesData.map((item) => item.properties!['name'])
-          ),
-        ].join(', ');
-
-        const site = findFeature(result, 'flowSites', 'Name');
-
-        const minimumFlowLimitId =
-          findFeatureId(result, 'minimumFlowLimitBoundaries') || 'NONE';
-
-        const flowRestrictionsManagementSiteId =
-          findFeature(result, 'minimumFlowLimitBoundaries', 'site_id') ||
-          'NONE';
-        const flowRestrictionsManagementSiteName =
-          findFeature(result, 'minimumFlowLimitBoundaries', 'name') ||
-          defaultFlowLimitAndSite(whaituaId);
-
-        const flowRestrictionsAmount = findFeature(
-          result,
-          'minimumFlowLimitBoundaries',
-          'plan_minimum_flow_value'
-        );
-
-        const flowRestrictionsUnit = findFeature(
-          result,
-          'minimumFlowLimitBoundaries',
-          'plan_minimum_flow_unit'
-        );
-
-        const flowRestrictionsLevel = flowRestrictionsAmount
-          ? formatWaterQuantity(
-              Number(flowRestrictionsAmount),
-              flowRestrictionsUnit as string
-            )
-          : defaultFlowLimitAndSite(whaituaId);
-
-        const surfaceWaterMgmtSubUnitLimit =
-          surfaceWaterMgmtSubUnitId === 'NONE'
-            ? undefined
-            : formatWaterQuantity(
-                Number(
-                  findFeature(
-                    result,
-                    'surfaceWaterMgmtSubUnits',
-                    'allocation_amount'
-                  )
-                ),
-                findFeature(
-                  result,
-                  'surfaceWaterMgmtSubUnits',
-                  'allocation_amount_unit'
-                ) as string
-              );
-
-        const surfaceWaterMgmtUnitLimitAmount = findFeature(
-          result,
-          'surfaceWaterMgmtUnits',
-          'allocation_amount'
-        );
-
-        const surfaceWaterMgmtUnitLimit = surfaceWaterMgmtUnitLimitAmount
-          ? formatWaterQuantity(
-              Number(surfaceWaterMgmtUnitLimitAmount),
-              findFeature(
-                result,
-                'surfaceWaterMgmtUnits',
-                'allocation_amount_unit'
-              ) as string
-            )
-          : undefined;
-
-        setMouseState({
-          ...mouseState,
-          position: {
-            lng: highlightLocation.longitude,
-            lat: highlightLocation.latitude,
-          },
-          council,
-          whaitua,
-          whaituaId,
-          groundWaterZoneName,
-          groundWaterZones,
-          site,
-          surfaceWaterMgmtUnitId,
-          surfaceWaterMgmtUnitDescription,
-          surfaceWaterMgmtSubUnitId,
-          surfaceWaterMgmtSubUnitDescription,
-          minimumFlowLimitId,
-          flowRestrictionsLevel,
-          flowRestrictionsManagementSiteName,
-          flowRestrictionsManagementSiteId,
-          surfaceWaterMgmtUnitLimit,
-          surfaceWaterMgmtSubUnitLimit,
-        });
+        setAppState(result);
       }
 
       // TODO: Move this out of main rendering callback and extract to hook/HOC
@@ -316,7 +175,7 @@ export default function LimitsMap({
         />
         <Layer
           id="whaitua-highlight"
-          filter={['==', ['id'], mouseState.whaituaId]}
+          filter={['==', ['id'], appState.whaituaId]}
           type="fill"
           paint={{
             'fill-outline-color': '#484896',
@@ -351,7 +210,7 @@ export default function LimitsMap({
           <Layer
             id="groundWater-highlight"
             type="fill"
-            filter={['in', ['id'], ['literal', mouseState.groundWaterZones]]}
+            filter={['in', ['id'], ['literal', appState.groundWaterZones]]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#33ff99',
@@ -377,7 +236,7 @@ export default function LimitsMap({
           <Layer
             id="surfaceWaterMgmtUnits-highlight"
             type="fill"
-            filter={['==', ['id'], mouseState.surfaceWaterMgmtUnitId]}
+            filter={['==', ['id'], appState.surfaceWaterMgmtUnitId]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -403,7 +262,7 @@ export default function LimitsMap({
           <Layer
             id="surfaceWaterMgmtSubUnits-highlight"
             type="fill"
-            filter={['==', ['id'], mouseState.surfaceWaterMgmtSubUnitId]}
+            filter={['==', ['id'], appState.surfaceWaterMgmtSubUnitId]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -431,7 +290,7 @@ export default function LimitsMap({
           <Layer
             id="minimumFlowLimitBoundaries-highlight"
             type="fill"
-            filter={['==', ['id'], mouseState.minimumFlowLimitId]}
+            filter={['==', ['id'], appState.minimumFlowLimitId]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -459,7 +318,7 @@ export default function LimitsMap({
           paint={{
             'icon-opacity': [
               'case',
-              ['==', ['id'], mouseState.flowRestrictionsManagementSiteId],
+              ['==', ['id'], appState.flowRestrictionsManagementSiteId],
               1,
               0.5,
             ],
