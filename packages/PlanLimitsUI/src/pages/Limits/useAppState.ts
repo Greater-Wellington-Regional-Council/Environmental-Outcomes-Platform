@@ -169,7 +169,7 @@ export function useAppState(): [
         // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
         const alphabet = '0123456789>';
         const first = a.properties?.depth.charAt(0);
-        const second = b.properties?.depth.charAt(1);
+        const second = b.properties?.depth.charAt(0);
         return alphabet.indexOf(first) - alphabet.indexOf(second);
       });
 
