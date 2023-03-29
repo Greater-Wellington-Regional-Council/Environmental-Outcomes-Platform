@@ -31,12 +31,13 @@ class SecurityConfig {
 }
 
 @Component
-class APIUserDetailsService(val usersConfig: ApplicationConfiguration) : UserDetailsService {
+class APIUserDetailsService(val applicationConfiguration: ApplicationConfiguration) :
+    UserDetailsService {
 
   override fun loadUserByUsername(username: String): UserDetails {
 
     val user =
-        usersConfig.users.firstOrNull { it.username == username }
+        applicationConfiguration.users.firstOrNull { it.username == username }
             ?: throw UsernameNotFoundException("$username is not a known user")
 
     return User.withUsername(username).password(user.token).roles("USER").build()

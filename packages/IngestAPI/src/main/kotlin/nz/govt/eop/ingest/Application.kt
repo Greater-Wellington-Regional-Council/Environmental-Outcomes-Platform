@@ -20,13 +20,13 @@ private const val PROP_CONFIG_KEYSTORE_PATH = "CONFIG_KEYSTORE_PATH"
 class Application {
 
   // Topics are created in test via EmbeddedKafka config. This helps avoid race
-  // conditions and retries when EmbeddedKafka is not be ready, and speeds up boot.
+  // conditions and retries when EmbeddedKafka is not ready, and speeds up boot.
   @Profile("!test")
   @Bean
-  fun createWaterAllocationTopic(ingestApiConfiguration: ApplicationConfiguration): NewTopic {
+  fun createWaterAllocationTopic(applicationConfiguration: ApplicationConfiguration): NewTopic {
     return TopicBuilder.name(WATER_ALLOCATION_TOPIC_NAME)
         .partitions(1)
-        .replicas(ingestApiConfiguration.topicReplicas)
+        .replicas(applicationConfiguration.topicReplicas)
         .build()
   }
 }
