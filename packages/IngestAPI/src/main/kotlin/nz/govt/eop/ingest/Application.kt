@@ -1,36 +1,35 @@
-package nz.govt.eop.ingestapi
+package nz.govt.eop.ingest
 
 import java.nio.file.Files
 import java.util.Base64
 import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
 import org.apache.kafka.clients.admin.NewTopic
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Profile
 import org.springframework.kafka.config.TopicBuilder
 
+private const val ENV_CONFIG_KEYSTORE_CONTENT = "CONFIG_KEYSTORE_CONTENT"
+private const val PROP_CONFIG_KEYSTORE_PATH = "CONFIG_KEYSTORE_PATH"
+
 @SpringBootApplication
+@EnableConfigurationProperties(ApplicationConfiguration::class)
 class Application {
 
   // Topics are created in test via EmbeddedKafka config. This helps avoid race
   // conditions and retries when EmbeddedKafka is not be ready, and speeds up boot.
   @Profile("!test")
   @Bean
-  fun createWaterAllocationTopic(
-      @Value("\${ingestApi.topicReplicas}") topicReplicas: Int
-  ): NewTopic {
+  fun createWaterAllocationTopic(ingestApiConfiguration: ApplicationConfiguration): NewTopic {
     return TopicBuilder.name(WATER_ALLOCATION_TOPIC_NAME)
         .partitions(1)
-        .replicas(topicReplicas)
+        .replicas(ingestApiConfiguration.topicReplicas)
         .build()
   }
 }
-
-private const val ENV_CONFIG_KEYSTORE_CONTENT = "CONFIG_KEYSTORE_CONTENT"
-private const val PROP_CONFIG_KEYSTORE_PATH = "CONFIG_KEYSTORE_PATH"
 
 fun main(args: Array<String>) {
   if (System.getenv(ENV_CONFIG_KEYSTORE_CONTENT) != null) {

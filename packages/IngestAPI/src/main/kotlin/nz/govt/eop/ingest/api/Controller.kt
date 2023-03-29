@@ -1,4 +1,4 @@
-package nz.govt.eop.ingestapi
+package nz.govt.eop.ingest.api
 
 import java.math.BigDecimal
 import java.time.Instant
