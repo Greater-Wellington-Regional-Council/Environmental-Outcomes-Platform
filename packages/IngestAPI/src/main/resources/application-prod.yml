@@ -9,7 +9,7 @@ spring:
         jaas:
           config: org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_SASL_USERNAME}" password="${KAFKA_SASL_PASSWORD}";
 
-ingestApi:
+ingest:
   topicReplicas: 2
 
 logging:

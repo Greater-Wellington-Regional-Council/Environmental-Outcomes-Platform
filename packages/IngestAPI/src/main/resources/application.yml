@@ -15,9 +15,11 @@ server:
     enabled: true
     mime-types: application/json
 
-ingestApi:
-  usersJSON: '{"gw": "test-api-token"}'
+ingest:
   topicReplicas: 1
+  users:
+    - username: gw
+      token: "{bcrypt}$2a$10$nlHst4OCIl2z9Xm4Dei07uFMJaajdWHD1SC4ALtkqaYChvyjNfpwu" # test-api-token
 
 logging:
   level:

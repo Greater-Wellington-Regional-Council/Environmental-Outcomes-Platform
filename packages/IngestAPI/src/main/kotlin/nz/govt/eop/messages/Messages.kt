@@ -2,7 +2,7 @@ package nz.govt.eop.messages
 
 import java.math.BigDecimal
 import java.time.Instant
-import nz.govt.eop.ingestapi.WaterAllocation
+import nz.govt.eop.ingest.api.WaterAllocation
 
 data class WaterAllocationMessage(
     val areaId: String,

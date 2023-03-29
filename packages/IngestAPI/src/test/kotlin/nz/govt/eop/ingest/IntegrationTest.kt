@@ -1,4 +1,4 @@
-package nz.govt.eop.ingestapi
+package nz.govt.eop.ingest
 
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -70,6 +70,7 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
   private fun createKafkaConsumer(
       broker: EmbeddedKafkaBroker
   ): Consumer<String, WaterAllocationMessage> {
+
     val consumerProps = KafkaTestUtils.consumerProps("test", "true", broker)
     consumerProps[JsonDeserializer.TRUSTED_PACKAGES] = "*"
     consumerProps[JsonDeserializer.VALUE_DEFAULT_TYPE] =

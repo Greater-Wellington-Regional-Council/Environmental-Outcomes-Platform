@@ -1,6 +1,7 @@
-package nz.govt.eop.ingestapi
+package nz.govt.eop.ingest.api
 
 import java.time.Instant
+import nz.govt.eop.ingest.WATER_ALLOCATION_TOPIC_NAME
 import nz.govt.eop.messages.WaterAllocationMessage
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
