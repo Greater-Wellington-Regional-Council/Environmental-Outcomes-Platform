@@ -25,7 +25,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/limits/:location',
-        loader: loader,
+        loader,
         element: <Limits />,
       },
     ],

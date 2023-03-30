@@ -10,7 +10,7 @@ export type ViewLocation = {
 };
 
 export function parseLocationString(
-  locationString?: String
+  locationString?: string
 ): ViewLocation | null {
   if (!locationString) {
     return null;
@@ -31,7 +31,7 @@ export function parseLocationString(
 }
 
 export function parsePinnedLocation(
-  pinnedLocationString: String | null
+  pinnedLocationString: string | null
 ): PinnedLocation | null {
   if (!pinnedLocationString) {
     return null;

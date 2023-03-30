@@ -22,7 +22,7 @@ import flowMarkerImage from '../../images/marker_flow.svg';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
-  type: 'FeatureCollection' as 'FeatureCollection',
+  type: 'FeatureCollection' as const,
   features: [],
 };
 

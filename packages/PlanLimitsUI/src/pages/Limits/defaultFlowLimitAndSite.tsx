@@ -40,7 +40,7 @@ export default function defaultFlowLimit(whaituaId: number | string) {
 
 function formatFlowLimit(text: string, link: string) {
   return (
-    <a className="underline" href={link} target="_blank">
+    <a className="underline" href={link} target="_blank" rel="noreferrer">
       {text}{' '}
       <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
     </a>
