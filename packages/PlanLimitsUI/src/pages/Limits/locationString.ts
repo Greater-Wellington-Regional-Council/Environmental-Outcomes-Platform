@@ -9,9 +9,9 @@ export type ViewLocation = {
   zoom: number;
 };
 
-export const parseLocationString = (
+export function parseLocationString(
   locationString?: String
-): ViewLocation | null => {
+): ViewLocation | null {
   if (!locationString) {
     return null;
   }
@@ -28,11 +28,11 @@ export const parseLocationString = (
         zoom: Number(match[5]),
       }
     : null;
-};
+}
 
-export const parsePinnedLocation = (
+export function parsePinnedLocation(
   pinnedLocationString: String | null
-): PinnedLocation | null => {
+): PinnedLocation | null {
   if (!pinnedLocationString) {
     return null;
   }
@@ -47,23 +47,25 @@ export const parsePinnedLocation = (
         longitude: Number(match[3]),
       }
     : null;
-};
+}
 
-const roundToThreeDecimals = (value: number) => Math.round(value * 1000) / 1000;
+function roundToThreeDecimals(value: number) {
+  return Math.round(value * 1000) / 1000;
+}
 
-export const createLocationString = ({
+export function createLocationString({
   latitude,
   longitude,
   zoom,
-}: ViewLocation) => {
+}: ViewLocation) {
   return `@${roundToThreeDecimals(latitude)},${roundToThreeDecimals(
     longitude
   )},${Math.round(zoom)}z`;
-};
+}
 
-export const createPinnedLocationString = ({
+export function createPinnedLocationString({
   latitude,
   longitude,
-}: PinnedLocation) => {
+}: PinnedLocation) {
   return `${roundToThreeDecimals(latitude)},${roundToThreeDecimals(longitude)}`;
-};
+}
