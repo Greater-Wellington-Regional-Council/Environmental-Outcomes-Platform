@@ -1,13 +1,16 @@
-import { FeatureCollection, Geometry } from 'geojson';
 import { useAtom } from 'jotai';
-import { GeoJsonQueries, GroundwaterZoneBoundariesProperties } from '../../api';
+import { type FeatureCollection, type Geometry } from 'geojson';
+import {
+  type GeoJsonQueries,
+  type GroundwaterZoneBoundariesProperties,
+} from '../../api';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
 import LimitsTable from './LimitsTable';
 import Button from '../../components/Button';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
-import type { AppState } from './useAppState';
-import type { WaterTakeFilter } from './index';
+import { type AppState } from './useAppState';
+import { type WaterTakeFilter } from './index';
 
 const LimitsListItem = ({
   title,

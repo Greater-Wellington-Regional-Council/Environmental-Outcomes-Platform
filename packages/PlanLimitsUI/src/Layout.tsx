@@ -6,7 +6,6 @@ export default function Layout() {
     <>
       <Disclaimer />
       <Outlet />
-      <div className="hidden">{import.meta.env.VITE_GIT_SHA}</div>
     </>
   );
 }

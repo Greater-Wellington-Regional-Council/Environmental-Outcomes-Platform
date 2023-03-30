@@ -2,7 +2,6 @@ import { useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
 import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
-import { GroundwaterZoneBoundariesProperties } from '../../api';
 
 export type AppState = {
   council?: string | null;

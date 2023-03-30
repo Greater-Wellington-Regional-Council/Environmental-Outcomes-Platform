@@ -4,7 +4,7 @@ import {
   parseLocationString,
   parsePinnedLocation,
 } from './locationString';
-import { expect, test } from 'vitest';
+import { expect } from 'vitest';
 
 describe('parseLocationString', () => {
   it('should return null when null passed', () => {

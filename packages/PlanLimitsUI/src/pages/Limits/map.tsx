@@ -1,23 +1,23 @@
-import React from 'react';
+import { useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Map, {
   Layer,
-  MapRef,
   Marker,
+  Source,
   NavigationControl,
   ScaleControl,
-  Source,
-  ViewState,
+  type MapRef,
+  type ViewState,
 } from 'react-map-gl';
 import { GeoJsonQueries } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/Button';
-import { PinnedLocation } from './locationString';
+import { type PinnedLocation } from './locationString';
 import RiverTilesSource from './RiverTilesSource';
-import type { AppState } from './useAppState';
-import type { WaterTakeFilter } from './index';
+import { type AppState } from './useAppState';
+import { type WaterTakeFilter } from './index';
 import flowMarkerImage from '../../images/marker_flow.svg';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
@@ -45,22 +45,19 @@ export default function LimitsMap({
   waterTakeFilter: WaterTakeFilter;
   queries: GeoJsonQueries;
 }) {
-  const [mapRenderCount, setMapRenderCount] = React.useState(0);
-  const [showImagery, setShowImagery] = React.useState(false);
+  const [mapRenderCount, setMapRenderCount] = useState(0);
+  const [showImagery, setShowImagery] = useState(false);
 
-  const [pinnedLocation, storePinnedLocation] = React.useState(
-    initialPinnedLocation
-  );
+  const [pinnedLocation, storePinnedLocation] = useState(initialPinnedLocation);
 
-  const [highlightLocation, setHighlightLocation] = React.useState<
+  const [highlightLocation, setHighlightLocation] = useState<
     PinnedLocation | undefined
   >(initialPinnedLocation);
 
-  const [flowMarkerImageAdded, setFlowMarkerImageAdded] = React.useState(false);
-  const [flowMarkerImageLoading, setFlowMarkerImageLoading] =
-    React.useState(false);
+  const [flowMarkerImageAdded, setFlowMarkerImageAdded] = useState(false);
+  const [flowMarkerImageLoading, setFlowMarkerImageLoading] = useState(false);
 
-  const changesCallback = React.useCallback(
+  const changesCallback = useCallback(
     (map: MapRef | null) => {
       if (highlightLocation && map) {
         const result = map.queryRenderedFeatures(

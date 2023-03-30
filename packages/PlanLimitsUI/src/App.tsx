@@ -6,7 +6,6 @@ import {
 } from 'react-router-dom';
 import Layout from './Layout';
 import Limits, { defaultViewLocation, loader } from './pages/Limits';
-import React from 'react';
 import { createLocationString } from './pages/Limits/locationString';
 
 export const routes: RouteObject[] = [

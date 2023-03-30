@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  LoaderFunction,
+  type LoaderFunction,
   redirect,
   useLoaderData,
   useNavigate,
 } from 'react-router-dom';
 import { useDebounce } from 'usehooks-ts';
-import { ViewState } from 'react-map-gl';
+import { type ViewState } from 'react-map-gl';
 import { useAppState } from './useAppState';
 import {
   createLocationString,
   createPinnedLocationString,
   parseLocationString,
   parsePinnedLocation,
-  PinnedLocation,
-  ViewLocation,
+  type PinnedLocation,
+  type ViewLocation,
 } from './locationString';
 import { useGeoJsonQueries } from '../../api';
 import Map from './map';
@@ -71,7 +71,7 @@ export default function Limits() {
   const geoJsonQueries = useGeoJsonQueries();
 
   const [waterTakeFilter, setWaterTakeFilter] =
-    React.useState<WaterTakeFilter>('Combined');
+    useState<WaterTakeFilter>('Combined');
 
   const [appState, setAppState] = useAppState();
 

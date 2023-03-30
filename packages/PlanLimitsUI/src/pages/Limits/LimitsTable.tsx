@@ -1,8 +1,7 @@
-import { FeatureCollection, Geometry } from 'geojson';
-
-import type { GroundwaterZoneBoundariesProperties } from '../../api';
-import type { AppState } from './useAppState';
-import type { WaterTakeFilter } from '.';
+import { type FeatureCollection, type Geometry } from 'geojson';
+import { type GroundwaterZoneBoundariesProperties } from '../../api';
+import { type AppState } from './useAppState';
+import { type WaterTakeFilter } from '.';
 
 const BLANK_CELL_CHAR = '-';
 const GROUNDWATER_CATEGORY_B_RULE = (

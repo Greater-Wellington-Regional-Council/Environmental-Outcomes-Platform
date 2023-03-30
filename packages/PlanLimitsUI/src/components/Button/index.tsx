@@ -1,5 +1,3 @@
-import React from 'react';
-
 type Props = {
   text: string;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
