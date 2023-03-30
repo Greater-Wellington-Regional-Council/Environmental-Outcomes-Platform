@@ -1,0 +1,23 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:import/recommended",
+    "plugin:jsx-a11y/recommended",
+    // Disable ESLint rules that Prettier handles. Has to be last.
+    "eslint-config-prettier"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "typescript": true
+    }
+  },
+  "rules": {
+    // Add your own rules here to override ones from the extended configs.
+  }
+}
