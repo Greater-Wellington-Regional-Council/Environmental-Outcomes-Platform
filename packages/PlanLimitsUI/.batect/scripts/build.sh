@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# exit when any command fails
+set -e
+
 export CI=true
 
 npm install
