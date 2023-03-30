@@ -1,4 +1,4 @@
-import { FeatureCollection } from 'geojson';
+import { type FeatureCollection } from 'geojson';
 import { useQueries, useQuery } from '@tanstack/react-query';
 
 const determineBackendUri = (hostname: string) => {
