@@ -1,11 +1,12 @@
 {
   "extends": [
-    "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
-    "plugin:import/recommended",
     "plugin:jsx-a11y/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@tanstack/eslint-plugin-query/recommended",
     // Disable ESLint rules that Prettier handles. Has to be last.
     "eslint-config-prettier"
   ],

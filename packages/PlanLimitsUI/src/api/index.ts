@@ -43,9 +43,10 @@ export type GroundwaterZoneBoundariesProperties = {
 };
 
 export function useGeoJsonQueries() {
-  const { data: manifest } = useQuery(['manifest'], () =>
-    fetchFromAPI<{ [key: string]: string }>('/manifest')
-  );
+  const { data: manifest } = useQuery({
+    queryKey: ['manifest'],
+    queryFn: () => fetchFromAPI<{ [key: string]: string }>('/manifest'),
+  });
 
   const queries = [
     '/layers/councils',
@@ -59,6 +60,7 @@ export function useGeoJsonQueries() {
     return {
       // This defers execution until the manifest query has loaded
       enabled: Boolean(manifest),
+      // eslint-disable-next-line @tanstack/query/exhaustive-deps
       queryKey: [path],
       queryFn: () =>
         // We use ! here since we know manifest will be populated when this executes
