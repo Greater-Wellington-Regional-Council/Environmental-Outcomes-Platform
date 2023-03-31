@@ -20,11 +20,11 @@ export type AppState = {
   surfaceWaterMgmtSubUnitAllocated?: string;
   surfaceWaterMgmtSubUnitAllocatedPercentage?: number;
   swLimit?: SWLimit;
-  site?: string | null;
   minimumFlowLimitId: string | null;
   flowRestrictionsManagementSiteId?: string | null;
   flowRestrictionsLevel?: string | JSX.Element | null;
   flowRestrictionsManagementSiteName?: string | JSX.Element | null;
+
   gwLimits?: GWLimit[];
   groundWaterZones: Array<number>;
   groundWaterZoneName?: string;
@@ -42,7 +42,6 @@ export function useAppState(): [
     surfaceWaterMgmtUnitDescription: null,
     surfaceWaterMgmtSubUnitId: 'NONE',
     surfaceWaterMgmtSubUnitDescription: null,
-    site: null,
     minimumFlowLimitId: 'NONE',
     flowRestrictionsManagementSiteId: 'NONE',
     flowRestrictionsLevel: null,
@@ -185,8 +184,6 @@ export function useAppState(): [
     );
 
     // Flow management
-    const site = findFeature(result, 'flowSites', 'Name');
-
     const minimumFlowLimitId =
       findFeatureId(result, 'minimumFlowLimitBoundaries') || 'NONE';
 
@@ -239,7 +236,6 @@ export function useAppState(): [
       groundWaterZones,
       gwLimits,
       // Flow
-      site,
       minimumFlowLimitId,
       flowRestrictionsLevel,
       flowRestrictionsManagementSiteName,
