@@ -9,7 +9,7 @@
     "prettier": "pretty-quick",
     "test": "vitest",
     "check:types": "tsc",
-    "check:eslint": "eslint . --ext .ts,.tsx",
+    "check:eslint": "eslint ./src --color --ext .ts,.tsx",
     "check:prettier": "prettier --check ./src",
     "check": "run-p check:*"
   },
