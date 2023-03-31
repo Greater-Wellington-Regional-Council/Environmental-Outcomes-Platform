@@ -6,7 +6,7 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import { useDebounce } from 'usehooks-ts';
-import { type ViewState } from 'react-map-gl';
+import type { ViewState } from 'react-map-gl';
 import { useAppState } from './useAppState';
 import {
   createLocationString,

@@ -14,10 +14,10 @@ import Map, {
 import { GeoJsonQueries } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/Button';
-import { type PinnedLocation } from './locationString';
+import type { PinnedLocation } from './locationString';
 import RiverTilesSource from './RiverTilesSource';
-import { type AppState } from './useAppState';
-import { type WaterTakeFilter } from './index';
+import type { AppState } from './useAppState';
+import type { WaterTakeFilter } from './index';
 import flowMarkerImage from '../../images/marker_flow.svg';
 
 const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;

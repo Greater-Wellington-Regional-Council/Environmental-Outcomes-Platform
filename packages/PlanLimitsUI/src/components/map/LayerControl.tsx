@@ -1,6 +1,6 @@
 import { memo, cloneElement } from 'react';
 import { createPortal } from 'react-dom';
-import { type IControl, useControl } from 'react-map-gl';
+import { useControl, type IControl } from 'react-map-gl';
 
 class OverlayControl implements IControl {
   _container: HTMLElement;
