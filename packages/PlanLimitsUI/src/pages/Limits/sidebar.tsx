@@ -87,7 +87,7 @@ export default function Sidebar({
         <dl className="mb-6">
           <LimitsListItem
             title="Whaitua"
-            text={appState.whaitua ? appState.whaitua : 'None'}
+            text={appState.whaitua?.name ?? 'None'}
           />
           {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <>

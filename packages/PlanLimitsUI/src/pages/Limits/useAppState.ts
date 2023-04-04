@@ -5,8 +5,11 @@ import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
 
 export type AppState = {
   council?: string | null;
-  whaituaId: string;
-  whaitua?: string | null;
+
+  whaitua: null | {
+    id: number;
+    name: string;
+  };
 
   surfaceWaterMgmtUnitId: string | null;
   surfaceWaterMgmtUnitDescription?: string | null;
@@ -36,7 +39,6 @@ export function useAppState(): [
 ] {
   const [appState, setAppState] = useState<AppState>({
     council: null,
-    whaituaId: 'NONE',
     whaitua: null,
     surfaceWaterMgmtUnitId: 'NONE',
     surfaceWaterMgmtUnitDescription: null,
@@ -51,8 +53,15 @@ export function useAppState(): [
 
   const setAppStateFromResult = (result: mapboxgl.MapboxGeoJSONFeature[]) => {
     const council = findFeature(result, 'councils', 'name');
-    const whaitua = findFeature(result, 'whaitua', 'name');
-    const whaituaId = findFeatureId(result, 'whaitua') || 'NONE';
+
+    let whaitua = null;
+    const selectedWhaitua = result.find((feat) => feat.layer.id === 'whaitua');
+    if (selectedWhaitua) {
+      whaitua = {
+        id: Number(selectedWhaitua.id),
+        name: selectedWhaitua.properties?.name,
+      };
+    }
 
     // Surface water MgmtUnit
     const surfaceWaterMgmtUnitId =
@@ -155,7 +164,7 @@ export function useAppState(): [
         : undefined;
 
     const swLimit = getSwLimit(
-      whaituaId,
+      whaitua?.id,
       surfaceWaterMgmtUnitLimit,
       surfaceWaterMgmtSubUnitLimit
     );
@@ -191,7 +200,7 @@ export function useAppState(): [
       findFeature(result, 'minimumFlowLimitBoundaries', 'site_id') || 'NONE';
     const flowRestrictionsManagementSiteName =
       findFeature(result, 'minimumFlowLimitBoundaries', 'name') ||
-      defaultFlowLimitAndSite(whaituaId);
+      defaultFlowLimitAndSite(whaitua?.id);
 
     const flowRestrictionsAmount = findFeature(
       result,
@@ -210,12 +219,11 @@ export function useAppState(): [
           Number(flowRestrictionsAmount),
           flowRestrictionsUnit as string
         )
-      : defaultFlowLimitAndSite(whaituaId);
+      : defaultFlowLimitAndSite(whaitua?.id);
 
     setAppState({
       ...appState,
       council,
-      whaituaId,
       whaitua,
 
       // SW
@@ -270,7 +278,7 @@ interface SWLimit {
 }
 
 function getSwLimit(
-  whaituaId: string,
+  whaituaId?: number,
   surfaceWaterMgmtUnitLimit?: string,
   surfaceWaterMgmtSubUnitLimit?: string
 ): SWLimit {
@@ -285,7 +293,7 @@ function getSwLimit(
     // limit P121 applies.
     useDefaultRuleForSubUnit:
       !surfaceWaterMgmtSubUnitLimit &&
-      whaituaId.toString() === '4' &&
+      whaituaId === 4 &&
       Boolean(surfaceWaterMgmtUnitLimit),
   };
   return stat;
