@@ -4,8 +4,6 @@ import formatWaterQuantity from './formatWaterQuantity';
 import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
 
 export type AppState = {
-  council?: string | null;
-
   whaitua: null | {
     id: number;
     name: string;
@@ -38,7 +36,6 @@ export function useAppState(): [
   (result: mapboxgl.MapboxGeoJSONFeature[]) => void
 ] {
   const [appState, setAppState] = useState<AppState>({
-    council: null,
     whaitua: null,
     surfaceWaterMgmtUnitId: 'NONE',
     surfaceWaterMgmtUnitDescription: null,
@@ -52,8 +49,6 @@ export function useAppState(): [
   });
 
   const setAppStateFromResult = (result: mapboxgl.MapboxGeoJSONFeature[]) => {
-    const council = findFeature(result, 'councils', 'name');
-
     let whaitua = null;
     const selectedWhaitua = result.find((feat) => feat.layer.id === 'whaitua');
     if (selectedWhaitua) {
@@ -223,7 +218,6 @@ export function useAppState(): [
 
     setAppState({
       ...appState,
-      council,
       whaitua,
 
       // SW
