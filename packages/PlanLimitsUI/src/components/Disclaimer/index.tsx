@@ -25,9 +25,10 @@ export default function Disclaimer() {
   return (
     <Dialog
       open={showDisclaimer}
-      // onClose is a required prop of Dialog to handle a user pressing escape or
-      // clicking outside the dialog. We don't want to take any, so it's no-op.
-      onClose={() => {}}
+      onClose={() => {
+        // onClose is a required prop to handle pressing escape or clicking outside
+        // the dialog. We don't want to take any action, so it's no-op.
+      }}
       className="relative z-50"
     >
       {/* The backdrop, rendered as a fixed sibling to the panel container */}

@@ -27,7 +27,7 @@ describe('Disclaimer', () => {
   });
 
   it('should not show of previously agreed to', async () => {
-    const user = userEvent.setup();
+    userEvent.setup();
     saveDisclaimerAgreed();
     render(<Disclaimer />);
     expect(queryDisclaimerDialog(screen)).not.toBeInTheDocument();

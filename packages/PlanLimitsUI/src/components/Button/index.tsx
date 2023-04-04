@@ -1,9 +1,7 @@
-import React from 'react';
-
 type Props = {
   text: string;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
   active?: boolean;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 const defaultStyles =
@@ -11,7 +9,7 @@ const defaultStyles =
 const activeStyles =
   'px-2 py-1 font-semibold text-sm bg-nui text-white rounded-full shadow-sm border-2 border-nui';
 
-export default function Button({ text, onClick, active }: Props) {
+export default function Button({ text, active = false, onClick }: Props) {
   return (
     <button
       className={active ? activeStyles : defaultStyles}

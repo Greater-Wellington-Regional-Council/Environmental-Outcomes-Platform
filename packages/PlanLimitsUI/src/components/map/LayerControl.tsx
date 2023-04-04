@@ -1,6 +1,6 @@
-import { createPortal } from "react-dom";
-import { IControl, MapboxMap, useControl } from "react-map-gl";
-import React, { cloneElement } from "react";
+import { memo, cloneElement } from 'react';
+import { createPortal } from 'react-dom';
+import { useControl, type IControl } from 'react-map-gl';
 
 class OverlayControl implements IControl {
   _container: HTMLElement;
@@ -9,7 +9,7 @@ class OverlayControl implements IControl {
     this._container = container;
   }
 
-  onAdd(map: MapboxMap) {
+  onAdd() {
     return this._container;
   }
 
@@ -24,16 +24,16 @@ class OverlayControl implements IControl {
 
 function CustomOverlay(props: { children: React.ReactElement }) {
   const ctrl = useControl<OverlayControl>(
-    (context) => {
-      const container = document.createElement("div");
-      container.className = "float-left mb-2.5 ml-2.5";
+    () => {
+      const container = document.createElement('div');
+      container.className = 'float-left mb-2.5 ml-2.5';
 
       return new OverlayControl(container);
     },
-    { position: "bottom-left" }
+    { position: 'bottom-left' }
   );
 
   return createPortal(cloneElement(props.children), ctrl.getElement());
 }
 
-export default React.memo(CustomOverlay);
+export default memo(CustomOverlay);

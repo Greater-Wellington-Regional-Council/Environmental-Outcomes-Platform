@@ -1,5 +1,4 @@
-import { FeatureCollection, Geometry } from 'geojson';
-
+import type { FeatureCollection, Geometry } from 'geojson';
 import type { GroundwaterZoneBoundariesProperties } from '../../api';
 import type { AppState } from './useAppState';
 import type { WaterTakeFilter } from '.';
@@ -320,25 +319,27 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
       {showFootnote && (
         <>
           <div className="mt-3">
-            <a title="#PNRP41">
+            <span id="PNRP41" className="underline">
               <sup>1</sup>
-            </a>
+            </span>
             <a
-              target="_blank"
               href="https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=52"
               className="text-sm flex-1 underline"
+              target="_blank"
+              rel="noreferrer"
             >
               Table 4.1 of the Proposed Natural Resource Plan Limits
             </a>
           </div>
           <div>
-            <a title="#PNRP121">
+            <span id="PNRP121" className="underline">
               <sup>2</sup>
-            </a>
+            </span>
             <a
-              target="_blank"
               href="https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=59"
               className="text-sm flex-1 underline"
+              target="_blank"
+              rel="noreferrer"
             >
               Policy P121 of the Proposed Natural Resource Plan Limits
             </a>

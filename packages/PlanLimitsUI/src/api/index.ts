@@ -1,4 +1,4 @@
-import { FeatureCollection } from 'geojson';
+import type { FeatureCollection } from 'geojson';
 import { useQueries, useQuery } from '@tanstack/react-query';
 
 const determineBackendUri = (hostname: string) => {
@@ -43,9 +43,10 @@ export type GroundwaterZoneBoundariesProperties = {
 };
 
 export function useGeoJsonQueries() {
-  const { data: manifest } = useQuery(['manifest'], () =>
-    fetchFromAPI<{ [key: string]: string }>('/manifest')
-  );
+  const { data: manifest } = useQuery({
+    queryKey: ['manifest'],
+    queryFn: () => fetchFromAPI<{ [key: string]: string }>('/manifest'),
+  });
 
   const queries = [
     '/layers/councils',
@@ -59,9 +60,11 @@ export function useGeoJsonQueries() {
     return {
       // This defers execution until the manifest query has loaded
       enabled: Boolean(manifest),
+      // eslint-disable-next-line @tanstack/query/exhaustive-deps
       queryKey: [path],
-      // We use ! here since we know manifest will be populated when this executes
       queryFn: () =>
+        // We use ! here since we know manifest will be populated when this executes
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         fetchFromAPI<FeatureCollection>(`${path}?v=${manifest![path]}`),
     };
   });

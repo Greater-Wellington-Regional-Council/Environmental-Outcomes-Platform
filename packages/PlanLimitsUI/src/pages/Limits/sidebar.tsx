@@ -1,6 +1,9 @@
-import { FeatureCollection, Geometry } from 'geojson';
 import { useAtom } from 'jotai';
-import { GeoJsonQueries, GroundwaterZoneBoundariesProperties } from '../../api';
+import type { FeatureCollection, Geometry } from 'geojson';
+import type {
+  GeoJsonQueries,
+  GroundwaterZoneBoundariesProperties,
+} from '../../api';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
 import LimitsTable from './LimitsTable';
 import Button from '../../components/Button';
@@ -150,18 +153,20 @@ export default function Sidebar({
       <footer className="px-6 py-4 border-t flex items-start">
         <div className="flex-1">
           <a
-            target="_blank"
             href="https://pnrp.gw.govt.nz/home/pnrp-final-appeals-version-2022"
             className="text-sm underline"
+            target="_blank"
+            rel="noreferrer"
           >
             Proposed Natural Resource Plan
             <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
           </a>
           <br />
           <a
-            target="_blank"
             href="http://pnrp.gw.govt.nz/assets/Uploads/Chapter-5.5-Rules-Water-Allocation-Appeal-version-2022.pdf"
             className="text-sm underline"
+            target="_blank"
+            rel="noreferrer"
           >
             Water allocation rules
             <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />

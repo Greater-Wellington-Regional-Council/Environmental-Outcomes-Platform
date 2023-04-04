@@ -2,7 +2,6 @@ import { useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
 import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
-import { GroundwaterZoneBoundariesProperties } from '../../api';
 
 export type AppState = {
   council?: string | null;
@@ -96,7 +95,7 @@ export function useAppState(): [
         )
       : undefined;
 
-    let surfaceWaterMgmtUnitAllocatedPercentage =
+    const surfaceWaterMgmtUnitAllocatedPercentage =
       surfaceWaterMgmtUnitLimitAmount && surfaceWaterMgmtUnitAllocatedAmount
         ? Math.round(
             (Number(surfaceWaterMgmtUnitAllocatedAmount) /
@@ -182,8 +181,7 @@ export function useAppState(): [
     ].join(', ');
 
     const gwLimits = getGwLimits(
-      groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[],
-      surfaceWaterMgmtSubUnitLimit
+      groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[]
     );
 
     // Flow management
@@ -319,10 +317,7 @@ interface GWLimit {
   groundwaterAllocationAmountId?: number;
 }
 
-function getGwLimits(
-  activeFeatures: mapboxgl.MapboxGeoJSONFeature[],
-  surfaceWaterMgmtUnitLimit?: string
-) {
+function getGwLimits(activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) {
   const rows: GWLimit[] = [];
   if (activeFeatures.length === 0) {
     rows.push({
