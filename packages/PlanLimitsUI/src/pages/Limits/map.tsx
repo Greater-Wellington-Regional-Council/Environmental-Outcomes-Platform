@@ -172,7 +172,7 @@ export default function LimitsMap({
         />
         <Layer
           id="whaitua-highlight"
-          filter={['==', ['id'], appState.whaituaId]}
+          filter={['==', ['id'], appState.whaitua && appState.whaitua.id]}
           type="fill"
           paint={{
             'fill-outline-color': '#484896',
