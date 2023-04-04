@@ -122,16 +122,20 @@ export default function Sidebar({
           <LimitsListItem
             title={'Flow Management Site'}
             text={
-              appState.flowRestrictionsManagementSiteName
-                ? appState.flowRestrictionsManagementSiteName
+              appState.flowLimitBoundary
+                ? appState.flowLimitBoundary.name
+                : appState.whaitua
+                ? appState.whaitua.defaultFlowLimitAndSite
                 : 'None'
             }
           />
           <LimitsListItem
             title={'Minimum Flow or Restriction Flow'}
             text={
-              appState.flowRestrictionsLevel
-                ? appState.flowRestrictionsLevel
+              appState.flowLimitBoundary
+                ? appState.flowLimitBoundary.flowRestriction
+                : appState.whaitua
+                ? appState.whaitua.defaultFlowLimitAndSite
                 : 'None'
             }
           />
