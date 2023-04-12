@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
 import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
@@ -82,95 +82,77 @@ export function useAppState(): [
     groundWaterZones: [],
   });
 
-  const setAppStateFromResult = (
-    activeFeatures: mapboxgl.MapboxGeoJSONFeature[]
-  ) => {
-    const whaitua = setWhaitua(activeFeatures);
-    const flowLimitBoundary = setFlowLimitBoundary(activeFeatures);
+  const setAppStateFromResult = useCallback(
+    (activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) => {
+      const whaitua = setWhaitua(activeFeatures);
+      const flowLimitBoundary = setFlowLimitBoundary(activeFeatures);
 
-    const result = activeFeatures;
-    // Surface water MgmtUnit
-    const surfaceWaterMgmtUnitId =
-      findFeatureId(result, 'surfaceWaterMgmtUnits') || null;
-    const surfaceWaterMgmtUnitDescription = findFeature(
-      result,
-      'surfaceWaterMgmtUnits',
-      'name'
-    );
-    const surfaceWaterMgmtUnitLimitAmount = findFeature(
-      result,
-      'surfaceWaterMgmtUnits',
-      'allocation_amount'
-    );
-    const surfaceWaterMgmtUnitLimit = surfaceWaterMgmtUnitLimitAmount
-      ? formatWaterQuantity(
-          Number(surfaceWaterMgmtUnitLimitAmount),
-          findFeature(
-            result,
-            'surfaceWaterMgmtUnits',
-            'allocation_amount_unit'
-          ) as string
-        )
-      : undefined;
-
-    const surfaceWaterMgmtUnitAllocatedAmount = findFeature(
-      result,
-      'surfaceWaterMgmtUnits',
-      'allocated_amount'
-    );
-    const surfaceWaterMgmtUnitAllocated = surfaceWaterMgmtUnitAllocatedAmount
-      ? formatWaterQuantity(
-          Math.round(Number(surfaceWaterMgmtUnitAllocatedAmount)),
-          findFeature(
-            result,
-            'surfaceWaterMgmtUnits',
-            'allocation_amount_unit'
-          ) as string
-        )
-      : undefined;
-
-    const surfaceWaterMgmtUnitAllocatedPercentage =
-      surfaceWaterMgmtUnitLimitAmount && surfaceWaterMgmtUnitAllocatedAmount
-        ? Math.round(
-            (Number(surfaceWaterMgmtUnitAllocatedAmount) /
-              Number(surfaceWaterMgmtUnitLimitAmount)) *
-              100
+      const result = activeFeatures;
+      // Surface water MgmtUnit
+      const surfaceWaterMgmtUnitId =
+        findFeatureId(result, 'surfaceWaterMgmtUnits') || null;
+      const surfaceWaterMgmtUnitDescription = findFeature(
+        result,
+        'surfaceWaterMgmtUnits',
+        'name'
+      );
+      const surfaceWaterMgmtUnitLimitAmount = findFeature(
+        result,
+        'surfaceWaterMgmtUnits',
+        'allocation_amount'
+      );
+      const surfaceWaterMgmtUnitLimit = surfaceWaterMgmtUnitLimitAmount
+        ? formatWaterQuantity(
+            Number(surfaceWaterMgmtUnitLimitAmount),
+            findFeature(
+              result,
+              'surfaceWaterMgmtUnits',
+              'allocation_amount_unit'
+            ) as string
           )
         : undefined;
 
-    // Surface water MgmtSubUnit
-    const surfaceWaterMgmtSubUnitId =
-      findFeatureId(result, 'surfaceWaterMgmtSubUnits') || null;
-    const surfaceWaterMgmtSubUnitDescription = findFeature(
-      result,
-      'surfaceWaterMgmtSubUnits',
-      'name'
-    );
-    const surfaceWaterMgmtSubUnitLimitAmount = findFeature(
-      result,
-      'surfaceWaterMgmtSubUnits',
-      'allocation_amount'
-    );
-    const surfaceWaterMgmtSubUnitLimit = surfaceWaterMgmtSubUnitLimitAmount
-      ? formatWaterQuantity(
-          Number(surfaceWaterMgmtSubUnitLimitAmount),
-          findFeature(
-            result,
-            'surfaceWaterMgmtSubUnits',
-            'allocation_amount_unit'
-          ) as string
-        )
-      : undefined;
-
-    const surfaceWaterMgmtSubUnitAllocatedAmount = findFeature(
-      result,
-      'surfaceWaterMgmtSubUnits',
-      'allocated_amount'
-    );
-    const surfaceWaterMgmtSubUnitAllocated =
-      surfaceWaterMgmtSubUnitAllocatedAmount
+      const surfaceWaterMgmtUnitAllocatedAmount = findFeature(
+        result,
+        'surfaceWaterMgmtUnits',
+        'allocated_amount'
+      );
+      const surfaceWaterMgmtUnitAllocated = surfaceWaterMgmtUnitAllocatedAmount
         ? formatWaterQuantity(
-            Math.round(Number(surfaceWaterMgmtSubUnitAllocatedAmount)),
+            Math.round(Number(surfaceWaterMgmtUnitAllocatedAmount)),
+            findFeature(
+              result,
+              'surfaceWaterMgmtUnits',
+              'allocation_amount_unit'
+            ) as string
+          )
+        : undefined;
+
+      const surfaceWaterMgmtUnitAllocatedPercentage =
+        surfaceWaterMgmtUnitLimitAmount && surfaceWaterMgmtUnitAllocatedAmount
+          ? Math.round(
+              (Number(surfaceWaterMgmtUnitAllocatedAmount) /
+                Number(surfaceWaterMgmtUnitLimitAmount)) *
+                100
+            )
+          : undefined;
+
+      // Surface water MgmtSubUnit
+      const surfaceWaterMgmtSubUnitId =
+        findFeatureId(result, 'surfaceWaterMgmtSubUnits') || null;
+      const surfaceWaterMgmtSubUnitDescription = findFeature(
+        result,
+        'surfaceWaterMgmtSubUnits',
+        'name'
+      );
+      const surfaceWaterMgmtSubUnitLimitAmount = findFeature(
+        result,
+        'surfaceWaterMgmtSubUnits',
+        'allocation_amount'
+      );
+      const surfaceWaterMgmtSubUnitLimit = surfaceWaterMgmtSubUnitLimitAmount
+        ? formatWaterQuantity(
+            Number(surfaceWaterMgmtSubUnitLimitAmount),
             findFeature(
               result,
               'surfaceWaterMgmtSubUnits',
@@ -179,69 +161,89 @@ export function useAppState(): [
           )
         : undefined;
 
-    const surfaceWaterMgmtSubUnitAllocatedPercentage =
-      surfaceWaterMgmtSubUnitLimitAmount &&
-      surfaceWaterMgmtSubUnitAllocatedAmount
-        ? Math.round(
-            (Number(surfaceWaterMgmtSubUnitAllocatedAmount) /
-              Number(surfaceWaterMgmtSubUnitLimitAmount)) *
-              100
-          )
-        : undefined;
+      const surfaceWaterMgmtSubUnitAllocatedAmount = findFeature(
+        result,
+        'surfaceWaterMgmtSubUnits',
+        'allocated_amount'
+      );
+      const surfaceWaterMgmtSubUnitAllocated =
+        surfaceWaterMgmtSubUnitAllocatedAmount
+          ? formatWaterQuantity(
+              Math.round(Number(surfaceWaterMgmtSubUnitAllocatedAmount)),
+              findFeature(
+                result,
+                'surfaceWaterMgmtSubUnits',
+                'allocation_amount_unit'
+              ) as string
+            )
+          : undefined;
 
-    const swLimit = getSwLimit(
-      whaitua?.id,
-      surfaceWaterMgmtUnitLimit,
-      surfaceWaterMgmtSubUnitLimit
-    );
+      const surfaceWaterMgmtSubUnitAllocatedPercentage =
+        surfaceWaterMgmtSubUnitLimitAmount &&
+        surfaceWaterMgmtSubUnitAllocatedAmount
+          ? Math.round(
+              (Number(surfaceWaterMgmtSubUnitAllocatedAmount) /
+                Number(surfaceWaterMgmtSubUnitLimitAmount)) *
+                100
+            )
+          : undefined;
 
-    // Groundwater
-    const groundWaterZonesData = result
-      .filter((value) => value.layer.id === 'groundWater')
-      .sort((a, b) => {
-        // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
-        const alphabet = '0123456789>';
-        const first = a.properties?.depth.charAt(0);
-        const second = b.properties?.depth.charAt(0);
-        return alphabet.indexOf(first) - alphabet.indexOf(second);
+      const swLimit = getSwLimit(
+        whaitua?.id,
+        surfaceWaterMgmtUnitLimit,
+        surfaceWaterMgmtSubUnitLimit
+      );
+
+      // Groundwater
+      const groundWaterZonesData = result
+        .filter((value) => value.layer.id === 'groundWater')
+        .sort((a, b) => {
+          // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
+          const alphabet = '0123456789>';
+          const first = a.properties?.depth.charAt(0);
+          const second = b.properties?.depth.charAt(0);
+          return alphabet.indexOf(first) - alphabet.indexOf(second);
+        });
+
+      const groundWaterZones = groundWaterZonesData.map(
+        (item) => item.id as number
+      );
+      const groundWaterZoneName = [
+        // Contructing then destructuring from a Set leaves us with unique values
+        ...new Set(
+          groundWaterZonesData.map((item) => item.properties!['name'])
+        ),
+      ].join(', ');
+
+      const gwLimits = getGwLimits(
+        groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[]
+      );
+
+      setAppState({
+        whaitua,
+        flowLimitBoundary,
+
+        // SW
+        surfaceWaterMgmtUnitId,
+        surfaceWaterMgmtUnitDescription,
+        surfaceWaterMgmtUnitLimit,
+        surfaceWaterMgmtUnitAllocated,
+        surfaceWaterMgmtUnitAllocatedPercentage,
+        surfaceWaterMgmtSubUnitId,
+        surfaceWaterMgmtSubUnitDescription,
+        surfaceWaterMgmtSubUnitLimit,
+        surfaceWaterMgmtSubUnitAllocated,
+        surfaceWaterMgmtSubUnitAllocatedPercentage,
+
+        swLimit,
+        // GW
+        groundWaterZoneName,
+        groundWaterZones,
+        gwLimits,
       });
-
-    const groundWaterZones = groundWaterZonesData.map(
-      (item) => item.id as number
-    );
-    const groundWaterZoneName = [
-      // Contructing then destructuring from a Set leaves us with unique values
-      ...new Set(groundWaterZonesData.map((item) => item.properties!['name'])),
-    ].join(', ');
-
-    const gwLimits = getGwLimits(
-      groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[]
-    );
-
-    setAppState({
-      ...appState,
-      whaitua,
-      flowLimitBoundary,
-
-      // SW
-      surfaceWaterMgmtUnitId,
-      surfaceWaterMgmtUnitDescription,
-      surfaceWaterMgmtUnitLimit,
-      surfaceWaterMgmtUnitAllocated,
-      surfaceWaterMgmtUnitAllocatedPercentage,
-      surfaceWaterMgmtSubUnitId,
-      surfaceWaterMgmtSubUnitDescription,
-      surfaceWaterMgmtSubUnitLimit,
-      surfaceWaterMgmtSubUnitAllocated,
-      surfaceWaterMgmtSubUnitAllocatedPercentage,
-
-      swLimit,
-      // GW
-      groundWaterZoneName,
-      groundWaterZones,
-      gwLimits,
-    });
-  };
+    },
+    [setAppState]
+  );
 
   return [appState, setAppStateFromResult];
 }
