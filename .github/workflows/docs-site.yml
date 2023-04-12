@@ -11,8 +11,6 @@ permissions:
   pages: write
   id-token: write
 
-
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,6 +24,12 @@ jobs:
       - name: Setup pages
         id: pages
         uses: actions/configure-pages@v2
+
+      - name: Cache Batect
+        uses: actions/cache@v3.2.4
+        with:
+          path: ~/.batect/cache
+          key: batect-${{ hashFiles(format('{0}/batect', './docs-site')) }}
 
       - name: Build docs
         run: ./batect build
