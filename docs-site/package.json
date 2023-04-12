@@ -43,6 +43,7 @@
     "tailwindcss": "^3.3.1",
     "typescript": "^5.0.4"
   },
+  "//": "This is a workaround for https://github.com/gatsbyjs/gatsby/issues/37242#issuecomment-1396620944. Should be fixed in later version of Gatsby",
   "overrides": {
     "react-server-dom-webpack@0.0.0-experimental-c8b778b7f-20220825": {
       "react": "^18.2.0"
