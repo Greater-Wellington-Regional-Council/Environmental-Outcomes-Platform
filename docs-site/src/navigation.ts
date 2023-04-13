@@ -17,8 +17,9 @@ export default [
   {
     title: 'Work in Progress',
     links: [
-      {title: 'Plan Limits', href: '/work-in-progress/plan-limits'}
-    ]
+      { title: 'Plan Limits', href: '/work-in-progress/plan-limits' },
+      { title: 'Current status', href: '/work-in-progress/current-status' },
+    ],
   },
   {
     title: 'Contributing',
