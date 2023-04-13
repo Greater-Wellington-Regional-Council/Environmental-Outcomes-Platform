@@ -5,13 +5,7 @@ export default [
   },
   {
     title: 'Design',
-    links: [
-      { title: 'High Level Overview', href: '/design/overview/' },
-      {
-        title: 'Design principles',
-        href: '/design/principles/',
-      },
-    ],
+    links: [{ title: 'Technical Design', href: '/design/technical-design/' }],
   },
   {
     title: 'Work in Progress',

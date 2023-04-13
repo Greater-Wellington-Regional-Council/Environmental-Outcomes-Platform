@@ -1,11 +1,11 @@
 ---
-slug: /design/overview
+slug: /design/technical-design
 section: Design
-title: Overview
+title: Technical Design
 ---
 
-Placeholder Early WIP - This page describes a high level structure of EOP. This is the long term vision
-of what EOP may encompass.
+Placeholder Early WIP - This page describes a high level structure of EOP. This
+is the long term vision of what EOP may encompass.
 
 The intention is that any piece of work will focus on delivering an outcome and
 fit it into this architecture.
@@ -16,28 +16,34 @@ fit it into this architecture.
 
 At a high level the solution breaks into a number of areas:
 
-- **Acquisition** - how information sourced mastered in other systems gets into EOP
-- **Capture** - how information that is mastered in EOP gets captured, quality assured, and published
-- **Storage** - how EOP stores information in ways that are accessible for different access needs
-- **Processing** - how EOP translates information bought into EOP into more useable information for presentation to users
-- **Output** - the most important stage, how EOP delivers outcomes to end users in a way that provides value to them 
+- **Acquisition** - how information sourced mastered in other systems gets into
+  EOP
+- **Capture** - how information that is mastered in EOP gets captured, quality
+  assured, and published
+- **Storage** - how EOP stores information in ways that are accessible for
+  different access needs
+- **Processing** - how EOP translates information bought into EOP into more
+  useable information for presentation to users
+- **Output** - the most important stage, how EOP delivers outcomes to end users
+  in a way that provides value to them
 
-The following diagram shows the high level relationship between these components, note the arrows shown and covering the top level data flows. 
+The following diagram shows the high level relationship between these
+components, note the arrows shown and covering the top level data flows.
 
 ![High Level Overview Diagram](./high-level-overview.png)
 
 ## Integration Hub
 
 A key part of the overall design is how to move data between the various
-components in and managable and robust way. Proposed direction is "Hub and Spoke" vs Bus style to allow 
+components in and managable and robust way. Proposed direction is "Hub and
+Spoke" vs Bus style to allow
 
-Peice of the picture is the
-"Integration Hub" which provides a centralised point for landing data in EOP and
-distributing it to the other components.
+Peice of the picture is the "Integration Hub" which provides a centralised point
+for landing data in EOP and distributing it to the other components.
 
-In the diagram the integratio hub is this is highlighted as the interface between the
-Acquisiton/Capture area and the Storage/Processing as this is the key
-integration point. This hub will also be used for the transfer of data
+In the diagram the integratio hub is this is highlighted as the interface
+between the Acquisiton/Capture area and the Storage/Processing as this is the
+key integration point. This hub will also be used for the transfer of data
 between any component in the solution and allows for
 
 Technology choice here is [Kafka](https://kafka.apache.org/)
