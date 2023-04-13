@@ -4,25 +4,24 @@ key: index
 
 ## Overview
 
-EOP is an initiative led by Greater Wellington Regional Council building on the
-experience of the Environment Canterbury Water Data programme to build a
-solution which will allow all regional councils to maximise the value they get
-from their environmental monitoring efforts and provide clear, consistent, and
-user-centric information to users of environmental information.
+EOP is an initiative led by Greater Wellington Regional Council to establish an
+end-to-end platform for capture, management and reporting of environmental
+information. The goal is to allow all regional councils to maximise the value
+they get from their environmental monitoring efforts, and provide clear,
+consistent and user-centric information to end-users if this data. It’s built
+based on the experiences from the Environment Canterbury Water Data programme
 
 Regional councils have many systems for collecting and managing environmental
-data. These systems are often siloed, legacy, and not integrated. This makes
-integrating the data to derive information a manual task of combining the data
-from multiple systems, which is slow, error-prone, and often this is done in a
-way that isn't consistent within a single council or across councils. This
-effort to integrate the data limits the type of analysis that people will even
-try to achieve with the data. This leads to the value of the data not being
-fully realised.
+data. These systems are often siloed and based on legacy technology. Integrating
+this data can be a slow, manual and and error prone process that is not
+consistent within or across councils. These challenges to limits the type of
+analysis that is feasible, meaning the value of the data is not fully realised.
 
 Much work has been done in councils by people without a software or data
-engineering background on the best efforts' basis. This has resulted in
-solutions that deliver lots of value but lack the maintainability, scalability
-and user-centric approach that would come from a software engineering team.
+engineering background on a best efforts' and as-needed basis. This has resulted
+in solutions that deliver lots of value but lack the maintainability,
+scalability and user-centric approach that would come from a dedicated software
+engineering team.
 
 EOP aims to address these issues by building a solution which focuses on:
 
@@ -44,8 +43,11 @@ councils, EOP can provide standardised adapters to allow the data to be
 
 _Modern Development Practices_
 
-We are using modern deliver practices ... why do you care? It supports long term
-maintainability and reduces the risk of the platform becoming legacy.
+The EOP platform will be developed using modern development and delivery
+practices to reduce the risk of the platform becoming legacy, and help ensure
+future development and operation and is sustainable. This includes test
+coverage, infrastructure automation and a devops approach, and selecting
+fit-for-purpose tools, infrastructure and standards.
 
 ## Data Sets
 
@@ -57,7 +59,7 @@ Being a sector wide initiative, there is a need for governance to support equity
 amongst the stakeholders. There are two groups for governing EOP. The first is a
 Steering Group on the strategic direction of EOP. The second is a Technical
 Working Group which will focus on the technical direction of EOP in terms of
-architecture, collaboration, development practices, and technical priorities.
+architecture, collaboration, development practices and technical priorities.
 
 ### Steering Group
 
@@ -89,10 +91,14 @@ A technical group is going to be setup in 2023 led by the EOP Delivery team.
 This will be the forum to share and collaborate on the technical solution across
 contributing councils and potential future contributors.
 
-- Setting the technical architecture for EOP
-- Setting the technical development practices for EOP
-- Setting the technical collaboration practices for EOP
-- Setting technical priorities for the EOP Delivery Team
+We imagine the activities of this group to be:
+
+- Discussion and feedback on major architectural concerns and decisions
+- Helping establish development practices for technical collaboration on EOP
+  across councils
+- Feeding back on current technical priorities of the EOP Delivery Team
+- Bringing a cross-council perspective to technical development by sharing
+  knowledge, challenges and opportunities from different councils
 
 ## Open Source
 
