@@ -25,14 +25,14 @@ engineering team.
 
 EOP aims to address these issues by building a solution which focuses on:
 
-_Outcomes_
+<h3 id="outcomes">Outcomes</h3>
 
 The unit of delivery in EOP is an outcome, information provided to a user in a
 way which is appropriate to their needs. For each outcome, the minimum technical
 architecture will be built to deliver that outcome. With future outcomes
 building and evolving, the architecture to support the new outcomes.
 
-_Multi Tenanted_
+### Multi Tenanted
 
 From the ground up EOP is being built to support multiple councils. This will
 enable the effort to deliver an outcome by one council to be delivered to all
@@ -41,7 +41,7 @@ council internal systems with each council providing data to EOP in a
 standardised format. However, for some common systems used in a majority of
 councils, EOP can provide standardised adapters to allow the data to be
 
-_Modern Development Practices_
+### Modern Development Practices
 
 The EOP platform will be developed using modern development and delivery
 practices to reduce the risk of the platform becoming legacy, and help ensure
@@ -61,7 +61,7 @@ Steering Group on the strategic direction of EOP. The second is a Technical
 Working Group which will focus on the technical direction of EOP in terms of
 architecture, collaboration, development practices and technical priorities.
 
-### Steering Group
+<h3 id="steering-group">Steering Group</h3>
 
 The steering group has a Terms of Reference formed which describes the
 responsibilities of the Steering Group as follows:
@@ -85,7 +85,7 @@ responsibilities of the Steering Group as follows:
 - To resolve any dispute or disagreement that is raised through the governance
   structure.
 
-### Technical Working Group
+<h3 id="technical-working-group">Technical Working Group</h3>
 
 A technical group is going to be setup in 2023 led by the EOP Delivery team.
 This will be the forum to share and collaborate on the technical solution across

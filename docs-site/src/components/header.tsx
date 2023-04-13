@@ -10,7 +10,7 @@ export default () => (
       <a
         className="group"
         aria-label="GitHub"
-        href="https://greater-wellington-regional-council.github.io/Environmental-Outcomes-Platform"
+        href="https://github.com/Greater-Wellington-Regional-Council/Environmental-Outcomes-Platform"
       >
         <svg
           aria-hidden="true"
