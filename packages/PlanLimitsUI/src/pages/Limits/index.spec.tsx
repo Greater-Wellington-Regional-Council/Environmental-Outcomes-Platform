@@ -23,6 +23,7 @@ describe('loader', () => {
         longitude: 175.166,
         zoom: 8,
       },
+      pinnedLocation: null,
     });
   });
 

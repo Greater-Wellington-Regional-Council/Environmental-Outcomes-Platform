@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useRef, type SetStateAction } from 'react';
 import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -10,6 +10,9 @@ import Map, {
   ScaleControl,
   type MapRef,
   type ViewState,
+  type ViewStateChangeEvent,
+  type MapboxEvent,
+  type MapLayerMouseEvent,
 } from 'react-map-gl';
 import { GeoJsonQueries } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
@@ -20,10 +23,24 @@ import type { AppState } from './useAppState';
 import type { WaterTakeFilter } from './index';
 import flowMarkerImage from '../../images/marker_flow.svg';
 
-const publicLinzApiKey = import.meta.env.VITE_LINZ_API_KEY;
+const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
   type: 'FeatureCollection' as const,
   features: [],
+};
+
+type Props = {
+  appState: AppState;
+  setAppState: (result: mapboxgl.MapboxGeoJSONFeature[]) => void;
+  viewState: ViewState;
+  setViewState: (value: ViewState) => void;
+  pinnedLocation: PinnedLocation | null;
+  setPinnedLocation: (
+    updateFn: (prevValue: PinnedLocation | null) => PinnedLocation | null
+  ) => void;
+  waterTakeFilter: WaterTakeFilter;
+  queries: GeoJsonQueries;
+  geoJsonDataLoaded: boolean;
 };
 
 export default function LimitsMap({
@@ -31,55 +48,16 @@ export default function LimitsMap({
   setAppState,
   viewState,
   setViewState,
-  initialPinnedLocation,
-  setCurrentPinnedLocation,
+  pinnedLocation,
+  setPinnedLocation,
   waterTakeFilter,
   queries,
-}: {
-  appState: AppState;
-  setAppState: (result: mapboxgl.MapboxGeoJSONFeature[]) => void;
-  viewState: ViewState;
-  setViewState: (value: ViewState) => void;
-  initialPinnedLocation?: PinnedLocation;
-  setCurrentPinnedLocation: (value?: PinnedLocation) => void;
-  waterTakeFilter: WaterTakeFilter;
-  queries: GeoJsonQueries;
-}) {
-  const [mapRenderCount, setMapRenderCount] = useState(0);
-  const [showImagery, setShowImagery] = useState(false);
-
-  const [pinnedLocation, storePinnedLocation] = useState(initialPinnedLocation);
-
-  const [highlightLocation, setHighlightLocation] = useState<
-    PinnedLocation | undefined
-  >(initialPinnedLocation);
-
+  geoJsonDataLoaded,
+}: Props) {
+  const mapRef = useRef<MapRef | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const [flowMarkerImageAdded, setFlowMarkerImageAdded] = useState(false);
-  const [flowMarkerImageLoading, setFlowMarkerImageLoading] = useState(false);
-
-  const changesCallback = useCallback(
-    (map: MapRef | null) => {
-      if (highlightLocation && map) {
-        const result = map.queryRenderedFeatures(
-          map.project([highlightLocation.longitude, highlightLocation.latitude])
-        );
-        setAppState(result);
-      }
-
-      // TODO: Move this out of main rendering callback and extract to hook/HOC
-      if (map && !map.hasImage('marker_flow') && !flowMarkerImageLoading) {
-        setFlowMarkerImageLoading(true);
-        const img = new Image(20, 20);
-        img.onload = () => {
-          map.addImage('marker_flow', img);
-          setFlowMarkerImageAdded(true);
-        };
-        img.src = flowMarkerImage;
-      }
-    },
-    [highlightLocation, mapRenderCount, waterTakeFilter]
-  );
-
+  const [showImagery, setShowImagery] = useState(false);
   const [
     councilsGeoJson,
     whaituaGeoJson,
@@ -90,42 +68,67 @@ export default function LimitsMap({
     groundwaterZoneBoundariesGeoJson,
   ] = queries;
 
+  useEffect(() => {
+    if (mapLoaded && mapRef.current && geoJsonDataLoaded && pinnedLocation) {
+      const activeFeatures = mapRef.current.queryRenderedFeatures(
+        mapRef.current.project([
+          pinnedLocation.longitude,
+          pinnedLocation.latitude,
+        ])
+      );
+      setAppState(activeFeatures);
+    }
+  }, [mapLoaded, geoJsonDataLoaded, pinnedLocation, setAppState]);
+
+  const handleLoad = (evt: MapboxEvent) => {
+    setMapLoaded(true);
+
+    const img = new Image(20, 20);
+    img.onload = () => {
+      evt.target.addImage('marker_flow', img);
+      setFlowMarkerImageAdded(true);
+    };
+    img.src = flowMarkerImage;
+  };
+
+  const handleMove = (evt: ViewStateChangeEvent) => {
+    setViewState(evt.viewState);
+  };
+
+  const handleMouseMove = (evt: MapLayerMouseEvent) => {
+    if (pinnedLocation) return;
+
+    const result = evt.target.queryRenderedFeatures(evt.point);
+    setAppState(result);
+  };
+
+  const handleClick = (evt: MapLayerMouseEvent) => {
+    setPinnedLocation((prevValue) =>
+      prevValue
+        ? null
+        : {
+            latitude: evt.lngLat.lat,
+            longitude: evt.lngLat.lng,
+          }
+    );
+  };
+
   return (
     <Map
-      ref={changesCallback}
+      ref={mapRef}
       reuseMaps={true}
       mapLib={maplibregl}
       style={{ width: '100%', height: '100vh' }}
-      mapStyle={`https://basemaps.linz.govt.nz/v1/tiles/topographic/EPSG:4326/style/topographic.json?api=${publicLinzApiKey}`}
+      mapStyle={`https://basemaps.linz.govt.nz/v1/tiles/topographic/EPSG:4326/style/topographic.json?api=${LINZ_API_KEY}`}
       minZoom={5}
       maxBounds={[
         [160, -60],
         [-160, -20],
       ]}
-      onMove={(evt) => setViewState(evt.viewState)}
-      onMouseMove={(evt) => {
-        if (!pinnedLocation) {
-          setHighlightLocation({
-            latitude: evt.lngLat.lat,
-            longitude: evt.lngLat.lng,
-          });
-        }
-      }}
-      onClick={(evt) => {
-        const newPinnedLocation = pinnedLocation
-          ? undefined
-          : {
-              latitude: evt.lngLat.lat,
-              longitude: evt.lngLat.lng,
-            };
-        setCurrentPinnedLocation(newPinnedLocation);
-        storePinnedLocation(newPinnedLocation);
-        setHighlightLocation({
-          latitude: evt.lngLat.lat,
-          longitude: evt.lngLat.lng,
-        });
-      }}
-      onRender={() => setMapRenderCount(mapRenderCount + 1)}
+      onMove={handleMove}
+      onMouseMove={handleMouseMove}
+      onClick={handleClick}
+      onLoad={handleLoad}
       {...viewState}
     >
       <NavigationControl position="top-left" visualizePitch={true} />
@@ -342,7 +345,7 @@ export default function LimitsMap({
         <Source
           type={'raster'}
           tiles={[
-            `https://basemaps.linz.govt.nz/v1/tiles/aerial/WebMercatorQuad/{z}/{x}/{y}.webp?api=${publicLinzApiKey}`,
+            `https://basemaps.linz.govt.nz/v1/tiles/aerial/WebMercatorQuad/{z}/{x}/{y}.webp?api=${LINZ_API_KEY}`,
           ]}
         >
           <Layer beforeId="councils" type={'raster'} />

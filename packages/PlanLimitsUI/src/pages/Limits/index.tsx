@@ -37,7 +37,7 @@ export const loader: LoaderFunction = ({ params, request }) => {
   return parsedLocation
     ? {
         locationString: parsedLocation,
-        pinnedLocation: parsedPinnedLocation || undefined,
+        pinnedLocation: parsedPinnedLocation || null,
       }
     : redirect(`/limits/${createLocationString(defaultViewLocation)}`);
 };
@@ -50,11 +50,11 @@ export default function Limits() {
     pinnedLocation: initialPinnedLocation,
   } = useLoaderData() as {
     locationString: ViewLocation;
-    pinnedLocation?: PinnedLocation;
+    pinnedLocation: PinnedLocation | null;
   };
 
   const [pinnedLocation, setPinnedLocation] = useState(initialPinnedLocation);
-  const [viewLocation, setCurrentViewLocation] = useState(initialViewLocation);
+  const [viewLocation, setViewLocation] = useState(initialViewLocation);
 
   const debouncedValue = useDebounce<ViewLocation>(viewLocation, 500);
   useEffect(() => {
@@ -66,7 +66,7 @@ export default function Limits() {
     } else {
       navigate(`/limits/${createLocationString(debouncedValue)}`);
     }
-  }, [debouncedValue, pinnedLocation]);
+  }, [debouncedValue, pinnedLocation, navigate]);
 
   const geoJsonQueries = useGeoJsonQueries();
 
@@ -88,9 +88,11 @@ export default function Limits() {
   });
 
   const setViewState = (value: ViewState) => {
-    setCurrentViewLocation(value);
+    setViewLocation(value);
     storeViewState(value);
   };
+
+  const geoJsonDataLoaded = geoJsonQueries.every((query) => query.data);
 
   return (
     <div className="flex">
@@ -100,10 +102,11 @@ export default function Limits() {
           setAppState={setAppState}
           viewState={viewState}
           setViewState={setViewState}
-          initialPinnedLocation={initialPinnedLocation}
-          setCurrentPinnedLocation={setPinnedLocation}
+          pinnedLocation={pinnedLocation}
+          setPinnedLocation={setPinnedLocation}
           waterTakeFilter={waterTakeFilter}
           queries={geoJsonQueries}
+          geoJsonDataLoaded={geoJsonDataLoaded}
         />
       </main>
       <aside className="w-[36rem] h-screen overflow-y-scroll border-l border-gray-200">
