@@ -172,7 +172,7 @@ export default function LimitsMap({
         />
         <Layer
           id="whaitua-highlight"
-          filter={['==', ['id'], appState.whaituaId]}
+          filter={['==', ['id'], appState.whaitua && appState.whaitua.id]}
           type="fill"
           paint={{
             'fill-outline-color': '#484896',
@@ -287,7 +287,11 @@ export default function LimitsMap({
           <Layer
             id="minimumFlowLimitBoundaries-highlight"
             type="fill"
-            filter={['==', ['id'], appState.minimumFlowLimitId]}
+            filter={[
+              '==',
+              ['id'],
+              appState.flowLimitBoundary && appState.flowLimitBoundary.id,
+            ]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -315,7 +319,11 @@ export default function LimitsMap({
           paint={{
             'icon-opacity': [
               'case',
-              ['==', ['id'], appState.flowRestrictionsManagementSiteId],
+              [
+                '==',
+                ['id'],
+                appState.flowLimitBoundary && appState.flowLimitBoundary.siteId,
+              ],
               1,
               0.5,
             ],

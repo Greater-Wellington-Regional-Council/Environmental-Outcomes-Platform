@@ -4,7 +4,7 @@ import defaultFlowLimitsAndSites from './defaultFlowLimitAndSite';
 
 describe('defaultFlowLimitsAndSites', () => {
   it('returns a link when the whaituaId is found', () => {
-    const result = defaultFlowLimitsAndSites('1');
+    const result = defaultFlowLimitsAndSites(1);
     const { getByRole } = render(result);
     const link = getByRole('link');
 
@@ -16,7 +16,7 @@ describe('defaultFlowLimitsAndSites', () => {
   });
 
   it('returns <>None</> when the whaituaId is not found', () => {
-    const result = defaultFlowLimitsAndSites('this-id-does-not-exist');
+    const result = defaultFlowLimitsAndSites(0);
     expect(result).toEqual(<>None</>);
   });
 });

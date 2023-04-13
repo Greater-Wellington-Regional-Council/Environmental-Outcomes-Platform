@@ -3,10 +3,22 @@ import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
 import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
 
+export type Whaitua = {
+  id: number;
+  name: string;
+  defaultFlowLimitAndSite: JSX.Element;
+};
+
+export type FlowLimitBoundary = {
+  id: number;
+  name: string;
+  siteId: number;
+  flowRestriction: string;
+};
+
 export type AppState = {
-  council?: string | null;
-  whaituaId: string;
-  whaitua?: string | null;
+  whaitua: Whaitua | null;
+  flowLimitBoundary: FlowLimitBoundary | null;
 
   surfaceWaterMgmtUnitId: string | null;
   surfaceWaterMgmtUnitDescription?: string | null;
@@ -20,41 +32,63 @@ export type AppState = {
   surfaceWaterMgmtSubUnitAllocated?: string;
   surfaceWaterMgmtSubUnitAllocatedPercentage?: number;
   swLimit?: SWLimit;
-  site?: string | null;
-  minimumFlowLimitId: string | null;
-  flowRestrictionsManagementSiteId?: string | null;
-  flowRestrictionsLevel?: string | JSX.Element | null;
-  flowRestrictionsManagementSiteName?: string | JSX.Element | null;
+
   gwLimits?: GWLimit[];
   groundWaterZones: Array<number>;
   groundWaterZoneName?: string;
 };
+
+function setWhaitua(activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) {
+  const whaitua = activeFeatures.find((f) => f.layer.id === 'whaitua');
+  if (!whaitua) return null;
+
+  const id = Number(whaitua.id);
+  return {
+    id,
+    name: whaitua.properties?.name,
+    defaultFlowLimitAndSite: defaultFlowLimitAndSite(id),
+  };
+}
+
+function setFlowLimitBoundary(activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) {
+  const flowLimitBoundary = activeFeatures.find(
+    (f) => f.layer.id === 'minimumFlowLimitBoundaries'
+  );
+  if (!flowLimitBoundary) return null;
+
+  const properties = flowLimitBoundary.properties!;
+  return {
+    id: Number(flowLimitBoundary.id),
+    name: properties.name,
+    siteId: Number(properties.site_id),
+    flowRestriction: formatWaterQuantity(
+      properties.plan_minimum_flow_value,
+      properties.plan_minimum_flow_unit
+    ),
+  };
+}
 
 export function useAppState(): [
   AppState,
   (result: mapboxgl.MapboxGeoJSONFeature[]) => void
 ] {
   const [appState, setAppState] = useState<AppState>({
-    council: null,
-    whaituaId: 'NONE',
     whaitua: null,
+    flowLimitBoundary: null,
     surfaceWaterMgmtUnitId: 'NONE',
     surfaceWaterMgmtUnitDescription: null,
     surfaceWaterMgmtSubUnitId: 'NONE',
     surfaceWaterMgmtSubUnitDescription: null,
-    site: null,
-    minimumFlowLimitId: 'NONE',
-    flowRestrictionsManagementSiteId: 'NONE',
-    flowRestrictionsLevel: null,
-    flowRestrictionsManagementSiteName: null,
     groundWaterZones: [],
   });
 
-  const setAppStateFromResult = (result: mapboxgl.MapboxGeoJSONFeature[]) => {
-    const council = findFeature(result, 'councils', 'name');
-    const whaitua = findFeature(result, 'whaitua', 'name');
-    const whaituaId = findFeatureId(result, 'whaitua') || 'NONE';
+  const setAppStateFromResult = (
+    activeFeatures: mapboxgl.MapboxGeoJSONFeature[]
+  ) => {
+    const whaitua = setWhaitua(activeFeatures);
+    const flowLimitBoundary = setFlowLimitBoundary(activeFeatures);
 
+    const result = activeFeatures;
     // Surface water MgmtUnit
     const surfaceWaterMgmtUnitId =
       findFeatureId(result, 'surfaceWaterMgmtUnits') || null;
@@ -156,7 +190,7 @@ export function useAppState(): [
         : undefined;
 
     const swLimit = getSwLimit(
-      whaituaId,
+      whaitua?.id,
       surfaceWaterMgmtUnitLimit,
       surfaceWaterMgmtSubUnitLimit
     );
@@ -184,42 +218,10 @@ export function useAppState(): [
       groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[]
     );
 
-    // Flow management
-    const site = findFeature(result, 'flowSites', 'Name');
-
-    const minimumFlowLimitId =
-      findFeatureId(result, 'minimumFlowLimitBoundaries') || 'NONE';
-
-    const flowRestrictionsManagementSiteId =
-      findFeature(result, 'minimumFlowLimitBoundaries', 'site_id') || 'NONE';
-    const flowRestrictionsManagementSiteName =
-      findFeature(result, 'minimumFlowLimitBoundaries', 'name') ||
-      defaultFlowLimitAndSite(whaituaId);
-
-    const flowRestrictionsAmount = findFeature(
-      result,
-      'minimumFlowLimitBoundaries',
-      'plan_minimum_flow_value'
-    );
-
-    const flowRestrictionsUnit = findFeature(
-      result,
-      'minimumFlowLimitBoundaries',
-      'plan_minimum_flow_unit'
-    );
-
-    const flowRestrictionsLevel = flowRestrictionsAmount
-      ? formatWaterQuantity(
-          Number(flowRestrictionsAmount),
-          flowRestrictionsUnit as string
-        )
-      : defaultFlowLimitAndSite(whaituaId);
-
     setAppState({
       ...appState,
-      council,
-      whaituaId,
       whaitua,
+      flowLimitBoundary,
 
       // SW
       surfaceWaterMgmtUnitId,
@@ -238,12 +240,6 @@ export function useAppState(): [
       groundWaterZoneName,
       groundWaterZones,
       gwLimits,
-      // Flow
-      site,
-      minimumFlowLimitId,
-      flowRestrictionsLevel,
-      flowRestrictionsManagementSiteName,
-      flowRestrictionsManagementSiteId,
     });
   };
 
@@ -274,7 +270,7 @@ interface SWLimit {
 }
 
 function getSwLimit(
-  whaituaId: string,
+  whaituaId?: number,
   surfaceWaterMgmtUnitLimit?: string,
   surfaceWaterMgmtSubUnitLimit?: string
 ): SWLimit {
@@ -289,7 +285,7 @@ function getSwLimit(
     // limit P121 applies.
     useDefaultRuleForSubUnit:
       !surfaceWaterMgmtSubUnitLimit &&
-      whaituaId.toString() === '4' &&
+      whaituaId === 4 &&
       Boolean(surfaceWaterMgmtUnitLimit),
   };
   return stat;
