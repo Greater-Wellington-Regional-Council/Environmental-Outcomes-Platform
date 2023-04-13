@@ -4,88 +4,12 @@ section: Contributing
 title: How to contribute
 ---
 
-Placeholder - Contribution Guide
+EOP is intended to be a sector-wide initiative with contributions from many councils.
 
----
+We're [currently working](/work-in-progress/current-status) on integrating data from other councils into the [Plan Limits Viewer](/work-in-progress/plan-limits). If this is something you are interested in, please get in touch.
 
-## Quis vel iste dicta
+We're also working towards technical contributions from other councils to the platform. Once formed, the [Technical Working Group](/#technical-working-group) will be esablishing guidelines for this, including an RFC process for substantial changes.
 
-Sit commodi iste iure molestias qui amet voluptatem sed quaerat. Nostrum aut
-pariatur. Sint ipsa praesentium dolor error cumque velit tenetur.
+In the meantime, if you're interested in following along with technical details, check out the [EOP](https://github.com/Greater-Wellington-Regional-Council/Environmental-Outcomes-Platform) and [EOP Infrastructure](https://github.com/Greater-Wellington-Regional-Council/Environmental-Outcomes-Platform-Infrastructure) GitHub repos.
 
-### Et pariatur ab quas
 
-Sit commodi iste iure molestias qui amet voluptatem sed quaerat. Nostrum aut
-pariatur. Sint ipsa praesentium dolor error cumque velit tenetur quaerat
-exercitationem. Consequatur et cum atque mollitia qui quia necessitatibus.
-
-Possimus saepe veritatis sint nobis et quam eos. Architecto consequatur odit
-perferendis fuga eveniet possimus rerum cumque. Ea deleniti voluptatum deserunt
-voluptatibus ut non iste. Provident nam asperiores vel laboriosam omnis ducimus
-enim nesciunt quaerat. Minus tempora cupiditate est quod.
-
-### Natus aspernatur iste
-
-Sit commodi iste iure molestias qui amet voluptatem sed quaerat. Nostrum aut
-pariatur. Sint ipsa praesentium dolor error cumque velit tenetur quaerat
-exercitationem. Consequatur et cum atque mollitia qui quia necessitatibus.
-
-Voluptas beatae omnis omnis voluptas. Cum architecto ab sit ad eaque quas quia
-distinctio. Molestiae aperiam qui quis deleniti soluta quia qui. Dolores nostrum
-blanditiis libero optio id. Mollitia ad et asperiores quas saepe alias.
-
----
-
-## Quos porro ut molestiae
-
-Sit commodi iste iure molestias qui amet voluptatem sed quaerat. Nostrum aut
-pariatur. Sint ipsa praesentium dolor error cumque velit tenetur.
-
-### Voluptatem quas possimus
-
-Sit commodi iste iure molestias qui amet voluptatem sed quaerat. Nostrum aut
-pariatur. Sint ipsa praesentium dolor error cumque velit tenetur quaerat
-exercitationem. Consequatur et cum atque mollitia qui quia necessitatibus.
-
-Possimus saepe veritatis sint nobis et quam eos. Architecto consequatur odit
-perferendis fuga eveniet possimus rerum cumque. Ea deleniti voluptatum deserunt
-voluptatibus ut non iste. Provident nam asperiores vel laboriosam omnis ducimus
-enim nesciunt quaerat. Minus tempora cupiditate est quod.
-
-### Id vitae minima
-
-Sit commodi iste iure molestias qui amet voluptatem sed quaerat. Nostrum aut
-pariatur. Sint ipsa praesentium dolor error cumque velit tenetur quaerat
-exercitationem. Consequatur et cum atque mollitia qui quia necessitatibus.
-
-Voluptas beatae omnis omnis voluptas. Cum architecto ab sit ad eaque quas quia
-distinctio. Molestiae aperiam qui quis deleniti soluta quia qui. Dolores nostrum
-blanditiis libero optio id. Mollitia ad et asperiores quas saepe alias.
-
----
-
-## Vitae laborum maiores
-
-Sit commodi iste iure molestias qui amet voluptatem sed quaerat. Nostrum aut
-pariatur. Sint ipsa praesentium dolor error cumque velit tenetur.
-
-### Corporis exercitationem
-
-Sit commodi iste iure molestias qui amet voluptatem sed quaerat. Nostrum aut
-pariatur. Sint ipsa praesentium dolor error cumque velit tenetur quaerat
-exercitationem. Consequatur et cum atque mollitia qui quia necessitatibus.
-
-Possimus saepe veritatis sint nobis et quam eos. Architecto consequatur odit
-perferendis fuga eveniet possimus rerum cumque. Ea deleniti voluptatum deserunt
-voluptatibus ut non iste. Provident nam asperiores vel laboriosam omnis ducimus
-enim nesciunt quaerat. Minus tempora cupiditate est quod.
-
-### Reprehenderit magni
-
-Sit commodi iste iure molestias qui amet voluptatem sed quaerat. Nostrum aut
-pariatur. Sint ipsa praesentium dolor error cumque velit tenetur quaerat
-exercitationem. Consequatur et cum atque mollitia qui quia necessitatibus.
-
-Voluptas beatae omnis omnis voluptas. Cum architecto ab sit ad eaque quas quia
-distinctio. Molestiae aperiam qui quis deleniti soluta quia qui. Dolores nostrum
-blanditiis libero optio id. Mollitia ad et asperiores quas saepe alias.

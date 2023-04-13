@@ -1,7 +1,7 @@
 ---
 slug: /work-in-progress/current-status
 section: In Progress
-title: Current Status
+title: Current status
 ---
 
 The EOP initiative is currently being incubated and led by a dedicated delivery team within Greater Wellington. This team consists of a Product Owner and Data and Software Engineers, and is working closely with subject matter experts from Greater Wellington and other councils.
