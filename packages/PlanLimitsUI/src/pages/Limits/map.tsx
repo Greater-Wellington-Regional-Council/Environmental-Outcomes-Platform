@@ -35,7 +35,9 @@ type Props = {
   viewState: ViewState;
   setViewState: (value: ViewState) => void;
   pinnedLocation: PinnedLocation | null;
-  setPinnedLocation: (prevValue: SetStateAction<PinnedLocation | null>) => void;
+  setPinnedLocation: (
+    updateFn: (prevValue: PinnedLocation | null) => PinnedLocation | null
+  ) => void;
   waterTakeFilter: WaterTakeFilter;
   queries: GeoJsonQueries;
   geoJsonDataLoaded: boolean;
