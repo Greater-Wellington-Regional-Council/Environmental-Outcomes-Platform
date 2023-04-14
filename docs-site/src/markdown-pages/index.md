@@ -52,7 +52,73 @@ fit-for-purpose tools, infrastructure and standards.
 
 ## Data Sets
 
-TODO—List of data sets
+The data being acquired into EOP is the core of deriving information to deliver
+outcomes. Most outcomes will be delivered from a combination of different data
+sets to derive information. As each outcome is delivered, it may require
+acquiring different data sets into EOP. While simplifying the access to data
+that councils already collect is a primary goal of EOP but it also can be the
+point for integrating and collecting data from third parties.
+
+This is list of the types of data sets that will be acquired by EOP. It isn't
+exhaustive, and EOP being successful will expand the types of data sets will be
+useful to have in EOP as more complex questions can be asked of the data once it
+is easier to access.
+
+### Environmental Observations
+
+Environmental observations are critical for assessing and documenting the impact
+of human activities on the natural environment. Councils have programmes for
+environmental monitoring that involve gathering data and information about
+various environmental parameters.
+
+Councils capture environmental observations in a variety of ways, and are often
+captured using a variety of systems, including custom built systems,
+spreadsheets and databases. A goal of EOP is to pull observations into a uniform
+model to allow for easier analysis across different environmental parameters.
+[Observations Data Model 2 (ODM)](https://www.odm2.org/ODM2/ODM2Overview.html)
+is being explored as a potential uniform model for EOP.
+
+### Regional Plans and Consenting Limits
+
+Plans are the primary mechanism for setting limits on how much of a resource can
+be allocated within a region. These limits are set by the council with the aim
+of ensuring that resources are used sustainably. Consents are the mechanism for
+allocating resources to a specific user limited by what is in the plan.
+
+The combination of plans and consents can be combined with environmental
+observations to determine how effective the plan is at delivering on
+sustainability goals. This can be used to help the future planning process by
+providing evidence of how effective the plan is.
+
+### Geospatial Context Data
+
+Presenting relevant information to the users of EOP requires providing context
+for areas that the users care about for example showing the location of
+environmental observations in relation to the land use of the area.
+
+This information may include:
+
+- Council boundaries
+- District boundaries
+- Iwi significant areas
+- Land cover
+
+### Geospatial Analysis Data
+
+While similar to Geospatial context data, data for geospatial analysis is
+specifically used to be combined with environmental observations to enable the
+identification of spatial patterns, trends, and hotspots, as well as the
+generation of predictive models and scenarios.
+
+For a example, how does the water quality at a site in a river impact the
+quality in the water downstream. This requires combining the point water quailty
+observations with a river network graph to model the downstream flow.
+
+This information may include:
+
+- River / Catchment network
+- Groundwater models
+- Land use
 
 ## Governance
 
