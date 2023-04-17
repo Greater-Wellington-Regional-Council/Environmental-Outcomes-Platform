@@ -80,15 +80,13 @@ is being explored as a potential uniform model for EOP.
 
 ### Regional Plans and Consenting Limits
 
-Plans are the primary mechanism for setting limits on how much of a resource can
-be allocated within a region. These limits are set by the council with the aim
-of ensuring that resources are used sustainably. Consents are the mechanism for
-allocating resources to a specific user limited by what is in the plan.
+Plans are the primary mechanism for setting sustainable limits on natural 
+resource use. Consents are the how these resources are allocated for use 
+according to these planned limits.
 
-The combination of plans and consents can be combined with environmental
-observations to determine how effective the plan is at delivering on
-sustainability goals. This can be used to help the future planning process by
-providing evidence of how effective the plan is.
+Combining data on these Plans and Consents with environmental observations helps
+determine how effective a Plan is at delivering on sustainability goals, and
+provides evidence to improve future planning efforts.
 
 ### Geospatial Context Data
 
