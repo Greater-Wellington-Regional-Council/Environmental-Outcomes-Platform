@@ -86,9 +86,8 @@ provides evidence to improve future planning efforts.
 
 ### Geospatial Context Data
 
-Presenting relevant information to the users of EOP requires providing context
-for areas that the users care about for example showing the location of
-environmental observations in relation to the land use of the area.
+Showing environmental observations and analysis in the context of relevant
+gespatial features helps improves usability and understandining of the data.
 
 This information may include:
 
