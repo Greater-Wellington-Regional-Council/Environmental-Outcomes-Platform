@@ -66,15 +66,11 @@ is easier to access.
 
 ### Environmental Observations
 
-Environmental observations are critical for assessing and documenting the impact
-of human activities on the natural environment. Councils have programmes for
-environmental monitoring that involve gathering data and information about
-various environmental parameters.
-
-Councils capture environmental observations in a variety of ways, and are often
-captured using a variety of systems, including custom built systems,
-spreadsheets and databases. A goal of EOP is to pull observations into a uniform
-model to allow for easier analysis across different environmental parameters.
+Environmental observations are critical for assessing and documenting impacts
+on the natural environment. Councils capture these observations using a variety
+of methods and systems, including spreadsheets, databases and software
+systems. A goal of EOP is to allow these observations to be captured in a uniform
+manner, allowing better analysis across different data-sets.
 [Observations Data Model 2 (ODM)](https://www.odm2.org/ODM2/ODM2Overview.html)
 is being explored as a potential uniform model for EOP.
 
