@@ -52,17 +52,14 @@ fit-for-purpose tools, infrastructure and standards.
 
 ## Data Sets
 
-The data being acquired into EOP is the core of deriving information to deliver
-outcomes. Most outcomes will be delivered from a combination of different data
-sets to derive information. As each outcome is delivered, it may require
-acquiring different data sets into EOP. While simplifying the access to data
-that councils already collect is a primary goal of EOP but it also can be the
-point for integrating and collecting data from third parties.
+This is a non-exhaustive list of the types data captured and housed by EOP. This
+will be driven by requirements to support the delivery of specific outcomes.
+ 
+We anticipate this list to expand as the platform is established, and more
+complex questions and outcomes can be asked of the data.
 
-This is list of the types of data sets that will be acquired by EOP. It isn't
-exhaustive, and EOP being successful will expand the types of data sets will be
-useful to have in EOP as more complex questions can be asked of the data once it
-is easier to access.
+While simplifying the access to the data that councils already collect is a
+primary goal, EOP will also be a of integration for third party systems.
 
 ### Environmental Observations
 
