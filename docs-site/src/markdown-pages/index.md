@@ -99,14 +99,13 @@ This information may include:
 
 ### Geospatial Analysis Data
 
-While similar to Geospatial context data, data for geospatial analysis is
-specifically used to be combined with environmental observations to enable the
-identification of spatial patterns, trends, and hotspots, as well as the
-generation of predictive models and scenarios.
+While similar to Geospatial context data, Geospatial Analysis Data can
+be combined with environmental observations to identify trends and in
+generate predictive models.
 
-For a example, how does the water quality at a site in a river impact the
-quality in the water downstream. This requires combining the point water quailty
-observations with a river network graph to model the downstream flow.
+For a example, using a river network graph to model downstream flow, combined
+with observations at a river site would help determine the how water quality at
+the river site impacts downstream water quality.
 
 This information may include:
 
