@@ -7,15 +7,15 @@ key: index
 EOP is an initiative led by Greater Wellington Regional Council to establish an
 end-to-end platform for capture, management and reporting of environmental
 information. The goal is to allow all regional councils to maximise the value
-they get from their environmental monitoring efforts, and provide clear,
-consistent and user-centric information to end-users if this data. It’s built
-based on the experiences from the Environment Canterbury Water Data programme
+they get from their environmental data efforts, and provide clear, consistent
+and user-centric information to end-users if this data. It’s built based on the
+experiences from the Environment Canterbury Water Data programme
 
 Regional councils have many systems for collecting and managing environmental
 data. These systems are often siloed and based on legacy technology. Integrating
-this data can be a slow, manual and and error prone process that is not
-consistent within or across councils. These challenges to limits the type of
-analysis that is feasible, meaning the value of the data is not fully realised.
+this data can be a slow, manual and error prone process that is not consistent
+within or across councils. Resulting in limitations to the type of analysis that
+is feasible, meaning the value of the data is not fully realised.
 
 Much work has been done in councils by people without a software or data
 engineering background on a best efforts' and as-needed basis. This has resulted
@@ -30,7 +30,7 @@ EOP aims to address these issues by building a solution which focuses on:
 The unit of delivery in EOP is an outcome, information provided to a user in a
 way which is appropriate to their needs. For each outcome, the minimum technical
 architecture will be built to deliver that outcome. With future outcomes
-building and evolving, the architecture to support the new outcomes.
+building and evolving the architecture to support the new outcomes.
 
 ### Multi Tenanted
 
@@ -38,8 +38,9 @@ From the ground up EOP is being built to support multiple councils. This will
 enable the effort to deliver an outcome by one council to be delivered to all
 councils for an incremental cost. This means in general, EOP will be agnostic of
 council internal systems with each council providing data to EOP in a
-standardised format. However, for some common systems used in a majority of
-councils, EOP can provide standardised adapters to allow the data to be
+standardised format. However, for some common systems used by a majority of
+councils, EOP can provide standardised adapters to allow councils to integrate
+the data with minimal effort.
 
 ### Modern Development Practices
 
@@ -111,9 +112,10 @@ The primary purpose of being open source in this sense is to be transparent
 about the work being done and lower the barrier to entry for other councils
 wishing to contribute.
 
-There is a cost to host and maintain an instance of the platform. Under guidence
-of the steering group the platform is being built to be multi-tenanted with a
-single instance run to support the councils of New Zealand. The EOP Delivery
-team will be responsible for hosting and maintaining the shared instance of EOP.
+There is a cost to host and maintain an instance of the platform. Under the
+guidence of the steering group the platform is being built to be multi-tenanted
+with a single instance run to support the councils of New Zealand. The EOP
+Delivery team will be responsible for hosting and maintaining the shared
+instance of EOP.
 
 _Last Revision April 2023_
