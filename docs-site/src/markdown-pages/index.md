@@ -52,7 +52,62 @@ fit-for-purpose tools, infrastructure and standards.
 
 ## Data Sets
 
-TODO—List of data sets
+This is a non-exhaustive list of the types data captured and housed by EOP. This
+will be driven by requirements to support the delivery of specific outcomes.
+
+We anticipate this list to expand as the platform is established, and more
+complex questions and outcomes can be asked of the data.
+
+While simplifying the access to the data that councils already collect is a
+primary goal, EOP will also be a of integration for third party systems.
+
+### Environmental Observations
+
+Environmental observations are critical for assessing and documenting impacts on
+the natural environment. Councils capture these observations using a variety of
+methods and systems, including spreadsheets, databases and software systems. A
+goal of EOP is to allow these observations to be captured in a uniform manner,
+allowing better analysis across different data-sets.
+[Observations Data Model 2 (ODM)](https://www.odm2.org/ODM2/ODM2Overview.html)
+is being explored as a potential uniform model for EOP.
+
+### Regional Plans and Consenting Limits
+
+Plans are the primary mechanism for setting sustainable limits on natural
+resource use. Consents are the how these resources are allocated for use
+according to these planned limits.
+
+Combining data on these Plans and Consents with environmental observations helps
+determine how effective a Plan is at delivering on sustainability goals, and
+provides evidence to improve future planning efforts.
+
+### Geospatial Context Data
+
+Showing environmental observations and analysis in the context of relevant
+gespatial features helps improves usability and understandining of the data.
+
+This information may include:
+
+- Council boundaries
+- District boundaries
+- Iwi significant areas
+
+### Geospatial Analysis Data
+
+While similar to Geospatial context data, Geospatial Analysis Data can be
+combined with environmental observations to identify trends and in generate
+predictive models.
+
+For a example, using a river network graph to model downstream flow, combined
+with observations at a river site would help determine the how water quality at
+the river site impacts downstream water quality.
+
+This information may include:
+
+- River / Catchment network
+- Groundwater models
+- Climate Models
+- Land use
 
 ## Governance
 

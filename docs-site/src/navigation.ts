@@ -7,7 +7,6 @@ export default [
     title: 'Design',
     links: [
       { title: 'High Level Overview', href: '/design/overview/' },
-      { title: 'Data Sets', href: '/design/data-sets/' },
       {
         title: 'Design principles',
         href: '/design/principles/',
