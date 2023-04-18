@@ -6,17 +6,22 @@ workspace "EOP - Plan Limits Viewer" {
         enterprise "EOP" {
             planLimitsSystem = softwareSystem "Plan Limits" "The system for providing Plan Limits information." {
 
-                frontend = container "Single-Page Application" "Provides ability for users to find which limits apply to what areas via a map interface." "Typescript / React" "Web Browser"
+                frontend = container "Web Application UI" "Provides ability for users to find which limits apply to what areas via a map interface." "Typescript / React" "Web Browser"
 
-                backend = container "Server Application" "Exposes Limits and Geospatial data via API. Keeps data store in sync with GIS Systems." "Kotlin / Spring Boot" {
+                backend = container "Management API" "Exposes Limit, Consent and Geospatial data via API. Keeps database in sync with GIS Systems and incoming Consent data." "Kotlin / Spring Boot" {
                     controllerGraph = component "Graph API Controller" "Allow access to data in the system." "Spring GraphQL Controller"
                     fetcherGis = component "Data Fetcher - GIS" "Keeps data store in sync latest version of data from the GIS system" "Spring Scheduled Http Sync"
                     loaderPlanLimits = component "Loader - Plan Limits" "Loads data store with the static plan limits data (SQL Scripts)" "Redgate Flyway"
                 }
 
+                ingestAPI = container "Ingest API" "Exposes an Authenticated HTTP API for incoming Limit and Consent data" "Kotlin / Spring Boot" {
+                }                
+
                 tileServer = container "Vector Tile Server" "Exposes Rivers data via a Vector Tile API." "Open Source Go"
 
                 database = container "Database" "Persistant storage for the Plan limits and Geospatial data, alloing for the Limits and Geospatial " "Postgis" "Database"
+
+                kafka = container "Kafka Broker" "Message Queue and Event Source for communication between systems"
 
                 datamodel = container "Data Model" {
                         sites = component "Sites" "A monitoring / management site"
@@ -33,6 +38,7 @@ workspace "EOP - Plan Limits Viewer" {
         group "GWRC" {
             gis = softwaresystem "GWRC GIS System" "The GWRC GIS system(s)" "Existing System"
             plan = element "GWRC NRPlan" "Documents" "The Natural Resources Plan" "Document"
+            consents = softwaresystem "GWRC Consents" "The Consents system" "Existing System"
         }
 
         group "Taihoro Nukurangi NIWA" {
@@ -52,6 +58,9 @@ workspace "EOP - Plan Limits Viewer" {
 
         # Relationships to Containers
         frontend -> user "Visits Plan limits viewer using"
+        ingestAPI -> kafka "Sends messages to"
+        kafka -> backend "Reads messagess from"
+        consents -> ingestAPI "Sends consent data to" "JSON/HTTPS"
         
         # Relationships to Components
         controllerGraph -> frontend "Gets GeoJSON data from" "GeoJson/HTTPS"

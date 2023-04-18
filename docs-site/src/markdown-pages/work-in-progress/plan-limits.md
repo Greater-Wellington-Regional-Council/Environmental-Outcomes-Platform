@@ -52,7 +52,7 @@ The application is deployed in a Docker Containers using [Amazon ECS](https://aw
 #### Ingest API
 This is a server-side applications which exposes authenticated APIs to accept incoming Plan and Consent data from Councils, and persist this to a Kafka Broker. It's developed and deployed using the same technology stack as the Management API.
 
-#### Tile Server
+#### Vector Tile Server
 This is a simple containerised deployment of [pg_tileserv](https://github.com/CrunchyData/pg_tileserv), which connects to the database and serves NZ River GIS data directly to the Web Application as Vector Tiles.
 
 #### Database
