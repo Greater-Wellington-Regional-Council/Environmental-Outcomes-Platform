@@ -106,6 +106,7 @@ This information may include:
 
 - River / Catchment network
 - Groundwater models
+- Climate Models
 - Land use
 
 ## Governance
