@@ -2,11 +2,10 @@
   "id" : 1,
   "name" : "EOP - Plan Limits Viewer",
   "description" : "Description",
-  "revision" : 0,
-  "lastModifiedDate" : "2023-01-25T04:19:15Z",
-  "lastModifiedAgent" : "structurizr-web/2828/diagram",
+  "lastModifiedDate" : "2023-04-18T00:18:58Z",
+  "lastModifiedAgent" : "structurizr-javascript",
   "properties" : {
-    "structurizr.dsl" : "d29ya3NwYWNlICJFT1AgLSBQbGFuIExpbWl0cyBWaWV3ZXIiIHsKCiAgICBtb2RlbCB7CiAgICAgICAgdXNlciA9IHBlcnNvbiAiVXNlciIgIkEgcGVyc29uIHdhbnRpbmcgdG8gdW5kZXJzdGFuZCB3aGF0IE5SUGxhbiBMaW1pdHMgYXBwbHkgdG8gYSBhcmVhLiIKCiAgICAgICAgZW50ZXJwcmlzZSAiRU9QIiB7CiAgICAgICAgICAgIHBsYW5MaW1pdHNTeXN0ZW0gPSBzb2Z0d2FyZVN5c3RlbSAiUGxhbiBMaW1pdHMiICJUaGUgc3lzdGVtIGZvciBwcm92aWRpbmcgUGxhbiBMaW1pdHMgaW5mb3JtYXRpb24uIiB7CgogICAgICAgICAgICAgICAgZnJvbnRlbmQgPSBjb250YWluZXIgIlNpbmdsZS1QYWdlIEFwcGxpY2F0aW9uIiAiUHJvdmlkZXMgYWJpbGl0eSBmb3IgdXNlcnMgdG8gZmluZCB3aGljaCBsaW1pdHMgYXBwbHkgdG8gd2hhdCBhcmVhcyB2aWEgYSBtYXAgaW50ZXJmYWNlLiIgIlR5cGVzY3JpcHQgLyBSZWFjdCIgIldlYiBCcm93c2VyIgoKICAgICAgICAgICAgICAgIGJhY2tlbmQgPSBjb250YWluZXIgIlNlcnZlciBBcHBsaWNhdGlvbiIgIkV4cG9zZXMgTGltaXRzIGFuZCBHZW9zcGF0aWFsIGRhdGEgdmlhIEFQSS4gS2VlcHMgZGF0YSBzdG9yZSBpbiBzeW5jIHdpdGggR0lTIFN5c3RlbXMuIiAiS290bGluIC8gU3ByaW5nIEJvb3QiIHsKICAgICAgICAgICAgICAgICAgICBjb250cm9sbGVyR3JhcGggPSBjb21wb25lbnQgIkdyYXBoIEFQSSBDb250cm9sbGVyIiAiQWxsb3cgYWNjZXNzIHRvIGRhdGEgaW4gdGhlIHN5c3RlbS4iICJTcHJpbmcgR3JhcGhRTCBDb250cm9sbGVyIgogICAgICAgICAgICAgICAgICAgIGZldGNoZXJHaXMgPSBjb21wb25lbnQgIkRhdGEgRmV0Y2hlciAtIEdJUyIgIktlZXBzIGRhdGEgc3RvcmUgaW4gc3luYyBsYXRlc3QgdmVyc2lvbiBvZiBkYXRhIGZyb20gdGhlIEdJUyBzeXN0ZW0iICJTcHJpbmcgU2NoZWR1bGVkIEh0dHAgU3luYyIKICAgICAgICAgICAgICAgICAgICBsb2FkZXJQbGFuTGltaXRzID0gY29tcG9uZW50ICJMb2FkZXIgLSBQbGFuIExpbWl0cyIgIkxvYWRzIGRhdGEgc3RvcmUgd2l0aCB0aGUgc3RhdGljIHBsYW4gbGltaXRzIGRhdGEgKFNRTCBTY3JpcHRzKSIgIlJlZGdhdGUgRmx5d2F5IgogICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIHRpbGVTZXJ2ZXIgPSBjb250YWluZXIgIlZlY3RvciBUaWxlIFNlcnZlciIgIkV4cG9zZXMgUml2ZXJzIGRhdGEgdmlhIGEgVmVjdG9yIFRpbGUgQVBJLiIgIk9wZW4gU291cmNlIEdvIgoKICAgICAgICAgICAgICAgIGRhdGFiYXNlID0gY29udGFpbmVyICJEYXRhYmFzZSIgIlBlcnNpc3RhbnQgc3RvcmFnZSBmb3IgdGhlIFBsYW4gbGltaXRzIGFuZCBHZW9zcGF0aWFsIGRhdGEsIGFsbG9pbmcgZm9yIHRoZSBMaW1pdHMgYW5kIEdlb3NwYXRpYWwgIiAiUG9zdGdpcyIgIkRhdGFiYXNlIgoKICAgICAgICAgICAgICAgIGRhdGFtb2RlbCA9IGNvbnRhaW5lciAiRGF0YSBNb2RlbCIgewogICAgICAgICAgICAgICAgICAgICAgICBzaXRlcyA9IGNvbXBvbmVudCAiU2l0ZXMiICJBIG1vbml0b3JpbmcgLyBtYW5hZ2VtZW50IHNpdGUiCiAgICAgICAgICAgICAgICAgICAgICAgIHJpdmVycyA9IGNvbXBvbmVudCAiUml2ZXJzIiAiQSByaXZlciBvbiB0aGUgbmV0d29yayIKICAgICAgICAgICAgICAgICAgICAgICAgY2F0Y2htZW50cyA9IGNvbXBvbmVudCAiQ2F0Y2htZW50cyIgIkEgaHlkcm9sb2dpY2FsIGNhdGNobWVudCBmb3Igd2F0ZXIiCiAgICAgICAgICAgICAgICAgICAgICAgIG1pbmltdW1GbG93cyA9IGNvbXBvbmVudCAiTWluaW11bSBGbG93IGxpbWl0cyIgIkEgbWluaW11bSBmbG93IGRlZmluZWQgaW4gdGhlIHBsYW4iCiAgICAgICAgICAgICAgICAgICAgICAgIGFsbG9jYXRpb25BbW91bnRzID0gY29tcG9uZW50ICJBbGxvY2F0aW9uIGFtb3VudHMiICJXYXRlciB0aGF0IGNhbiBiZSBhbGxvY2F0ZWQiCiAgICAgICAgICAgICAgICAgICAgICAgIGdyb3VuZFdhdGVyWm9uZXMgPSBjb21wb25lbnQgIkdyb3VuZHdhdGVyIFpvbmVzIiAiR3JvdW5kd2F0ZXIgem9uZXMiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CgogICAgICAgIH0KCiAgICAgICAgZ3JvdXAgIkdXUkMiIHsKICAgICAgICAgICAgZ2lzID0gc29mdHdhcmVzeXN0ZW0gIkdXUkMgR0lTIFN5c3RlbSIgIlRoZSBHV1JDIEdJUyBzeXN0ZW0ocykiICJFeGlzdGluZyBTeXN0ZW0iCiAgICAgICAgICAgIHBsYW4gPSBlbGVtZW50ICJHV1JDIE5SUGxhbiIgIkRvY3VtZW50cyIgIlRoZSBOYXR1cmFsIFJlc291cmNlcyBQbGFuIiAiRG9jdW1lbnQiCiAgICAgICAgfQoKICAgICAgICBncm91cCAiVGFpaG9ybyBOdWt1cmFuZ2kgTklXQSIgewogICAgICAgICAgICByZWMgPSBlbGVtZW50ICJOSVdBIFJFQyIgIkRvY3VtZW50cyIgIlJpdmVyIEVudmlyb25tZW50IENsYXNzaWZpY2F0aW9uIChSRUMyKSBNb2RlbCIgIkRvY3VtZW50IgogICAgICAgIH0KCiAgICAgICAgZ3JvdXAgIlRvaXTFqyBUZSBXaGVudWEgTElOWiIgewogICAgICAgICAgICBiYXNlbWFwcyA9IHNvZnR3YXJlc3lzdGVtICJMSU5aIEJhc2VtYXBzIFN5c3RlbSIgIlRoZSBMSU5aIEJhc2VtYXBzIiAiRXhpc3RpbmcgU3lzdGVtIgogICAgICAgIH0KCiAgICAgICAgIyBSZWxhdGlvbnNoaXBzIHRvIFN5c3RlbXMKICAgICAgICBwbGFuTGltaXRzU3lzdGVtIC0+IHVzZXIgIlVzZXMgdG8gdW5kZXJzdGFuZCBsaW1pdHMgZnJvbSB0aGUgTmF0dXJhbCBSZXNvdXJjZXMgUGxhbiIKICAgICAgICBnaXMgLT4gcGxhbkxpbWl0c1N5c3RlbSAiUHVsbHMgR2Vvc3BhdGlhbCBib3VuZGFyaWVzIGZyb20iCiAgICAgICAgcGxhbiAtPiBwbGFuTGltaXRzU3lzdGVtICJTdG9yZXMgdGhlIGRpZ2l0aXplZCBQbGFuIGxpbWl0cyIKICAgICAgICByZWMgLT4gcGxhbkxpbWl0c1N5c3RlbSAiU3RvcmVzIGEgY29weSBvZiB0aGUgUkVDIG1vZGVsIgogICAgICAgIGJhc2VtYXBzIC0+IHBsYW5MaW1pdHNTeXN0ZW0gIlB1bGxzIE5aIEJhc2VtYXAgaW1lZ3J5IGZyb20iCgogICAgICAgICMgUmVsYXRpb25zaGlwcyB0byBDb250YWluZXJzCiAgICAgICAgZnJvbnRlbmQgLT4gdXNlciAiVmlzaXRzIFBsYW4gbGltaXRzIHZpZXdlciB1c2luZyIKICAgICAgICAKICAgICAgICAjIFJlbGF0aW9uc2hpcHMgdG8gQ29tcG9uZW50cwogICAgICAgIGNvbnRyb2xsZXJHcmFwaCAtPiBmcm9udGVuZCAiR2V0cyBHZW9KU09OIGRhdGEgZnJvbSIgIkdlb0pzb24vSFRUUFMiCiAgICAgICAgdGlsZVNlcnZlciAtPiBmcm9udGVuZCAiR2V0cyByaXZlcnMgdmVjdG9yIHRpbGVzIGZyb20iICJQcm90b2J1Zi9IVFRQUyIKICAgICAgICBiYXNlbWFwcyAtPiBmcm9udGVuZCAiTG9hZHMgYmFzZW1hcHMgZnJvbSIgIkpTT04gYW5kIFdFQlAvSFRUUFMiCgogICAgICAgIGZldGNoZXJHaXMgLT4gZGF0YWJhc2UgIlN0b3JlcyB0byIgIkpEQkMiCiAgICAgICAgZ2lzIC0+IGZldGNoZXJHaXMgIlN5bmNzIHNwYXRpYWwgZmVhdHVyZXMgZnJvbSIgIkpTT04vSFRUUFMiCiAgICAgICAgbG9hZGVyUGxhbkxpbWl0cyAtPiBkYXRhYmFzZSAiU3RvcmVzIHRvIiAiSkRCQyIKICAgICAgICBkYXRhYmFzZSAtPiBjb250cm9sbGVyR3JhcGggIlJlYWRzIGZyb20iICJKREJDIgogICAgICAgIGRhdGFiYXNlIC0+IHRpbGVTZXJ2ZXIgIlJlYWRzIGZyb20iICJUQ1AiCgogICAgICAgICMgUmVsYXRpb25zaGlwcyBpbiBkYXRhIG1vZGVsCiAgICAgICAgc2l0ZXMgLT4gUml2ZXJzICJtb25pdG9yIgogICAgICAgIHJpdmVycyAtPiBDYXRjaG1lbnRzICJhcmUgcGFydCBvZiIKICAgICAgICBtaW5pbXVtRkxvd3MgLT4gIlNpdGVzIiAiYXJlIG1lYXN1cmVkIGF0IgogICAgICAgIG1pbmltdW1GTG93cyAtPiAiQ2F0Y2htZW50cyIgImhhdmUgYW4gZWZmZWN0IG9uIHdhdGVyIHVzZSBpbiIKICAgICAgICBhbGxvY2F0aW9uQW1vdW50cyAtPiAiY2F0Y2htZW50cyIgImJlbG9uZyB0byIKICAgICAgICBhbGxvY2F0aW9uQW1vdW50cyAtPiAiZ3JvdW5kV2F0ZXJab25lcyIgImJlbG9uZyB0byIKICAgIH0KCiAgICB2aWV3cyB7CgogICAgICAgIHN5c3RlbUNvbnRleHQgcGxhbkxpbWl0c1N5c3RlbSAiU3lzdGVtQ29udGV4dCIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dCBsciA0MDAgNDAwCiAgICAgICAgfQoKICAgICAgICBjb250YWluZXIgcGxhbkxpbWl0c1N5c3RlbSAiU3lzdGVtQ29udGFpbmVycyIgewogICAgICAgICAgICBpbmNsdWRlICogICAgICAgICAgIAogICAgICAgICAgICBleGNsdWRlIGRhdGFtb2RlbAogICAgICAgICAgICBhdXRvbGF5b3V0IGxyIDQwMCA0MDAgICAgICAgICAgICAKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBiYWNrZW5kICJTZXJ2ZXJDb21wb25lbnRzIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyIDQwMCA0MDAKICAgICAgICB9CiAgICAgICAgCiAgICAgICAgY29tcG9uZW50IGRhdGFtb2RlbCAiRGF0YU1vZGVsIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyIDQwMCA0MDAKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIkNvbXBvbmVudCIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjODViYmYwCiAgICAgICAgICAgICAgICBjb2xvciAjMDAwMDAwCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29udGFpbmVyIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM0MzhkZDUKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJTb2Z0d2FyZSBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzExNjhiZAogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBDeWxpbmRlcgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIldlYiBCcm93c2VyIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBXZWJCcm93c2VyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiUGVyc29uIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBwZXJzb24KICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA4NDI3YgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkV4aXN0aW5nIFN5c3RlbSIgewogICAgICAgICAgICAgICAgc2hhcGUgUm91bmRlZEJveAogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRG9jdW1lbnQiIHsKICAgICAgICAgICAgICAgIHNoYXBlIEZvbGRlcgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjZmZlOWEyCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0K"
+    "structurizr.dsl" : "d29ya3NwYWNlICJFT1AgLSBQbGFuIExpbWl0cyBWaWV3ZXIiIHsKCiAgICBtb2RlbCB7CiAgICAgICAgdXNlciA9IHBlcnNvbiAiVXNlciIgIkEgcGVyc29uIHdhbnRpbmcgdG8gdW5kZXJzdGFuZCB3aGF0IE5SUGxhbiBMaW1pdHMgYXBwbHkgdG8gYSBhcmVhLiIKCiAgICAgICAgZW50ZXJwcmlzZSAiRU9QIiB7CiAgICAgICAgICAgIHBsYW5MaW1pdHNTeXN0ZW0gPSBzb2Z0d2FyZVN5c3RlbSAiUGxhbiBMaW1pdHMiICJUaGUgc3lzdGVtIGZvciBwcm92aWRpbmcgUGxhbiBMaW1pdHMgaW5mb3JtYXRpb24uIiB7CgogICAgICAgICAgICAgICAgZnJvbnRlbmQgPSBjb250YWluZXIgIldlYiBBcHBsaWNhdGlvbiBVSSIgIlByb3ZpZGVzIGFiaWxpdHkgZm9yIHVzZXJzIHRvIGZpbmQgd2hpY2ggbGltaXRzIGFwcGx5IHRvIHdoYXQgYXJlYXMgdmlhIGEgbWFwIGludGVyZmFjZS4iICJUeXBlc2NyaXB0IC8gUmVhY3QiICJXZWIgQnJvd3NlciIKCiAgICAgICAgICAgICAgICBiYWNrZW5kID0gY29udGFpbmVyICJNYW5hZ2VtZW50IEFQSSIgIkV4cG9zZXMgTGltaXQsIENvbnNlbnQgYW5kIEdlb3NwYXRpYWwgZGF0YSB2aWEgQVBJLiBLZWVwcyBkYXRhYmFzZSBpbiBzeW5jIHdpdGggR0lTIFN5c3RlbXMgYW5kIGluY29taW5nIENvbnNlbnQgZGF0YS4iICJLb3RsaW4gLyBTcHJpbmcgQm9vdCIgewogICAgICAgICAgICAgICAgICAgIGNvbnRyb2xsZXJHcmFwaCA9IGNvbXBvbmVudCAiR3JhcGggQVBJIENvbnRyb2xsZXIiICJBbGxvdyBhY2Nlc3MgdG8gZGF0YSBpbiB0aGUgc3lzdGVtLiIgIlNwcmluZyBHcmFwaFFMIENvbnRyb2xsZXIiCiAgICAgICAgICAgICAgICAgICAgZmV0Y2hlckdpcyA9IGNvbXBvbmVudCAiRGF0YSBGZXRjaGVyIC0gR0lTIiAiS2VlcHMgZGF0YSBzdG9yZSBpbiBzeW5jIGxhdGVzdCB2ZXJzaW9uIG9mIGRhdGEgZnJvbSB0aGUgR0lTIHN5c3RlbSIgIlNwcmluZyBTY2hlZHVsZWQgSHR0cCBTeW5jIgogICAgICAgICAgICAgICAgICAgIGxvYWRlclBsYW5MaW1pdHMgPSBjb21wb25lbnQgIkxvYWRlciAtIFBsYW4gTGltaXRzIiAiTG9hZHMgZGF0YSBzdG9yZSB3aXRoIHRoZSBzdGF0aWMgcGxhbiBsaW1pdHMgZGF0YSAoU1FMIFNjcmlwdHMpIiAiUmVkZ2F0ZSBGbHl3YXkiCiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgaW5nZXN0QVBJID0gY29udGFpbmVyICJJbmdlc3QgQVBJIiAiRXhwb3NlcyBhbiBBdXRoZW50aWNhdGVkIEhUVFAgQVBJIGZvciBpbmNvbWluZyBMaW1pdCBhbmQgQ29uc2VudCBkYXRhIiAiS290bGluIC8gU3ByaW5nIEJvb3QiIHsKICAgICAgICAgICAgICAgIH0gICAgICAgICAgICAgICAgCgogICAgICAgICAgICAgICAgdGlsZVNlcnZlciA9IGNvbnRhaW5lciAiVmVjdG9yIFRpbGUgU2VydmVyIiAiRXhwb3NlcyBSaXZlcnMgZGF0YSB2aWEgYSBWZWN0b3IgVGlsZSBBUEkuIiAiT3BlbiBTb3VyY2UgR28iCgogICAgICAgICAgICAgICAgZGF0YWJhc2UgPSBjb250YWluZXIgIkRhdGFiYXNlIiAiUGVyc2lzdGFudCBzdG9yYWdlIGZvciB0aGUgUGxhbiBsaW1pdHMgYW5kIEdlb3NwYXRpYWwgZGF0YSwgYWxsb2luZyBmb3IgdGhlIExpbWl0cyBhbmQgR2Vvc3BhdGlhbCAiICJQb3N0Z2lzIiAiRGF0YWJhc2UiCgogICAgICAgICAgICAgICAga2Fma2EgPSBjb250YWluZXIgIkthZmthIEJyb2tlciIgIk1lc3NhZ2UgUXVldWUgYW5kIEV2ZW50IFNvdXJjZSBmb3IgY29tbXVuaWNhdGlvbiBiZXR3ZWVuIHN5c3RlbXMiCgogICAgICAgICAgICAgICAgZGF0YW1vZGVsID0gY29udGFpbmVyICJEYXRhIE1vZGVsIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHNpdGVzID0gY29tcG9uZW50ICJTaXRlcyIgIkEgbW9uaXRvcmluZyAvIG1hbmFnZW1lbnQgc2l0ZSIKICAgICAgICAgICAgICAgICAgICAgICAgcml2ZXJzID0gY29tcG9uZW50ICJSaXZlcnMiICJBIHJpdmVyIG9uIHRoZSBuZXR3b3JrIgogICAgICAgICAgICAgICAgICAgICAgICBjYXRjaG1lbnRzID0gY29tcG9uZW50ICJDYXRjaG1lbnRzIiAiQSBoeWRyb2xvZ2ljYWwgY2F0Y2htZW50IGZvciB3YXRlciIKICAgICAgICAgICAgICAgICAgICAgICAgbWluaW11bUZsb3dzID0gY29tcG9uZW50ICJNaW5pbXVtIEZsb3cgbGltaXRzIiAiQSBtaW5pbXVtIGZsb3cgZGVmaW5lZCBpbiB0aGUgcGxhbiIKICAgICAgICAgICAgICAgICAgICAgICAgYWxsb2NhdGlvbkFtb3VudHMgPSBjb21wb25lbnQgIkFsbG9jYXRpb24gYW1vdW50cyIgIldhdGVyIHRoYXQgY2FuIGJlIGFsbG9jYXRlZCIKICAgICAgICAgICAgICAgICAgICAgICAgZ3JvdW5kV2F0ZXJab25lcyA9IGNvbXBvbmVudCAiR3JvdW5kd2F0ZXIgWm9uZXMiICJHcm91bmR3YXRlciB6b25lcyIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KCiAgICAgICAgfQoKICAgICAgICBncm91cCAiR1dSQyIgewogICAgICAgICAgICBnaXMgPSBzb2Z0d2FyZXN5c3RlbSAiR1dSQyBHSVMgU3lzdGVtIiAiVGhlIEdXUkMgR0lTIHN5c3RlbShzKSIgIkV4aXN0aW5nIFN5c3RlbSIKICAgICAgICAgICAgcGxhbiA9IGVsZW1lbnQgIkdXUkMgTlJQbGFuIiAiRG9jdW1lbnRzIiAiVGhlIE5hdHVyYWwgUmVzb3VyY2VzIFBsYW4iICJEb2N1bWVudCIKICAgICAgICAgICAgY29uc2VudHMgPSBzb2Z0d2FyZXN5c3RlbSAiR1dSQyBDb25zZW50cyIgIlRoZSBDb25zZW50cyBzeXN0ZW0iICJFeGlzdGluZyBTeXN0ZW0iCiAgICAgICAgfQoKICAgICAgICBncm91cCAiVGFpaG9ybyBOdWt1cmFuZ2kgTklXQSIgewogICAgICAgICAgICByZWMgPSBlbGVtZW50ICJOSVdBIFJFQyIgIkRvY3VtZW50cyIgIlJpdmVyIEVudmlyb25tZW50IENsYXNzaWZpY2F0aW9uIChSRUMyKSBNb2RlbCIgIkRvY3VtZW50IgogICAgICAgIH0KCiAgICAgICAgZ3JvdXAgIlRvaXTFqyBUZSBXaGVudWEgTElOWiIgewogICAgICAgICAgICBiYXNlbWFwcyA9IHNvZnR3YXJlc3lzdGVtICJMSU5aIEJhc2VtYXBzIFN5c3RlbSIgIlRoZSBMSU5aIEJhc2VtYXBzIiAiRXhpc3RpbmcgU3lzdGVtIgogICAgICAgIH0KCiAgICAgICAgIyBSZWxhdGlvbnNoaXBzIHRvIFN5c3RlbXMKICAgICAgICBwbGFuTGltaXRzU3lzdGVtIC0+IHVzZXIgIlVzZXMgdG8gdW5kZXJzdGFuZCBsaW1pdHMgZnJvbSB0aGUgTmF0dXJhbCBSZXNvdXJjZXMgUGxhbiIKICAgICAgICBnaXMgLT4gcGxhbkxpbWl0c1N5c3RlbSAiUHVsbHMgR2Vvc3BhdGlhbCBib3VuZGFyaWVzIGZyb20iCiAgICAgICAgcGxhbiAtPiBwbGFuTGltaXRzU3lzdGVtICJTdG9yZXMgdGhlIGRpZ2l0aXplZCBQbGFuIGxpbWl0cyIKICAgICAgICByZWMgLT4gcGxhbkxpbWl0c1N5c3RlbSAiU3RvcmVzIGEgY29weSBvZiB0aGUgUkVDIG1vZGVsIgogICAgICAgIGJhc2VtYXBzIC0+IHBsYW5MaW1pdHNTeXN0ZW0gIlB1bGxzIE5aIEJhc2VtYXAgaW1lZ3J5IGZyb20iCgogICAgICAgICMgUmVsYXRpb25zaGlwcyB0byBDb250YWluZXJzCiAgICAgICAgZnJvbnRlbmQgLT4gdXNlciAiVmlzaXRzIFBsYW4gbGltaXRzIHZpZXdlciB1c2luZyIKICAgICAgICBpbmdlc3RBUEkgLT4ga2Fma2EgIlNlbmRzIG1lc3NhZ2VzIHRvIgogICAgICAgIGthZmthIC0+IGJhY2tlbmQgIlJlYWRzIG1lc3NhZ2VzcyBmcm9tIgogICAgICAgIGNvbnNlbnRzIC0+IGluZ2VzdEFQSSAiU2VuZHMgY29uc2VudCBkYXRhIHRvIiAiSlNPTi9IVFRQUyIKICAgICAgICAKICAgICAgICAjIFJlbGF0aW9uc2hpcHMgdG8gQ29tcG9uZW50cwogICAgICAgIGNvbnRyb2xsZXJHcmFwaCAtPiBmcm9udGVuZCAiR2V0cyBHZW9KU09OIGRhdGEgZnJvbSIgIkdlb0pzb24vSFRUUFMiCiAgICAgICAgdGlsZVNlcnZlciAtPiBmcm9udGVuZCAiR2V0cyByaXZlcnMgdmVjdG9yIHRpbGVzIGZyb20iICJQcm90b2J1Zi9IVFRQUyIKICAgICAgICBiYXNlbWFwcyAtPiBmcm9udGVuZCAiTG9hZHMgYmFzZW1hcHMgZnJvbSIgIkpTT04gYW5kIFdFQlAvSFRUUFMiCgogICAgICAgIGZldGNoZXJHaXMgLT4gZGF0YWJhc2UgIlN0b3JlcyB0byIgIkpEQkMiCiAgICAgICAgZ2lzIC0+IGZldGNoZXJHaXMgIlN5bmNzIHNwYXRpYWwgZmVhdHVyZXMgZnJvbSIgIkpTT04vSFRUUFMiCiAgICAgICAgbG9hZGVyUGxhbkxpbWl0cyAtPiBkYXRhYmFzZSAiU3RvcmVzIHRvIiAiSkRCQyIKICAgICAgICBkYXRhYmFzZSAtPiBjb250cm9sbGVyR3JhcGggIlJlYWRzIGZyb20iICJKREJDIgogICAgICAgIGRhdGFiYXNlIC0+IHRpbGVTZXJ2ZXIgIlJlYWRzIGZyb20iICJUQ1AiCgogICAgICAgICMgUmVsYXRpb25zaGlwcyBpbiBkYXRhIG1vZGVsCiAgICAgICAgc2l0ZXMgLT4gUml2ZXJzICJtb25pdG9yIgogICAgICAgIHJpdmVycyAtPiBDYXRjaG1lbnRzICJhcmUgcGFydCBvZiIKICAgICAgICBtaW5pbXVtRkxvd3MgLT4gIlNpdGVzIiAiYXJlIG1lYXN1cmVkIGF0IgogICAgICAgIG1pbmltdW1GTG93cyAtPiAiQ2F0Y2htZW50cyIgImhhdmUgYW4gZWZmZWN0IG9uIHdhdGVyIHVzZSBpbiIKICAgICAgICBhbGxvY2F0aW9uQW1vdW50cyAtPiAiY2F0Y2htZW50cyIgImJlbG9uZyB0byIKICAgICAgICBhbGxvY2F0aW9uQW1vdW50cyAtPiAiZ3JvdW5kV2F0ZXJab25lcyIgImJlbG9uZyB0byIKICAgIH0KCiAgICB2aWV3cyB7CgogICAgICAgIHN5c3RlbUNvbnRleHQgcGxhbkxpbWl0c1N5c3RlbSAiU3lzdGVtQ29udGV4dCIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b0xheW91dCBsciA0MDAgNDAwCiAgICAgICAgfQoKICAgICAgICBjb250YWluZXIgcGxhbkxpbWl0c1N5c3RlbSAiU3lzdGVtQ29udGFpbmVycyIgewogICAgICAgICAgICBpbmNsdWRlICogICAgICAgICAgIAogICAgICAgICAgICBleGNsdWRlIGRhdGFtb2RlbAogICAgICAgICAgICBhdXRvbGF5b3V0IGxyIDQwMCA0MDAgICAgICAgICAgICAKICAgICAgICB9CgogICAgICAgIGNvbXBvbmVudCBiYWNrZW5kICJTZXJ2ZXJDb21wb25lbnRzIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyIDQwMCA0MDAKICAgICAgICB9CiAgICAgICAgCiAgICAgICAgY29tcG9uZW50IGRhdGFtb2RlbCAiRGF0YU1vZGVsIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyIDQwMCA0MDAKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIkNvbXBvbmVudCIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjODViYmYwCiAgICAgICAgICAgICAgICBjb2xvciAjMDAwMDAwCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29udGFpbmVyIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM0MzhkZDUKICAgICAgICAgICAgICAgIGNvbG9yICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJTb2Z0d2FyZSBTeXN0ZW0iIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzExNjhiZAogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBDeWxpbmRlcgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIldlYiBCcm93c2VyIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBXZWJCcm93c2VyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiUGVyc29uIiB7CiAgICAgICAgICAgICAgICBzaGFwZSBwZXJzb24KICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA4NDI3YgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkV4aXN0aW5nIFN5c3RlbSIgewogICAgICAgICAgICAgICAgc2hhcGUgUm91bmRlZEJveAogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRG9jdW1lbnQiIHsKICAgICAgICAgICAgICAgIHNoYXBlIEZvbGRlcgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjZmZlOWEyCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0K"
   },
   "configuration" : { },
   "model" : {
@@ -16,33 +15,39 @@
     "people" : [ {
       "id" : "1",
       "tags" : "Element,Person",
+      "properties" : {
+        "structurizr.dsl.identifier" : "user"
+      },
       "name" : "User",
       "description" : "A person wanting to understand what NRPlan Limits apply to a area.",
       "location" : "External"
     } ],
     "softwareSystems" : [ {
-      "id" : "17",
+      "id" : "19",
       "tags" : "Element,Software System,Existing System",
+      "properties" : {
+        "structurizr.dsl.identifier" : "gis"
+      },
       "name" : "GWRC GIS System",
       "description" : "The GWRC GIS system(s)",
       "relationships" : [ {
-        "id" : "34",
-        "sourceId" : "17",
-        "destinationId" : "4",
-        "description" : "Syncs spatial features from",
-        "technology" : "JSON/HTTPS",
-        "linkedRelationshipId" : "33"
-      }, {
-        "id" : "33",
+        "id" : "40",
         "tags" : "Relationship",
-        "sourceId" : "17",
+        "sourceId" : "19",
         "destinationId" : "6",
         "description" : "Syncs spatial features from",
         "technology" : "JSON/HTTPS"
       }, {
-        "id" : "22",
+        "id" : "41",
+        "sourceId" : "19",
+        "destinationId" : "4",
+        "description" : "Syncs spatial features from",
+        "technology" : "JSON/HTTPS",
+        "linkedRelationshipId" : "40"
+      }, {
+        "id" : "25",
         "tags" : "Relationship",
-        "sourceId" : "17",
+        "sourceId" : "19",
         "destinationId" : "2",
         "description" : "Pulls Geospatial boundaries from"
       } ],
@@ -50,34 +55,15 @@
       "location" : "External",
       "documentation" : { }
     }, {
-      "id" : "20",
-      "tags" : "Element,Software System,Existing System",
-      "name" : "LINZ Basemaps System",
-      "description" : "The LINZ Basemaps",
-      "relationships" : [ {
-        "id" : "30",
-        "tags" : "Relationship",
-        "sourceId" : "20",
-        "destinationId" : "3",
-        "description" : "Loads basemaps from",
-        "technology" : "JSON and WEBP/HTTPS"
-      }, {
-        "id" : "25",
-        "tags" : "Relationship",
-        "sourceId" : "20",
-        "destinationId" : "2",
-        "description" : "Pulls NZ Basemap imegry from"
-      } ],
-      "group" : "Toitū Te Whenua LINZ",
-      "location" : "External",
-      "documentation" : { }
-    }, {
       "id" : "2",
       "tags" : "Element,Software System",
+      "properties" : {
+        "structurizr.dsl.identifier" : "planlimitssystem"
+      },
       "name" : "Plan Limits",
       "description" : "The system for providing Plan Limits information.",
       "relationships" : [ {
-        "id" : "21",
+        "id" : "24",
         "tags" : "Relationship",
         "sourceId" : "2",
         "destinationId" : "1",
@@ -85,91 +71,75 @@
       } ],
       "location" : "Internal",
       "containers" : [ {
-        "id" : "9",
-        "tags" : "Element,Container,Database",
-        "name" : "Database",
-        "description" : "Persistant storage for the Plan limits and Geospatial data, alloing for the Limits and Geospatial",
-        "relationships" : [ {
-          "id" : "37",
-          "sourceId" : "9",
-          "destinationId" : "4",
-          "description" : "Reads from",
-          "technology" : "JDBC",
-          "linkedRelationshipId" : "36"
-        }, {
-          "id" : "38",
-          "tags" : "Relationship",
-          "sourceId" : "9",
-          "destinationId" : "8",
-          "description" : "Reads from",
-          "technology" : "TCP"
-        }, {
-          "id" : "36",
-          "tags" : "Relationship",
-          "sourceId" : "9",
-          "destinationId" : "5",
-          "description" : "Reads from",
-          "technology" : "JDBC"
-        } ],
-        "technology" : "Postgis"
-      }, {
         "id" : "4",
         "tags" : "Element,Container",
-        "name" : "Server Application",
-        "description" : "Exposes Limits and Geospatial data via API. Keeps data store in sync with GIS Systems.",
+        "properties" : {
+          "structurizr.dsl.identifier" : "backend"
+        },
+        "name" : "Management API",
+        "description" : "Exposes Limit, Consent and Geospatial data via API. Keeps database in sync with GIS Systems and incoming Consent data.",
         "relationships" : [ {
-          "id" : "32",
-          "sourceId" : "4",
-          "destinationId" : "9",
-          "description" : "Stores to",
-          "technology" : "JDBC",
-          "linkedRelationshipId" : "31"
-        }, {
-          "id" : "28",
+          "id" : "35",
           "sourceId" : "4",
           "destinationId" : "3",
           "description" : "Gets GeoJSON data from",
           "technology" : "GeoJson/HTTPS",
-          "linkedRelationshipId" : "27"
+          "linkedRelationshipId" : "34"
+        }, {
+          "id" : "39",
+          "sourceId" : "4",
+          "destinationId" : "10",
+          "description" : "Stores to",
+          "technology" : "JDBC",
+          "linkedRelationshipId" : "38"
         } ],
         "technology" : "Kotlin / Spring Boot",
         "components" : [ {
-          "id" : "6",
-          "tags" : "Element,Component",
-          "name" : "Data Fetcher - GIS",
-          "description" : "Keeps data store in sync latest version of data from the GIS system",
-          "relationships" : [ {
-            "id" : "31",
-            "tags" : "Relationship",
-            "sourceId" : "6",
-            "destinationId" : "9",
-            "description" : "Stores to",
-            "technology" : "JDBC"
-          } ],
-          "technology" : "Spring Scheduled Http Sync",
-          "size" : 0
-        }, {
           "id" : "7",
           "tags" : "Element,Component",
+          "properties" : {
+            "structurizr.dsl.identifier" : "loaderplanlimits"
+          },
           "name" : "Loader - Plan Limits",
           "description" : "Loads data store with the static plan limits data (SQL Scripts)",
           "relationships" : [ {
-            "id" : "35",
+            "id" : "42",
             "tags" : "Relationship",
             "sourceId" : "7",
-            "destinationId" : "9",
+            "destinationId" : "10",
             "description" : "Stores to",
             "technology" : "JDBC"
           } ],
           "technology" : "Redgate Flyway",
-          "size" : 0
+          "documentation" : { }
+        }, {
+          "id" : "6",
+          "tags" : "Element,Component",
+          "properties" : {
+            "structurizr.dsl.identifier" : "fetchergis"
+          },
+          "name" : "Data Fetcher - GIS",
+          "description" : "Keeps data store in sync latest version of data from the GIS system",
+          "relationships" : [ {
+            "id" : "38",
+            "tags" : "Relationship",
+            "sourceId" : "6",
+            "destinationId" : "10",
+            "description" : "Stores to",
+            "technology" : "JDBC"
+          } ],
+          "technology" : "Spring Scheduled Http Sync",
+          "documentation" : { }
         }, {
           "id" : "5",
           "tags" : "Element,Component",
+          "properties" : {
+            "structurizr.dsl.identifier" : "controllergraph"
+          },
           "name" : "Graph API Controller",
           "description" : "Allow access to data in the system.",
           "relationships" : [ {
-            "id" : "27",
+            "id" : "34",
             "tags" : "Relationship",
             "sourceId" : "5",
             "destinationId" : "3",
@@ -177,159 +147,312 @@
             "technology" : "GeoJson/HTTPS"
           } ],
           "technology" : "Spring GraphQL Controller",
-          "size" : 0
-        } ]
-      }, {
-        "id" : "10",
-        "tags" : "Element,Container",
-        "name" : "Data Model",
-        "components" : [ {
-          "id" : "14",
-          "tags" : "Element,Component",
-          "name" : "Minimum Flow limits",
-          "description" : "A minimum flow defined in the plan",
-          "relationships" : [ {
-            "id" : "42",
-            "tags" : "Relationship",
-            "sourceId" : "14",
-            "destinationId" : "13",
-            "description" : "have an effect on water use in"
-          }, {
-            "id" : "41",
-            "tags" : "Relationship",
-            "sourceId" : "14",
-            "destinationId" : "11",
-            "description" : "are measured at"
-          } ],
-          "size" : 0
-        }, {
-          "id" : "13",
-          "tags" : "Element,Component",
-          "name" : "Catchments",
-          "description" : "A hydrological catchment for water",
-          "size" : 0
-        }, {
-          "id" : "12",
-          "tags" : "Element,Component",
-          "name" : "Rivers",
-          "description" : "A river on the network",
-          "relationships" : [ {
-            "id" : "40",
-            "tags" : "Relationship",
-            "sourceId" : "12",
-            "destinationId" : "13",
-            "description" : "are part of"
-          } ],
-          "size" : 0
-        }, {
-          "id" : "16",
-          "tags" : "Element,Component",
-          "name" : "Groundwater Zones",
-          "description" : "Groundwater zones",
-          "size" : 0
-        }, {
-          "id" : "11",
-          "tags" : "Element,Component",
-          "name" : "Sites",
-          "description" : "A monitoring / management site",
-          "relationships" : [ {
-            "id" : "39",
-            "tags" : "Relationship",
-            "sourceId" : "11",
-            "destinationId" : "12",
-            "description" : "monitor"
-          } ],
-          "size" : 0
-        }, {
-          "id" : "15",
-          "tags" : "Element,Component",
-          "name" : "Allocation amounts",
-          "description" : "Water that can be allocated",
-          "relationships" : [ {
-            "id" : "43",
-            "tags" : "Relationship",
-            "sourceId" : "15",
-            "destinationId" : "13",
-            "description" : "belong to"
-          }, {
-            "id" : "44",
-            "tags" : "Relationship",
-            "sourceId" : "15",
-            "destinationId" : "16",
-            "description" : "belong to"
-          } ],
-          "size" : 0
-        } ]
+          "documentation" : { }
+        } ],
+        "documentation" : { }
       }, {
         "id" : "8",
         "tags" : "Element,Container",
-        "name" : "Vector Tile Server",
-        "description" : "Exposes Rivers data via a Vector Tile API.",
+        "properties" : {
+          "structurizr.dsl.identifier" : "ingestapi"
+        },
+        "name" : "Ingest API",
+        "description" : "Exposes an Authenticated HTTP API for incoming Limit and Consent data",
         "relationships" : [ {
-          "id" : "29",
+          "id" : "30",
           "tags" : "Relationship",
           "sourceId" : "8",
-          "destinationId" : "3",
-          "description" : "Gets rivers vector tiles from",
-          "technology" : "Protobuf/HTTPS"
+          "destinationId" : "11",
+          "description" : "Sends messages to"
         } ],
-        "technology" : "Open Source Go"
+        "technology" : "Kotlin / Spring Boot",
+        "documentation" : { }
       }, {
         "id" : "3",
         "tags" : "Element,Container,Web Browser",
-        "name" : "Single-Page Application",
+        "properties" : {
+          "structurizr.dsl.identifier" : "frontend"
+        },
+        "name" : "Web Application UI",
         "description" : "Provides ability for users to find which limits apply to what areas via a map interface.",
         "relationships" : [ {
-          "id" : "26",
+          "id" : "29",
           "tags" : "Relationship",
           "sourceId" : "3",
           "destinationId" : "1",
           "description" : "Visits Plan limits viewer using"
         } ],
-        "technology" : "Typescript / React"
+        "technology" : "Typescript / React",
+        "documentation" : { }
+      }, {
+        "id" : "9",
+        "tags" : "Element,Container",
+        "properties" : {
+          "structurizr.dsl.identifier" : "tileserver"
+        },
+        "name" : "Vector Tile Server",
+        "description" : "Exposes Rivers data via a Vector Tile API.",
+        "relationships" : [ {
+          "id" : "36",
+          "tags" : "Relationship",
+          "sourceId" : "9",
+          "destinationId" : "3",
+          "description" : "Gets rivers vector tiles from",
+          "technology" : "Protobuf/HTTPS"
+        } ],
+        "technology" : "Open Source Go",
+        "documentation" : { }
+      }, {
+        "id" : "10",
+        "tags" : "Element,Container,Database",
+        "properties" : {
+          "structurizr.dsl.identifier" : "database"
+        },
+        "name" : "Database",
+        "description" : "Persistant storage for the Plan limits and Geospatial data, alloing for the Limits and Geospatial",
+        "relationships" : [ {
+          "id" : "43",
+          "tags" : "Relationship",
+          "sourceId" : "10",
+          "destinationId" : "5",
+          "description" : "Reads from",
+          "technology" : "JDBC"
+        }, {
+          "id" : "44",
+          "sourceId" : "10",
+          "destinationId" : "4",
+          "description" : "Reads from",
+          "technology" : "JDBC",
+          "linkedRelationshipId" : "43"
+        }, {
+          "id" : "45",
+          "tags" : "Relationship",
+          "sourceId" : "10",
+          "destinationId" : "9",
+          "description" : "Reads from",
+          "technology" : "TCP"
+        } ],
+        "technology" : "Postgis",
+        "documentation" : { }
+      }, {
+        "id" : "12",
+        "tags" : "Element,Container",
+        "properties" : {
+          "structurizr.dsl.identifier" : "datamodel"
+        },
+        "name" : "Data Model",
+        "components" : [ {
+          "id" : "16",
+          "tags" : "Element,Component",
+          "properties" : {
+            "structurizr.dsl.identifier" : "minimumflows"
+          },
+          "name" : "Minimum Flow limits",
+          "description" : "A minimum flow defined in the plan",
+          "relationships" : [ {
+            "id" : "49",
+            "tags" : "Relationship",
+            "sourceId" : "16",
+            "destinationId" : "15",
+            "description" : "have an effect on water use in"
+          }, {
+            "id" : "48",
+            "tags" : "Relationship",
+            "sourceId" : "16",
+            "destinationId" : "13",
+            "description" : "are measured at"
+          } ],
+          "documentation" : { }
+        }, {
+          "id" : "14",
+          "tags" : "Element,Component",
+          "properties" : {
+            "structurizr.dsl.identifier" : "rivers"
+          },
+          "name" : "Rivers",
+          "description" : "A river on the network",
+          "relationships" : [ {
+            "id" : "47",
+            "tags" : "Relationship",
+            "sourceId" : "14",
+            "destinationId" : "15",
+            "description" : "are part of"
+          } ],
+          "documentation" : { }
+        }, {
+          "id" : "13",
+          "tags" : "Element,Component",
+          "properties" : {
+            "structurizr.dsl.identifier" : "sites"
+          },
+          "name" : "Sites",
+          "description" : "A monitoring / management site",
+          "relationships" : [ {
+            "id" : "46",
+            "tags" : "Relationship",
+            "sourceId" : "13",
+            "destinationId" : "14",
+            "description" : "monitor"
+          } ],
+          "documentation" : { }
+        }, {
+          "id" : "18",
+          "tags" : "Element,Component",
+          "properties" : {
+            "structurizr.dsl.identifier" : "groundwaterzones"
+          },
+          "name" : "Groundwater Zones",
+          "description" : "Groundwater zones",
+          "documentation" : { }
+        }, {
+          "id" : "15",
+          "tags" : "Element,Component",
+          "properties" : {
+            "structurizr.dsl.identifier" : "catchments"
+          },
+          "name" : "Catchments",
+          "description" : "A hydrological catchment for water",
+          "documentation" : { }
+        }, {
+          "id" : "17",
+          "tags" : "Element,Component",
+          "properties" : {
+            "structurizr.dsl.identifier" : "allocationamounts"
+          },
+          "name" : "Allocation amounts",
+          "description" : "Water that can be allocated",
+          "relationships" : [ {
+            "id" : "51",
+            "tags" : "Relationship",
+            "sourceId" : "17",
+            "destinationId" : "18",
+            "description" : "belong to"
+          }, {
+            "id" : "50",
+            "tags" : "Relationship",
+            "sourceId" : "17",
+            "destinationId" : "15",
+            "description" : "belong to"
+          } ],
+          "documentation" : { }
+        } ],
+        "documentation" : { }
+      }, {
+        "id" : "11",
+        "tags" : "Element,Container",
+        "properties" : {
+          "structurizr.dsl.identifier" : "kafka"
+        },
+        "name" : "Kafka Broker",
+        "description" : "Message Queue and Event Source for communication between systems",
+        "relationships" : [ {
+          "id" : "31",
+          "tags" : "Relationship",
+          "sourceId" : "11",
+          "destinationId" : "4",
+          "description" : "Reads messagess from"
+        } ],
+        "documentation" : { }
       } ],
+      "documentation" : { }
+    }, {
+      "id" : "23",
+      "tags" : "Element,Software System,Existing System",
+      "properties" : {
+        "structurizr.dsl.identifier" : "basemaps"
+      },
+      "name" : "LINZ Basemaps System",
+      "description" : "The LINZ Basemaps",
+      "relationships" : [ {
+        "id" : "28",
+        "tags" : "Relationship",
+        "sourceId" : "23",
+        "destinationId" : "2",
+        "description" : "Pulls NZ Basemap imegry from"
+      }, {
+        "id" : "37",
+        "tags" : "Relationship",
+        "sourceId" : "23",
+        "destinationId" : "3",
+        "description" : "Loads basemaps from",
+        "technology" : "JSON and WEBP/HTTPS"
+      } ],
+      "group" : "Toitū Te Whenua LINZ",
+      "location" : "External",
+      "documentation" : { }
+    }, {
+      "id" : "21",
+      "tags" : "Element,Software System,Existing System",
+      "properties" : {
+        "structurizr.dsl.identifier" : "consents"
+      },
+      "name" : "GWRC Consents",
+      "description" : "The Consents system",
+      "relationships" : [ {
+        "id" : "32",
+        "tags" : "Relationship",
+        "sourceId" : "21",
+        "destinationId" : "8",
+        "description" : "Sends consent data to",
+        "technology" : "JSON/HTTPS"
+      }, {
+        "id" : "33",
+        "sourceId" : "21",
+        "destinationId" : "2",
+        "description" : "Sends consent data to",
+        "technology" : "JSON/HTTPS",
+        "linkedRelationshipId" : "32"
+      } ],
+      "group" : "GWRC",
+      "location" : "External",
       "documentation" : { }
     } ],
     "customElements" : [ {
-      "id" : "19",
+      "id" : "20",
       "tags" : "Element,Document",
-      "name" : "NIWA REC",
-      "description" : "River Environment Classification (REC2) Model",
-      "relationships" : [ {
-        "id" : "24",
-        "tags" : "Relationship",
-        "sourceId" : "19",
-        "destinationId" : "2",
-        "description" : "Stores a copy of the REC model"
-      } ],
-      "group" : "Taihoro Nukurangi NIWA",
-      "metadata" : "Documents"
-    }, {
-      "id" : "18",
-      "tags" : "Element,Document",
+      "properties" : {
+        "structurizr.dsl.identifier" : "plan"
+      },
       "name" : "GWRC NRPlan",
       "description" : "The Natural Resources Plan",
       "relationships" : [ {
-        "id" : "23",
+        "id" : "26",
         "tags" : "Relationship",
-        "sourceId" : "18",
+        "sourceId" : "20",
         "destinationId" : "2",
         "description" : "Stores the digitized Plan limits"
       } ],
       "group" : "GWRC",
+      "metadata" : "Documents"
+    }, {
+      "id" : "22",
+      "tags" : "Element,Document",
+      "properties" : {
+        "structurizr.dsl.identifier" : "rec"
+      },
+      "name" : "NIWA REC",
+      "description" : "River Environment Classification (REC2) Model",
+      "relationships" : [ {
+        "id" : "27",
+        "tags" : "Relationship",
+        "sourceId" : "22",
+        "destinationId" : "2",
+        "description" : "Stores a copy of the REC model"
+      } ],
+      "group" : "Taihoro Nukurangi NIWA",
       "metadata" : "Documents"
     } ]
   },
   "documentation" : { },
   "views" : {
     "systemContextViews" : [ {
-      "softwareSystemId" : "2",
       "key" : "SystemContext",
       "order" : 1,
+      "softwareSystemId" : "2",
       "paperSize" : "A3_Portrait",
       "dimensions" : {
         "width" : 2654,
-        "height" : 3058
+        "height" : 3758
       },
       "automaticLayout" : {
         "implementation" : "Graphviz",
@@ -341,58 +464,63 @@
       },
       "enterpriseBoundaryVisible" : true,
       "elements" : [ {
+        "id" : "22",
+        "x" : 329,
+        "y" : 2429
+      }, {
         "id" : "1",
         "x" : 2029,
-        "y" : 1329
+        "y" : 1679
+      }, {
+        "id" : "23",
+        "x" : 329,
+        "y" : 3129
       }, {
         "id" : "2",
         "x" : 1179,
-        "y" : 1379
-      }, {
-        "id" : "17",
-        "x" : 329,
-        "y" : 329
-      }, {
-        "id" : "18",
-        "x" : 329,
-        "y" : 1029
+        "y" : 1729
       }, {
         "id" : "19",
         "x" : 329,
-        "y" : 1729
+        "y" : 329
       }, {
         "id" : "20",
         "x" : 329,
-        "y" : 2429
+        "y" : 1029
+      }, {
+        "id" : "21",
+        "x" : 329,
+        "y" : 1729
       } ],
       "relationships" : [ {
-        "id" : "25",
+        "id" : "28",
         "vertices" : [ {
           "x" : 883,
-          "y" : 2233
+          "y" : 2933
         } ]
       }, {
-        "id" : "24"
+        "id" : "27"
       }, {
-        "id" : "23"
+        "id" : "26"
       }, {
-        "id" : "22",
+        "id" : "25",
         "vertices" : [ {
           "x" : 883,
           "y" : 829
         } ]
       }, {
-        "id" : "21"
+        "id" : "24"
+      }, {
+        "id" : "33"
       } ]
     } ],
     "containerViews" : [ {
-      "softwareSystemId" : "2",
       "key" : "SystemContainers",
       "order" : 2,
-      "paperSize" : "A2_Landscape",
+      "softwareSystemId" : "2",
       "dimensions" : {
-        "width" : 5066,
-        "height" : 1962
+        "width" : 5050,
+        "height" : 2120
       },
       "automaticLayout" : {
         "implementation" : "Graphviz",
@@ -404,65 +532,142 @@
       },
       "externalSoftwareSystemBoundariesVisible" : true,
       "elements" : [ {
+        "id" : "11",
+        "x" : 1900,
+        "y" : 920
+      }, {
         "id" : "1",
-        "x" : 4458,
-        "y" : 648
+        "x" : 4450,
+        "y" : 870
+      }, {
+        "id" : "23",
+        "x" : 2750,
+        "y" : 1620
       }, {
         "id" : "3",
-        "x" : 3608,
-        "y" : 698
+        "x" : 3600,
+        "y" : 920
       }, {
         "id" : "4",
-        "x" : 1058,
-        "y" : 290
-      }, {
-        "id" : "17",
-        "x" : 208,
-        "y" : 290
+        "x" : 2750,
+        "y" : 920
       }, {
         "id" : "8",
-        "x" : 2758,
-        "y" : 290
+        "x" : 1050,
+        "y" : 920
+      }, {
+        "id" : "19",
+        "x" : 1900,
+        "y" : 1620
       }, {
         "id" : "9",
-        "x" : 1908,
-        "y" : 290
+        "x" : 2750,
+        "y" : 220
       }, {
-        "id" : "20",
-        "x" : 2758,
-        "y" : 1398
+        "id" : "21",
+        "x" : 200,
+        "y" : 920
+      }, {
+        "id" : "10",
+        "x" : 1900,
+        "y" : 220
       } ],
       "relationships" : [ {
         "id" : "29"
       }, {
-        "id" : "28",
+        "id" : "37"
+      }, {
+        "id" : "36"
+      }, {
+        "id" : "35"
+      }, {
+        "id" : "41"
+      }, {
+        "id" : "32"
+      }, {
+        "id" : "44",
         "vertices" : [ {
-          "x" : 1908,
-          "y" : 790
+          "x" : 2454,
+          "y" : 835
         } ]
       }, {
-        "id" : "26"
+        "id" : "45"
       }, {
-        "id" : "37",
-        "vertices" : [ {
-          "x" : 1708,
-          "y" : 290
-        } ]
-      }, {
-        "id" : "34"
-      }, {
-        "id" : "32",
-        "vertices" : [ {
-          "x" : 1708,
-          "y" : 590
-        } ]
+        "id" : "31"
       }, {
         "id" : "30"
       }, {
-        "id" : "38"
+        "id" : "39",
+        "vertices" : [ {
+          "x" : 2645,
+          "y" : 604
+        } ]
       } ]
     } ],
     "componentViews" : [ {
+      "key" : "DataModel",
+      "order" : 4,
+      "paperSize" : "A3_Landscape",
+      "dimensions" : {
+        "width" : 3658,
+        "height" : 2066
+      },
+      "automaticLayout" : {
+        "implementation" : "Graphviz",
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 400,
+        "nodeSeparation" : 400,
+        "edgeSeparation" : 0,
+        "vertices" : false
+      },
+      "containerId" : "12",
+      "externalContainerBoundariesVisible" : true,
+      "elements" : [ {
+        "id" : "13",
+        "x" : 1179,
+        "y" : 737
+      }, {
+        "id" : "14",
+        "x" : 2029,
+        "y" : 737
+      }, {
+        "id" : "15",
+        "x" : 2879,
+        "y" : 737
+      }, {
+        "id" : "16",
+        "x" : 329,
+        "y" : 533
+      }, {
+        "id" : "17",
+        "x" : 2029,
+        "y" : 1437
+      }, {
+        "id" : "18",
+        "x" : 2879,
+        "y" : 1437
+      } ],
+      "relationships" : [ {
+        "id" : "50"
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "46"
+      }, {
+        "id" : "47"
+      }, {
+        "id" : "48"
+      }, {
+        "id" : "49",
+        "vertices" : [ {
+          "x" : 1179,
+          "y" : 537
+        }, {
+          "x" : 2479,
+          "y" : 537
+        } ]
+      } ]
+    }, {
       "key" : "ServerComponents",
       "order" : 3,
       "paperSize" : "A4_Landscape",
@@ -483,101 +688,38 @@
       "elements" : [ {
         "id" : "3",
         "x" : 1908,
-        "y" : 329
+        "y" : 1729
       }, {
         "id" : "5",
         "x" : 1058,
-        "y" : 329
+        "y" : 1729
       }, {
         "id" : "6",
         "x" : 1058,
         "y" : 1029
       }, {
-        "id" : "17",
+        "id" : "7",
+        "x" : 1058,
+        "y" : 329
+      }, {
+        "id" : "19",
         "x" : 208,
         "y" : 1029
       }, {
-        "id" : "7",
-        "x" : 1058,
-        "y" : 1729
-      }, {
-        "id" : "9",
+        "id" : "10",
         "x" : 1908,
         "y" : 1029
       } ],
       "relationships" : [ {
-        "id" : "27"
-      }, {
-        "id" : "36"
-      }, {
-        "id" : "35"
-      }, {
-        "id" : "33"
-      }, {
-        "id" : "31"
-      } ]
-    }, {
-      "key" : "DataModel",
-      "order" : 4,
-      "paperSize" : "A3_Landscape",
-      "dimensions" : {
-        "width" : 3658,
-        "height" : 2066
-      },
-      "automaticLayout" : {
-        "implementation" : "Graphviz",
-        "rankDirection" : "LeftRight",
-        "rankSeparation" : 400,
-        "nodeSeparation" : 400,
-        "edgeSeparation" : 0,
-        "vertices" : false
-      },
-      "containerId" : "10",
-      "externalContainerBoundariesVisible" : true,
-      "elements" : [ {
-        "id" : "11",
-        "x" : 1179,
-        "y" : 737
-      }, {
-        "id" : "12",
-        "x" : 2029,
-        "y" : 737
-      }, {
-        "id" : "13",
-        "x" : 2879,
-        "y" : 737
-      }, {
-        "id" : "14",
-        "x" : 329,
-        "y" : 533
-      }, {
-        "id" : "15",
-        "x" : 2029,
-        "y" : 1437
-      }, {
-        "id" : "16",
-        "x" : 2879,
-        "y" : 1437
-      } ],
-      "relationships" : [ {
         "id" : "40"
       }, {
-        "id" : "41"
+        "id" : "42"
       }, {
-        "id" : "42",
-        "vertices" : [ {
-          "x" : 1179,
-          "y" : 537
-        }, {
-          "x" : 2479,
-          "y" : 537
-        } ]
+        "id" : "34"
       }, {
         "id" : "43"
       }, {
-        "id" : "44"
-      }, {
-        "id" : "39"
+        "id" : "38"
       } ]
     } ],
     "configuration" : {
@@ -619,6 +761,7 @@
         } ]
       },
       "terminology" : { },
+      "metadataSymbols" : "SquareBrackets",
       "lastSavedView" : "SystemContainers"
     }
   }
