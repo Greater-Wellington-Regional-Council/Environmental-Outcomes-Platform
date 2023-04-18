@@ -4,7 +4,7 @@ section: In Progress
 title: Plan Limits Viewer
 ---
 
-You can check out the Plan Limits Viewer at [https://plan-limits-viewer.gw.govt.nz/](https://plan-limits-viewer.gw.govt.nz/)
+You can check out the Plan Limits Viewer at [https://plan-limits.eop.gw.govt.nz/](https://plan-limits.eop.gw.govt.nz/)
 
 ![A screenshot of the Plan Limits Viewer](./plan-limits-viewer-screenshot.png)
 
@@ -14,7 +14,7 @@ Regional Councils create plans which set out objectives and policies that govern
 
 These plans are generally published in text based formats such PDF files, referencing Geospatial boundaries coming from Council GIS systems. For end-users, this means large amounts of text often containing complex rules need to be read and understood to know what limits apply to which areas. This format also makes it is difficult to build digital solutions that can compare these limits to other data sets.
 
-The Plan Limits Viewer digitises these rules alongside the GIS data they reference, allowing a user to easily understand what limits apply where.
+The Plan Limits Viewer digitises these rules alongside the GIS data they reference, allowing a user to easily understand what limits apply where. It has been developed with Greater Wellington data sources as a starting point, and we're currently in the process of integrating data from other councils.
 
 ![Context Diagram](./structurizr-1-SystemContext.png)
 ![Context Key](./structurizr-1-SystemContext-key.png)
