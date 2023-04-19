@@ -2,26 +2,19 @@ import {
   createBrowserRouter,
   RouteObject,
   RouterProvider,
-  redirect,
+  Navigate,
 } from 'react-router-dom';
 import Layout from './Layout';
-import Limits, { defaultViewLocation, loader } from './pages/Limits';
-import { createLocationString } from './pages/Limits/locationString';
+import Limits, { defaultPath, loader } from './pages/Limits';
 
 export const routes: RouteObject[] = [
   {
-    path: '/',
     element: <Layout />,
     children: [
+      // This redirects "/" and "/limits" to a default location
       {
-        index: true,
-        loader: () =>
-          redirect(`/limits/${createLocationString(defaultViewLocation)}`),
-      },
-      {
-        path: '/limits',
-        loader: () =>
-          redirect(`/limits/${createLocationString(defaultViewLocation)}`),
+        path: '/limits?',
+        element: <Navigate replace to={defaultPath} />,
       },
       {
         path: '/limits/:location',

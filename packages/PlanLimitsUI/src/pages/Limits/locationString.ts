@@ -10,43 +10,39 @@ export type ViewLocation = {
 };
 
 export function parseLocationString(
-  locationString?: string
+  locationString: string
 ): ViewLocation | null {
-  if (!locationString) {
-    return null;
-  }
+  if (!locationString) return null;
 
   // e.g. -00.000,000.000,1Z
   const match = locationString.match(
     /^@(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?),(\d\d?)z$/
   );
 
-  return match
-    ? {
-        latitude: Number(match[1]),
-        longitude: Number(match[3]),
-        zoom: Number(match[5]),
-      }
-    : null;
+  if (!match) return null;
+
+  return {
+    latitude: Number(match[1]),
+    longitude: Number(match[3]),
+    zoom: Number(match[5]),
+  };
 }
 
 export function parsePinnedLocation(
-  pinnedLocationString: string | null
+  pinnedLocationString: string
 ): PinnedLocation | null {
-  if (!pinnedLocationString) {
-    return null;
-  }
+  if (!pinnedLocationString) return null;
 
   const match = pinnedLocationString.match(
     /^(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?)$/
   );
 
-  return match
-    ? {
-        latitude: Number(match[1]),
-        longitude: Number(match[3]),
-      }
-    : null;
+  if (!match) return null;
+
+  return {
+    latitude: Number(match[1]),
+    longitude: Number(match[3]),
+  };
 }
 
 function roundToThreeDecimals(value: number) {

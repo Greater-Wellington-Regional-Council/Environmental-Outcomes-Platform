@@ -13,7 +13,6 @@ import {
   createPinnedLocationString,
   parseLocationString,
   parsePinnedLocation,
-  type PinnedLocation,
   type ViewLocation,
 } from './locationString';
 import { useGeoJsonQueries } from '../../api';
@@ -25,21 +24,24 @@ export const defaultViewLocation = {
   longitude: 175.35,
   zoom: 8,
 };
+export const defaultPath = `/limits/${createLocationString(
+  defaultViewLocation
+)}`;
 
 export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
 
 export const loader: LoaderFunction = ({ params, request }) => {
+  if (!params.location) return redirect(defaultPath);
+
+  const locationString = parseLocationString(params.location);
+  if (!locationString) return redirect(defaultPath);
+
   const url = new URL(request.url);
   const pinnedParam = url.searchParams.get('pinned');
-
-  const parsedLocation = parseLocationString(params.location);
-  const parsedPinnedLocation = parsePinnedLocation(pinnedParam);
-  return parsedLocation
-    ? {
-        locationString: parsedLocation,
-        pinnedLocation: parsedPinnedLocation || null,
-      }
-    : redirect(`/limits/${createLocationString(defaultViewLocation)}`);
+  return {
+    locationString,
+    pinnedLocation: pinnedParam && parsePinnedLocation(pinnedParam),
+  };
 };
 
 export default function Limits() {
@@ -48,24 +50,21 @@ export default function Limits() {
   const {
     locationString: initialViewLocation,
     pinnedLocation: initialPinnedLocation,
-  } = useLoaderData() as {
-    locationString: ViewLocation;
-    pinnedLocation: PinnedLocation | null;
-  };
+  } = useLoaderData() as ReturnType<typeof loader>;
 
   const [pinnedLocation, setPinnedLocation] = useState(initialPinnedLocation);
   const [viewLocation, setViewLocation] = useState(initialViewLocation);
 
   const debouncedValue = useDebounce<ViewLocation>(viewLocation, 500);
   useEffect(() => {
-    if (pinnedLocation) {
-      navigate({
-        pathname: `/limits/${createLocationString(debouncedValue)}`,
-        search: `pinned=${createPinnedLocationString(pinnedLocation)}`,
-      });
-    } else {
-      navigate(`/limits/${createLocationString(debouncedValue)}`);
-    }
+    const updatedLocation = {
+      pathname: `/limits/${createLocationString(debouncedValue)}`,
+      search: pinnedLocation
+        ? `pinned=${createPinnedLocationString(pinnedLocation)}`
+        : undefined,
+    };
+
+    navigate(updatedLocation, { replace: true });
   }, [debouncedValue, pinnedLocation, navigate]);
 
   const geoJsonQueries = useGeoJsonQueries();
