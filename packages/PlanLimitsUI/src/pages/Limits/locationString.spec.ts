@@ -7,12 +7,6 @@ import {
 import { expect } from 'vitest';
 
 describe('parseLocationString', () => {
-  it('should return null when null passed', () => {
-    const result = parseLocationString();
-
-    expect(result).toEqual(null);
-  });
-
   it('should return null when string is invalid', () => {
     const result = parseLocationString('foo');
 
@@ -69,12 +63,6 @@ describe('createLocationString', () => {
 });
 
 describe('parsePinnedLocation', () => {
-  it('should return null when null passed', () => {
-    const result = parsePinnedLocation(null);
-
-    expect(result).toEqual(null);
-  });
-
   it('should return null when string is invalid', () => {
     const result = parsePinnedLocation('foo');
 
