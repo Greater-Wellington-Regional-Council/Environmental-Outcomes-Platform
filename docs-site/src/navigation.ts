@@ -1,31 +1,9 @@
+// Note: include the trailing slash in the href. Otherwise, the active highlight in the navigation block will not work.
 export default [
-  {
-    title: 'Introduction',
-    links: [{ title: 'Getting started', href: '/' }],
-  },
-  {
-    title: 'Design',
-    links: [
-      { title: 'High Level Overview', href: '/design/overview/' },
-      {
-        title: 'Design principles',
-        href: '/design/principles/',
-      },
-    ],
-  },
-  {
-    title: 'Work in Progress',
-    links: [
-      { title: 'Plan Limits', href: '/work-in-progress/plan-limits' },
-      { title: 'Current status', href: '/work-in-progress/current-status' },
-    ],
-  },
-  {
-    title: 'Contributing',
-    links: [
-      { title: 'How to contribute', href: '/contributing/how-to/' },
-      { title: 'RFC', href: '/contributing/rfc/' },
-      { title: 'Changing this Site', href: '/contributing/this-site/' },
-    ],
-  },
+  { title: 'What is EOP?', href: '/' },
+  { title: 'Technical Design', href: '/technical-design/' },
+  { title: 'Current status', href: '/current-status/' },
+  { title: 'Plan Limits Viewer', href: '/plan-limits-viewer/' },
+  { title: 'How to contribute', href: '/how-to-contribute/' },
+  { title: 'Changing this Site', href: '/changing-this-site/' },
 ];

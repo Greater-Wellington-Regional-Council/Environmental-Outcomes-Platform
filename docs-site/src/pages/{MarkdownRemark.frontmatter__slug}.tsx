@@ -19,10 +19,7 @@ export default function MarkdownPage({
 
   return (
     <Layout currentPath={path}>
-      <ArticleHeader
-        title={frontmatter!!.title!!}
-        section={frontmatter!!.section!!}
-      />
+      <ArticleHeader title={frontmatter!!.title!!} />
       <Prose>
         <div dangerouslySetInnerHTML={{ __html: html!! }} />
       </Prose>
@@ -39,7 +36,6 @@ export const pageQuery = graphql`
     markdownRemark(id: { eq: $id }) {
       frontmatter {
         title
-        section
       }
       html
     }
