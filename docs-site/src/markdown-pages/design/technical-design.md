@@ -32,18 +32,17 @@ including systems of record and services that EOP can add value to.
 ## Structure
 
 EOP is being developed as a hub and spoke model. Data is captured or acquired
-from external sources and sent to the hub in a raw format. That raw format can
-then be forwarded to different storage or processing components depending on how
-that data will be used, for example, it might be stored in a data warehouse for
-analytical analysis or to a real time processing component for operational
-alerting. Key to this model is not forcing all data into a store which would
-limit its to be used for different use cases.
+from external sources and sent to a central hub in a raw format. This can then
+be consumed for procesing and storage by multiple components depending on needs.
 
-A decision has been made to build the hub on [Kafka](https://kafka.apache.org/).
-Kafka was chosen to provide a scalable, loosely coupled, hub with well supported
-connectors to other systems. While Kafka is often used for real time processing
-it is also well suited to consuming data that may come from batch processes from
-the councils.
+As an example, the same data captured in the Hub might be subsequently stored in
+a data warehouse for analysis, and also processed in realtime for operational
+alerting.
+
+[Kafka](https://kafka.apache.org/) has been chosen as a scalable, loosely-coupled
+Hub, with well supported connectors to other systems. Kafka is often used
+for real time processing, and is also well suited to consuming data that from
+batch processes.
 
 The following diagram shows the high-level relationship between the different
 classes of components that will be delivered around the hub
