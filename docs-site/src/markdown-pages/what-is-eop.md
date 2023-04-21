@@ -1,6 +1,17 @@
 ---
+title: What is EOP?
 key: index
 ---
+
+<p class="text-center font-bold italic">
+  The Environmental Outcomes Platform (EOP) is an end-to-solution for
+  acquiring, managing, and interacting with environmental information
+  to empower council services both internally and externally.
+</p>
+<p class="text-center font-bold italic">
+  The vision is to have an environment focused platform that has
+  outcomes at heart.
+</p>
 
 ## Overview
 

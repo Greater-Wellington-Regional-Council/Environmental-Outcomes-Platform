@@ -1,6 +1,5 @@
 ---
-slug: /contributing/this-site
-section: Contributing
+slug: /changing-this-site/
 title: Changing this site
 ---
 
