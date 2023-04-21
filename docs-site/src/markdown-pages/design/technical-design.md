@@ -72,19 +72,18 @@ Example Acquisition components:
 
 ### Capture
 
-Capture components allow for getting information where EOP is the system of
-record. This will be used when there is a potential for providing new tools to
-all councils for replacing existing data capture methods. New tooling will allow
-for bring the data captured up to new standards for meta-data that are not
-caught in existing systems.
+Capture components support ingestion of data where EOP is the system of record.
+These will be developed when there is an opportunity to improve on existing data
+capture tools for all councils, such as supporting newer data-standards or
+capturing meta-data not-supported by existing systems.
 
-This type of component is a long term vision for the EOP solution.
+This type of component is a longer term goal for the EOP.
 
 Example Capture components:
 
 - Field capture user interface that may be running on a mobile device
 - IOT endpoints for capturing data from sensors
-- User interface for QA review
+- User interfaces for QA review
 
 ## Data Stores
 
