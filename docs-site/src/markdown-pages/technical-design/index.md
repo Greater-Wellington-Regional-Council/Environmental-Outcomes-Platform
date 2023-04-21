@@ -1,6 +1,5 @@
 ---
-slug: /design/technical-design
-section: Design
+slug: /technical-design
 title: Technical Design
 ---
 
@@ -13,21 +12,21 @@ title: Technical Design
 
 These are the principles that drive the design and development of EOP.
 
-- **Leverage existing data** - Enable councils to reuse existing data and 
-integrate this in ways that produce outcomes that are currently difficult.
+- **Leverage existing data** - Enable councils to reuse existing data and
+  integrate this in ways that produce outcomes that are currently difficult.
 
 - **Design and delivery iteratively** - Plan for the future, but start small and
-iterate, ensuring value and outcomes are delivered early.
+  iterate, ensuring value and outcomes are delivered early.
 
 - **Support real-time and batch** - Design to support real-time and batch
-processing. Use the data and outcomes to drive which is required, rather
-than technical choices and constraints. 
+  processing. Use the data and outcomes to drive which is required, rather than
+  technical choices and constraints.
 
 - **Plan for scale** - Anticpate and design for the scale required to support
-the needs of multiple councils.
+  the needs of multiple councils.
 
 - **Designed for integration** - Enable EOP to integrate well with other system
-including systems of record and services that EOP can add value to.
+  including systems of record and services that EOP can add value to.
 
 ## Structure
 
@@ -39,10 +38,10 @@ As an example, the same data captured in the Hub might be subsequently stored in
 a data warehouse for analysis, and also processed in realtime for operational
 alerting.
 
-[Kafka](https://kafka.apache.org/) has been chosen as a scalable, loosely-coupled
-Hub, with well supported connectors to other systems. Kafka is often used
-for real time processing, and is also well suited to consuming data that from
-batch processes.
+[Kafka](https://kafka.apache.org/) has been chosen as a scalable,
+loosely-coupled Hub, with well supported connectors to other systems. Kafka is
+often used for real time processing, and is also well suited to consuming data
+that from batch processes.
 
 The following diagram shows the high-level relationship between the different
 classes of components that will be delivered around the hub
@@ -90,7 +89,7 @@ Example Capture components:
 Multiple data store components may be used to allow modelling and querying based
 on the type analysis required.
 
-Using a Hub and Spoke model allows the EOP to remain agnostic of the data store 
+Using a Hub and Spoke model allows the EOP to remain agnostic of the data store
 solutions used now and in the future.
 
 Example Data store components:
@@ -122,7 +121,7 @@ The diagram shows these grouped by the type of user emphasise a user-centric,
 rather than technology-centric approach. E.g. multiple web applications or APIs
 may be developed to serve difference audiences.
 
- Example Processing components:
+Example Processing components:
 
 - UI Viewers
 - API endpoints
@@ -130,7 +129,7 @@ may be developed to serve difference audiences.
 
 ### External Applications B2C
 
-Applications intended for public use. These should be focussed on presenting 
+Applications intended for public use. These should be focussed on presenting
 information and outcomes in a user-friendly way.
 
 ### External Applications B2B
@@ -141,8 +140,9 @@ provided as exports for use in third party systems.
 
 ### Internal Tools
 
-Tools used by council staff to perform day-to-day work. These might task-focussed
-applications, developed for users with particular expertise in the data.
+Tools used by council staff to perform day-to-day work. These might
+task-focussed applications, developed for users with particular expertise in the
+data.
 
 ### Feeds to Council Systems
 
