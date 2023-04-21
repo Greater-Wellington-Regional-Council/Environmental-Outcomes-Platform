@@ -11,40 +11,23 @@ title: Technical Design
 
 ## Principals
 
-The overall design of EOP while in the early stages has a number of principals
-that are driving some of the choices made. In particular, the choices are to
-support the evolution of the platform over time deliver value early
+These are the principles that drive the design and development of EOP.
 
-- **Reuse** - EOP will initially focus on allowing councils to reuse the data
-  that is in their existing systems. Bringing the data together to allow for
-  analysis that is currently too time-consuming to perform
+- **Leverage existing data** - Enable councils to reuse existing data and 
+integrate this in ways that produce outcomes that are currently difficult.
 
-- **Evolutionary** - EOP will be built to evolve over time. This means that
-  decisions made now will try not to limit the ability to change and grow the
-  platform in the future. This includes any designs here are a guide to what we
-  think EOP will need but may change as they are actually implemented.
+- **Design and delivery iteratively** - Plan for the future, but start small and
+iterate, ensuring value and outcomes are delivered early.
 
-- **Real time** - EOP will be built to allow for use in semi-real time use
-  cases. This means accepting and processing data as soon as it arrives for
-  delivery to consumers. This capability will require councils to be sending
-  data this way as well. But we don't want to choose a batch focused solution
-  and then not be able to do realtime.
+- **Support real-time and batch** - Design to support real-time and batch
+processing. Use the data and outcomes to drive which is required, rather
+than technical choices and constraints. 
 
-- **Loosely coupled** - To enable EOP to change and expand in the future
-  decisions now that promote loose coupling between components. An example of
-  trying to reduce coupling is the use of Kafka as the integration hub. This
-  allows for the components to be changed out without affecting the other
-  components.
+- **Plan for scale** - Anticpate and design for the scale required to support
+the needs of multiple councils.
 
-- **Scalable** - EOP is going to start small and grow ... so we need tech that
-  supports that. To enable EOP to grow to support the needs of the region. This
-  means that the solution needs to be able to scale up and down as needed. This
-  includes the ability to scale up and down the number of regions that are
-  supported by EOP.
-
-- **Extensible** - To enable EOP to be able to integrate with other systems and
-  services. This includes the ability to integrate with other systems of record
-  and other systems that provide services that EOP can use.
+- **Designed for integration** - Enable EOP to integrate well with other system
+including systems of record and services that EOP can add value to.
 
 ## Structure
 
