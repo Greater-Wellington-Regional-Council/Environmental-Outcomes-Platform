@@ -101,17 +101,15 @@ Example Data store components:
 
 ## Processing
 
-Processing components are there to perform analysis on the data that is stored
-in EOP.
+Processing components perform analysis on the data stored in EOP.
 
-The processing components are loosely coupled to the data stores. The intention
-is for this to be a key extension point for adding new analysis processes to EOP
-without changing other components.
+These are decoupled from the data stores, and designed to be a key extension
+point for adding new analysis capability without affecting other components.
 
 Example Processing components:
 
-- Real time processing has driven off kafka streams
-- Batch processing driven data in the OLAP data stores
+- Real time processing, driven from kafka streams
+- Batch processing, driven from data in OLAP data stores
 - Data science scripts (R / Python) for analysis e.g. Naturalised flow
 - AI model training
 
