@@ -87,12 +87,11 @@ Example Capture components:
 
 ## Data Stores
 
-Data store components are about storing data in a way that is appropriate for
-the type of analysis being performed. The data storage type being used drives
-the types of queries that can be performed and the type of information that can
-be derived. By using the hub and spoke model with Kafka as the hub, EOP can stay
-agnostic of the data stores that are used, rahter than tying the solution to a
-specific type of analysis.
+Multiple data store components may be used to allow modelling and querying based
+on the type analysis required.
+
+Using a Hub and Spoke model allows the EOP to remain agnostic of the data store 
+solutions used now and in the future.
 
 Example Data store components:
 
