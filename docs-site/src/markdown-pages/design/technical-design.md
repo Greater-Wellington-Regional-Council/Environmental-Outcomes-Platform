@@ -51,18 +51,17 @@ classes of components that will be delivered around the hub
 
 ### Acquisition
 
-Acquisition components support the process of getting data captured in existing
-systems and into EOP. These might be existing council systems or any third party
-systems which EOP can make use of. Acquiring data in this fashion will be the
-main focus of the initial EOP build.
+Acquisition components support ingestion of data from existing systems into EOP.
+These might be existing council systems or third party systems housing data
+which EOP can make use of. Acquisition will be the the initial focus for EOP.
 
-Generally, the preference is for councils to push data into EOP rather than
-pull. This allows councils to choose the frequency of updates from their systems
-to EOP. However, there will be some cases where pulling data from a system is
-required, for example from third party systems that can't be changed.
+The preference is for councils to push data to EOP, rather than for EOP to pull.
+This allows councils to control the frequency of updates. However, there will be
+some cases where pulling data from a system is required, such as data from third
+party systems that can't be changed.
 
-A special case is Hilltop which because of its ubiquity in councils and it
-having a pre-existing API will be supported as a "pull from councils" example.
+A special case is Hilltop. Because of its wide-use and existing APIs, EOP will
+support pulling data from council Hilltop instances.
 
 Example Acquisition components:
 
