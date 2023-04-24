@@ -1,111 +1,150 @@
 ---
-slug: /technical-design/
+slug: /technical-design
 title: Technical Design
 ---
 
-Placeholder Early WIP - This page describes a high level structure of EOP. This
-is the long term vision of what EOP may encompass.
+> This design is still subject to change as EOP evolves. In particular, it has
+> been developed without the scope intended by the proposed Environmental Data
+> Management System (EDMS) solution being clear. That may impact the scope of
+> what EOP does
 
-The intention is that any piece of work will focus on delivering an outcome and
-fit it into this architecture.
+## Principals
 
----
+These are the principles that drive the design and development of EOP.
+
+- **Leverage existing data** - Enable councils to reuse existing data and
+  integrate this in ways that produce outcomes that are currently difficult.
+
+- **Design and delivery iteratively** - Plan for the future, but start small and
+  iterate, ensuring value and outcomes are delivered early.
+
+- **Support real-time and batch** - Design to support real-time and batch
+  processing. Use the data and outcomes to drive which is required, rather than
+  technical choices and constraints.
+
+- **Plan for scale** - Anticpate and design for the scale required to support
+  the needs of multiple councils.
+
+- **Designed for integration** - Enable EOP to integrate well with other system
+  including systems of record and services that EOP can add value to.
 
 ## Structure
 
-At a high level the solution breaks into a number of areas:
+EOP is being developed as a hub and spoke model. Data is captured or acquired
+from external sources and sent to a central hub in a raw format. This can then
+be consumed for procesing and storage by multiple components depending on needs.
 
-- **Acquisition** - how information sourced mastered in other systems gets into
-  EOP
-- **Capture** - how information that is mastered in EOP gets captured, quality
-  assured, and published
-- **Storage** - how EOP stores information in ways that are accessible for
-  different access needs
-- **Processing** - how EOP translates information bought into EOP into more
-  useable information for presentation to users
-- **Output** - the most important stage, how EOP delivers outcomes to end users
-  in a way that provides value to them
+As an example, the same data captured in the Hub might be subsequently stored in
+a data warehouse for analysis, and also processed in realtime for operational
+alerting.
 
-The following diagram shows the high level relationship between these
-components, note the arrows shown and covering the top level data flows.
+[Kafka](https://kafka.apache.org/) has been chosen as a scalable,
+loosely-coupled Hub, with well supported connectors to other systems. Kafka is
+often used for real time processing, and is also well suited to consuming data
+that from batch processes.
+
+The following diagram shows the high-level relationship between the different
+classes of components that will be delivered around the hub
 
 ![High Level Overview Diagram](./high-level-overview.png)
 
-## Integration Hub
-
-A key part of the overall design is how to move data between the various
-components in and managable and robust way. Proposed direction is "Hub and
-Spoke" vs Bus style to allow
-
-Peice of the picture is the "Integration Hub" which provides a centralised point
-for landing data in EOP and distributing it to the other components.
-
-In the diagram the integratio hub is this is highlighted as the interface
-between the Acquisiton/Capture area and the Storage/Processing as this is the
-key integration point. This hub will also be used for the transfer of data
-between any component in the solution and allows for
-
-Technology choice here is [Kafka](https://kafka.apache.org/)
-
 ### Acquisition
 
-Acquisition is the process getting information from existing systems of record
-into the EOP platform so they can be used as part of delivering outcomes. These
-might be existing council systems or any third party systems that EOP has
-permission to collect information from.
+Acquisition components support ingestion of data from existing systems into EOP.
+These might be existing council systems or third party systems housing data
+which EOP can make use of. Acquisition will be the the initial focus for EOP.
 
-While in the long term, the intention is for EOP to become the system of record
-for observation data. This is intended to be the process for capturing
-information from any systems where the Regional Councils are not the master of
-the information e.g. Information exposed from Central Government or Citizen
-Science or it is not a core environmental data type to EOP e.g. Regional Plan
-Limits, Consenting information.
+The preference is for councils to push data to EOP, rather than for EOP to pull.
+This allows councils to control the frequency of updates. However, there will be
+some cases where pulling data from a system is required, such as data from third
+party systems that can't be changed.
 
-Key technology here is
-[Kafka Connect](https://kafka.apache.org/documentation/#connect) and connectors
-where they exist, or custom "Producer" components that can pull data from
-existing systems and push it into Kafka (e.g. pulling Observations from the
-Hilltop API).
+A special case is Hilltop. Because of its wide-use and existing APIs, EOP will
+support pulling data from council Hilltop instances.
+
+Example Acquisition components:
+
+- JSON API's exposed to councils
+- Data lake / Blob storage style end points for bulk data
+- Hilltop API
+- Direct connection from Kafka Connectors running in council environments
 
 ### Capture
 
-Capture is the process of getting information where EOP is the system of record.
+Capture components support ingestion of data where EOP is the system of record.
+These will be developed when there is an opportunity to improve on existing data
+capture tools for all councils, such as supporting newer data-standards or
+capturing meta-data not-supported by existing systems.
 
-This will primarily be for when existing processes are replaced with EOP
-provided tooling for capturing data.
+This type of component is a longer term goal for the EOP.
 
-Key technology here will be
+Example Capture components:
 
-- Initial capture of information
-- Automated QA of newly captured information
-- User interface for QA review
-- Dissemination of newly captured information
+- Field capture user interface that may be running on a mobile device
+- IOT endpoints for capturing data from sensors
+- User interfaces for QA review
 
-## Data Stores
+### Data Stores
 
-Information captured in the Acquisition / Creation processes needs to be stored
-for use in build outcome viewers, there will be different storage styles (OLTP,
-OLAP) depending on the type of access required.
+Multiple data store components may be used to allow modelling and querying based
+on the type analysis required.
 
-- Environmental Observations -
-- Geospatial Networks - Models for the geospatial relations between the
-- Regional Plan Targets/Limits -
-- Consented Use -
+Using a Hub and Spoke model allows the EOP to remain agnostic of the data store
+solutions used now and in the future.
 
-Information of these various types might make it into different data stores that
-are appropriate for the types of querying done
+Example Data store components:
 
-[this page](./data-sets)
+- OLTP database for fast operational access
+- OLAP database for slower analytical access
+- Graph database for network analysis
 
-## Processing
+### Processing
 
-Processing components
+Processing components perform analysis on the data stored in EOP.
 
-## Output
+These are decoupled from the data stores, and designed to be a key extension
+point for adding new analysis capability without affecting other components.
 
-Output systems take information captured in EOP and present it to users as
-usable "Outcomes".
+Example Processing components:
 
-- Export / API / Bulk Data
-- Technical access for science
+- Real time processing, driven from kafka streams
+- Batch processing, driven from data in OLAP data stores
+- Data science scripts (R / Python) for analysis e.g. Naturalised flow
+- AI model training
+
+### Output
+
+Output components present information captured and generated by EOP to various
+types of users, with a focus on outcomes.
+
+The diagram shows these grouped by the type of user emphasise a user-centric,
+rather than technology-centric approach. E.g. multiple web applications or APIs
+may be developed to serve difference audiences.
+
+Example Processing components:
+
 - UI Viewers
+- API endpoints
+- Bulk data downloads
+
+#### External Applications B2C
+
+Applications intended for public use. These should be focussed on presenting
+information and outcomes in a user-friendly way.
+
+#### External Applications B2B
+
+Applications intended for use by third-party organisations including central
+government. This could be information for particular types of reporting, often
+provided as exports for use in third party systems.
+
+#### Internal Tools
+
+Tools used by council staff to perform day-to-day work. These might
+task-focussed applications, developed for users with particular expertise in the
+data.
+
+#### Feeds to Council Systems
+
+These may be useful where EOP has created information that is valuable for
+presentation by existing council systems.
