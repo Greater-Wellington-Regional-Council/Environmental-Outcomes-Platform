@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type SetStateAction } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -17,7 +17,6 @@ import Map, {
 import { GeoJsonQueries } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/Button';
-import type { PinnedLocation } from './locationString';
 import RiverTilesSource from './RiverTilesSource';
 import type { AppState } from './useAppState';
 import type { WaterTakeFilter } from './index';
