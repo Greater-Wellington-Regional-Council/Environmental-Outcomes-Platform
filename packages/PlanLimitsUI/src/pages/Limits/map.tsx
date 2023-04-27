@@ -18,8 +18,6 @@ import { GeoJsonQueries } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/Button';
 import RiverTilesSource from './RiverTilesSource';
-import type { AppState } from './useAppState';
-import type { WaterTakeFilter } from './index';
 import flowMarkerImage from '../../images/marker_flow.svg';
 
 const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;

@@ -12,8 +12,6 @@ import {
   pinnedLocationUrlParam,
 } from '../../lib/loader';
 
-export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
-
 export default function Limits() {
   const navigate = useNavigate();
 

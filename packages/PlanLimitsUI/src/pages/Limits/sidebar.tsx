@@ -9,8 +9,6 @@ import LimitsTable from './LimitsTable';
 import Button from '../../components/Button';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
-import type { AppState } from './useAppState';
-import type { WaterTakeFilter } from './index';
 
 const LimitsListItem = ({
   title,

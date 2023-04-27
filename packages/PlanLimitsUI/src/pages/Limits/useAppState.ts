@@ -3,41 +3,6 @@ import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
 import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
 
-export type Whaitua = {
-  id: number;
-  name: string;
-  defaultFlowLimitAndSite: JSX.Element;
-};
-
-export type FlowLimitBoundary = {
-  id: number;
-  name: string;
-  siteId: number;
-  flowRestriction: string;
-};
-
-export type AppState = {
-  whaitua: Whaitua | null;
-  flowLimitBoundary: FlowLimitBoundary | null;
-
-  surfaceWaterMgmtUnitId: string | null;
-  surfaceWaterMgmtUnitDescription?: string | null;
-  surfaceWaterMgmtUnitLimit?: string;
-  surfaceWaterMgmtUnitAllocated?: string;
-  surfaceWaterMgmtUnitAllocatedPercentage?: number;
-
-  surfaceWaterMgmtSubUnitId: string | null;
-  surfaceWaterMgmtSubUnitDescription?: string | null;
-  surfaceWaterMgmtSubUnitLimit?: string;
-  surfaceWaterMgmtSubUnitAllocated?: string;
-  surfaceWaterMgmtSubUnitAllocatedPercentage?: number;
-  swLimit?: SWLimit;
-
-  gwLimits?: GWLimit[];
-  groundWaterZones: Array<number>;
-  groundWaterZoneName?: string;
-};
-
 function setWhaitua(activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) {
   const whaitua = activeFeatures.find((f) => f.layer.id === 'whaitua');
   if (!whaitua) return null;
