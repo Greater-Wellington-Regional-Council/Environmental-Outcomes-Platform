@@ -1,6 +1,7 @@
 interface Council {
   slug: string;
   name: string;
+  headingText: string;
   defaultViewLocation: {
     latitude: number;
     longitude: number;

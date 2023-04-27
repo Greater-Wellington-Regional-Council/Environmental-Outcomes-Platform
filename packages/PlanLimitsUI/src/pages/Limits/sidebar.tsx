@@ -5,6 +5,7 @@ import type {
   GroundwaterZoneBoundariesProperties,
 } from '../../api';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
+import { councilAtom } from '../../lib/loader';
 import LimitsTable from './LimitsTable';
 import Button from '../../components/Button';
 import gwrcLogo from '../../images/gwrc-logo-header.svg';
@@ -35,13 +36,13 @@ export default function Sidebar({
   queries: GeoJsonQueries;
 }) {
   const [, setShowDisclaimer] = useAtom(showDisclaimerAtom);
+  const [council] = useAtom(councilAtom);
+
   return (
     <>
       <header className="flex items-center px-6 py-4">
         <div className="flex-1">
-          <h1 className="text-xl font-light">
-            Proposed Natural Resource Plan Limits
-          </h1>
+          <h1 className="text-xl font-light">{council.headingText}</h1>
           <h2>Water Quantity Limits</h2>
         </div>
         <a
