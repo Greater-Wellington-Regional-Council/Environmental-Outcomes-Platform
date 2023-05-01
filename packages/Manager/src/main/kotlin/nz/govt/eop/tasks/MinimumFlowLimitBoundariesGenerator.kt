@@ -6,7 +6,7 @@ import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import net.postgis.jdbc.geometry.Geometry
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimitBoundaries.Companion.MINIMUM_FLOW_LIMIT_BOUNDARIES
-import nz.govt.eop.si.jooq.tables.MinimumFlowLimits.Companion.MINIMUM_FLOW_LIMITS
+import nz.govt.eop.si.jooq.tables.MinimumFlowLimitsOld.Companion.MINIMUM_FLOW_LIMITS_OLD
 import nz.govt.eop.si.jooq.tables.Rivers.Companion.RIVERS
 import nz.govt.eop.si.jooq.tables.Watersheds.Companion.WATERSHEDS
 import org.jooq.DSLContext
@@ -42,9 +42,9 @@ class MinimumFlowLimitBoundariesGenerator(@Autowired val context: DSLContext) {
 
     val lastCreatedMinimumFlowLimit =
         context
-            .select(max(MINIMUM_FLOW_LIMITS.CREATED_AT))
-            .from(MINIMUM_FLOW_LIMITS)
-            .fetchOne(max(MINIMUM_FLOW_LIMITS.CREATED_AT))
+            .select(max(MINIMUM_FLOW_LIMITS_OLD.CREATED_AT))
+            .from(MINIMUM_FLOW_LIMITS_OLD)
+            .fetchOne(max(MINIMUM_FLOW_LIMITS_OLD.CREATED_AT))
             ?: return false
 
     val lastUpdatedDependency =
@@ -69,17 +69,17 @@ class MinimumFlowLimitBoundariesGenerator(@Autowired val context: DSLContext) {
     val minimumFlowBoundariesToProcess =
         context
             .select(
-                MINIMUM_FLOW_LIMITS.ID,
-                MINIMUM_FLOW_LIMITS.HYDRO_IDS,
-                MINIMUM_FLOW_LIMITS.EXCLUDED_HYDRO_IDS)
-            .from(MINIMUM_FLOW_LIMITS)
-            .where(MINIMUM_FLOW_LIMITS.HYDRO_ID.isNotNull)
+                MINIMUM_FLOW_LIMITS_OLD.ID,
+                MINIMUM_FLOW_LIMITS_OLD.HYDRO_IDS,
+                MINIMUM_FLOW_LIMITS_OLD.EXCLUDED_HYDRO_IDS)
+            .from(MINIMUM_FLOW_LIMITS_OLD)
+            .where(MINIMUM_FLOW_LIMITS_OLD.HYDRO_ID.isNotNull)
             .fetch()
 
     minimumFlowBoundariesToProcess.forEach {
-      val id = it.get(MINIMUM_FLOW_LIMITS.ID)!!
-      val hydroIds = it.get(MINIMUM_FLOW_LIMITS.HYDRO_IDS)!!.filterNotNull()
-      val excludedHydroIds = it.get(MINIMUM_FLOW_LIMITS.EXCLUDED_HYDRO_IDS)!!.filterNotNull()
+      val id = it.get(MINIMUM_FLOW_LIMITS_OLD.ID)!!
+      val hydroIds = it.get(MINIMUM_FLOW_LIMITS_OLD.HYDRO_IDS)!!.filterNotNull()
+      val excludedHydroIds = it.get(MINIMUM_FLOW_LIMITS_OLD.EXCLUDED_HYDRO_IDS)!!.filterNotNull()
       val catchmentTree =
           selectRecCatchmentTree(context, hydroIds.toSet(), excludedHydroIds.toSet())
       insertCatchmentFromWatersheds(id, catchmentTree)

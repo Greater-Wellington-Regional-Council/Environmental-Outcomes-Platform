@@ -5,8 +5,8 @@ import nz.govt.eop.si.jooq.tables.AllocationAmounts.Companion.ALLOCATION_AMOUNTS
 import nz.govt.eop.si.jooq.tables.CouncilBoundaries.Companion.COUNCIL_BOUNDARIES
 import nz.govt.eop.si.jooq.tables.GroundwaterZones.Companion.GROUNDWATER_ZONES
 import nz.govt.eop.si.jooq.tables.MinimumFlowLimitBoundaries.Companion.MINIMUM_FLOW_LIMIT_BOUNDARIES
-import nz.govt.eop.si.jooq.tables.MinimumFlowLimits.Companion.MINIMUM_FLOW_LIMITS
-import nz.govt.eop.si.jooq.tables.Sites.Companion.SITES
+import nz.govt.eop.si.jooq.tables.MinimumFlowLimitsOld.Companion.MINIMUM_FLOW_LIMITS_OLD
+import nz.govt.eop.si.jooq.tables.SitesOld.Companion.SITES_OLD
 import nz.govt.eop.si.jooq.tables.SurfaceWaterManagementBoundaries.Companion.SURFACE_WATER_MANAGEMENT_BOUNDARIES
 import nz.govt.eop.si.jooq.tables.WaterAllocations.Companion.WATER_ALLOCATIONS
 import nz.govt.eop.si.jooq.tables.WhaituaBoundaries.Companion.WHAITUA_BOUNDARIES
@@ -68,10 +68,10 @@ class GeoJsonQueries(@Autowired val context: DSLContext) {
   fun flowManagementSites(): String {
     val innerQuery =
         select(
-                SITES.ID.`as`("id"),
-                SITES.GEOM.`as`("geometry"),
+                SITES_OLD.ID.`as`("id"),
+                SITES_OLD.GEOM.`as`("geometry"),
             )
-            .from(SITES)
+            .from(SITES_OLD)
 
     return buildFeatureCollection(context, innerQuery)
   }
@@ -81,14 +81,14 @@ class GeoJsonQueries(@Autowired val context: DSLContext) {
         select(
                 MINIMUM_FLOW_LIMIT_BOUNDARIES.ID.`as`("id"),
                 MINIMUM_FLOW_LIMIT_BOUNDARIES.GEOM.`as`("geometry"),
-                MINIMUM_FLOW_LIMITS.PLAN_MANAGEMENT_POINT_NAME.`as`("name"),
-                MINIMUM_FLOW_LIMITS.PLAN_MINIMUM_FLOW_VALUE,
-                MINIMUM_FLOW_LIMITS.PLAN_MINIMUM_FLOW_UNIT,
-                MINIMUM_FLOW_LIMITS.SITE_ID,
+                MINIMUM_FLOW_LIMITS_OLD.PLAN_MANAGEMENT_POINT_NAME.`as`("name"),
+                MINIMUM_FLOW_LIMITS_OLD.PLAN_MINIMUM_FLOW_VALUE,
+                MINIMUM_FLOW_LIMITS_OLD.PLAN_MINIMUM_FLOW_UNIT,
+                MINIMUM_FLOW_LIMITS_OLD.SITE_ID,
             )
             .from(MINIMUM_FLOW_LIMIT_BOUNDARIES)
-            .join(MINIMUM_FLOW_LIMITS)
-            .on(MINIMUM_FLOW_LIMITS.ID.eq(MINIMUM_FLOW_LIMIT_BOUNDARIES.ID))
+            .join(MINIMUM_FLOW_LIMITS_OLD)
+            .on(MINIMUM_FLOW_LIMITS_OLD.ID.eq(MINIMUM_FLOW_LIMIT_BOUNDARIES.ID))
 
     return buildFeatureCollection(context, innerQuery)
   }
