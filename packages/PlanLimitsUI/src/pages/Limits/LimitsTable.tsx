@@ -1,7 +1,5 @@
-import type { FeatureCollection, Geometry } from 'geojson';
-import type { GroundwaterZoneBoundariesProperties } from '../../api';
-import type { AppState } from './useAppState';
-import type { WaterTakeFilter } from '.';
+import { twMerge } from 'tailwind-merge';
+import { pick } from 'lodash';
 
 const BLANK_CELL_CHAR = '-';
 const GROUNDWATER_CATEGORY_B_RULE = (
@@ -21,302 +19,261 @@ const DEFAULT_RULE = (
   </span>
 );
 
-type Props = {
-  waterTakeFilter: WaterTakeFilter;
-  appState: AppState;
-  groundWaterZoneGeoJson: FeatureCollection<
-    Geometry,
-    GroundwaterZoneBoundariesProperties
-  >;
-};
-
-function AllocatedAmount({
-  amount,
-  percentage,
-}: {
-  amount?: string;
-  percentage?: number;
+function FormattedTD(props: {
+  children?: React.ReactElement | string;
+  rowSpan?: number;
 }) {
-  if (!amount) return <>{BLANK_CELL_CHAR}</>;
+  const { children, ...otherProps } = props;
+  return (
+    <td className="border p-2 text-left text-sm" {...otherProps}>
+      {children}
+    </td>
+  );
+}
+
+function FormattedTH(props: {
+  children?: React.ReactElement | string;
+  rowSpan?: number;
+  colSpan?: number;
+  className?: string;
+}) {
+  const { children, className, ...otherProps } = props;
+  return (
+    <th
+      className={twMerge(
+        'border p-2 text-left text-sm font-normal bg-gray-100',
+        className
+      )}
+      {...otherProps}
+    >
+      {children}
+    </th>
+  );
+}
+
+interface LimitRow {
+  type: 'Surface' | 'Ground';
+  depth?: string;
+  category?: string;
+  hideCategory?: boolean;
+  subUnitLimitView: LimitView;
+  subUnitLimitRowSpan?: number;
+  hideSubUnitLimit?: boolean;
+  unitLimitView: LimitView;
+  unitLimitRowSpan?: number;
+  hideUnitLimit?: boolean;
+}
+function LimitRow({
+  type,
+  depth = BLANK_CELL_CHAR,
+  category = BLANK_CELL_CHAR,
+  hideCategory = false,
+  hideSubUnitLimit = false,
+  subUnitLimitView,
+  subUnitLimitRowSpan = 1,
+  hideUnitLimit = false,
+  unitLimitView,
+  unitLimitRowSpan = 1,
+}: LimitRow) {
+  return (
+    <tr>
+      <FormattedTD>{type}</FormattedTD>
+      <FormattedTD>{depth}</FormattedTD>
+      {!hideCategory && <FormattedTD>{category}</FormattedTD>}
+      {!hideSubUnitLimit && (
+        <>
+          <FormattedTD rowSpan={subUnitLimitRowSpan}>
+            {subUnitLimitView.limitToDiplay || BLANK_CELL_CHAR}
+          </FormattedTD>
+          <FormattedTD rowSpan={subUnitLimitRowSpan}>
+            <AllocatedAmount limitView={subUnitLimitView} />
+          </FormattedTD>
+        </>
+      )}
+      {!hideUnitLimit && (
+        <>
+          <FormattedTD rowSpan={unitLimitRowSpan}>
+            {unitLimitView.limitToDiplay || BLANK_CELL_CHAR}
+          </FormattedTD>
+          <FormattedTD rowSpan={unitLimitRowSpan}>
+            <AllocatedAmount limitView={unitLimitView} />
+          </FormattedTD>
+        </>
+      )}
+    </tr>
+  );
+}
+
+function AllocatedAmount({ limitView }: { limitView: LimitView }) {
+  if (!limitView.allocated) return <>{BLANK_CELL_CHAR}</>;
   return (
     <>
-      {amount}
+      {limitView.allocatedToDiplay}
       <br />
       <span
         className={
-          percentage && percentage < 100 ? 'text-green-700' : 'text-red-700'
+          limitView.allocatedPercent && limitView.allocatedPercent < 100
+            ? 'text-green-700'
+            : 'text-red-700'
         }
       >
-        {percentage}%
+        {limitView.allocatedPercent}%
       </span>
     </>
   );
 }
 
-export default function LimitsTable({ waterTakeFilter, appState }: Props) {
-  if (!appState.swLimit && appState.gwLimits?.length === 0) return <></>;
+type Props = {
+  waterTakeFilter: WaterTakeFilter;
+  appState: AppState;
+  council: Council;
+};
+export default function LimitsTable({
+  waterTakeFilter,
+  appState,
+  council,
+}: Props) {
+  if (
+    !appState.surfaceWaterLimitView &&
+    !appState.catAGroundWaterLimitsView &&
+    !appState.catBGroundWaterLimitsView &&
+    !appState.catCGroundWaterLimitsView
+  )
+    return <></>;
 
-  const showFootnote =
-    appState.swLimit?.useDefaultRuleForSubUnit ||
-    appState.swLimit?.useDefaultRuleForUnit ||
-    appState.gwLimits?.some(
-      (gwLimit) =>
-        gwLimit.useDefaultRuleForSubUnit || gwLimit.useDefaultRuleForUnit
-    );
+  const showSurfaceWaterLimits = ['Combined', 'Surface'].includes(
+    waterTakeFilter
+  );
+  const showGroundWaterLimits = ['Combined', 'Ground'].includes(
+    waterTakeFilter
+  );
 
-  let swAndGWCatASubUnitRowSpan = 1;
-  let swAndGWCatAUnitRowSpan = 1;
+  const showFootnote = true;
+  let surfaceAndGroundCatASubUnitRowSpan = 1;
+  let surfaceAndGroundCatAUnitRowSpan = 1;
+  if (
+    appState.catAGroundWaterLimitsView &&
+    Object.values(appState.catAGroundWaterLimitsView).length > 0
+  ) {
+    const catALimits = Object.values(appState.catAGroundWaterLimitsView)[0];
+    surfaceAndGroundCatAUnitRowSpan =
+      catALimits.filter(
+        (gwLimitView) =>
+          appState.surfaceWaterUnitLimit &&
+          gwLimitView.depletesFromUnitLimit?.id ===
+            appState.surfaceWaterUnitLimit?.id
+      ).length + 1;
 
-  let gwCatBSubUnitRowSpan = 1;
-  let gwCatBAllocationAmountId: number;
-  let gwCatCSubUnitRowSpan = 1;
-  let gwCatCAllocationAmountId: number;
-
-  appState.gwLimits?.forEach((gwLimit) => {
-    if (gwLimit.category === 'A') {
-      if (
-        ['Combined'].includes(waterTakeFilter) &&
-        gwLimit.parentSWSubUnitId &&
-        gwLimit.parentSWSubUnitId.toString() ===
-          appState?.surfaceWaterMgmtSubUnitId?.toString()
-      ) {
-        swAndGWCatASubUnitRowSpan += 1;
-        // This depends on consecutive Cat A GW limits having the parent SW sub unit.
-        gwLimit.mergeSubUnit = true;
-      }
-      if (
-        ['Combined'].includes(waterTakeFilter) &&
-        gwLimit.parentSWUnitId &&
-        gwLimit.parentSWUnitId.toString() ===
-          appState?.surfaceWaterMgmtUnitId?.toString()
-      ) {
-        swAndGWCatAUnitRowSpan += 1;
-        // This depends on consecutive Cat A GW limits having the parent SW sub unit.
-        gwLimit.mergeUnit = true;
-      }
-    }
-
-    if (gwLimit.category === 'B') {
-      if (!gwCatBAllocationAmountId && gwLimit.groundwaterAllocationAmountId) {
-        gwCatBAllocationAmountId = gwLimit.groundwaterAllocationAmountId;
-      } else {
-        if (
-          gwCatBAllocationAmountId &&
-          gwCatBAllocationAmountId === gwLimit.groundwaterAllocationAmountId
-        ) {
-          // This depends on consecutive Cat B GW limits having the parent SW sub unit.
-          gwCatBSubUnitRowSpan += 1;
-          gwLimit.mergeSubUnit = true;
-          gwLimit.mergeUnit = true;
-        }
-      }
-    }
-
-    if (gwLimit.category === 'C') {
-      if (!gwCatCAllocationAmountId && gwLimit.groundwaterAllocationAmountId) {
-        gwCatCAllocationAmountId = gwLimit.groundwaterAllocationAmountId;
-      } else {
-        if (
-          gwCatCAllocationAmountId &&
-          gwCatCAllocationAmountId == gwLimit.groundwaterAllocationAmountId
-        ) {
-          // This depends on consecutive Cat C GW limits having the parent SW sub unit.
-          gwCatCSubUnitRowSpan += 1;
-          gwLimit.mergeSubUnit = true;
-          gwLimit.mergeUnit = true;
-        }
-      }
-    }
-  });
+    surfaceAndGroundCatASubUnitRowSpan =
+      catALimits.filter(
+        (gwLimitView) =>
+          appState.surfaceWaterSubUnitLimit &&
+          gwLimitView.depletesFromSubunitLimit?.id ===
+            appState.surfaceWaterSubUnitLimit?.id
+      ).length + 1;
+  }
 
   return (
     <>
       <h3 className="text-lg uppercase mb-2 tracking-wider">Limits</h3>
+
       <table className="border-collapse border">
         <thead>
           <tr>
-            <th
-              rowSpan={2}
-              className="border p-2 text-left text-sm font-normal bg-gray-100"
-            >
-              Type
-            </th>
-            <th
-              rowSpan={2}
-              className="border p-2 text-left text-sm font-normal bg-gray-100"
-            >
-              Depth
-            </th>
-            <th
-              rowSpan={2}
-              className="border p-2 text-left text-sm font-normal bg-gray-100"
-            >
-              Category
-            </th>
-            <th
-              colSpan={2}
-              className="border p-2 text-center text-sm font-normal bg-gray-100"
-            >
-              Sub-unit
-            </th>
-
-            <th
-              colSpan={2}
-              className="border p-2 text-center text-sm font-normal bg-gray-100"
-            >
-              Unit
-            </th>
+            <FormattedTH rowSpan={2}>Type</FormattedTH>
+            <FormattedTH rowSpan={2}>Depth</FormattedTH>
+            {council.hasGroundwaterCategories && (
+              <FormattedTH rowSpan={2}>Category</FormattedTH>
+            )}
+            <FormattedTH colSpan={2} className="text-center">
+              {council.labels.surfaceWaterChild}
+            </FormattedTH>
+            <FormattedTH colSpan={2} className="text-center">
+              {council.labels.surfaceWaterParent}
+            </FormattedTH>
           </tr>
           <tr>
-            <th className="border p-1 text-left text-sm font-normal bg-gray-100">
-              Limit
-            </th>
-            <th className="border p-1 text-left text-sm font-normal bg-gray-100">
-              Allocated
-            </th>
-            <th className="border p-1 text-left text-sm font-normal bg-gray-100">
-              Limit
-            </th>
-            <th className="border p-1 text-left text-sm font-normal bg-gray-100">
-              Allocated
-            </th>
+            <FormattedTH>Limit</FormattedTH>
+            <FormattedTH>Allocated</FormattedTH>
+            <FormattedTH>Limit</FormattedTH>
+            <FormattedTH>Allocated</FormattedTH>
           </tr>
         </thead>
         <tbody>
-          {/* Surface water */}
-          {['Combined', 'Surface'].includes(waterTakeFilter) && (
-            <>
-              <tr>
-                <td className="border p-2 text-left text-sm">Surface</td>
-                <td className="border p-2 text-left text-sm">
-                  {BLANK_CELL_CHAR}
-                </td>
-                <td className="border p-2 text-left text-sm">
-                  {BLANK_CELL_CHAR}
-                </td>
-                <td
-                  rowSpan={swAndGWCatASubUnitRowSpan}
-                  className="border p-2 text-left text-sm"
-                >
-                  {appState.swLimit?.useDefaultRuleForSubUnit
-                    ? DEFAULT_RULE
-                    : appState.swLimit?.subUnitLimit || BLANK_CELL_CHAR}
-                </td>
-                <td
-                  rowSpan={swAndGWCatASubUnitRowSpan}
-                  className="border p-2 text-left text-sm"
-                >
-                  <AllocatedAmount
-                    amount={appState.surfaceWaterMgmtSubUnitAllocated}
-                    percentage={
-                      appState.surfaceWaterMgmtSubUnitAllocatedPercentage
-                    }
-                  />
-                </td>
-                <td
-                  rowSpan={swAndGWCatAUnitRowSpan}
-                  className="border p-2 text-left text-sm"
-                >
-                  {appState.swLimit?.useDefaultRuleForUnit
-                    ? DEFAULT_RULE
-                    : appState.swLimit?.unitLimit || BLANK_CELL_CHAR}
-                </td>
-                <td
-                  rowSpan={swAndGWCatAUnitRowSpan}
-                  className="border p-2 text-left text-sm"
-                >
-                  <AllocatedAmount
-                    amount={appState.surfaceWaterMgmtUnitAllocated}
-                    percentage={
-                      appState.surfaceWaterMgmtUnitAllocatedPercentage
-                    }
-                  />
-                </td>
-              </tr>
-            </>
+          {showSurfaceWaterLimits && appState.surfaceWaterLimitView && (
+            <LimitRow
+              type="Surface"
+              {...appState.surfaceWaterLimitView}
+              hideCategory={!council.hasGroundwaterCategories}
+              subUnitLimitRowSpan={surfaceAndGroundCatASubUnitRowSpan}
+              unitLimitRowSpan={surfaceAndGroundCatAUnitRowSpan}
+            ></LimitRow>
           )}
-          {['Combined', 'Ground'].includes(waterTakeFilter) && (
-            <>
-              {appState.gwLimits?.map((gwLimit, index) => (
-                <tr key={index}>
-                  <td className="border p-2 text-left text-sm">Ground</td>
-                  <td className="border p-2 text-left text-sm">
-                    {gwLimit.depth}
-                  </td>
-                  <td className="border p-2 text-left text-sm">
-                    {gwLimit.category || BLANK_CELL_CHAR}
-                  </td>
-                  {!gwLimit.mergeSubUnit && (
-                    <>
-                      <td
-                        rowSpan={
-                          gwLimit.category === 'B'
-                            ? gwCatBSubUnitRowSpan
-                            : gwLimit.category === 'C'
-                            ? gwCatCSubUnitRowSpan
-                            : 1
-                        }
-                        className="border p-2 text-left text-sm"
-                      >
-                        {gwLimit.useDefaultRuleForSubUnit
-                          ? gwLimit.category === 'B'
-                            ? GROUNDWATER_CATEGORY_B_RULE
-                            : DEFAULT_RULE
-                          : gwLimit.subUnitLimit || BLANK_CELL_CHAR}
-                      </td>
-                      <td
-                        rowSpan={
-                          gwLimit.category === 'B'
-                            ? gwCatBSubUnitRowSpan
-                            : gwLimit.category === 'C'
-                            ? gwCatCSubUnitRowSpan
-                            : 1
-                        }
-                        className="border p-2 text-left text-sm"
-                      >
-                        <AllocatedAmount {...gwLimit.subUnitAllocated} />
-                      </td>
-                    </>
-                  )}
-                  {!gwLimit.mergeUnit && (
-                    <>
-                      <td
-                        rowSpan={
-                          gwLimit.category === 'B'
-                            ? gwCatBSubUnitRowSpan
-                            : gwLimit.category === 'C'
-                            ? gwCatCSubUnitRowSpan
-                            : 1
-                        }
-                        className="border p-2 text-left text-sm"
-                      >
-                        {gwLimit.useDefaultRuleForUnit
-                          ? gwLimit.category === 'B'
-                            ? GROUNDWATER_CATEGORY_B_RULE
-                            : DEFAULT_RULE
-                          : gwLimit.unitLimit || BLANK_CELL_CHAR}
-                      </td>
-                      <td
-                        rowSpan={
-                          gwLimit.category === 'B'
-                            ? gwCatBSubUnitRowSpan
-                            : gwLimit.category === 'C'
-                            ? gwCatCSubUnitRowSpan
-                            : 1
-                        }
-                        className="border p-2 text-left text-sm"
-                      >
-                        <AllocatedAmount {...gwLimit.unitAllocated} />
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
-            </>
-          )}
+          {showGroundWaterLimits &&
+            appState.catAGroundWaterLimitsView &&
+            Object.keys(appState.catAGroundWaterLimitsView).map((key) =>
+              appState.catAGroundWaterLimitsView[key].map((gwLimit, index) => (
+                <LimitRow
+                  key={`${key}=${index}`}
+                  type="Ground"
+                  depth={gwLimit.groundWaterLimit.depth}
+                  category="A"
+                  hideCategory={!council.hasGroundwaterCategories}
+                  {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
+                  hideSubUnitLimit={
+                    showSurfaceWaterLimits &&
+                    index + 1 < surfaceAndGroundCatASubUnitRowSpan
+                  }
+                  hideUnitLimit={
+                    showSurfaceWaterLimits &&
+                    index + 1 < surfaceAndGroundCatAUnitRowSpan
+                  }
+                ></LimitRow>
+              ))
+            )}
         </tbody>
+        {showGroundWaterLimits &&
+          appState.catBGroundWaterLimitsView &&
+          Object.keys(appState.catBGroundWaterLimitsView).map((key) => (
+            <tbody key={key}>
+              {appState.catBGroundWaterLimitsView[key].map((gwLimit, index) => (
+                <LimitRow
+                  key={`${key}=${index}`}
+                  type="Ground"
+                  category="B"
+                  depth={gwLimit.groundWaterLimit.depth}
+                  hideCategory={!council.hasGroundwaterCategories}
+                  {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
+                  subUnitLimitRowSpan={0}
+                  hideSubUnitLimit={index > 0}
+                  unitLimitRowSpan={0}
+                  hideUnitLimit={index > 0}
+                ></LimitRow>
+              ))}
+            </tbody>
+          ))}
+        {showGroundWaterLimits &&
+          appState.catCGroundWaterLimitsView &&
+          Object.keys(appState.catCGroundWaterLimitsView).map((key) => (
+            <tbody key={key}>
+              {appState.catCGroundWaterLimitsView[key].map((gwLimit, index) => (
+                <LimitRow
+                  key={`${key}=${index}`}
+                  type="Ground"
+                  depth={gwLimit.groundWaterLimit.depth}
+                  category="C"
+                  hideCategory={!council.hasGroundwaterCategories}
+                  {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
+                  subUnitLimitRowSpan={0}
+                  hideSubUnitLimit={index > 0}
+                  unitLimitRowSpan={0}
+                  hideUnitLimit={index > 0}
+                ></LimitRow>
+              ))}
+            </tbody>
+          ))}
       </table>
-      {showFootnote && (
+      {showFootnote && council.id === 9 && (
         <>
           <div className="mt-3">
             <span id="PNRP41" className="underline">

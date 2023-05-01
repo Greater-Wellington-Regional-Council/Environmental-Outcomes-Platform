@@ -1,16 +1,10 @@
 import { useAtom } from 'jotai';
-import type { FeatureCollection, Geometry } from 'geojson';
-import type {
-  GeoJsonQueries,
-  GroundwaterZoneBoundariesProperties,
-} from '../../api';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
+import { councilAtom } from '../../lib/loader';
 import LimitsTable from './LimitsTable';
 import Button from '../../components/Button';
-import gwrcLogo from '../../images/gwrc-logo-header.svg';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
-import type { AppState } from './useAppState';
-import type { WaterTakeFilter } from './index';
+import formatWaterQuantity from './formatWaterQuantity';
 
 const LimitsListItem = ({
   title,
@@ -29,31 +23,26 @@ export default function Sidebar({
   appState,
   waterTakeFilter,
   setWaterTakeFilter,
-  queries,
 }: {
   appState: AppState;
   waterTakeFilter: WaterTakeFilter;
   setWaterTakeFilter: (value: WaterTakeFilter) => void;
-  queries: GeoJsonQueries;
 }) {
   const [, setShowDisclaimer] = useAtom(showDisclaimerAtom);
+  const [council] = useAtom(councilAtom);
+
   return (
     <>
       <header className="flex items-center px-6 py-4">
         <div className="flex-1">
-          <h1 className="text-xl font-light">
-            Proposed Natural Resource Plan Limits
-          </h1>
+          <h1 className="text-xl font-light">{council.labels.headingText}</h1>
           <h2>Water Quantity Limits</h2>
         </div>
-        <a
-          href="https://www.gw.govt.nz/"
-          title="Go to the Greater Wellington website"
-        >
+        <a href={council.url} title={`Go to the ${council.name} website`}>
           <img
             className="h-10"
-            alt="Greater Wellington Logo"
-            src={gwrcLogo}
+            alt={`${council.name} Logo`}
+            src={council.logo}
           ></img>
         </a>
       </header>
@@ -86,95 +75,87 @@ export default function Sidebar({
         <h3 className="text-lg uppercase mb-2 tracking-wider">Area</h3>
         <dl className="mb-6">
           <LimitsListItem
-            title="Whaitua"
-            text={appState.whaitua?.name ?? 'None'}
+            title={council.labels.region}
+            text={appState.planRegion?.name ?? 'None'}
           />
           {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <>
               <LimitsListItem
-                title={'Surface Water Catchment Unit'}
-                text={
-                  appState.surfaceWaterMgmtUnitDescription
-                    ? appState.surfaceWaterMgmtUnitDescription
-                    : 'None'
-                }
+                title={council.labels.surfaceWaterParentLimit}
+                text={appState.surfaceWaterUnitLimit?.name ?? 'None'}
               />
+              {/* <span>ID: {appState.surfaceWaterUnitLimit?.id}</span> */}
+
               <LimitsListItem
-                title={'Surface Water Catchment Sub-unit'}
-                text={
-                  appState.surfaceWaterMgmtSubUnitDescription
-                    ? appState.surfaceWaterMgmtSubUnitDescription
-                    : 'None'
-                }
+                title={council.labels.surfaceWaterChildLimit}
+                text={appState.surfaceWaterSubUnitLimit?.name ?? 'None'}
               />
+              {/* <span>ID: {appState.surfaceWaterSubUnitLimit?.id}</span> */}
             </>
           )}
           {['Ground', 'Combined'].includes(waterTakeFilter) && (
-            <LimitsListItem
-              title={'Groundwater Catchment Unit'}
-              text={
-                appState.groundWaterZoneName
-                  ? appState.groundWaterZoneName
-                  : 'None'
-              }
-            />
+            <>
+              <LimitsListItem
+                title={council.labels.groundwaterLimit}
+                text={
+                  appState.groundWaterZoneName
+                    ? appState.groundWaterZoneName
+                    : 'None'
+                }
+              />
+              <span>
+                {/* IDS:{' '}
+                {appState.groundWaterLimits.map((limit) => limit.id).join(', ')} */}
+              </span>
+            </>
           )}
           <LimitsListItem
             title={'Flow Management Site'}
             text={
-              appState.flowLimitBoundary
-                ? appState.flowLimitBoundary.name
-                : appState.whaitua
-                ? appState.whaitua.defaultFlowLimitAndSite
+              appState.flowLimit
+                ? appState.flowSite?.name
+                : appState.planRegion
+                ? appState.planRegion.defaultFlowManagementLimit
                 : 'None'
             }
           />
           <LimitsListItem
             title={'Minimum Flow or Restriction Flow'}
             text={
-              appState.flowLimitBoundary
-                ? appState.flowLimitBoundary.flowRestriction
-                : appState.whaitua
-                ? appState.whaitua.defaultFlowLimitAndSite
+              appState.flowLimit
+                ? formatWaterQuantity(
+                    appState.flowLimit.minimumFlow,
+                    council.unitTypes.flow
+                  )
+                : appState.planRegion
+                ? appState.planRegion.defaultFlowManagementLimit
                 : 'None'
             }
           />
         </dl>
-        {appState.whaitua && queries[6].data && (
+        {appState.planRegion && (
           <LimitsTable
+            council={council}
             waterTakeFilter={waterTakeFilter}
             appState={appState}
-            groundWaterZoneGeoJson={
-              queries[6].data as FeatureCollection<
-                Geometry,
-                GroundwaterZoneBoundariesProperties
-              >
-            }
           />
         )}
       </div>
 
       <footer className="px-6 py-4 border-t flex items-start">
         <div className="flex-1">
-          <a
-            href="https://pnrp.gw.govt.nz/home/pnrp-final-appeals-version-2022"
-            className="text-sm underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Proposed Natural Resource Plan
-            <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
-          </a>
-          <br />
-          <a
-            href="http://pnrp.gw.govt.nz/assets/Uploads/Chapter-5.5-Rules-Water-Allocation-Appeal-version-2022.pdf"
-            className="text-sm underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Water allocation rules
-            <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
-          </a>
+          {council.footerLinks.map((link) => (
+            <a
+              key={link.text}
+              href={link.url}
+              className="text-sm underline block mb-2"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {link.text}
+              <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
+            </a>
+          ))}
         </div>
         <button
           onClick={() => setShowDisclaimer(true)}

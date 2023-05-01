@@ -1,50 +1,22 @@
 import { useEffect, useState } from 'react';
-import {
-  type LoaderFunction,
-  redirect,
-  useLoaderData,
-  useNavigate,
-} from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { useDebounce } from 'usehooks-ts';
 import type { ViewState } from 'react-map-gl';
+import { useAtom } from 'jotai';
+import { councilAtom } from '../../lib/loader';
 import { useAppState } from './useAppState';
-import {
-  createLocationString,
-  createPinnedLocationString,
-  parseLocationString,
-  parsePinnedLocation,
-  type ViewLocation,
-} from './locationString';
-import { useGeoJsonQueries } from '../../api';
+import { usePlanLimitsData } from '../../api';
 import Map from './map';
 import Sidebar from './sidebar';
-
-export const defaultViewLocation = {
-  latitude: -41,
-  longitude: 175.35,
-  zoom: 8,
-};
-export const defaultPath = `/limits/${createLocationString(
-  defaultViewLocation
-)}`;
-
-export type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
-
-export const loader: LoaderFunction = ({ params, request }) => {
-  if (!params.location) return redirect(defaultPath);
-
-  const locationString = parseLocationString(params.location);
-  if (!locationString) return redirect(defaultPath);
-
-  const url = new URL(request.url);
-  const pinnedParam = url.searchParams.get('pinned');
-  return {
-    locationString,
-    pinnedLocation: pinnedParam && parsePinnedLocation(pinnedParam),
-  };
-};
+import {
+  type loader,
+  viewLocationUrlPath,
+  pinnedLocationUrlParam,
+} from '../../lib/loader';
 
 export default function Limits() {
+  const [council] = useAtom(councilAtom);
+
   const navigate = useNavigate();
 
   const {
@@ -58,21 +30,17 @@ export default function Limits() {
   const debouncedValue = useDebounce<ViewLocation>(viewLocation, 500);
   useEffect(() => {
     const updatedLocation = {
-      pathname: `/limits/${createLocationString(debouncedValue)}`,
+      pathname: viewLocationUrlPath(council.slug, debouncedValue),
       search: pinnedLocation
-        ? `pinned=${createPinnedLocationString(pinnedLocation)}`
+        ? pinnedLocationUrlParam(pinnedLocation)
         : undefined,
     };
 
     navigate(updatedLocation, { replace: true });
-  }, [debouncedValue, pinnedLocation, navigate]);
-
-  const geoJsonQueries = useGeoJsonQueries();
+  }, [debouncedValue, pinnedLocation, navigate, council.slug]);
 
   const [waterTakeFilter, setWaterTakeFilter] =
     useState<WaterTakeFilter>('Combined');
-
-  const [appState, setAppState] = useAppState();
 
   const [viewState, storeViewState] = useState<ViewState>({
     ...initialViewLocation,
@@ -91,29 +59,31 @@ export default function Limits() {
     storeViewState(value);
   };
 
-  const geoJsonDataLoaded = geoJsonQueries.every((query) => query.data);
+  const planLimitsData = usePlanLimitsData(council.id);
+  const [appState, setAppState] = useAppState(council);
 
   return (
     <div className="flex">
       <main className="flex-1">
-        <Map
-          appState={appState}
-          setAppState={setAppState}
-          viewState={viewState}
-          setViewState={setViewState}
-          pinnedLocation={pinnedLocation}
-          setPinnedLocation={setPinnedLocation}
-          waterTakeFilter={waterTakeFilter}
-          queries={geoJsonQueries}
-          geoJsonDataLoaded={geoJsonDataLoaded}
-        />
+        {/* TODO: Temp workaround to ensure limits for pinned locations are displayed on load */}
+        {planLimitsData.isLoaded && (
+          <Map
+            appState={appState}
+            setAppState={setAppState}
+            viewState={viewState}
+            setViewState={setViewState}
+            pinnedLocation={pinnedLocation}
+            setPinnedLocation={setPinnedLocation}
+            waterTakeFilter={waterTakeFilter}
+            planLimitsData={planLimitsData}
+          />
+        )}
       </main>
       <aside className="w-[36rem] h-screen overflow-y-scroll border-l border-gray-200">
         <Sidebar
           appState={appState}
           waterTakeFilter={waterTakeFilter}
           setWaterTakeFilter={setWaterTakeFilter}
-          queries={geoJsonQueries}
         />
       </aside>
     </div>
