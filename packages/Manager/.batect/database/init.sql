@@ -15,10 +15,9 @@ CREATE EXTENSION postgis;
 REVOKE ALL PRIVILEGES ON SCHEMA public FROM PUBLIC;
 
 CREATE USER eop_manager_migrations_user WITH PASSWORD 'password' NOINHERIT;
-CREATE SCHEMA plan_limits;
+
 -- Migrations user has full access
 GRANT ALL ON SCHEMA public TO eop_manager_migrations_user WITH GRANT OPTION;
-GRANT ALL ON SCHEMA plan_limits TO eop_manager_migrations_user WITH GRANT OPTION;
 
 -- App / Developers will be granted access by the migrations user in migration scripts
 CREATE USER eop_manager_app_user WITH PASSWORD 'password' NOINHERIT;
@@ -36,6 +35,5 @@ CREATE ROLE developers NOINHERIT;
 
 \c eop_test
 CREATE EXTENSION postgis;
-CREATE SCHEMA plan_limits;
 
 -- Test DB will just be access via the super-user so no explicit roles needed
