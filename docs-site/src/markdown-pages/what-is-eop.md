@@ -3,15 +3,12 @@ title: What is EOP?
 key: index
 ---
 
-<p class="text-center font-bold italic">
-  The Environmental Outcomes Platform (EOP) is an end-to-solution for
-  acquiring, managing, and interacting with environmental information
-  to empower council services both internally and externally.
-</p>
-<p class="text-center font-bold italic">
-  The vision is to have an environment focused platform that has
-  outcomes at heart.
-</p>
+> The Environmental Outcomes Platform (EOP) is an end-to-end solution for
+> acquiring, managing, and interacting with environmental information to empower
+> council services both internally and externally.
+
+> The vision is to have an environment focused platform that has outcomes at
+> heart.
 
 ## Overview
 
@@ -79,8 +76,8 @@ the natural environment. Councils capture these observations using a variety of
 methods and systems, including spreadsheets, databases and software systems. A
 goal of EOP is to allow these observations to be captured in a uniform manner,
 allowing better analysis across different data-sets.
-[Observations Data Model 2 (ODM)](https://www.odm2.org/ODM2/ODM2Overview.html)
-is being explored as a potential uniform model for EOP.
+[Observations Data Model 2 (ODM)](https://www.odm2.org) is being explored as a
+potential uniform model for EOP.
 
 ### Regional Plans and Consenting Limits
 
@@ -95,7 +92,7 @@ provides evidence to improve future planning efforts.
 ### Geospatial Context Data
 
 Showing environmental observations and analysis in the context of relevant
-gespatial features helps improves usability and understandining of the data.
+geospatial features helps improves usability and understanding of the data.
 
 This information may include:
 
@@ -174,12 +171,12 @@ and available for all New Zealand regional councils. The Regional Councils are
 expected to be the main contributors, whether via their own staff or employing a
 third party vendor to contribute on their behalf.
 
-The primary purpose of being open source in this sense is to be transparent
-about the work being done and lower the barrier to entry for other councils
-wishing to contribute.
+The main reason being open source in this sense is to be transparent about the
+work being done and lower the barrier to entry for other councils wishing to
+contribute.
 
 There is a cost to host and maintain an instance of the platform. Under the
-guidence of the steering group the platform is being built to be multi-tenanted
+guidance of the steering group the platform is being built to be multi-tenanted
 with a single instance run to support the councils of New Zealand. The EOP
 Delivery team will be responsible for hosting and maintaining the shared
 instance of EOP.
