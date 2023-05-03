@@ -96,7 +96,7 @@ CREATE TABLE groundwater_areas
     FOREIGN KEY (depletion_limit_id) REFERENCES surface_water_limits
 );
 
-CREATE TABLE sites
+CREATE TABLE flow_measurement_sites
 (
     id         SERIAL          NOT NULL,
     council_id INT             NOT NULL,
@@ -108,7 +108,7 @@ CREATE TABLE sites
     FOREIGN KEY (council_id) REFERENCES councils
 );
 
-CREATE TABLE minimum_flow_limits
+CREATE TABLE flow_limits
 (
     id                  SERIAL      NOT NULL,
     council_id          INT         NOT NULL,
@@ -118,6 +118,6 @@ CREATE TABLE minimum_flow_limits
     created_at          timestamptz NOT NULL DEFAULT NOW(),
     updated_at          timestamptz NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
-    FOREIGN KEY (measured_at_site_id) REFERENCES sites,
+    FOREIGN KEY (measured_at_site_id) REFERENCES flow_measurement_sites,
     FOREIGN KEY (council_id) REFERENCES councils
 );
