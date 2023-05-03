@@ -22,7 +22,7 @@ These are the principles that drive the design and development of EOP.
   processing. Use the data and outcomes to drive which is required, rather than
   technical choices and constraints.
 
-- **Plan for scale** - Anticpate and design for the scale required to support
+- **Plan for scale** - Anticipate and design for the scale required to support
   the needs of multiple councils.
 
 - **Designed for integration** - Enable EOP to integrate well with other system
@@ -32,7 +32,8 @@ These are the principles that drive the design and development of EOP.
 
 EOP is being developed as a hub and spoke model. Data is captured or acquired
 from external sources and sent to a central hub in a raw format. This can then
-be consumed for procesing and storage by multiple components depending on needs.
+be consumed for processing and storage by multiple components depending on
+needs.
 
 As an example, the same data captured in the Hub might be subsequently stored in
 a data warehouse for analysis, and also processed in realtime for operational
@@ -59,14 +60,15 @@ This allows councils to control the frequency of updates. However, there will be
 some cases where pulling data from a system is required, such as data from third
 party systems that can't be changed.
 
-A special case is Hilltop. Because of its wide-use and existing APIs, EOP will
-support pulling data from council Hilltop instances.
+There will be special cases for tools that are ubiquitous across the councils
+that EOP can pull from standard interfaces without per council integration. For
+example, ESRI and Hilltop.
 
 Example Acquisition components:
 
 - JSON API's exposed to councils
 - Data lake / Blob storage style end points for bulk data
-- Hilltop API
+- Pulling from Hilltop / ESRI API's
 - Direct connection from Kafka Connectors running in council environments
 
 ### Capture
