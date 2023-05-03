@@ -99,21 +99,25 @@ CREATE TABLE groundwater_areas
 CREATE TABLE sites
 (
     id         SERIAL          NOT NULL,
+    council_id INT             NOT NULL,
     name       VARCHAR         NOT NULL,
     location   geometry(Point) NOT NULL,
     created_at timestamptz     NOT NULL DEFAULT NOW(),
     updated_at timestamptz     NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (council_id) REFERENCES councils
 );
 
 CREATE TABLE minimum_flow_limits
 (
     id                  SERIAL      NOT NULL,
+    council_id          INT         NOT NULL,
     minimum_flow        NUMERIC     NOT NULL,
     boundary            geometry    NOT NULL,
     measured_at_site_id INT         NOT NULL,
     created_at          timestamptz NOT NULL DEFAULT NOW(),
     updated_at          timestamptz NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
-    FOREIGN KEY (measured_at_site_id) REFERENCES sites
+    FOREIGN KEY (measured_at_site_id) REFERENCES sites,
+    FOREIGN KEY (council_id) REFERENCES councils
 );
