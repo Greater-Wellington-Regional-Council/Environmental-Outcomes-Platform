@@ -1,4 +1,5 @@
 interface Council {
+  id: number;
   slug: string;
   name: string;
   headingText: string;

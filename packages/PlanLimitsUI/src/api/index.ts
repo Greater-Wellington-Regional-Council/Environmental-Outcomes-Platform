@@ -14,17 +14,6 @@ const determineBackendUri = (hostname: string) => {
   }
 };
 
-const defaultRequestInit: RequestInit = {
-  mode: 'cors',
-};
-
-const apiBasePath = determineBackendUri(window.location.hostname);
-
-async function fetchFromAPI<T>(path: string): Promise<T> {
-  const result = await fetch(`${apiBasePath}${path}`, defaultRequestInit);
-  return await result.json();
-}
-
 export type GroundwaterZoneBoundariesProperties = {
   category: 'Category A' | 'Category B' | 'Category C';
   depth: string;
@@ -41,6 +30,78 @@ export type GroundwaterZoneBoundariesProperties = {
   groundwater_allocation_amount_unit: string;
   groundwater_allocated_amount: number;
 };
+
+const defaultRequestInit: RequestInit = {
+  mode: 'cors',
+};
+
+const apiBasePath = determineBackendUri(window.location.hostname);
+
+async function fetchFromAPI<T>(path: string): Promise<T> {
+  const result = await fetch(`${apiBasePath}${path}`, defaultRequestInit);
+  return await result.json();
+}
+
+function mapFeatureCollectionPropsToType<T>(
+  featureCollection: FeatureCollection
+) {
+  return featureCollection.features.map((feature) => {
+    return {
+      id: feature.id,
+      ...feature.properties,
+    } as T;
+  });
+}
+
+async function fetchFeaturesAndData<T>(
+  path: string,
+  councilId: number,
+  hash: string
+) {
+  const features = await fetchFromAPI<FeatureCollection>(
+    `${path}?councilId=${councilId}&v=${hash}`
+  );
+  return {
+    features,
+    data: mapFeatureCollectionPropsToType<T>(features),
+  };
+}
+
+interface CouncilRegion {
+  id: number;
+  name: string;
+}
+
+function useQ<T>(
+  path: string,
+  manifest: { [key: string]: string } | undefined,
+  councilId: number
+) {
+  return useQuery({
+    enabled: Boolean(manifest),
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
+    queryKey: [path, councilId],
+    refetchOnWindowFocus: false,
+    // We use ! here since we know manifest will be populated when this executes
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    queryFn: () => fetchFeaturesAndData<T>(path, councilId, manifest![path]),
+  });
+}
+
+export function usePlanLimitsData(councilId: number) {
+  const { data: manifest } = useQuery({
+    queryKey: ['manifest', councilId],
+    refetchOnWindowFocus: false,
+    queryFn: () =>
+      fetchFromAPI<{ [key: string]: string }>(
+        `/plan-limits/manifest?councilId=${councilId}`
+      ),
+  });
+
+  return {
+    councils: useQ<CouncilRegion>('/plan-limits/councils', manifest, councilId),
+  };
+}
 
 export function useGeoJsonQueries() {
   const { data: manifest } = useQuery({
@@ -73,3 +134,4 @@ export function useGeoJsonQueries() {
 }
 
 export type GeoJsonQueries = ReturnType<typeof useGeoJsonQueries>;
+export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;

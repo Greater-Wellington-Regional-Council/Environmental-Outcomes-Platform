@@ -14,11 +14,12 @@ import Map, {
   type MapboxEvent,
   type MapLayerMouseEvent,
 } from 'react-map-gl';
-import { GeoJsonQueries } from '../../api';
+import type { GeoJsonQueries, PlanLimitsData } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/Button';
 import RiverTilesSource from './RiverTilesSource';
 import flowMarkerImage from '../../images/marker_flow.svg';
+import { FeatureCollection } from 'geojson';
 
 const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
@@ -37,6 +38,7 @@ type Props = {
   ) => void;
   waterTakeFilter: WaterTakeFilter;
   queries: GeoJsonQueries;
+  councilFeatures: FeatureCollection;
   geoJsonDataLoaded: boolean;
 };
 
@@ -48,6 +50,7 @@ export default function LimitsMap({
   pinnedLocation,
   setPinnedLocation,
   waterTakeFilter,
+  councilFeatures,
   queries,
   geoJsonDataLoaded,
 }: Props) {
@@ -140,7 +143,8 @@ export default function LimitsMap({
       <Source
         id="councilsGeoJson"
         type="geojson"
-        data={councilsGeoJson.data || EMPTY_GEO_JSON_DATA}
+        // data={councilsGeoJson.data || EMPTY_GEO_JSON_DATA}
+        data={councilFeatures || EMPTY_GEO_JSON_DATA}
       >
         <Layer
           id="councils"
@@ -158,7 +162,7 @@ export default function LimitsMap({
         />
       </Source>
 
-      <Source
+      {/* <Source
         id="whaituaGeoJson"
         type="geojson"
         data={whaituaGeoJson.data || EMPTY_GEO_JSON_DATA}
@@ -329,7 +333,7 @@ export default function LimitsMap({
             ],
           }}
         />
-      </Source>
+      </Source> */}
 
       {pinnedLocation && (
         <Marker

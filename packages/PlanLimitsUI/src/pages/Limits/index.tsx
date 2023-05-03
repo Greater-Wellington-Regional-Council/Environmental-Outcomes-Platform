@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { useDebounce } from 'usehooks-ts';
 import type { ViewState } from 'react-map-gl';
+import { useAtom } from 'jotai';
+import { councilAtom } from '../../lib/loader';
 import { useAppState } from './useAppState';
-import { useGeoJsonQueries } from '../../api';
+import { useGeoJsonQueries, usePlanLimitsData } from '../../api';
 import Map from './map';
 import Sidebar from './sidebar';
 import {
@@ -13,12 +15,13 @@ import {
 } from '../../lib/loader';
 
 export default function Limits() {
+  const [council] = useAtom(councilAtom);
+
   const navigate = useNavigate();
 
   const {
     locationString: initialViewLocation,
     pinnedLocation: initialPinnedLocation,
-    council,
   } = useLoaderData() as ReturnType<typeof loader>;
 
   const [pinnedLocation, setPinnedLocation] = useState(initialPinnedLocation);
@@ -35,8 +38,6 @@ export default function Limits() {
 
     navigate(updatedLocation, { replace: true });
   }, [debouncedValue, pinnedLocation, navigate, council.slug]);
-
-  const geoJsonQueries = useGeoJsonQueries();
 
   const [waterTakeFilter, setWaterTakeFilter] =
     useState<WaterTakeFilter>('Combined');
@@ -60,6 +61,9 @@ export default function Limits() {
     storeViewState(value);
   };
 
+  const geoJsonQueries = useGeoJsonQueries();
+  const planLimitsData = usePlanLimitsData(council.id);
+  console.log(planLimitsData.councils.data);
   const geoJsonDataLoaded = geoJsonQueries.every((query) => query.data);
 
   return (
@@ -73,6 +77,7 @@ export default function Limits() {
           pinnedLocation={pinnedLocation}
           setPinnedLocation={setPinnedLocation}
           waterTakeFilter={waterTakeFilter}
+          councilFeatures={planLimitsData?.councils?.data?.features}
           queries={geoJsonQueries}
           geoJsonDataLoaded={geoJsonDataLoaded}
         />

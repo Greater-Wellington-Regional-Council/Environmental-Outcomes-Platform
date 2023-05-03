@@ -1,5 +1,7 @@
 export const Councils = [
   {
+    id: 1,
+
     slug: 'gw',
     name: 'Geater Wellington',
     headingText: 'Proposed Natural Resource Plan Limits',
@@ -10,6 +12,8 @@ export const Councils = [
     },
   },
   {
+    id: 2,
+
     slug: 'horizons',
     name: 'Horizons',
     headingText: 'Proposed Natural Resource Plan Limits',
