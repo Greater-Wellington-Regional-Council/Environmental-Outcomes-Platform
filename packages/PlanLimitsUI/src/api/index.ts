@@ -14,23 +14,6 @@ const determineBackendUri = (hostname: string) => {
   }
 };
 
-export type GroundwaterZoneBoundariesProperties = {
-  category: 'Category A' | 'Category B' | 'Category C';
-  depth: string;
-  surface_water_unit_allocation_amount_id: number;
-  surface_water_unit_allocation_amount: number;
-  surface_water_unit_allocation_amount_unit: string;
-  surface_water_unit_allocated_amount: number;
-  surface_water_sub_unit_allocation_amount_id: number;
-  surface_water_sub_unit_allocation_amount: number;
-  surface_water_sub_unit_allocation_amount_unit: string;
-  surface_water_sub_unit_allocated_amount: number;
-  groundwater_allocation_amount_id: number;
-  groundwater_allocation_amount: number;
-  groundwater_allocation_amount_unit: string;
-  groundwater_allocated_amount: number;
-};
-
 const defaultRequestInit: RequestInit = {
   mode: 'cors',
 };
@@ -53,11 +36,7 @@ function mapFeatureCollectionPropsToType<T>(
   });
 }
 
-async function fetchFeaturesAndData<T>(
-  path: string,
-  councilId: number,
-  hash: string
-) {
+async function fetchFeatures<T>(path: string, councilId: number, hash: string) {
   const features = await fetchFromAPI<FeatureCollection>(
     `${path}?councilId=${councilId}&v=${hash}`
   );
@@ -67,12 +46,7 @@ async function fetchFeaturesAndData<T>(
   };
 }
 
-interface CouncilRegion {
-  id: number;
-  name: string;
-}
-
-function useQ<T>(
+function useFeatureQuery<T>(
   path: string,
   manifest: { [key: string]: string } | undefined,
   councilId: number
@@ -84,28 +58,61 @@ function useQ<T>(
     refetchOnWindowFocus: false,
     // We use ! here since we know manifest will be populated when this executes
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    queryFn: () => fetchFeaturesAndData<T>(path, councilId, manifest![path]),
+    queryFn: () => fetchFeatures<T>(path, councilId, manifest![path]),
   });
 }
+
+const manifestURL = '/plan-limits/manifest';
 
 export function usePlanLimitsData(councilId: number) {
   const { data: manifest } = useQuery({
-    queryKey: ['manifest', councilId],
+    queryKey: [manifestURL, councilId],
     refetchOnWindowFocus: false,
     queryFn: () =>
       fetchFromAPI<{ [key: string]: string }>(
-        `/plan-limits/manifest?councilId=${councilId}`
+        `${manifestURL}?councilId=${councilId}`
       ),
   });
 
+  function useFeatureQueryWith<T>(path: string) {
+    return useFeatureQuery<T>(path, manifest, councilId);
+  }
+
   return {
-    councils: useQ<CouncilRegion>('/plan-limits/councils', manifest, councilId),
+    councils: useFeatureQueryWith<Council>('/plan-limits/councils'),
+    councilsRegions: useFeatureQueryWith<CouncilRegion>(
+      '/plan-limits/council-regions'
+    ),
+    surfaceWaterLimits: useFeatureQueryWith<CouncilRegion>(
+      '/plan-limits/surface-water-limits'
+    ),
+    groundwaterLimits: useFeatureQueryWith<GroundwaterWaterLimit>(
+      '/plan-limits/ground-water-limits'
+    ),
+    flowMeasurementSites: useFeatureQueryWith<FlowMeasurementSite>(
+      '/plan-limits/flow-measurement-sites'
+    ),
+    flowLimits: useFeatureQueryWith<FlowLimit>('/plan-limits/flow-limits'),
+    plan: useQuery({
+      enabled: Boolean(manifest),
+      queryKey: ['/plan-limits/plan', councilId],
+      refetchOnWindowFocus: false,
+      queryFn: () =>
+        fetchFromAPI<Plan>(
+          `/plan-limits/plan?councilId=${councilId}&v=${
+            manifest!['/plan-limits/plan']
+          }`
+        ),
+    }),
   };
 }
 
-export function useGeoJsonQueries() {
+const key = 'manifest';
+
+function useGeoJsonQueries() {
   const { data: manifest } = useQuery({
-    queryKey: ['manifest'],
+    queryKey: [key],
+    refetchOnWindowFocus: false,
     queryFn: () => fetchFromAPI<{ [key: string]: string }>('/manifest'),
   });
 
@@ -123,6 +130,7 @@ export function useGeoJsonQueries() {
       enabled: Boolean(manifest),
       // eslint-disable-next-line @tanstack/query/exhaustive-deps
       queryKey: [path],
+      refetchOnWindowFocus: false,
       queryFn: () =>
         // We use ! here since we know manifest will be populated when this executes
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

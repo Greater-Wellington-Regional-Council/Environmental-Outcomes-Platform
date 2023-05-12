@@ -1,5 +1,4 @@
 import type { FeatureCollection, Geometry } from 'geojson';
-import type { GroundwaterZoneBoundariesProperties } from '../../api';
 
 const BLANK_CELL_CHAR = '-';
 const GROUNDWATER_CATEGORY_B_RULE = (

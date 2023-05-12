@@ -26,8 +26,15 @@ class Manifest(@Autowired val queries: Queries) {
   private fun generate(councilId: Int): Map<String, String> {
     return mapOf(
         "updatedAt" to Instant.now().toString(),
-        //        "/plan-limits/councils" to generateHash(queries.councils()),
+        "/plan-limits/councils" to generateHash(queries.councils()),
+        "/plan-limits/plan" to generateHash(queries.plan(councilId)),
         "/plan-limits/council-regions" to generateHash(queries.councilRegions(councilId)),
+        "/plan-limits/surface-water-limits" to generateHash(queries.surfaceWaterLimits(councilId)),
+        "/plan-limits/ground-water-limits" to
+            generateHash(queries.groundwaterWaterLimits(councilId)),
+        "/plan-limits/flow-measurement-sites" to
+            generateHash(queries.flowMeasurementSites(councilId)),
+        "/plan-limits/flow-limits" to generateHash(queries.flowLimits(councilId)),
     )
   }
 

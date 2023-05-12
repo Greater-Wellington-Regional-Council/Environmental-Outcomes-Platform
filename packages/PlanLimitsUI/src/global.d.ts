@@ -1,3 +1,4 @@
+// Server data types
 interface Council {
   id: number;
   slug: string;
@@ -8,6 +9,50 @@ interface Council {
     longitude: number;
     zoom: number;
   };
+}
+
+interface Plan {
+  id: number;
+  councilId: number;
+  defaultSurfaceWaterLimit: string;
+  defaultGroundwaterLimit: string;
+  defaultFlowManagementSite: string;
+  defaultFlowManagementLimit: string;
+}
+
+interface CouncilRegion {
+  id: number;
+  name: string;
+  defaultSurfaceWaterLimit: string;
+  defaultGroundwaterLimit: string;
+  defaultFlowManagementSite: string;
+  defaultFlowManagementLimit: string;
+}
+
+interface SurfaceWaterLimit {
+  id: number;
+  name: string;
+  planRegionId: number;
+  prentSurfaceWaterLimit: number;
+  allocationLimit: number;
+}
+
+interface GroundwaterWaterLimit {
+  id: number;
+  name: string;
+  planRegionId: number;
+  allocationLimit: number;
+}
+
+interface FlowMeasurementSite {
+  id: number;
+  name: string;
+}
+
+interface FlowLimit {
+  id: number;
+  minimumFlow: number;
+  measuredAtSiteId: number;
 }
 
 interface PinnedLocation {
@@ -56,4 +101,21 @@ interface AppState {
   gwLimits?: GWLimit[];
   groundWaterZones: Array<number>;
   groundWaterZoneName?: string;
+}
+
+interface GroundwaterZoneBoundariesProperties {
+  category: 'Category A' | 'Category B' | 'Category C';
+  depth: string;
+  surface_water_unit_allocation_amount_id: number;
+  surface_water_unit_allocation_amount: number;
+  surface_water_unit_allocation_amount_unit: string;
+  surface_water_unit_allocated_amount: number;
+  surface_water_sub_unit_allocation_amount_id: number;
+  surface_water_sub_unit_allocation_amount: number;
+  surface_water_sub_unit_allocation_amount_unit: string;
+  surface_water_sub_unit_allocated_amount: number;
+  groundwater_allocation_amount_id: number;
+  groundwater_allocation_amount: number;
+  groundwater_allocation_amount_unit: string;
+  groundwater_allocated_amount: number;
 }

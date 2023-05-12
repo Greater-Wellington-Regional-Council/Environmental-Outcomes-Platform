@@ -29,6 +29,14 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
         .body(queries.councils())
   }
 
+  @RequestMapping("/plan-limits/plan", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun getPlan(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        .body(queries.plan(councilId))
+  }
+
   @RequestMapping("/plan-limits/council-regions", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getCouncilRegions(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
@@ -46,8 +54,16 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
         .body(queries.surfaceWaterLimits(councilId))
   }
 
+  @RequestMapping("/plan-limits/ground-water-limits", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun groundWaterLimits(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        .body(queries.groundwaterWaterLimits(councilId))
+  }
+
   @RequestMapping(
-      "/plan-limits/flow-management-sites", produces = [MediaType.APPLICATION_JSON_VALUE])
+      "/plan-limits/flow-measurement-sites", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun flowMeasurementSites(
       @RequestParam(name = "councilId") councilId: Int
