@@ -1,9 +1,4 @@
 import { useAtom } from 'jotai';
-import type { FeatureCollection, Geometry } from 'geojson';
-import type {
-  GeoJsonQueries,
-  GroundwaterZoneBoundariesProperties,
-} from '../../api';
 import { showDisclaimerAtom } from '../../components/Disclaimer';
 import { councilAtom } from '../../lib/loader';
 import LimitsTable from './LimitsTable';
@@ -28,12 +23,11 @@ export default function Sidebar({
   appState,
   waterTakeFilter,
   setWaterTakeFilter,
-  queries,
 }: {
   appState: AppState;
   waterTakeFilter: WaterTakeFilter;
   setWaterTakeFilter: (value: WaterTakeFilter) => void;
-  queries: GeoJsonQueries;
+  // queries: GeoJsonQueries;
 }) {
   const [, setShowDisclaimer] = useAtom(showDisclaimerAtom);
   const [council] = useAtom(councilAtom);
@@ -139,17 +133,8 @@ export default function Sidebar({
             }
           />
         </dl>
-        {appState.whaitua && queries[6].data && (
-          <LimitsTable
-            waterTakeFilter={waterTakeFilter}
-            appState={appState}
-            groundWaterZoneGeoJson={
-              queries[6].data as FeatureCollection<
-                Geometry,
-                GroundwaterZoneBoundariesProperties
-              >
-            }
-          />
+        {appState.whaitua && (
+          <LimitsTable waterTakeFilter={waterTakeFilter} appState={appState} />
         )}
       </div>
 

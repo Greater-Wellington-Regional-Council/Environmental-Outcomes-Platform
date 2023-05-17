@@ -86,7 +86,7 @@ export function usePlanLimitsData(councilId: number) {
     surfaceWaterLimits: useFeatureQueryWith<CouncilRegion>(
       '/plan-limits/surface-water-limits'
     ),
-    groundwaterLimits: useFeatureQueryWith<GroundwaterWaterLimit>(
+    GroundWaterLimits: useFeatureQueryWith<GroundWaterLimit>(
       '/plan-limits/ground-water-limits'
     ),
     flowMeasurementSites: useFeatureQueryWith<FlowMeasurementSite>(

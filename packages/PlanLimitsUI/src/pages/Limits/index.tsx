@@ -5,7 +5,7 @@ import type { ViewState } from 'react-map-gl';
 import { useAtom } from 'jotai';
 import { councilAtom } from '../../lib/loader';
 import { useAppState } from './useAppState';
-import { useGeoJsonQueries, usePlanLimitsData } from '../../api';
+import { usePlanLimitsData } from '../../api';
 import Map from './map';
 import Sidebar from './sidebar';
 import {
@@ -61,10 +61,7 @@ export default function Limits() {
     storeViewState(value);
   };
 
-  const geoJsonQueries = useGeoJsonQueries();
   const planLimitsData = usePlanLimitsData(council.id);
-  console.log(planLimitsData.councils.data);
-  const geoJsonDataLoaded = geoJsonQueries.every((query) => query.data);
 
   return (
     <div className="flex">
@@ -77,9 +74,7 @@ export default function Limits() {
           pinnedLocation={pinnedLocation}
           setPinnedLocation={setPinnedLocation}
           waterTakeFilter={waterTakeFilter}
-          councilFeatures={planLimitsData?.councils?.data?.features}
-          queries={geoJsonQueries}
-          geoJsonDataLoaded={geoJsonDataLoaded}
+          planLimitsData={planLimitsData}
         />
       </main>
       <aside className="w-[36rem] h-screen overflow-y-scroll border-l border-gray-200">
@@ -87,7 +82,6 @@ export default function Limits() {
           appState={appState}
           waterTakeFilter={waterTakeFilter}
           setWaterTakeFilter={setWaterTakeFilter}
-          queries={geoJsonQueries}
         />
       </aside>
     </div>

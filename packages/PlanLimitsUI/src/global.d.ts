@@ -37,7 +37,7 @@ interface SurfaceWaterLimit {
   allocationLimit: number;
 }
 
-interface GroundwaterWaterLimit {
+interface GroundWaterLimit {
   id: number;
   name: string;
   planRegionId: number;

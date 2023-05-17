@@ -14,12 +14,11 @@ import Map, {
   type MapboxEvent,
   type MapLayerMouseEvent,
 } from 'react-map-gl';
-import type { GeoJsonQueries, PlanLimitsData } from '../../api';
+import type { PlanLimitsData } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/Button';
 import RiverTilesSource from './RiverTilesSource';
 import flowMarkerImage from '../../images/marker_flow.svg';
-import { FeatureCollection } from 'geojson';
 
 const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
@@ -37,9 +36,7 @@ type Props = {
     updateFn: (prevValue: PinnedLocation | null) => PinnedLocation | null
   ) => void;
   waterTakeFilter: WaterTakeFilter;
-  queries: GeoJsonQueries;
-  councilFeatures: FeatureCollection;
-  geoJsonDataLoaded: boolean;
+  planLimitsData: PlanLimitsData;
 };
 
 export default function LimitsMap({
@@ -50,26 +47,30 @@ export default function LimitsMap({
   pinnedLocation,
   setPinnedLocation,
   waterTakeFilter,
-  councilFeatures,
-  queries,
-  geoJsonDataLoaded,
+  planLimitsData,
 }: Props) {
   const mapRef = useRef<MapRef | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [flowMarkerImageAdded, setFlowMarkerImageAdded] = useState(false);
   const [showImagery, setShowImagery] = useState(false);
-  const [
-    councilsGeoJson,
-    whaituaGeoJson,
-    surfaceWaterMgmtUnitsGeoJson,
-    surfaceWaterMgmtSubUnitsGeoJson,
-    flowManagementSitesGeoJson,
-    minimumFlowLimitBoundariesGeoJson,
-    groundwaterZoneBoundariesGeoJson,
-  ] = queries;
+
+  const councils = planLimitsData.councils.data;
+  const councilRegions = planLimitsData.councilsRegions.data;
+  const surfaceWaterLimits = planLimitsData.surfaceWaterLimits.data;
+  const groundWaterLimits = planLimitsData.GroundWaterLimits.data;
+  const flowLimits = planLimitsData.flowLimits.data;
+  const flowSites = planLimitsData.councilsRegions.data;
+
+  const allDataLoaded =
+    councils &&
+    councilRegions &&
+    surfaceWaterLimits &&
+    groundWaterLimits &&
+    flowLimits &&
+    flowSites;
 
   useEffect(() => {
-    if (mapLoaded && mapRef.current && geoJsonDataLoaded && pinnedLocation) {
+    if (mapLoaded && mapRef.current && allDataLoaded && pinnedLocation) {
       const activeFeatures = mapRef.current.queryRenderedFeatures(
         mapRef.current.project([
           pinnedLocation.longitude,
@@ -78,7 +79,7 @@ export default function LimitsMap({
       );
       setAppState(activeFeatures);
     }
-  }, [mapLoaded, geoJsonDataLoaded, pinnedLocation, setAppState]);
+  }, [mapLoaded, allDataLoaded, pinnedLocation, setAppState]);
 
   const handleLoad = (evt: MapboxEvent) => {
     setMapLoaded(true);
@@ -141,10 +142,9 @@ export default function LimitsMap({
       </LayerControl>
 
       <Source
-        id="councilsGeoJson"
+        id="councils"
         type="geojson"
-        // data={councilsGeoJson.data || EMPTY_GEO_JSON_DATA}
-        data={councilFeatures || EMPTY_GEO_JSON_DATA}
+        data={(councils && councils.features) || EMPTY_GEO_JSON_DATA}
       >
         <Layer
           id="councils"
@@ -154,6 +154,7 @@ export default function LimitsMap({
           }}
         />
         <Layer
+          id="councilsOutline"
           type="line"
           paint={{
             'line-color': 'green',
@@ -162,20 +163,22 @@ export default function LimitsMap({
         />
       </Source>
 
-      {/* <Source
-        id="whaituaGeoJson"
+      <Source
+        id="councilRegions"
         type="geojson"
-        data={whaituaGeoJson.data || EMPTY_GEO_JSON_DATA}
+        data={
+          (councilRegions && councilRegions.features) || EMPTY_GEO_JSON_DATA
+        }
       >
         <Layer
-          id="whaitua"
+          id="councilRegions"
           type="fill"
           paint={{
             'fill-opacity': 0,
           }}
         />
         <Layer
-          id="whaitua-highlight"
+          id="councilRegionsHighlight"
           filter={['==', ['id'], appState.whaitua && appState.whaitua.id]}
           type="fill"
           paint={{
@@ -185,6 +188,7 @@ export default function LimitsMap({
           }}
         />
         <Layer
+          id="councilRegionsOutline"
           type="line"
           paint={{
             'line-color': 'green',
@@ -196,9 +200,12 @@ export default function LimitsMap({
       <RiverTilesSource zoom={viewState.zoom} />
 
       <Source
-        id="groundWaterGeoJson"
+        id="groundWater"
         type="geojson"
-        data={groundwaterZoneBoundariesGeoJson.data || EMPTY_GEO_JSON_DATA}
+        data={
+          (groundWaterLimits && groundWaterLimits.features) ||
+          EMPTY_GEO_JSON_DATA
+        }
       >
         <Layer
           id="groundWater"
@@ -209,7 +216,7 @@ export default function LimitsMap({
         />
         {['Ground', 'Combined'].includes(waterTakeFilter) && (
           <Layer
-            id="groundWater-highlight"
+            id="groundWaterHighlight"
             type="fill"
             filter={['in', ['id'], ['literal', appState.groundWaterZones]]}
             paint={{
@@ -222,12 +229,15 @@ export default function LimitsMap({
       </Source>
 
       <Source
-        id="surfaceWaterMgmtUnitsGeoJson"
+        id="surfaceWater"
         type="geojson"
-        data={surfaceWaterMgmtUnitsGeoJson.data || EMPTY_GEO_JSON_DATA}
+        data={
+          (surfaceWaterLimits && surfaceWaterLimits.features) ||
+          EMPTY_GEO_JSON_DATA
+        }
       >
         <Layer
-          id="surfaceWaterMgmtUnits"
+          id="surfaceWater"
           type="fill"
           paint={{
             'fill-opacity': 0,
@@ -235,33 +245,7 @@ export default function LimitsMap({
         />
         {['Surface', 'Combined'].includes(waterTakeFilter) && (
           <Layer
-            id="surfaceWaterMgmtUnits-highlight"
-            type="fill"
-            filter={['==', ['id'], appState.surfaceWaterMgmtUnitId]}
-            paint={{
-              'fill-outline-color': '#484896',
-              'fill-color': '#6e599f',
-              'fill-opacity': 0.4,
-            }}
-          />
-        )}
-      </Source>
-
-      <Source
-        id="surfaceWaterMgmtSubUnitsGeoJson"
-        type="geojson"
-        data={surfaceWaterMgmtSubUnitsGeoJson.data || EMPTY_GEO_JSON_DATA}
-      >
-        <Layer
-          id="surfaceWaterMgmtSubUnits"
-          type="fill"
-          paint={{
-            'fill-opacity': 0,
-          }}
-        />
-        {['Surface', 'Combined'].includes(waterTakeFilter) && (
-          <Layer
-            id="surfaceWaterMgmtSubUnits-highlight"
+            id="surfaceWaterHighlight"
             type="fill"
             filter={['==', ['id'], appState.surfaceWaterMgmtSubUnitId]}
             paint={{
@@ -274,12 +258,12 @@ export default function LimitsMap({
       </Source>
 
       <Source
-        id="minimumFlowLimitBoundariesGeoJson"
+        id="flowLimits"
         type="geojson"
-        data={minimumFlowLimitBoundariesGeoJson.data || EMPTY_GEO_JSON_DATA}
+        data={(flowLimits && flowLimits.features) || EMPTY_GEO_JSON_DATA}
       >
         <Layer
-          id="minimumFlowLimitBoundaries"
+          id="flowLimits"
           type="fill"
           paint={{
             'fill-outline-color': 'black',
@@ -289,7 +273,7 @@ export default function LimitsMap({
         />
         {['Surface', 'Combined'].includes(waterTakeFilter) && (
           <Layer
-            id="minimumFlowLimitBoundaries-highlight"
+            id="flowLimitsHighlight"
             type="fill"
             filter={[
               '==',
@@ -306,11 +290,11 @@ export default function LimitsMap({
       </Source>
 
       <Source
-        id="flowManagementSitesGeoJson"
+        id="flowSites"
         type="geojson"
         data={
-          flowManagementSitesGeoJson.data && flowMarkerImageAdded
-            ? flowManagementSitesGeoJson.data
+          flowSites && flowMarkerImageAdded
+            ? flowSites.features
             : EMPTY_GEO_JSON_DATA
         }
       >
@@ -333,7 +317,7 @@ export default function LimitsMap({
             ],
           }}
         />
-      </Source> */}
+      </Source>
 
       {pinnedLocation && (
         <Marker

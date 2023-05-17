@@ -1,5 +1,3 @@
-import type { FeatureCollection, Geometry } from 'geojson';
-
 const BLANK_CELL_CHAR = '-';
 const GROUNDWATER_CATEGORY_B_RULE = (
   <span className="text-xs">
@@ -21,10 +19,6 @@ const DEFAULT_RULE = (
 type Props = {
   waterTakeFilter: WaterTakeFilter;
   appState: AppState;
-  groundWaterZoneGeoJson: FeatureCollection<
-    Geometry,
-    GroundwaterZoneBoundariesProperties
-  >;
 };
 
 function AllocatedAmount({
