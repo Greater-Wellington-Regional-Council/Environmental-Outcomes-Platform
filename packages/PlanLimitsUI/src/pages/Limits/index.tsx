@@ -42,8 +42,6 @@ export default function Limits() {
   const [waterTakeFilter, setWaterTakeFilter] =
     useState<WaterTakeFilter>('Combined');
 
-  const [appState, setAppState] = useAppState();
-
   const [viewState, storeViewState] = useState<ViewState>({
     ...initialViewLocation,
     bearing: 0,
@@ -62,6 +60,7 @@ export default function Limits() {
   };
 
   const planLimitsData = usePlanLimitsData(council.id);
+  const [appState, setAppState] = useAppState(council.id);
 
   return (
     <div className="flex">

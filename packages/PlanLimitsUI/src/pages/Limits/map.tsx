@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -28,7 +28,7 @@ const EMPTY_GEO_JSON_DATA = {
 
 type Props = {
   appState: AppState;
-  setAppState: (result: mapboxgl.MapboxGeoJSONFeature[]) => void;
+  setAppState: (activeLimits: ActiveLimits, allPlanData: AllPlanData) => void;
   viewState: ViewState;
   setViewState: (value: ViewState) => void;
   pinnedLocation: PinnedLocation | null;
@@ -38,6 +38,72 @@ type Props = {
   waterTakeFilter: WaterTakeFilter;
   planLimitsData: PlanLimitsData;
 };
+
+interface Identifyable {
+  id: number;
+}
+
+function mapFeatureLayers<T extends Identifyable>(
+  features: mapboxgl.MapboxGeoJSONFeature[],
+  layerName: string,
+  collection: T[]
+) {
+  return features
+    .filter((feature) => feature.layer.id === layerName)
+    .map((feature) => {
+      const item = collection.find((ci) => ci.id === Number(feature.id));
+      if (!item)
+        throw new Error(
+          `Could not find item with feature id ${feature.id} from layer ${layerName} `
+        );
+      return item;
+    });
+}
+
+function mapFeatureLayer<T extends Identifyable>(
+  features: mapboxgl.MapboxGeoJSONFeature[],
+  layerName: string,
+  collection: T[]
+) {
+  return mapFeatureLayers<T>(features, layerName, collection)[0];
+}
+
+function mapAllFeatures(
+  features: mapboxgl.MapboxGeoJSONFeature[],
+  appPlanData: AllPlanData
+): ActiveLimits {
+  return {
+    councilRegion:
+      mapFeatureLayer<CouncilRegion>(
+        features,
+        'councilRegions',
+        appPlanData.councilRegions
+      ) || null,
+    flowLimit:
+      mapFeatureLayer<FlowLimit>(
+        features,
+        'flowLimits',
+        appPlanData.flowLimits
+      ) || null,
+    surfaceWaterUnitLimit:
+      mapFeatureLayer<SurfaceWaterLimit>(
+        features,
+        'surfaceWaterUnitLimits',
+        appPlanData.surfaceWaterUnitLimits
+      ) || null,
+    surfaceWaterSubUnitLimit:
+      mapFeatureLayer<SurfaceWaterLimit>(
+        features,
+        'surfaceWaterSubUnitLimits',
+        appPlanData.surfaceWaterSubUnitLimits
+      ) || null,
+    groundWaterLimits: mapFeatureLayers<GroundWaterLimit>(
+      features,
+      'groundWaterLimits',
+      appPlanData.groundWaterLimits
+    ),
+  };
+}
 
 export default function LimitsMap({
   appState,
@@ -54,32 +120,20 @@ export default function LimitsMap({
   const [flowMarkerImageAdded, setFlowMarkerImageAdded] = useState(false);
   const [showImagery, setShowImagery] = useState(false);
 
-  const councils = planLimitsData.councils.data;
-  const councilRegions = planLimitsData.councilsRegions.data;
-  const surfaceWaterLimits = planLimitsData.surfaceWaterLimits.data;
-  const groundWaterLimits = planLimitsData.GroundWaterLimits.data;
-  const flowLimits = planLimitsData.flowLimits.data;
-  const flowSites = planLimitsData.councilsRegions.data;
-
-  const allDataLoaded =
-    councils &&
-    councilRegions &&
-    surfaceWaterLimits &&
-    groundWaterLimits &&
-    flowLimits &&
-    flowSites;
+  const { isLoaded, data: allPlanData, features } = planLimitsData;
 
   useEffect(() => {
-    if (mapLoaded && mapRef.current && allDataLoaded && pinnedLocation) {
+    if (mapLoaded && mapRef.current && isLoaded && pinnedLocation) {
       const activeFeatures = mapRef.current.queryRenderedFeatures(
         mapRef.current.project([
           pinnedLocation.longitude,
           pinnedLocation.latitude,
         ])
       );
-      setAppState(activeFeatures);
+      const activeLimits = mapAllFeatures(activeFeatures, allPlanData!);
+      setAppState(activeLimits, allPlanData!);
     }
-  }, [mapLoaded, allDataLoaded, pinnedLocation, setAppState]);
+  }, [mapLoaded, isLoaded, allPlanData, pinnedLocation, setAppState]);
 
   const handleLoad = (evt: MapboxEvent) => {
     setMapLoaded(true);
@@ -97,10 +151,11 @@ export default function LimitsMap({
   };
 
   const handleMouseMove = (evt: MapLayerMouseEvent) => {
-    if (pinnedLocation) return;
+    if (pinnedLocation || !allPlanData) return;
 
-    const result = evt.target.queryRenderedFeatures(evt.point);
-    setAppState(result);
+    const activeFeatures = evt.target.queryRenderedFeatures(evt.point);
+    const activeLimits = mapAllFeatures(activeFeatures, allPlanData);
+    setAppState(activeLimits, allPlanData);
   };
 
   const handleClick = (evt: MapLayerMouseEvent) => {
@@ -144,7 +199,9 @@ export default function LimitsMap({
       <Source
         id="councils"
         type="geojson"
-        data={(councils && councils.features) || EMPTY_GEO_JSON_DATA}
+        data={
+          (planLimitsData.isLoaded && features!.councils) || EMPTY_GEO_JSON_DATA
+        }
       >
         <Layer
           id="councils"
@@ -167,7 +224,8 @@ export default function LimitsMap({
         id="councilRegions"
         type="geojson"
         data={
-          (councilRegions && councilRegions.features) || EMPTY_GEO_JSON_DATA
+          (planLimitsData.isLoaded && features!.councilRegions) ||
+          EMPTY_GEO_JSON_DATA
         }
       >
         <Layer
@@ -179,7 +237,11 @@ export default function LimitsMap({
         />
         <Layer
           id="councilRegionsHighlight"
-          filter={['==', ['id'], appState.whaitua && appState.whaitua.id]}
+          filter={[
+            '==',
+            ['id'],
+            appState.councilRegion && appState.councilRegion.id,
+          ]}
           type="fill"
           paint={{
             'fill-outline-color': '#484896',
@@ -200,15 +262,15 @@ export default function LimitsMap({
       <RiverTilesSource zoom={viewState.zoom} />
 
       <Source
-        id="groundWater"
+        id="groundWaterLimits"
         type="geojson"
         data={
-          (groundWaterLimits && groundWaterLimits.features) ||
+          (planLimitsData.isLoaded && features!.groundWaterLimits) ||
           EMPTY_GEO_JSON_DATA
         }
       >
         <Layer
-          id="groundWater"
+          id="groundWaterLimits"
           type="fill"
           paint={{
             'fill-opacity': 0,
@@ -216,7 +278,7 @@ export default function LimitsMap({
         />
         {['Ground', 'Combined'].includes(waterTakeFilter) && (
           <Layer
-            id="groundWaterHighlight"
+            id="groundWaterLimitsHighlight"
             type="fill"
             filter={['in', ['id'], ['literal', appState.groundWaterZones]]}
             paint={{
@@ -229,15 +291,15 @@ export default function LimitsMap({
       </Source>
 
       <Source
-        id="surfaceWater"
+        id="surfaceWaterUnitLimits"
         type="geojson"
         data={
-          (surfaceWaterLimits && surfaceWaterLimits.features) ||
+          (planLimitsData.isLoaded && features!.surfaceWaterUnitLimits) ||
           EMPTY_GEO_JSON_DATA
         }
       >
         <Layer
-          id="surfaceWater"
+          id="surfaceWaterUnitLimits"
           type="fill"
           paint={{
             'fill-opacity': 0,
@@ -245,9 +307,42 @@ export default function LimitsMap({
         />
         {['Surface', 'Combined'].includes(waterTakeFilter) && (
           <Layer
-            id="surfaceWaterHighlight"
+            id="surfaceWaterUnitLimitHighlight"
             type="fill"
-            filter={['==', ['id'], appState.surfaceWaterMgmtSubUnitId]}
+            filter={['==', ['id'], appState.surfaceWaterUnitLimit?.id || null]}
+            paint={{
+              'fill-outline-color': '#484896',
+              'fill-color': '#6e599f',
+              'fill-opacity': 0.3,
+            }}
+          />
+        )}
+      </Source>
+
+      <Source
+        id="surfaceWaterSubUnitLimits"
+        type="geojson"
+        data={
+          (planLimitsData.isLoaded && features!.surfaceWaterSubUnitLimits) ||
+          EMPTY_GEO_JSON_DATA
+        }
+      >
+        <Layer
+          id="surfaceWaterSubUnitLimits"
+          type="fill"
+          paint={{
+            'fill-opacity': 0,
+          }}
+        />
+        {['Surface', 'Combined'].includes(waterTakeFilter) && (
+          <Layer
+            id="surfaceWaterSubUnitLimitHighlight"
+            type="fill"
+            filter={[
+              '==',
+              ['id'],
+              appState.surfaceWaterSubUnitLimit?.id || null,
+            ]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -260,7 +355,10 @@ export default function LimitsMap({
       <Source
         id="flowLimits"
         type="geojson"
-        data={(flowLimits && flowLimits.features) || EMPTY_GEO_JSON_DATA}
+        data={
+          (planLimitsData.isLoaded && features!.flowLimits) ||
+          EMPTY_GEO_JSON_DATA
+        }
       >
         <Layer
           id="flowLimits"
@@ -275,11 +373,7 @@ export default function LimitsMap({
           <Layer
             id="flowLimitsHighlight"
             type="fill"
-            filter={[
-              '==',
-              ['id'],
-              appState.flowLimitBoundary && appState.flowLimitBoundary.id,
-            ]}
+            filter={['==', ['id'], appState.flowLimit && appState.flowLimit.id]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -293,8 +387,8 @@ export default function LimitsMap({
         id="flowSites"
         type="geojson"
         data={
-          flowSites && flowMarkerImageAdded
-            ? flowSites.features
+          planLimitsData.isLoaded && flowMarkerImageAdded
+            ? features!.flowMeasurementSites
             : EMPTY_GEO_JSON_DATA
         }
       >
@@ -310,7 +404,7 @@ export default function LimitsMap({
               [
                 '==',
                 ['id'],
-                appState.flowLimitBoundary && appState.flowLimitBoundary.siteId,
+                appState.flowLimit ? appState.flowLimit.measuredAtSiteId : null,
               ],
               1,
               0.5,

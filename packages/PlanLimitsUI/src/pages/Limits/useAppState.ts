@@ -1,210 +1,76 @@
 import { useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
-import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
 
-function setWhaitua(activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) {
-  const whaitua = activeFeatures.find((f) => f.layer.id === 'whaitua');
-  if (!whaitua) return null;
-
-  const id = Number(whaitua.id);
-  return {
-    id,
-    name: whaitua.properties?.name,
-    defaultFlowLimitAndSite: defaultFlowLimitAndSite(id),
-  };
-}
-
-function setFlowLimitBoundary(activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) {
-  const flowLimitBoundary = activeFeatures.find(
-    (f) => f.layer.id === 'minimumFlowLimitBoundaries'
-  );
-  if (!flowLimitBoundary) return null;
-
-  const properties = flowLimitBoundary.properties!;
-  return {
-    id: Number(flowLimitBoundary.id),
-    name: properties.name,
-    siteId: Number(properties.site_id),
-    flowRestriction: formatWaterQuantity(
-      properties.plan_minimum_flow_value,
-      properties.plan_minimum_flow_unit
-    ),
-  };
-}
-
-export function useAppState(): [
-  AppState,
-  (result: mapboxgl.MapboxGeoJSONFeature[]) => void
-] {
+export function useAppState(
+  councilId: number
+): [AppState, (activeLimits: ActiveLimits, allPlanData: AllPlanData) => void] {
   const [appState, setAppState] = useState<AppState>({
-    whaitua: null,
-    flowLimitBoundary: null,
-    surfaceWaterMgmtUnitId: 'NONE',
-    surfaceWaterMgmtUnitDescription: null,
-    surfaceWaterMgmtSubUnitId: 'NONE',
-    surfaceWaterMgmtSubUnitDescription: null,
+    councilRegion: null,
+    flowLimit: null,
+    flowSite: null,
+    surfaceWaterUnitLimit: null,
+    surfaceWaterSubUnitLimit: null,
+    groundWaterLimits: [],
     groundWaterZones: [],
   });
 
   const setAppStateFromResult = useCallback(
-    (activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) => {
-      const whaitua = setWhaitua(activeFeatures);
-      const flowLimitBoundary = setFlowLimitBoundary(activeFeatures);
-
-      const result = activeFeatures;
-      // Surface water MgmtUnit
-      const surfaceWaterMgmtUnitId =
-        findFeatureId(result, 'surfaceWaterMgmtUnits') || null;
-      const surfaceWaterMgmtUnitDescription = findFeature(
-        result,
-        'surfaceWaterMgmtUnits',
-        'name'
-      );
-      const surfaceWaterMgmtUnitLimitAmount = findFeature(
-        result,
-        'surfaceWaterMgmtUnits',
-        'allocation_amount'
-      );
-      const surfaceWaterMgmtUnitLimit = surfaceWaterMgmtUnitLimitAmount
-        ? formatWaterQuantity(
-            Number(surfaceWaterMgmtUnitLimitAmount),
-            findFeature(
-              result,
-              'surfaceWaterMgmtUnits',
-              'allocation_amount_unit'
-            ) as string
-          )
-        : undefined;
-
-      const surfaceWaterMgmtUnitAllocatedAmount = findFeature(
-        result,
-        'surfaceWaterMgmtUnits',
-        'allocated_amount'
-      );
-      const surfaceWaterMgmtUnitAllocated = surfaceWaterMgmtUnitAllocatedAmount
-        ? formatWaterQuantity(
-            Math.round(Number(surfaceWaterMgmtUnitAllocatedAmount)),
-            findFeature(
-              result,
-              'surfaceWaterMgmtUnits',
-              'allocation_amount_unit'
-            ) as string
-          )
-        : undefined;
-
-      const surfaceWaterMgmtUnitAllocatedPercentage =
-        surfaceWaterMgmtUnitLimitAmount && surfaceWaterMgmtUnitAllocatedAmount
-          ? Math.round(
-              (Number(surfaceWaterMgmtUnitAllocatedAmount) /
-                Number(surfaceWaterMgmtUnitLimitAmount)) *
-                100
-            )
-          : undefined;
-
-      // Surface water MgmtSubUnit
-      const surfaceWaterMgmtSubUnitId =
-        findFeatureId(result, 'surfaceWaterMgmtSubUnits') || null;
-      const surfaceWaterMgmtSubUnitDescription = findFeature(
-        result,
-        'surfaceWaterMgmtSubUnits',
-        'name'
-      );
-      const surfaceWaterMgmtSubUnitLimitAmount = findFeature(
-        result,
-        'surfaceWaterMgmtSubUnits',
-        'allocation_amount'
-      );
-      const surfaceWaterMgmtSubUnitLimit = surfaceWaterMgmtSubUnitLimitAmount
-        ? formatWaterQuantity(
-            Number(surfaceWaterMgmtSubUnitLimitAmount),
-            findFeature(
-              result,
-              'surfaceWaterMgmtSubUnits',
-              'allocation_amount_unit'
-            ) as string
-          )
-        : undefined;
-
-      const surfaceWaterMgmtSubUnitAllocatedAmount = findFeature(
-        result,
-        'surfaceWaterMgmtSubUnits',
-        'allocated_amount'
-      );
-      const surfaceWaterMgmtSubUnitAllocated =
-        surfaceWaterMgmtSubUnitAllocatedAmount
-          ? formatWaterQuantity(
-              Math.round(Number(surfaceWaterMgmtSubUnitAllocatedAmount)),
-              findFeature(
-                result,
-                'surfaceWaterMgmtSubUnits',
-                'allocation_amount_unit'
-              ) as string
-            )
-          : undefined;
-
-      const surfaceWaterMgmtSubUnitAllocatedPercentage =
-        surfaceWaterMgmtSubUnitLimitAmount &&
-        surfaceWaterMgmtSubUnitAllocatedAmount
-          ? Math.round(
-              (Number(surfaceWaterMgmtSubUnitAllocatedAmount) /
-                Number(surfaceWaterMgmtSubUnitLimitAmount)) *
-                100
-            )
-          : undefined;
+    (activeLimits: ActiveLimits, allPlanData: AllPlanData) => {
+      let flowSite = null;
+      if (activeLimits.flowLimit) {
+        flowSite = allPlanData.flowMeasurementSites.find(
+          (fs) => fs.id === activeLimits.flowLimit.measuredAtSiteId
+        );
+        if (!flowSite) throw new Error('Flow site not found');
+      }
 
       const swLimit = getSwLimit(
-        whaitua?.id,
-        surfaceWaterMgmtUnitLimit,
-        surfaceWaterMgmtSubUnitLimit
+        activeLimits.councilRegion?.id,
+        activeLimits.surfaceWaterUnitLimit,
+        activeLimits.surfaceWaterSubUnitLimit
       );
 
-      // Groundwater
-      const groundWaterZonesData = result
-        .filter((value) => value.layer.id === 'groundWater')
-        .sort((a, b) => {
-          // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
-          const alphabet = '0123456789>';
-          const first = a.properties?.depth.charAt(0);
-          const second = b.properties?.depth.charAt(0);
-          return alphabet.indexOf(first) - alphabet.indexOf(second);
-        });
-
-      const groundWaterZones = groundWaterZonesData.map(
-        (item) => item.id as number
+      const groundWaterZones = activeLimits.groundWaterLimits.map(
+        (gl) => gl.id
       );
       const groundWaterZoneName = [
         // Contructing then destructuring from a Set leaves us with unique values
-        ...new Set(
-          groundWaterZonesData.map((item) => item.properties!['name'])
-        ),
+        ...new Set(activeLimits.groundWaterLimits.map((gwl) => gwl.name)),
       ].join(', ');
 
-      const gwLimits = getGwLimits(
-        groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[]
-      );
+      // Groundwater
+      // const groundWaterZonesData = result
+      //   .filter((value) => value.layer.id === 'groundWater')
+      //   .sort((a, b) => {
+      //     // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
+      //     const alphabet = '0123456789>';
+      //     const first = a.properties?.depth.charAt(0);
+      //     const second = b.properties?.depth.charAt(0);
+      //     return alphabet.indexOf(first) - alphabet.indexOf(second);
+      //   });
+
+      // const groundWaterZones = groundWaterZonesData.map(
+      //   (item) => item.id as number
+      // );
+      // const groundWaterZoneName = [
+      //   // Contructing then destructuring from a Set leaves us with unique values
+      //   ...new Set(
+      //     groundWaterZonesData.map((item) => item.properties!['name'])
+      //   ),
+      // ].join(', ');
+
+      // const gwLimits = getGwLimits(
+      //   groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[]
+      // );
 
       setAppState({
-        whaitua,
-        flowLimitBoundary,
-
-        // SW
-        surfaceWaterMgmtUnitId,
-        surfaceWaterMgmtUnitDescription,
-        surfaceWaterMgmtUnitLimit,
-        surfaceWaterMgmtUnitAllocated,
-        surfaceWaterMgmtUnitAllocatedPercentage,
-        surfaceWaterMgmtSubUnitId,
-        surfaceWaterMgmtSubUnitDescription,
-        surfaceWaterMgmtSubUnitLimit,
-        surfaceWaterMgmtSubUnitAllocated,
-        surfaceWaterMgmtSubUnitAllocatedPercentage,
-
+        ...activeLimits,
+        flowSite,
         swLimit,
-        // GW
         groundWaterZoneName,
         groundWaterZones,
-        gwLimits,
+        // gwLimits,
       });
     },
     [setAppState]
@@ -213,47 +79,24 @@ export function useAppState(): [
   return [appState, setAppStateFromResult];
 }
 
-const findFeature = (
-  features: mapboxgl.MapboxGeoJSONFeature[],
-  layer: string,
-  prop: string
-) =>
-  features.find((feat) => feat.layer.id === layer)?.properties?.[prop] as
-    | string
-    | undefined;
-
-const findFeatureId = (
-  features: mapboxgl.MapboxGeoJSONFeature[],
-  layer: string
-) => features.find((feat) => feat.layer.id === layer)?.id as string;
-
-interface SWLimit {
-  subUnitLimit?: string;
-  unitLimit?: string;
-  useDefaultRuleForUnit: boolean;
-  useDefaultRuleForSubUnit: boolean;
-  mergeUnit?: boolean;
-  mergeSubUnit?: boolean;
-}
-
 function getSwLimit(
-  whaituaId?: number,
-  surfaceWaterMgmtUnitLimit?: string,
-  surfaceWaterMgmtSubUnitLimit?: string
+  councilRegionId?: number,
+  surfaceWaterUnitLimit: SurfaceWaterLimit | null,
+  surfaceWaterSubUnitLimit: SurfaceWaterLimit | null
 ): SWLimit {
   const stat = {
-    unitLimit: surfaceWaterMgmtUnitLimit,
-    subUnitLimit: surfaceWaterMgmtSubUnitLimit,
+    unitLimit: surfaceWaterUnitLimit?.allocationLimit.toString(),
+    subUnitLimit: surfaceWaterSubUnitLimit?.allocationLimit.toString(),
 
-    useDefaultRuleForUnit: !surfaceWaterMgmtUnitLimit,
+    useDefaultRuleForUnit: !surfaceWaterUnitLimit,
 
     // Ruamahanga (Whaitua '4') uses 2 levels of surface water units. So in areas
     // where there is no value at the Subunit and there is a management unit,
     // limit P121 applies.
     useDefaultRuleForSubUnit:
-      !surfaceWaterMgmtSubUnitLimit &&
-      whaituaId === 4 &&
-      Boolean(surfaceWaterMgmtUnitLimit),
+      !surfaceWaterSubUnitLimit &&
+      councilRegionId === 4 &&
+      Boolean(surfaceWaterUnitLimit),
   };
   return stat;
 }

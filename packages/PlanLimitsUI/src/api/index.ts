@@ -1,5 +1,7 @@
-import type { FeatureCollection } from 'geojson';
+import { useMemo } from 'react';
+import type { FeatureCollection, Geometry } from 'geojson';
 import { useQueries, useQuery } from '@tanstack/react-query';
+import { camelCase, mapKeys } from 'lodash';
 
 const determineBackendUri = (hostname: string) => {
   switch (hostname) {
@@ -28,22 +30,24 @@ async function fetchFromAPI<T>(path: string): Promise<T> {
 function mapFeatureCollectionPropsToType<T>(
   featureCollection: FeatureCollection
 ) {
-  return featureCollection.features.map((feature) => {
+  featureCollection.features = featureCollection.features.map((feature) => {
     return {
-      id: feature.id,
-      ...feature.properties,
-    } as T;
+      ...feature,
+      properties: {
+        id: feature.id,
+        ...mapKeys(feature.properties, (value, key) => camelCase(key)),
+      },
+    };
   });
+
+  return featureCollection as FeatureCollection<Geometry, T>;
 }
 
 async function fetchFeatures<T>(path: string, councilId: number, hash: string) {
   const features = await fetchFromAPI<FeatureCollection>(
     `${path}?councilId=${councilId}&v=${hash}`
   );
-  return {
-    features,
-    data: mapFeatureCollectionPropsToType<T>(features),
-  };
+  return mapFeatureCollectionPropsToType<T>(features);
 }
 
 function useFeatureQuery<T>(
@@ -62,6 +66,25 @@ function useFeatureQuery<T>(
   });
 }
 
+function splitSurfaceWaterLimits(
+  sw: FeatureCollection<Geometry, SurfaceWaterLimit>
+) {
+  return {
+    surfaceWaterUnitLimits: {
+      ...sw,
+      features: sw.features.filter(
+        (feature) => feature.properties.parentSurfaceWaterLimit === null
+      ),
+    } as FeatureCollection<Geometry, SurfaceWaterLimit>,
+    surfaceWaterSubUnitLimits: {
+      ...sw,
+      features: sw.features.filter(
+        (feature) => feature.properties.parentSurfaceWaterLimit !== null
+      ),
+    } as FeatureCollection<Geometry, SurfaceWaterLimit>,
+  };
+}
+
 const manifestURL = '/plan-limits/manifest';
 
 export function usePlanLimitsData(councilId: number) {
@@ -78,32 +101,80 @@ export function usePlanLimitsData(councilId: number) {
     return useFeatureQuery<T>(path, manifest, councilId);
   }
 
-  return {
-    councils: useFeatureQueryWith<Council>('/plan-limits/councils'),
-    councilsRegions: useFeatureQueryWith<CouncilRegion>(
-      '/plan-limits/council-regions'
-    ),
-    surfaceWaterLimits: useFeatureQueryWith<CouncilRegion>(
-      '/plan-limits/surface-water-limits'
-    ),
-    GroundWaterLimits: useFeatureQueryWith<GroundWaterLimit>(
-      '/plan-limits/ground-water-limits'
-    ),
-    flowMeasurementSites: useFeatureQueryWith<FlowMeasurementSite>(
-      '/plan-limits/flow-measurement-sites'
-    ),
-    flowLimits: useFeatureQueryWith<FlowLimit>('/plan-limits/flow-limits'),
-    plan: useQuery({
-      enabled: Boolean(manifest),
-      queryKey: ['/plan-limits/plan', councilId],
-      refetchOnWindowFocus: false,
-      queryFn: () =>
-        fetchFromAPI<Plan>(
-          `/plan-limits/plan?councilId=${councilId}&v=${
-            manifest!['/plan-limits/plan']
-          }`
+  const councils = useFeatureQueryWith<Council>('/plan-limits/councils');
+  const councilRegions = useFeatureQueryWith<CouncilRegion>(
+    '/plan-limits/council-regions'
+  );
+  const surfaceWaterLimits = useFeatureQueryWith<SurfaceWaterLimit>(
+    '/plan-limits/surface-water-limits'
+  );
+  const groundWaterLimits = useFeatureQueryWith<GroundWaterLimit>(
+    '/plan-limits/ground-water-limits'
+  );
+  const flowMeasurementSites = useFeatureQueryWith<FlowMeasurementSite>(
+    '/plan-limits/flow-measurement-sites'
+  );
+  const flowLimits = useFeatureQueryWith<FlowLimit>('/plan-limits/flow-limits');
+  const plan = useQuery({
+    enabled: Boolean(manifest),
+    queryKey: ['/plan-limits/plan', councilId],
+    refetchOnWindowFocus: false,
+    queryFn: () =>
+      fetchFromAPI<Plan>(
+        `/plan-limits/plan?councilId=${councilId}&v=${
+          manifest!['/plan-limits/plan']
+        }`
+      ),
+  });
+
+  const isLoaded =
+    councils.isSuccess &&
+    councilRegions.isSuccess &&
+    surfaceWaterLimits.isSuccess &&
+    groundWaterLimits.isSuccess &&
+    flowMeasurementSites.isSuccess &&
+    flowLimits.isSuccess &&
+    plan.isSuccess;
+
+  const features = isLoaded
+    ? {
+        councils: councils.data,
+        councilRegions: councilRegions.data,
+        ...splitSurfaceWaterLimits(surfaceWaterLimits.data),
+        groundWaterLimits: groundWaterLimits.data,
+        flowMeasurementSites: flowMeasurementSites.data,
+        flowLimits: flowLimits.data,
+        plan: plan.data,
+      }
+    : undefined;
+
+  const data = isLoaded
+    ? {
+        councils: features!.councils.features.map((f) => f.properties),
+        councilRegions: features!.councilRegions.features.map(
+          (f) => f.properties
         ),
-    }),
+        surfaceWaterUnitLimits: features!.surfaceWaterUnitLimits.features.map(
+          (f) => f.properties
+        ),
+        surfaceWaterSubUnitLimits:
+          features!.surfaceWaterSubUnitLimits.features.map((f) => f.properties),
+        groundWaterLimits: features!.groundWaterLimits.features.map(
+          (feature) => feature.properties
+        ),
+        flowLimits: features!.flowLimits.features.map(
+          (feature) => feature.properties
+        ),
+        flowMeasurementSites: features!.flowMeasurementSites.features.map(
+          (feature) => feature.properties
+        ),
+      }
+    : undefined;
+
+  return {
+    isLoaded,
+    features,
+    data,
   };
 }
 

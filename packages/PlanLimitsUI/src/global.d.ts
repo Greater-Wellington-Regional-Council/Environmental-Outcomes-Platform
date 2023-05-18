@@ -33,7 +33,7 @@ interface SurfaceWaterLimit {
   id: number;
   name: string;
   planRegionId: number;
-  prentSurfaceWaterLimit: number;
+  parentSurfaceWaterLimit: number;
   allocationLimit: number;
 }
 
@@ -81,26 +81,30 @@ interface FlowLimitBoundary {
   flowRestriction: string;
 }
 
-interface AppState {
-  whaitua: Whaitua | null;
-  flowLimitBoundary: FlowLimitBoundary | null;
+interface AllPlanData {
+  councils: Council[];
+  councilRegions: CouncilRegion[];
+  surfaceWaterUnitLimits: SurfaceWaterLimit[];
+  surfaceWaterSubUnitLimits: SurfaceWaterLimit[];
+  groundWaterLimits: GroundWaterLimit[];
+  flowLimits: FlowLimit[];
+  flowMeasurementSites: FlowMeasurementSite[];
+}
 
-  surfaceWaterMgmtUnitId: string | null;
-  surfaceWaterMgmtUnitDescription?: string | null;
-  surfaceWaterMgmtUnitLimit?: string;
-  surfaceWaterMgmtUnitAllocated?: string;
-  surfaceWaterMgmtUnitAllocatedPercentage?: number;
+interface ActiveLimits {
+  councilRegion: CouncilRegion | null;
+  flowLimit: FlowLimit | null;
+  surfaceWaterUnitLimit: SurfaceWaterLimit | null;
+  surfaceWaterSubUnitLimit: SurfaceWaterLimit | null;
+  groundWaterLimits: GroundWaterLimit[];
+}
 
-  surfaceWaterMgmtSubUnitId: string | null;
-  surfaceWaterMgmtSubUnitDescription?: string | null;
-  surfaceWaterMgmtSubUnitLimit?: string;
-  surfaceWaterMgmtSubUnitAllocated?: string;
-  surfaceWaterMgmtSubUnitAllocatedPercentage?: number;
-  swLimit?: SWLimit;
-
-  gwLimits?: GWLimit[];
+interface AppState extends ActiveLimits {
+  flowSite: FlowMeasurementSite | null;
   groundWaterZones: Array<number>;
   groundWaterZoneName?: string;
+  swLimit?: SWLimit;
+  gwLimits?: GWLimit[];
 }
 
 interface GroundwaterZoneBoundariesProperties {
@@ -118,4 +122,13 @@ interface GroundwaterZoneBoundariesProperties {
   groundwater_allocation_amount: number;
   groundwater_allocation_amount_unit: string;
   groundwater_allocated_amount: number;
+}
+
+interface SWLimit {
+  unitLimit?: string;
+  subUnitLimit?: string;
+  useDefaultRuleForUnit: boolean;
+  useDefaultRuleForSubUnit: boolean;
+  mergeUnit?: boolean;
+  mergeSubUnit?: boolean;
 }

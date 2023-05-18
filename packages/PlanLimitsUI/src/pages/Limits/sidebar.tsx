@@ -27,7 +27,6 @@ export default function Sidebar({
   appState: AppState;
   waterTakeFilter: WaterTakeFilter;
   setWaterTakeFilter: (value: WaterTakeFilter) => void;
-  // queries: GeoJsonQueries;
 }) {
   const [, setShowDisclaimer] = useAtom(showDisclaimerAtom);
   const [council] = useAtom(councilAtom);
@@ -80,25 +79,17 @@ export default function Sidebar({
         <dl className="mb-6">
           <LimitsListItem
             title="Whaitua"
-            text={appState.whaitua?.name ?? 'None'}
+            text={appState.councilRegion?.name ?? 'None'}
           />
           {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <>
               <LimitsListItem
                 title={'Surface Water Catchment Unit'}
-                text={
-                  appState.surfaceWaterMgmtUnitDescription
-                    ? appState.surfaceWaterMgmtUnitDescription
-                    : 'None'
-                }
+                text={appState.surfaceWaterUnitLimit?.name ?? 'None'}
               />
               <LimitsListItem
                 title={'Surface Water Catchment Sub-unit'}
-                text={
-                  appState.surfaceWaterMgmtSubUnitDescription
-                    ? appState.surfaceWaterMgmtSubUnitDescription
-                    : 'None'
-                }
+                text={appState.surfaceWaterSubUnitLimit?.name ?? 'None'}
               />
             </>
           )}
@@ -115,25 +106,25 @@ export default function Sidebar({
           <LimitsListItem
             title={'Flow Management Site'}
             text={
-              appState.flowLimitBoundary
-                ? appState.flowLimitBoundary.name
-                : appState.whaitua
-                ? appState.whaitua.defaultFlowLimitAndSite
+              appState.flowLimit
+                ? appState.flowSite?.name
+                : appState.councilRegion
+                ? appState.councilRegion.defaultFlowManagementLimit
                 : 'None'
             }
           />
           <LimitsListItem
             title={'Minimum Flow or Restriction Flow'}
             text={
-              appState.flowLimitBoundary
-                ? appState.flowLimitBoundary.flowRestriction
-                : appState.whaitua
-                ? appState.whaitua.defaultFlowLimitAndSite
+              appState.flowLimit
+                ? appState.flowLimit.minimumFlow
+                : appState.councilRegion
+                ? appState.councilRegion.defaultFlowManagementLimit
                 : 'None'
             }
           />
         </dl>
-        {appState.whaitua && (
+        {appState.councilRegion && (
           <LimitsTable waterTakeFilter={waterTakeFilter} appState={appState} />
         )}
       </div>
