@@ -45,12 +45,16 @@ function AllocatedAmount({
 }
 
 export default function LimitsTable({ waterTakeFilter, appState }: Props) {
-  if (!appState.swLimit && appState.gwLimits?.length === 0) return <></>;
+  if (
+    !appState.surfaceWaterLimitsView &&
+    appState.groundWaterLimitsView?.length === 0
+  )
+    return <></>;
 
   const showFootnote =
-    appState.swLimit?.useDefaultRuleForSubUnit ||
-    appState.swLimit?.useDefaultRuleForUnit ||
-    appState.gwLimits?.some(
+    appState.surfaceWaterLimitsView?.useDefaultRuleForSubUnit ||
+    appState.surfaceWaterLimitsView?.useDefaultRuleForUnit ||
+    appState.groundWaterLimitsView?.some(
       (gwLimit) =>
         gwLimit.useDefaultRuleForSubUnit || gwLimit.useDefaultRuleForUnit
     );
@@ -64,65 +68,66 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
   let gwCatCAllocationAmountId: number;
 
   appState.gwLimits?.forEach((gwLimit) => {
-    if (gwLimit.category === 'A') {
-      if (
-        ['Combined'].includes(waterTakeFilter) &&
-        gwLimit.parentSWSubUnitId &&
-        gwLimit.parentSWSubUnitId.toString() ===
-          appState?.surfaceWaterMgmtSubUnitId?.toString()
-      ) {
-        swAndGWCatASubUnitRowSpan += 1;
-        // This depends on consecutive Cat A GW limits having the parent SW sub unit.
-        gwLimit.mergeSubUnit = true;
-      }
-      if (
-        ['Combined'].includes(waterTakeFilter) &&
-        gwLimit.parentSWUnitId &&
-        gwLimit.parentSWUnitId.toString() ===
-          appState?.surfaceWaterMgmtUnitId?.toString()
-      ) {
-        swAndGWCatAUnitRowSpan += 1;
-        // This depends on consecutive Cat A GW limits having the parent SW sub unit.
-        gwLimit.mergeUnit = true;
-      }
-    }
-
-    if (gwLimit.category === 'B') {
-      if (!gwCatBAllocationAmountId && gwLimit.groundwaterAllocationAmountId) {
-        gwCatBAllocationAmountId = gwLimit.groundwaterAllocationAmountId;
-      } else {
-        if (
-          gwCatBAllocationAmountId &&
-          gwCatBAllocationAmountId === gwLimit.groundwaterAllocationAmountId
-        ) {
-          // This depends on consecutive Cat B GW limits having the parent SW sub unit.
-          gwCatBSubUnitRowSpan += 1;
-          gwLimit.mergeSubUnit = true;
-          gwLimit.mergeUnit = true;
-        }
-      }
-    }
-
-    if (gwLimit.category === 'C') {
-      if (!gwCatCAllocationAmountId && gwLimit.groundwaterAllocationAmountId) {
-        gwCatCAllocationAmountId = gwLimit.groundwaterAllocationAmountId;
-      } else {
-        if (
-          gwCatCAllocationAmountId &&
-          gwCatCAllocationAmountId == gwLimit.groundwaterAllocationAmountId
-        ) {
-          // This depends on consecutive Cat C GW limits having the parent SW sub unit.
-          gwCatCSubUnitRowSpan += 1;
-          gwLimit.mergeSubUnit = true;
-          gwLimit.mergeUnit = true;
-        }
-      }
-    }
+    // if (gwLimit.category === 'A') {
+    //   if (
+    //     ['Combined'].includes(waterTakeFilter) &&
+    //     gwLimit.parentSWSubUnitId &&
+    //     gwLimit.parentSWSubUnitId.toString() ===
+    //       appState?.surfaceWaterMgmtSubUnitId?.toString()
+    //   ) {
+    //     swAndGWCatASubUnitRowSpan += 1;
+    //     // This depends on consecutive Cat A GW limits having the parent SW sub unit.
+    //     gwLimit.mergeSubUnit = true;
+    //   }
+    //   if (
+    //     ['Combined'].includes(waterTakeFilter) &&
+    //     gwLimit.parentSWUnitId &&
+    //     gwLimit.parentSWUnitId.toString() ===
+    //       appState?.surfaceWaterMgmtUnitId?.toString()
+    //   ) {
+    //     swAndGWCatAUnitRowSpan += 1;
+    //     // This depends on consecutive Cat A GW limits having the parent SW sub unit.
+    //     gwLimit.mergeUnit = true;
+    //   }
+    // }
+    // if (gwLimit.category === 'B') {
+    //   if (!gwCatBAllocationAmountId && gwLimit.groundwaterAllocationAmountId) {
+    //     gwCatBAllocationAmountId = gwLimit.groundwaterAllocationAmountId;
+    //   } else {
+    //     if (
+    //       gwCatBAllocationAmountId &&
+    //       gwCatBAllocationAmountId === gwLimit.groundwaterAllocationAmountId
+    //     ) {
+    //       // This depends on consecutive Cat B GW limits having the parent SW sub unit.
+    //       gwCatBSubUnitRowSpan += 1;
+    //       gwLimit.mergeSubUnit = true;
+    //       gwLimit.mergeUnit = true;
+    //     }
+    //   }
+    // }
+    // if (gwLimit.category === 'C') {
+    //   if (!gwCatCAllocationAmountId && gwLimit.groundwaterAllocationAmountId) {
+    //     gwCatCAllocationAmountId = gwLimit.groundwaterAllocationAmountId;
+    //   } else {
+    //     if (
+    //       gwCatCAllocationAmountId &&
+    //       gwCatCAllocationAmountId == gwLimit.groundwaterAllocationAmountId
+    //     ) {
+    //       // This depends on consecutive Cat C GW limits having the parent SW sub unit.
+    //       gwCatCSubUnitRowSpan += 1;
+    //       gwLimit.mergeSubUnit = true;
+    //       gwLimit.mergeUnit = true;
+    //     }
+    //   }
+    // }
   });
+
+  console.log(appState.catAGroundWaterLimitsView);
 
   return (
     <>
       <h3 className="text-lg uppercase mb-2 tracking-wider">Limits</h3>
+
       <table className="border-collapse border">
         <thead>
           <tr>
@@ -189,120 +194,72 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                   rowSpan={swAndGWCatASubUnitRowSpan}
                   className="border p-2 text-left text-sm"
                 >
-                  {appState.swLimit?.useDefaultRuleForSubUnit
-                    ? DEFAULT_RULE
-                    : appState.swLimit?.subUnitLimit || BLANK_CELL_CHAR}
+                  {appState.surfaceWaterLimitView?.subUnitLimitToDisplay ??
+                    BLANK_CELL_CHAR}
                 </td>
                 <td
                   rowSpan={swAndGWCatASubUnitRowSpan}
                   className="border p-2 text-left text-sm"
                 >
-                  <AllocatedAmount
+                  {/* <AllocatedAmount
                     amount={appState.surfaceWaterMgmtSubUnitAllocated}
                     percentage={
                       appState.surfaceWaterMgmtSubUnitAllocatedPercentage
                     }
-                  />
+                  /> */}
                 </td>
                 <td
                   rowSpan={swAndGWCatAUnitRowSpan}
                   className="border p-2 text-left text-sm"
                 >
-                  {appState.swLimit?.useDefaultRuleForUnit
-                    ? DEFAULT_RULE
-                    : appState.swLimit?.unitLimit || BLANK_CELL_CHAR}
+                  {appState.surfaceWaterLimitView?.unitLimitToDisplay ??
+                    BLANK_CELL_CHAR}
                 </td>
                 <td
                   rowSpan={swAndGWCatAUnitRowSpan}
                   className="border p-2 text-left text-sm"
                 >
-                  <AllocatedAmount
+                  {/* <AllocatedAmount
                     amount={appState.surfaceWaterMgmtUnitAllocated}
                     percentage={
                       appState.surfaceWaterMgmtUnitAllocatedPercentage
                     }
-                  />
+                  /> */}
                 </td>
               </tr>
             </>
           )}
           {['Combined', 'Ground'].includes(waterTakeFilter) && (
             <>
-              {appState.gwLimits?.map((gwLimit, index) => (
-                <tr key={index}>
-                  <td className="border p-2 text-left text-sm">Ground</td>
-                  <td className="border p-2 text-left text-sm">
-                    {gwLimit.depth}
-                  </td>
-                  <td className="border p-2 text-left text-sm">
-                    {gwLimit.category || BLANK_CELL_CHAR}
-                  </td>
-                  {!gwLimit.mergeSubUnit && (
-                    <>
-                      <td
-                        rowSpan={
-                          gwLimit.category === 'B'
-                            ? gwCatBSubUnitRowSpan
-                            : gwLimit.category === 'C'
-                            ? gwCatCSubUnitRowSpan
-                            : 1
-                        }
-                        className="border p-2 text-left text-sm"
-                      >
-                        {gwLimit.useDefaultRuleForSubUnit
-                          ? gwLimit.category === 'B'
-                            ? GROUNDWATER_CATEGORY_B_RULE
-                            : DEFAULT_RULE
-                          : gwLimit.subUnitLimit || BLANK_CELL_CHAR}
-                      </td>
-                      <td
-                        rowSpan={
-                          gwLimit.category === 'B'
-                            ? gwCatBSubUnitRowSpan
-                            : gwLimit.category === 'C'
-                            ? gwCatCSubUnitRowSpan
-                            : 1
-                        }
-                        className="border p-2 text-left text-sm"
-                      >
-                        <AllocatedAmount {...gwLimit.subUnitAllocated} />
-                      </td>
-                    </>
-                  )}
-                  {!gwLimit.mergeUnit && (
-                    <>
-                      <td
-                        rowSpan={
-                          gwLimit.category === 'B'
-                            ? gwCatBSubUnitRowSpan
-                            : gwLimit.category === 'C'
-                            ? gwCatCSubUnitRowSpan
-                            : 1
-                        }
-                        className="border p-2 text-left text-sm"
-                      >
-                        {gwLimit.useDefaultRuleForUnit
-                          ? gwLimit.category === 'B'
-                            ? GROUNDWATER_CATEGORY_B_RULE
-                            : DEFAULT_RULE
-                          : gwLimit.unitLimit || BLANK_CELL_CHAR}
-                      </td>
-                      <td
-                        rowSpan={
-                          gwLimit.category === 'B'
-                            ? gwCatBSubUnitRowSpan
-                            : gwLimit.category === 'C'
-                            ? gwCatCSubUnitRowSpan
-                            : 1
-                        }
-                        className="border p-2 text-left text-sm"
-                      >
-                        <AllocatedAmount {...gwLimit.unitAllocated} />
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
+              {Object.keys(appState.catBGroundWaterLimitsView ?? []).map(
+                (key) => {
+                  return appState.catBGroundWaterLimitsView![key].map(
+                    (gwLimit) => (
+                      <tr key={gwLimit.groundWaterLimit.id}>
+                        <td className="border p-2 text-left text-sm">Ground</td>
+                        <td className="border p-2 text-left text-sm">
+                          {gwLimit.groundWaterLimit.depth || BLANK_CELL_CHAR}
+                        </td>
+                        <td className="border p-2 text-left text-sm">
+                          {gwLimit.groundWaterLimit.category || BLANK_CELL_CHAR}
+                        </td>
+                        <td className="border p-2 text-left text-sm">
+                          {gwLimit.subUnitLimitToDisplay || BLANK_CELL_CHAR}
+                        </td>
+                        <td className="border p-2 text-left text-sm">
+                          {/* <AllocatedAmount {...gwLimit.subUnitAllocated} /> */}
+                        </td>
+                        <td className="border p-2 text-left text-sm">
+                          {gwLimit.unitLimitToDisplay || BLANK_CELL_CHAR}
+                        </td>
+                        <td className="border p-2 text-left text-sm">
+                          {/* <AllocatedAmount {...gwLimit.subUnitAllocated} /> */}
+                        </td>
+                      </tr>
+                    )
+                  );
+                }
+              )}
             </>
           )}
         </tbody>

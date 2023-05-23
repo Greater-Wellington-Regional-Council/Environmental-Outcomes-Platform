@@ -83,11 +83,15 @@ class Queries(@Autowired val context: DSLContext) {
   fun groundwaterWaterLimits(councilId: Int): String {
     val innerQuery =
         select(
-                GROUNDWATER_LIMITS.ID,
+                GROUNDWATER_AREAS.ID,
+                GROUNDWATER_AREAS.CATEGORY,
+                GROUNDWATER_AREAS.DEPTH,
+                GROUNDWATER_AREAS.DEPLETION_LIMIT_ID,
+                GROUNDWATER_AREAS.BOUNDARY.`as`("geometry"),
+                GROUNDWATER_LIMITS.ID.`as`("limit_id"),
                 GROUNDWATER_LIMITS.PLAN_REGION_ID,
                 GROUNDWATER_LIMITS.NAME,
-                GROUNDWATER_LIMITS.ALLOCATION_LIMIT,
-                GROUNDWATER_AREAS.BOUNDARY.`as`("geometry"))
+                GROUNDWATER_LIMITS.ALLOCATION_LIMIT)
             .from(GROUNDWATER_LIMITS)
             .join(GROUNDWATER_AREAS)
             .on(GROUNDWATER_LIMITS.ID.eq(GROUNDWATER_AREAS.GROUNDWATER_LIMIT_ID))

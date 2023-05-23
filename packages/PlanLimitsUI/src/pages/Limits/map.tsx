@@ -133,7 +133,7 @@ export default function LimitsMap({
       const activeLimits = mapAllFeatures(activeFeatures, allPlanData!);
       setAppState(activeLimits, allPlanData!);
     }
-  }, [mapLoaded, isLoaded, allPlanData, pinnedLocation, setAppState]);
+  }, [mapLoaded, isLoaded, pinnedLocation, setAppState]);
 
   const handleLoad = (evt: MapboxEvent) => {
     setMapLoaded(true);

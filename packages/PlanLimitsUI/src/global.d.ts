@@ -1,4 +1,8 @@
 // Server data types
+interface Dictionary<T> {
+  [index: string]: T;
+}
+
 interface Council {
   id: number;
   slug: string;
@@ -39,9 +43,13 @@ interface SurfaceWaterLimit {
 
 interface GroundWaterLimit {
   id: number;
+  limitId: number;
   name: string;
   planRegionId: number;
   allocationLimit: number;
+  depth: string;
+  category: string;
+  depletionLimitId: number;
 }
 
 interface FlowMeasurementSite {
@@ -68,19 +76,6 @@ interface ViewLocation {
 
 type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
 
-interface Whaitua {
-  id: number;
-  name: string;
-  defaultFlowLimitAndSite: JSX.Element;
-}
-
-interface FlowLimitBoundary {
-  id: number;
-  name: string;
-  siteId: number;
-  flowRestriction: string;
-}
-
 interface AllPlanData {
   councils: Council[];
   councilRegions: CouncilRegion[];
@@ -103,32 +98,21 @@ interface AppState extends ActiveLimits {
   flowSite: FlowMeasurementSite | null;
   groundWaterZones: Array<number>;
   groundWaterZoneName?: string;
-  swLimit?: SWLimit;
-  gwLimits?: GWLimit[];
+  surfaceWaterLimitView?: SurfaceWaterLimitView;
+  catAGroundWaterLimitsView?: Dictionary<GroundwaterLimitView[]>;
+  catBGroundWaterLimitsView?: Dictionary<GroundwaterLimitView[]>;
+  catCGroundWaterLimitsView?: Dictionary<GroundwaterLimitView[]>;
 }
 
-interface GroundwaterZoneBoundariesProperties {
-  category: 'Category A' | 'Category B' | 'Category C';
-  depth: string;
-  surface_water_unit_allocation_amount_id: number;
-  surface_water_unit_allocation_amount: number;
-  surface_water_unit_allocation_amount_unit: string;
-  surface_water_unit_allocated_amount: number;
-  surface_water_sub_unit_allocation_amount_id: number;
-  surface_water_sub_unit_allocation_amount: number;
-  surface_water_sub_unit_allocation_amount_unit: string;
-  surface_water_sub_unit_allocated_amount: number;
-  groundwater_allocation_amount_id: number;
-  groundwater_allocation_amount: number;
-  groundwater_allocation_amount_unit: string;
-  groundwater_allocated_amount: number;
+interface SurfaceWaterLimitView {
+  unitLimitToDisplay?: string;
+  subUnitLimitToDisplay?: string;
 }
 
-interface SWLimit {
-  unitLimit?: string;
-  subUnitLimit?: string;
-  useDefaultRuleForUnit: boolean;
-  useDefaultRuleForSubUnit: boolean;
-  mergeUnit?: boolean;
-  mergeSubUnit?: boolean;
+interface GroundwaterLimitView {
+  groundWaterLimit: GroundWaterLimit;
+  depletesFromUnitLimit?: SurfaceWaterLimit;
+  depletesFromSubunitLimit?: SurfaceWaterLimit;
+  unitLimitToDisplay?: string;
+  subUnitLimitToDisplay?: string;
 }
