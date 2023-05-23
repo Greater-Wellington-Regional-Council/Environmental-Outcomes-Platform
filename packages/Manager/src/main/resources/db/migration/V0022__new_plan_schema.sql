@@ -14,11 +14,13 @@ CREATE TABLE council_plan_documents
 (
     id         SERIAL      NOT NULL,
     council_id INT         NOT NULL UNIQUE,
+    source_id  VARCHAR     NOT NULL,
     document   JSONB,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
-    FOREIGN KEY (council_id) REFERENCES councils
+    FOREIGN KEY (council_id) REFERENCES councils,
+    UNIQUE (council_id, source_id)
 );
 
 CREATE TABLE council_plan_boundaries
@@ -104,6 +106,7 @@ CREATE TABLE groundwater_areas
 (
     id                   SERIAL      NOT NULL,
     groundwater_limit_id INT         NOT NULL,
+    source_id            VARCHAR     NOT NULL,
     category             VARCHAR     NOT NULL,
     depth                VARCHAR     NOT NULL,
     depletion_limit_id   INT,
@@ -112,7 +115,8 @@ CREATE TABLE groundwater_areas
     updated_at           TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
     FOREIGN KEY (groundwater_limit_id) REFERENCES groundwater_limits,
-    FOREIGN KEY (depletion_limit_id) REFERENCES surface_water_limits
+    FOREIGN KEY (depletion_limit_id) REFERENCES surface_water_limits,
+    UNIQUE (groundwater_limit_id, source_id)
 );
 
 CREATE TABLE flow_measurement_sites
@@ -133,6 +137,7 @@ CREATE TABLE flow_limits
 (
     id                  SERIAL      NOT NULL,
     plan_region_id      INT         NOT NULL,
+    source_id           VARCHAR     NOT NULL,
     minimum_flow        NUMERIC     NOT NULL,
     boundary            GEOMETRY    NOT NULL,
     measured_at_site_id INT         NOT NULL,
@@ -140,5 +145,6 @@ CREATE TABLE flow_limits
     updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
     FOREIGN KEY (measured_at_site_id) REFERENCES flow_measurement_sites,
-    FOREIGN KEY (plan_region_id) REFERENCES plan_regions
+    FOREIGN KEY (plan_region_id) REFERENCES plan_regions,
+    UNIQUE (plan_region_id, source_id)
 );
