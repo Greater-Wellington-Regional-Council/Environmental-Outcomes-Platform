@@ -79,7 +79,7 @@ export default function Sidebar({
         <dl className="mb-6">
           <LimitsListItem
             title="Whaitua"
-            text={appState.councilRegion?.name ?? 'None'}
+            text={appState.planRegion?.name ?? 'None'}
           />
           {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <>
@@ -108,8 +108,8 @@ export default function Sidebar({
             text={
               appState.flowLimit
                 ? appState.flowSite?.name
-                : appState.councilRegion
-                ? appState.councilRegion.defaultFlowManagementLimit
+                : appState.planRegion
+                ? appState.planRegion.defaultFlowManagementLimit
                 : 'None'
             }
           />
@@ -118,13 +118,13 @@ export default function Sidebar({
             text={
               appState.flowLimit
                 ? appState.flowLimit.minimumFlow
-                : appState.councilRegion
-                ? appState.councilRegion.defaultFlowManagementLimit
+                : appState.planRegion
+                ? appState.planRegion.defaultFlowManagementLimit
                 : 'None'
             }
           />
         </dl>
-        {appState.councilRegion && (
+        {appState.planRegion && (
           <LimitsTable waterTakeFilter={waterTakeFilter} appState={appState} />
         )}
       </div>

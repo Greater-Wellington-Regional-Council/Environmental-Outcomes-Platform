@@ -28,7 +28,7 @@ class Manifest(@Autowired val queries: Queries) {
         "updatedAt" to Instant.now().toString(),
         "/plan-limits/councils" to generateHash(queries.councils()),
         "/plan-limits/plan" to generateHash(queries.plan(councilId)),
-        "/plan-limits/council-regions" to generateHash(queries.councilRegions(councilId)),
+        "/plan-limits/plan-regions" to generateHash(queries.planRegions(councilId)),
         "/plan-limits/surface-water-limits" to generateHash(queries.surfaceWaterLimits(councilId)),
         "/plan-limits/ground-water-limits" to
             generateHash(queries.groundwaterWaterLimits(councilId)),

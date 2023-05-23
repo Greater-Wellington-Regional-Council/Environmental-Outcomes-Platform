@@ -1,6 +1,5 @@
 package nz.govt.eop.plan_limits
 
-import nz.govt.eop.si.jooq.tables.CouncilRegions.Companion.COUNCIL_REGIONS
 import nz.govt.eop.si.jooq.tables.Councils.Companion.COUNCILS
 import nz.govt.eop.si.jooq.tables.FlowLimits.Companion.FLOW_LIMITS
 import nz.govt.eop.si.jooq.tables.FlowMeasurementSites.Companion.FLOW_MEASUREMENT_SITES
@@ -43,20 +42,22 @@ class Queries(@Autowired val context: DSLContext) {
     return result.firstNotNullOf { it.value1().toString() }
   }
 
-  fun councilRegions(councilId: Int): String {
+  fun planRegions(councilId: Int): String {
     val innerQuery =
         select(
-                COUNCIL_REGIONS.ID,
-                COUNCIL_REGIONS.NAME.`as`("name"),
-                COUNCIL_REGIONS.BOUNDARY.`as`("geometry"),
+                PLAN_REGIONS.ID,
+                PLAN_REGIONS.PLAN_ID,
+                PLAN_REGIONS.NAME,
+                PLAN_REGIONS.BOUNDARY.`as`("geometry"),
                 PLAN_REGIONS.DEFAULT_SURFACE_WATER_LIMIT,
                 PLAN_REGIONS.DEFAULT_GROUNDWATER_LIMIT,
                 PLAN_REGIONS.DEFAULT_FLOW_MANAGEMENT_SITE,
                 PLAN_REGIONS.DEFAULT_FLOW_MANAGEMENT_LIMIT)
-            .from(COUNCIL_REGIONS)
-            .join(PLAN_REGIONS)
-            .on(COUNCIL_REGIONS.ID.eq(PLAN_REGIONS.COUNCIL_REGION_ID))
-            .where(COUNCIL_REGIONS.COUNCIL_ID.eq(councilId))
+            .from(PLAN_REGIONS)
+            .join(PLANS)
+            .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
+            .where(PLANS.COUNCIL_ID.eq(councilId))
+
     return buildFeatureCollection(context, innerQuery)
   }
 
@@ -65,7 +66,7 @@ class Queries(@Autowired val context: DSLContext) {
         select(
                 SURFACE_WATER_LIMITS.ID,
                 SURFACE_WATER_LIMITS.PLAN_REGION_ID,
-                SURFACE_WATER_LIMITS.PARENT_SURFACE_WATER_LIMIT,
+                SURFACE_WATER_LIMITS.PARENT_SURFACE_WATER_LIMIT_ID,
                 SURFACE_WATER_LIMITS.NAME,
                 SURFACE_WATER_LIMITS.ALLOCATION_LIMIT,
                 SURFACE_WATER_LIMITS.BOUNDARY.`as`("geometry"))
@@ -74,9 +75,9 @@ class Queries(@Autowired val context: DSLContext) {
                 SURFACE_WATER_LIMITS.PLAN_REGION_ID.`in`(
                     select(PLAN_REGIONS.ID)
                         .from(PLAN_REGIONS)
-                        .join(COUNCIL_REGIONS)
-                        .on(PLAN_REGIONS.COUNCIL_REGION_ID.eq(COUNCIL_REGIONS.ID))
-                        .where(COUNCIL_REGIONS.COUNCIL_ID.eq(councilId))))
+                        .join(PLANS)
+                        .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
+                        .where(PLANS.COUNCIL_ID.eq(councilId))))
     return buildFeatureCollection(context, innerQuery)
   }
 
@@ -99,9 +100,9 @@ class Queries(@Autowired val context: DSLContext) {
                 GROUNDWATER_LIMITS.PLAN_REGION_ID.`in`(
                     select(PLAN_REGIONS.ID)
                         .from(PLAN_REGIONS)
-                        .join(COUNCIL_REGIONS)
-                        .on(PLAN_REGIONS.COUNCIL_REGION_ID.eq(COUNCIL_REGIONS.ID))
-                        .where(COUNCIL_REGIONS.COUNCIL_ID.eq(councilId))))
+                        .join(PLANS)
+                        .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
+                        .where(PLANS.COUNCIL_ID.eq(councilId))))
     return buildFeatureCollection(context, innerQuery)
   }
 
@@ -112,7 +113,13 @@ class Queries(@Autowired val context: DSLContext) {
                 FLOW_MEASUREMENT_SITES.NAME,
                 FLOW_MEASUREMENT_SITES.LOCATION.`as`("geometry"))
             .from(FLOW_MEASUREMENT_SITES)
-            .where(FLOW_MEASUREMENT_SITES.COUNCIL_ID.eq(councilId))
+            .where(
+                FLOW_MEASUREMENT_SITES.PLAN_REGION_ID.`in`(
+                    select(PLAN_REGIONS.ID)
+                        .from(PLAN_REGIONS)
+                        .join(PLANS)
+                        .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
+                        .where(PLANS.COUNCIL_ID.eq(councilId))))
 
     return buildFeatureCollection(context, innerQuery)
   }
@@ -125,7 +132,14 @@ class Queries(@Autowired val context: DSLContext) {
                 FLOW_LIMITS.BOUNDARY.`as`("geometry"),
                 FLOW_LIMITS.MEASURED_AT_SITE_ID)
             .from(FLOW_LIMITS)
-            .where(FLOW_LIMITS.COUNCIL_ID.eq(councilId))
+            .where(
+                FLOW_LIMITS.PLAN_REGION_ID.`in`(
+                    select(PLAN_REGIONS.ID)
+                        .from(PLAN_REGIONS)
+                        .join(PLANS)
+                        .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
+                        .where(PLANS.COUNCIL_ID.eq(councilId))))
+
     return buildFeatureCollection(context, innerQuery)
   }
 

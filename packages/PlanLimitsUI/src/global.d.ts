@@ -24,8 +24,9 @@ interface Plan {
   defaultFlowManagementLimit: string;
 }
 
-interface CouncilRegion {
+interface PlanRegion {
   id: number;
+  planId: number;
   name: string;
   defaultSurfaceWaterLimit: string;
   defaultGroundwaterLimit: string;
@@ -37,7 +38,7 @@ interface SurfaceWaterLimit {
   id: number;
   name: string;
   planRegionId: number;
-  parentSurfaceWaterLimit: number;
+  parentSurfaceWaterLimitId: number;
   allocationLimit: number;
 }
 
@@ -78,7 +79,7 @@ type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
 
 interface AllPlanData {
   councils: Council[];
-  councilRegions: CouncilRegion[];
+  planRegions: PlanRegion[];
   surfaceWaterUnitLimits: SurfaceWaterLimit[];
   surfaceWaterSubUnitLimits: SurfaceWaterLimit[];
   groundWaterLimits: GroundWaterLimit[];
@@ -87,7 +88,7 @@ interface AllPlanData {
 }
 
 interface ActiveLimits {
-  councilRegion: CouncilRegion | null;
+  planRegion: PlanRegion | null;
   flowLimit: FlowLimit | null;
   surfaceWaterUnitLimit: SurfaceWaterLimit | null;
   surfaceWaterSubUnitLimit: SurfaceWaterLimit | null;

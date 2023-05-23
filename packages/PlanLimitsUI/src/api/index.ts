@@ -73,13 +73,13 @@ function splitSurfaceWaterLimits(
     surfaceWaterUnitLimits: {
       ...sw,
       features: sw.features.filter(
-        (feature) => feature.properties.parentSurfaceWaterLimit === null
+        (feature) => feature.properties.parentSurfaceWaterLimitId === null
       ),
     } as FeatureCollection<Geometry, SurfaceWaterLimit>,
     surfaceWaterSubUnitLimits: {
       ...sw,
       features: sw.features.filter(
-        (feature) => feature.properties.parentSurfaceWaterLimit !== null
+        (feature) => feature.properties.parentSurfaceWaterLimitId !== null
       ),
     } as FeatureCollection<Geometry, SurfaceWaterLimit>,
   };
@@ -102,8 +102,8 @@ export function usePlanLimitsData(councilId: number) {
   }
 
   const councils = useFeatureQueryWith<Council>('/plan-limits/councils');
-  const councilRegions = useFeatureQueryWith<CouncilRegion>(
-    '/plan-limits/council-regions'
+  const planRegions = useFeatureQueryWith<PlanRegion>(
+    '/plan-limits/plan-regions'
   );
   const surfaceWaterLimits = useFeatureQueryWith<SurfaceWaterLimit>(
     '/plan-limits/surface-water-limits'
@@ -129,7 +129,7 @@ export function usePlanLimitsData(councilId: number) {
 
   const isLoaded =
     councils.isSuccess &&
-    councilRegions.isSuccess &&
+    planRegions.isSuccess &&
     surfaceWaterLimits.isSuccess &&
     groundWaterLimits.isSuccess &&
     flowMeasurementSites.isSuccess &&
@@ -139,7 +139,7 @@ export function usePlanLimitsData(councilId: number) {
   const features = isLoaded
     ? {
         councils: councils.data,
-        councilRegions: councilRegions.data,
+        planRegions: planRegions.data,
         ...splitSurfaceWaterLimits(surfaceWaterLimits.data),
         groundWaterLimits: groundWaterLimits.data,
         flowMeasurementSites: flowMeasurementSites.data,
@@ -151,9 +151,7 @@ export function usePlanLimitsData(councilId: number) {
   const data = isLoaded
     ? {
         councils: features!.councils.features.map((f) => f.properties),
-        councilRegions: features!.councilRegions.features.map(
-          (f) => f.properties
-        ),
+        planRegions: features!.planRegions.features.map((f) => f.properties),
         surfaceWaterUnitLimits: features!.surfaceWaterUnitLimits.features.map(
           (f) => f.properties
         ),

@@ -7,7 +7,7 @@ export function useAppState(): [
   (activeLimits: ActiveLimits, allPlanData: AllPlanData) => void
 ] {
   const [appState, setAppState] = useState<AppState>({
-    councilRegion: null,
+    planRegion: null,
     flowLimit: null,
     flowSite: null,
     surfaceWaterUnitLimit: null,
@@ -37,7 +37,7 @@ export function useAppState(): [
       const surfaceWaterLimitView = buildSurfaceWaterLimitView(
         activeLimits.surfaceWaterUnitLimit,
         activeLimits.surfaceWaterSubUnitLimit,
-        activeLimits.councilRegion?.id
+        activeLimits.planRegion?.id
       );
 
       const groundWaterLimitViews = buildGroundWaterLimitView(
@@ -86,7 +86,7 @@ export function useAppState(): [
 function buildSurfaceWaterLimitView(
   surfaceWaterUnitLimit: SurfaceWaterLimit | null,
   surfaceWaterSubUnitLimit: SurfaceWaterLimit | null,
-  councilRegionId?: number
+  planRegionId?: number
 ): SurfaceWaterLimitView {
   const unitLimitToDisplay =
     surfaceWaterUnitLimit?.allocationLimit.toString() ?? 'RULE';
@@ -98,7 +98,7 @@ function buildSurfaceWaterLimitView(
   // limit P121 applies.
   if (
     !subUnitLimitToDisplay &&
-    councilRegionId === 4 &&
+    planRegionId === 4 &&
     Boolean(surfaceWaterUnitLimit)
   ) {
     subUnitLimitToDisplay = 'RULE';
@@ -148,10 +148,10 @@ function mapDepletesFrom(
     let depletesFromUnitLimitId: number | undefined;
     if (
       depletesFromSubunitLimit &&
-      depletesFromSubunitLimit.parentSurfaceWaterLimit
+      depletesFromSubunitLimit.parentSurfaceWaterLimitId
     ) {
       depletesFromUnitLimitId =
-        depletesFromSubunitLimit.parentSurfaceWaterLimit;
+        depletesFromSubunitLimit.parentSurfaceWaterLimitId;
     } else if (!depletesFromSubunitLimit) {
       depletesFromUnitLimitId = limit.depletionLimitId;
     }

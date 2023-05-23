@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -73,11 +73,11 @@ function mapAllFeatures(
   appPlanData: AllPlanData
 ): ActiveLimits {
   return {
-    councilRegion:
-      mapFeatureLayer<CouncilRegion>(
+    planRegion:
+      mapFeatureLayer<PlanRegion>(
         features,
-        'councilRegions',
-        appPlanData.councilRegions
+        'planRegions',
+        appPlanData.planRegions
       ) || null,
     flowLimit:
       mapFeatureLayer<FlowLimit>(
@@ -221,27 +221,23 @@ export default function LimitsMap({
       </Source>
 
       <Source
-        id="councilRegions"
+        id="planRegions"
         type="geojson"
         data={
-          (planLimitsData.isLoaded && features!.councilRegions) ||
+          (planLimitsData.isLoaded && features!.planRegions) ||
           EMPTY_GEO_JSON_DATA
         }
       >
         <Layer
-          id="councilRegions"
+          id="planRegions"
           type="fill"
           paint={{
             'fill-opacity': 0,
           }}
         />
         <Layer
-          id="councilRegionsHighlight"
-          filter={[
-            '==',
-            ['id'],
-            appState.councilRegion && appState.councilRegion.id,
-          ]}
+          id="planRegionsHighlight"
+          filter={['==', ['id'], appState.planRegion && appState.planRegion.id]}
           type="fill"
           paint={{
             'fill-outline-color': '#484896',
@@ -250,7 +246,7 @@ export default function LimitsMap({
           }}
         />
         <Layer
-          id="councilRegionsOutline"
+          id="planRegionsOutline"
           type="line"
           paint={{
             'line-color': 'green',

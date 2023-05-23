@@ -37,12 +37,12 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
         .body(queries.plan(councilId))
   }
 
-  @RequestMapping("/plan-limits/council-regions", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @RequestMapping("/plan-limits/plan-regions", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun getCouncilRegions(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.councilRegions(councilId))
+        .body(queries.planRegions(councilId))
   }
 
   @RequestMapping(
