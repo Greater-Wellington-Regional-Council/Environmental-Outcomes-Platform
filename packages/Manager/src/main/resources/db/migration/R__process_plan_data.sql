@@ -1,3 +1,5 @@
+-- ${flyway:timestamp}
+
 -- Trim old Data
 DELETE FROM groundwater_areas;
 DELETE FROM groundwater_limits;

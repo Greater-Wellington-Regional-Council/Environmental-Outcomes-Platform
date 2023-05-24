@@ -1,5 +1,4 @@
-DELETE
-FROM council_plan_documents;
+DELETE FROM council_plan_documents WHERE council_id = 9;
 
 INSERT INTO council_plan_documents (council_id, source_id, document)
 VALUES (9, 'PRNP_2023',
