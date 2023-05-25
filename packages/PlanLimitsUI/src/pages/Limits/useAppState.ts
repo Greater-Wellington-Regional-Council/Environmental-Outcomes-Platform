@@ -50,17 +50,7 @@ export function useAppState(): [
       const gwLimitViews =
         groundWaterLimitViews.length === 0
           ? {
-              catAGroundWaterLimitsView: {
-                All: [
-                  {
-                    groundWaterLimit: {
-                      category: 'A',
-                      depth: 'All',
-                      unitLimitsToDisplay: 'RULE',
-                    },
-                  },
-                ],
-              },
+              catAGroundWaterLimitsView: fallBackCatAGroundWaterLimit,
             }
           : {
               catAGroundWaterLimitsView: filterGroupAndSort(
@@ -92,34 +82,50 @@ export function useAppState(): [
   return [appState, setAppStateFromResult];
 }
 
+const fallBackCatAGroundWaterLimit: GroupedGroundwaterLimitViews = {
+  all: [
+    {
+      groundWaterLimit: {
+        category: 'A',
+        depth: 'All',
+      } as GroundWaterLimit,
+      unitLimitView: {
+        overrideText: 'RULE',
+      },
+      subUnitLimitView: {},
+    },
+  ],
+};
+
 function buildSurfaceWaterLimitView(
   surfaceWaterUnitLimit: SurfaceWaterLimit | null,
   surfaceWaterSubUnitLimit: SurfaceWaterLimit | null,
   planRegionId?: number
 ): SurfaceWaterLimitView {
-  const unitLimitToDisplay =
-    surfaceWaterUnitLimit?.allocationLimit.toString() ?? 'RULE';
+  const unitLimitView: LimitView = {
+    limit: surfaceWaterUnitLimit?.allocationLimit,
+    overrideText: surfaceWaterUnitLimit?.allocationLimit ? undefined : 'RULE',
+    allocated: surfaceWaterUnitLimit?.allocationAmount,
+  };
 
-  let subUnitLimitToDisplay =
-    surfaceWaterSubUnitLimit?.allocationLimit.toString();
+  const subUnitLimitView: LimitView = {
+    limit: surfaceWaterSubUnitLimit?.allocationLimit,
+    allocated: surfaceWaterSubUnitLimit?.allocationAmount,
+  };
   // Ruamahanga (Whaitua '4') uses 2 levels of surface water units. So in areas
   // where there is no value at the Subunit and there is a management unit,
   // limit P121 applies.
   if (
-    !subUnitLimitToDisplay &&
+    !subUnitLimitView.limit &&
     planRegionId === 4 &&
-    Boolean(surfaceWaterUnitLimit)
+    Boolean(unitLimitView.limit)
   ) {
-    subUnitLimitToDisplay = 'RULE';
+    subUnitLimitView.overrideText = 'RULE';
   }
 
   return {
-    unitLimitToDisplay,
-    subUnitLimitToDisplay,
-    unitAllocatedToDisplay:
-      surfaceWaterUnitLimit?.allocationAmount.toString() || '',
-    subUnitAllocatedToDisplay:
-      surfaceWaterSubUnitLimit?.allocationAmount.toString() || '',
+    unitLimitView: formatLimitView(unitLimitView),
+    subUnitLimitView: formatLimitView(subUnitLimitView),
   };
 }
 
@@ -135,14 +141,22 @@ function buildGroundWaterLimitView(
       surfaceWaterSubUnitLimits
     );
 
+    const limitsToDisplay = unitLimitsToDisplay(
+      groundWaterLimit,
+      depletesFrom.depletesFromUnitLimit,
+      depletesFrom.depletesFromSubunitLimit
+    );
+    limitsToDisplay.subUnitLimitView = formatLimitView(
+      limitsToDisplay.subUnitLimitView
+    );
+    limitsToDisplay.unitLimitView = formatLimitView(
+      limitsToDisplay.unitLimitView
+    );
+
     return {
       groundWaterLimit,
       ...depletesFrom,
-      ...unitLimitsToDisplay(
-        groundWaterLimit,
-        depletesFrom.depletesFromUnitLimit,
-        depletesFrom.depletesFromSubunitLimit
-      ),
+      ...limitsToDisplay,
     };
   });
 }
@@ -184,35 +198,48 @@ function unitLimitsToDisplay(
   groundWaterLimit: GroundWaterLimit,
   depletesFromUnitLimit?: SurfaceWaterLimit,
   depletesFromSubunitLimit?: SurfaceWaterLimit
-) {
+): { unitLimitView: LimitView; subUnitLimitView: LimitView } {
   switch (groundWaterLimit.category) {
     case 'A':
       if (!groundWaterLimit.depletionLimitId) {
         return {
-          unitLimitToDisplay: 'RULE',
-          subUnitLimitToDisplay: 'RULE',
-        };
-      } else {
-        return {
-          unitLimitToDisplay: depletesFromUnitLimit?.allocationLimit.toString(),
-          unitAllocatedToDisplay:
-            depletesFromUnitLimit?.allocationAmount.toString(),
-          subUnitLimitToDisplay:
-            depletesFromSubunitLimit?.allocationLimit.toString(),
-          subUnitAllocatedToDisplay:
-            depletesFromSubunitLimit?.allocationAmount.toString(),
+          unitLimitView: {
+            overrideText: 'RULE',
+          },
+          subUnitLimitView: {
+            overrideText: 'RULE',
+          },
         };
       }
+      return {
+        unitLimitView: {
+          limit: depletesFromUnitLimit?.allocationLimit,
+          allocated: depletesFromUnitLimit?.allocationAmount,
+        },
+        subUnitLimitView: {
+          limit: depletesFromSubunitLimit?.allocationLimit,
+          allocated: depletesFromSubunitLimit?.allocationAmount,
+        },
+      };
     case 'B':
       return {
-        unitLimitToDisplay: 'RULE',
-        unitAllocatedToDisplay: groundWaterLimit.allocationAmount.toString(),
+        unitLimitView: {
+          overrideText: 'RULE',
+          limit: groundWaterLimit.allocationLimit,
+          allocated: groundWaterLimit.allocationAmount,
+        },
+        subUnitLimitView: {},
       };
     case 'C':
       return {
-        unitLimitToDisplay: groundWaterLimit.allocationLimit.toString(),
-        unitAllocatedToDisplay: groundWaterLimit.allocationAmount.toString(),
+        unitLimitView: {
+          limit: groundWaterLimit.allocationLimit,
+          allocated: groundWaterLimit.allocationAmount,
+        },
+        subUnitLimitView: {},
       };
+    default:
+      throw new Error('Unknown category');
   }
 }
 
@@ -242,20 +269,24 @@ function sortByDepth(groundwaterLimitsView: GroundwaterLimitView[]) {
   });
 }
 
-// function allocatedProps(
-//   limitAmount: string,
-//   allocatedAmount: string,
-//   unit: string
-// ) {
-//   let amount;
-//   let percentage;
-//   if (allocatedAmount && unit) {
-//     amount = formatWaterQuantity(Math.round(Number(allocatedAmount)), unit);
-//     if (limitAmount) {
-//       percentage = Math.round(
-//         (Number(allocatedAmount) / Number(limitAmount)) * 100
-//       );
-//     }
-//   }
-//   return { amount, percentage };
-// }
+function formatLimitView(limitView: LimitView) {
+  if (limitView.overrideText) {
+    limitView.limitToDiplay = limitView.overrideText;
+  } else if (limitView.limit) {
+    limitView.limitToDiplay == formatWaterQuantity(limitView.limit, 'L/s');
+  }
+
+  if (limitView.allocated) {
+    limitView.allocatedToDiplay = formatWaterQuantity(
+      limitView.allocated,
+      'L/s'
+    );
+  }
+
+  if (limitView.limit && limitView.allocated) {
+    limitView.allocatedPercent = Math.round(
+      (limitView.allocated / limitView.limit) * 100
+    );
+  }
+  return limitView;
+}

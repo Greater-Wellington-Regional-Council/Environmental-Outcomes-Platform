@@ -97,29 +97,44 @@ interface ActiveLimits {
   groundWaterLimits: GroundWaterLimit[];
 }
 
+type GroupedGroundwaterLimitViews = Dictionary<GroundwaterLimitView[]>;
+
 interface AppState extends ActiveLimits {
   flowSite: FlowMeasurementSite | null;
   groundWaterZones: Array<number>;
   groundWaterZoneName?: string;
   surfaceWaterLimitView?: SurfaceWaterLimitView;
-  catAGroundWaterLimitsView?: Dictionary<GroundwaterLimitView[]>;
-  catBGroundWaterLimitsView?: Dictionary<GroundwaterLimitView[]>;
-  catCGroundWaterLimitsView?: Dictionary<GroundwaterLimitView[]>;
+  catAGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
+  catBGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
+  catCGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
+}
+
+interface LimitView {
+  limit?: number;
+  allocated?: number;
+  allocatedPercent?: number;
+  overrideText?: string;
+  limitToDiplay?: string;
+  allocatedToDiplay?: string;
 }
 
 interface SurfaceWaterLimitView {
-  unitLimitToDisplay?: string;
-  subUnitLimitToDisplay?: string;
-  unitAllocatedToDisplay?: string;
-  subUnitAllocatedToDisplay?: string;
+  unitLimitView: LimitView;
+  subUnitLimitView: LimitView;
+  // unitLimitToDisplay?: string;
+  // subUnitLimitToDisplay?: string;
+  // unitAllocatedToDisplay?: string;
+  // subUnitAllocatedToDisplay?: string;
 }
 
 interface GroundwaterLimitView {
   groundWaterLimit: GroundWaterLimit;
   depletesFromUnitLimit?: SurfaceWaterLimit;
   depletesFromSubunitLimit?: SurfaceWaterLimit;
-  unitLimitToDisplay?: string;
-  subUnitLimitToDisplay?: string;
-  unitAllocatedToDisplay?: string;
-  subUnitAllocatedToDisplay?: string;
+  unitLimitView: LimitView;
+  subUnitLimitView: LimitView;
+  // unitLimitToDisplay?: string;
+  // subUnitLimitToDisplay?: string;
+  // unitAllocatedToDisplay?: string;
+  // subUnitAllocatedToDisplay?: string;
 }

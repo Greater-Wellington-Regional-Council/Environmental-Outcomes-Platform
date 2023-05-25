@@ -1,4 +1,5 @@
 import { twMerge } from 'tailwind-merge';
+import { pick } from 'lodash';
 
 const BLANK_CELL_CHAR = '-';
 const GROUNDWATER_CATEGORY_B_RULE = (
@@ -54,12 +55,14 @@ interface LimitRow {
   type: 'Surface' | 'Ground';
   depth?: string;
   category?: string;
-  subUnitLimitToDisplay?: string;
-  subUnitAllocatedToDisplay?: string;
+  subUnitLimitView: LimitView;
+  // subUnitLimitToDisplay?: string;
+  // subUnitAllocatedToDisplay?: string;
   subUnitLimitRowSpan?: number;
   hideSubUnitLimit?: boolean;
-  unitAllocatedToDisplay?: string;
-  unitLimitToDisplay?: string;
+  unitLimitView: LimitView;
+  // unitAllocatedToDisplay?: string;
+  // unitLimitToDisplay?: string;
   unitLimitRowSpan?: number;
   hideUnitLimit?: boolean;
 }
@@ -68,12 +71,10 @@ function LimitRow({
   depth = BLANK_CELL_CHAR,
   category = BLANK_CELL_CHAR,
   hideSubUnitLimit = false,
-  subUnitLimitToDisplay = BLANK_CELL_CHAR,
-  subUnitAllocatedToDisplay = '',
+  subUnitLimitView,
   subUnitLimitRowSpan = 1,
   hideUnitLimit = false,
-  unitLimitToDisplay = BLANK_CELL_CHAR,
-  unitAllocatedToDisplay = '',
+  unitLimitView,
   unitLimitRowSpan = 1,
 }: LimitRow) {
   return (
@@ -84,22 +85,20 @@ function LimitRow({
       {!hideSubUnitLimit && (
         <>
           <FormattedTD rowSpan={subUnitLimitRowSpan}>
-            {subUnitLimitToDisplay}
+            {subUnitLimitView.limitToDiplay || BLANK_CELL_CHAR}
           </FormattedTD>
           <FormattedTD rowSpan={subUnitLimitRowSpan}>
-            {subUnitAllocatedToDisplay}
-            {/* <AllocatedAmount {...gwLimit.subUnitAllocated} /> */}
+            <AllocatedAmount limitView={subUnitLimitView} />
           </FormattedTD>
         </>
       )}
       {!hideUnitLimit && (
         <>
           <FormattedTD rowSpan={unitLimitRowSpan}>
-            {unitLimitToDisplay}
+            {unitLimitView.limitToDiplay || BLANK_CELL_CHAR}
           </FormattedTD>
           <FormattedTD rowSpan={unitLimitRowSpan}>
-            {unitAllocatedToDisplay}
-            {/* <AllocatedAmount {...gwLimit.subUnitAllocated} /> */}
+            <AllocatedAmount limitView={unitLimitView} />
           </FormattedTD>
         </>
       )}
@@ -107,24 +106,20 @@ function LimitRow({
   );
 }
 
-function AllocatedAmount({
-  amount,
-  percentage,
-}: {
-  amount?: string;
-  percentage?: number;
-}) {
-  if (!amount) return <>{BLANK_CELL_CHAR}</>;
+function AllocatedAmount({ limitView }: { limitView: LimitView }) {
+  if (!limitView.allocated) return <>{BLANK_CELL_CHAR}</>;
   return (
     <>
-      {amount}
+      {limitView.allocatedToDiplay}
       <br />
       <span
         className={
-          percentage && percentage < 100 ? 'text-green-700' : 'text-red-700'
+          limitView.allocatedPercent && limitView.allocatedPercent < 100
+            ? 'text-green-700'
+            : 'text-red-700'
         }
       >
-        {percentage}%
+        {limitView.allocatedPercent}%
       </span>
     </>
   );
@@ -197,23 +192,12 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
           </tr>
         </thead>
         <tbody>
-          {showSurfaceWaterLimits && (
+          {showSurfaceWaterLimits && appState.surfaceWaterLimitView && (
             <LimitRow
               type="Surface"
-              subUnitLimitToDisplay={
-                appState.surfaceWaterLimitView?.subUnitLimitToDisplay
-              }
-              subUnitAllocatedToDisplay={
-                appState.surfaceWaterLimitView?.subUnitAllocatedToDisplay
-              }
+              {...appState.surfaceWaterLimitView}
               subUnitLimitRowSpan={surfaceAndGroundCatASubUnitRowSpan}
-              unitLimitToDisplay={
-                appState.surfaceWaterLimitView?.unitLimitToDisplay
-              }
               unitLimitRowSpan={surfaceAndGroundCatAUnitRowSpan}
-              unitAllocatedToDisplay={
-                appState.surfaceWaterLimitView?.unitAllocatedToDisplay
-              }
             ></LimitRow>
           )}
           {showGroundWaterLimits &&
@@ -225,17 +209,14 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
                   category={gwLimit.groundWaterLimit.category}
-                  subUnitLimitToDisplay={gwLimit.subUnitLimitToDisplay}
-                  subUnitAllocatedToDisplay={gwLimit.subUnitAllocatedToDisplay}
+                  {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   hideSubUnitLimit={
-                    index + 1 < surfaceAndGroundCatASubUnitRowSpan &&
-                    showSurfaceWaterLimits
+                    showSurfaceWaterLimits &&
+                    index + 1 < surfaceAndGroundCatASubUnitRowSpan
                   }
-                  unitLimitToDisplay={gwLimit.unitLimitToDisplay}
-                  unitAllocatedToDisplay={gwLimit.unitAllocatedToDisplay}
                   hideUnitLimit={
-                    index + 1 < surfaceAndGroundCatAUnitRowSpan &&
-                    showSurfaceWaterLimits
+                    showSurfaceWaterLimits &&
+                    index + 1 < surfaceAndGroundCatAUnitRowSpan
                   }
                 ></LimitRow>
               ))
@@ -251,12 +232,9 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
                   category={gwLimit.groundWaterLimit.category}
-                  subUnitLimitToDisplay={gwLimit.subUnitLimitToDisplay}
-                  subUnitAllocatedToDisplay={gwLimit.subUnitAllocatedToDisplay}
+                  {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   subUnitLimitRowSpan={0}
                   hideSubUnitLimit={index > 0}
-                  unitLimitToDisplay={gwLimit.unitLimitToDisplay}
-                  unitAllocatedToDisplay={gwLimit.unitAllocatedToDisplay}
                   unitLimitRowSpan={0}
                   hideUnitLimit={index > 0}
                 ></LimitRow>
@@ -273,12 +251,9 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
                   category={gwLimit.groundWaterLimit.category}
-                  subUnitLimitToDisplay={gwLimit.subUnitLimitToDisplay}
-                  subUnitAllocatedToDisplay={gwLimit.subUnitAllocatedToDisplay}
+                  {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   subUnitLimitRowSpan={0}
                   hideSubUnitLimit={index > 0}
-                  unitLimitToDisplay={gwLimit.unitLimitToDisplay}
-                  unitAllocatedToDisplay={gwLimit.unitAllocatedToDisplay}
                   unitLimitRowSpan={0}
                   hideUnitLimit={index > 0}
                 ></LimitRow>
