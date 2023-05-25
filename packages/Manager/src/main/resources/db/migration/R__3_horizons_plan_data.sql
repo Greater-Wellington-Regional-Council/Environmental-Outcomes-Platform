@@ -8,6 +8,7 @@ VALUES (8, 'ONE_PLAN_2023',
         {
           "id": "ONE_PLAN_2023",
           "name": "One Plan",
+          "defaultSurfaceWaterLimit": "10% of MALF",
           "regions": [
             {
               "id": "akitio",
@@ -17,33 +18,33 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "akit_1",
                   "name": "Akitio",
-                  "boundaryId": "akit_1",
                   "allocationLimit": 2592,
+                  "boundaryId": "akit_1",
                   "children": [
                     {
                       "id": "akit_1a",
                       "name": "Upper Akitio",
-                      "boundaryId": "akit_1a",
-                      "allocationLimit": 864
+                      "allocationLimit": 864,
+                      "boundaryId": "akit_1a"
                     },
                     {
                       "id": "akit_1b",
                       "name": "Lower Akitio",
-                      "boundaryId": "akit_1b",
-                      "allocationLimit": 2592
+                      "allocationLimit": 2592,
+                      "boundaryId": "akit_1b"
                     },
                     {
                       "id": "akit_1c",
                       "name": "Waihi",
-                      "boundaryId": "akit_1c",
-                      "allocationLimit": 1296
+                      "allocationLimit": 1296,
+                      "boundaryId": "akit_1c"
                     }
                   ]
                 }
               ]
             },
             {
-              "id": "Lake_Horowhenua",
+              "id": "lake_horowhenua",
               "name": "Lake Horowhenua",
               "boundaryId": "hoki_1",
               "surfaceWaterLimits": [
@@ -56,19 +57,32 @@ VALUES (8, 'ONE_PLAN_2023',
                     {
                       "id": "hoki_1a",
                       "name": "Lake Horowhenua",
-                      "boundaryId": "hoki_1a",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "hoki_1a"
                     },
                     {
                       "id": "hoki_1b",
                       "name": "Hokio",
-                      "boundaryId": "hoki_1b",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "hoki_1b"
                     }
                   ]
                 }
               ],
-              "defaultSurfaceWaterLimit": "10% of MALF"
+              "groundwaterLimits": [
+                {
+                  "id": "horowhenua",
+                  "name": "Horowhenua",
+                  "allocationLimit": 27000000,
+                  "areas": [
+                    {
+                      "id": "horowhenua",
+                      "depth": "All depths",
+                      "boundaryId": "horowhenua_gw"
+                    }
+                  ]
+                }
+              ]
             },
             {
               "id": "manawatu",
@@ -78,398 +92,424 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "mana_1",
                   "name": "Upper Manawatu",
+                  "allocationLimit": 17712,
                   "boundaryId": "mana_1",
-                  "allocationLimit": 205,
                   "children": [
                     {
                       "id": "mana_1a",
                       "name": "Upper Manawatu",
-                      "boundaryId": "mana_1a",
-                      "allocationLimit": 205
+                      "allocationLimit": 17712,
+                      "boundaryId": "mana_1a"
                     },
                     {
                       "id": "mana_1b",
                       "name": "Mangatewainui",
-                      "boundaryId": "mana_1b",
-                      "allocationLimit": 65
+                      "allocationLimit": 5616,
+                      "boundaryId": "mana_1b"
                     },
                     {
                       "id": "mana_1c",
                       "name": "Mangatoro",
-                      "boundaryId": "mana_1c",
-                      "allocationLimit": 120
+                      "allocationLimit": 10368,
+                      "boundaryId": "mana_1c"
                     }
                   ]
                 },
                 {
                   "id": "mana_10",
                   "name": "Middle Manawatu",
+                  "allocationLimit": 264384,
                   "boundaryId": "mana_10",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "mana_10a",
                       "name": "Middle Manawatu",
-                      "boundaryId": "mana_10a",
-                      "allocationLimit": 0
+                      "allocationLimit": 264384,
+                      "boundaryId": "mana_10a"
                     },
                     {
                       "id": "mana_10b",
                       "name": "Upper Pohangina",
-                      "boundaryId": "mana_10b",
-                      "allocationLimit": 0
+                      "allocationLimit": 9936,
+                      "boundaryId": "mana_10b"
                     },
                     {
                       "id": "mana_10c",
                       "name": "Middle Pohangina",
-                      "boundaryId": "mana_10c",
-                      "allocationLimit": 0
+                      "allocationLimit": 39312,
+                      "boundaryId": "mana_10c"
                     },
                     {
                       "id": "mana_10d",
                       "name": "Lower Pohangina",
-                      "boundaryId": "mana_10d",
-                      "allocationLimit": 0
+                      "allocationLimit": 39312,
+                      "boundaryId": "mana_10d"
                     },
                     {
                       "id": "mana_10e",
                       "name": "Aokautere",
-                      "boundaryId": "mana_10e",
-                      "allocationLimit": 0
+                      "allocationLimit": 432,
+                      "boundaryId": "mana_10e"
                     }
                   ]
                 },
                 {
                   "id": "mana_11",
                   "name": "Lower Manawatu",
+                  "allocationLimit": 336096,
                   "boundaryId": "mana_11",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "mana_11a",
                       "name": "Lower Manawatu",
-                      "boundaryId": "mana_11a",
-                      "allocationLimit": 0
+                      "allocationLimit": 336096,
+                      "boundaryId": "mana_11a"
                     },
                     {
                       "id": "mana_11b",
                       "name": "Turitea",
-                      "boundaryId": "mana_11b",
-                      "allocationLimit": 0
+                      "allocationLimit": 37100,
+                      "boundaryId": "mana_11b"
                     },
                     {
                       "id": "mana_11c",
                       "name": "Kahuterawa",
-                      "boundaryId": "mana_11c",
-                      "allocationLimit": 0
+                      "allocationLimit": 864,
+                      "boundaryId": "mana_11c"
                     },
                     {
                       "id": "mana_11d",
                       "name": "Upper Mangaone Stream",
-                      "boundaryId": "mana_11d",
-                      "allocationLimit": 0
+                      "allocationLimit": 432,
+                      "boundaryId": "mana_11d"
                     },
                     {
                       "id": "mana_11e",
                       "name": "Lower Mangaone Stream",
-                      "boundaryId": "mana_11e",
-                      "allocationLimit": 0
+                      "allocationLimit": 864,
+                      "boundaryId": "mana_11e"
                     },
                     {
                       "id": "mana_11f",
                       "name": "Main Drain",
-                      "boundaryId": "mana_11f",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "mana_11f"
                     }
                   ]
                 },
                 {
                   "id": "mana_12",
                   "name": "Oroua",
+                  "allocationLimit": 37152,
                   "boundaryId": "mana_12",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "mana_12a",
                       "name": "Upper Oroua",
-                      "boundaryId": "mana_12a",
-                      "allocationLimit": 0
+                      "allocationLimit": 34128,
+                      "boundaryId": "mana_12a"
                     },
                     {
                       "id": "mana_12b",
                       "name": "Middle Oroua",
-                      "boundaryId": "mana_12b",
-                      "allocationLimit": 0
+                      "allocationLimit": 34992,
+                      "boundaryId": "mana_12b"
                     },
                     {
                       "id": "mana_12c",
                       "name": "Lower Oroua",
-                      "boundaryId": "mana_12c",
-                      "allocationLimit": 0
+                      "allocationLimit": 37152,
+                      "boundaryId": "mana_12c"
                     },
                     {
                       "id": "mana_12d",
                       "name": "Kiwitea",
-                      "boundaryId": "mana_12d",
-                      "allocationLimit": 0
+                      "allocationLimit": 1296,
+                      "boundaryId": "mana_12d"
                     },
                     {
                       "id": "mana_12e",
                       "name": "Makino",
-                      "boundaryId": "mana_12e",
-                      "allocationLimit": 0
+                      "allocationLimit": 1296,
+                      "boundaryId": "mana_12e"
                     }
                   ]
                 },
                 {
                   "id": "mana_13",
                   "name": "Coastal Manawatu",
+                  "allocationLimit": 598752,
                   "boundaryId": "mana_13",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "mana_13a",
                       "name": "Coastal Manawatu",
-                      "boundaryId": "mana_13a",
-                      "allocationLimit": 0
+                      "allocationLimit": 598752,
+                      "boundaryId": "mana_13a"
                     },
                     {
                       "id": "mana_13b",
                       "name": "Upper Tokomaru",
-                      "boundaryId": "mana_13b",
-                      "allocationLimit": 0
+                      "allocationLimit": 1296,
+                      "boundaryId": "mana_13b"
                     },
                     {
                       "id": "mana_13c",
                       "name": "Lower Tokomaru",
-                      "boundaryId": "mana_13c",
-                      "allocationLimit": 0
+                      "allocationLimit": 14688,
+                      "boundaryId": "mana_13c"
                     },
                     {
                       "id": "mana_13d",
                       "name": "Mangaore",
-                      "boundaryId": "mana_13d",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "mana_13d"
                     },
                     {
                       "id": "mana_13e",
                       "name": "Koputaroa",
-                      "boundaryId": "mana_13e",
-                      "allocationLimit": 0
+                      "allocationLimit": 432,
+                      "boundaryId": "mana_13e"
                     },
                     {
                       "id": "mana_13f",
                       "name": "Foxton Loop",
-                      "boundaryId": "mana_13f",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "mana_13f"
                     }
                   ]
                 },
                 {
                   "id": "mana_2",
                   "name": "Weber-Tamaki",
+                  "allocationLimit": 21600,
                   "boundaryId": "mana_2",
-                  "allocationLimit": 250,
                   "children": [
                     {
                       "id": "mana_2a",
                       "name": "Weber-Tamaki",
-                      "boundaryId": "mana_2a",
-                      "allocationLimit": 250
+                      "allocationLimit": 21600,
+                      "boundaryId": "mana_2a"
                     },
                     {
                       "id": "mana_2b",
                       "name": "Mangatera",
-                      "boundaryId": "mana_2b",
-                      "allocationLimit": 45
+                      "allocationLimit": 3888,
+                      "boundaryId": "mana_2b"
                     }
                   ]
                 },
                 {
                   "id": "mana_3",
                   "name": "Upper Tamaki",
+                  "allocationLimit": 6912,
                   "boundaryId": "mana_3",
-                  "allocationLimit": 80,
                   "children": [
                     {
                       "id": "mana_3_sub",
                       "name": "Upper Tamaki",
-                      "boundaryId": "mana_3",
-                      "allocationLimit": 80
+                      "allocationLimit": 6912,
+                      "boundaryId": "mana_3"
                     }
                   ]
                 },
                 {
                   "id": "mana_4",
                   "name": "Upper Kumeti",
+                  "allocationLimit": 864,
                   "boundaryId": "mana_4",
-                  "allocationLimit": 10,
                   "children": [
                     {
                       "id": "mana_4_sub",
                       "name": "Upper Kumeti",
-                      "boundaryId": "mana_4",
-                      "allocationLimit": 10
+                      "allocationLimit": 864,
+                      "boundaryId": "mana_4"
                     }
                   ]
                 },
                 {
                   "id": "mana_5",
                   "name": "Tamaki-Hopelands",
+                  "allocationLimit": 83808,
                   "boundaryId": "mana_5",
-                  "allocationLimit": 970,
                   "children": [
                     {
                       "id": "mana_5a",
                       "name": "Tamaki-Hopelands",
-                      "boundaryId": "mana_5a",
-                      "allocationLimit": 970
+                      "allocationLimit": 83808,
+                      "boundaryId": "mana_5a"
                     },
                     {
                       "id": "mana_5b",
                       "name": "Lower Tamaki",
-                      "boundaryId": "mana_5b",
-                      "allocationLimit": 140
+                      "allocationLimit": 12096,
+                      "boundaryId": "mana_5b"
                     },
                     {
                       "id": "mana_5c",
                       "name": "Lower Kumeti",
-                      "boundaryId": "mana_5c",
-                      "allocationLimit": 60
+                      "allocationLimit": 5184,
+                      "boundaryId": "mana_5c"
                     },
                     {
                       "id": "mana_5d",
                       "name": "Oruakeretaki",
-                      "boundaryId": "mana_5d",
-                      "allocationLimit": 158
+                      "allocationLimit": 13651,
+                      "boundaryId": "mana_5d"
                     },
                     {
                       "id": "mana_5e",
                       "name": "Raparapawai",
-                      "boundaryId": "mana_5e",
-                      "allocationLimit": 15
+                      "allocationLimit": 1296,
+                      "boundaryId": "mana_5e"
                     }
                   ]
                 },
                 {
                   "id": "mana_6",
                   "name": "Hopelands-Tiraumea",
+                  "allocationLimit": 90720,
                   "boundaryId": "mana_6",
-                  "allocationLimit": 1050,
                   "children": [
                     {
                       "id": "mana_6_sub",
                       "name": "Hopelands-Tiraumea",
-                      "boundaryId": "mana_6",
-                      "allocationLimit": 1050
+                      "allocationLimit": 90720,
+                      "boundaryId": "mana_6"
                     }
                   ]
                 },
                 {
                   "id": "mana_7",
                   "name": "Tiraumea",
+                  "allocationLimit": 23328,
                   "boundaryId": "mana_7",
-                  "allocationLimit": 270,
                   "children": [
                     {
                       "id": "mana_7a",
                       "name": "Upper Tiraumea",
-                      "boundaryId": "mana_7a",
-                      "allocationLimit": 40
+                      "allocationLimit": 3456,
+                      "boundaryId": "mana_7a"
                     },
                     {
                       "id": "mana_7b",
                       "name": "Lower Tiraumea",
-                      "boundaryId": "mana_7b",
-                      "allocationLimit": 270
+                      "allocationLimit": 23328,
+                      "boundaryId": "mana_7b"
                     },
                     {
                       "id": "mana_7c",
                       "name": "Mangaone River",
-                      "boundaryId": "mana_7c",
-                      "allocationLimit": 20
+                      "allocationLimit": 1728,
+                      "boundaryId": "mana_7c"
                     },
                     {
                       "id": "mana_7d",
                       "name": "Makuri",
-                      "boundaryId": "mana_7d",
-                      "allocationLimit": 100
+                      "allocationLimit": 8640,
+                      "boundaryId": "mana_7d"
                     },
                     {
                       "id": "mana_7e",
                       "name": "Mangaramarama",
-                      "boundaryId": "mana_7e",
-                      "allocationLimit": 25
+                      "allocationLimit": 2160,
+                      "boundaryId": "mana_7e"
                     }
                   ]
                 },
                 {
                   "id": "mana_8",
                   "name": "Mangatainoka",
+                  "allocationLimit": 27913,
                   "boundaryId": "mana_8",
-                  "allocationLimit": 323,
                   "children": [
                     {
                       "id": "mana_8a",
                       "name": "Upper Mangatainoka",
-                      "boundaryId": "mana_8a",
-                      "allocationLimit": 20
+                      "allocationLimit": 1728,
+                      "boundaryId": "mana_8a"
                     },
                     {
                       "id": "mana_8b",
                       "name": "Middle Mangatainoka",
-                      "boundaryId": "mana_8b",
-                      "allocationLimit": 60
+                      "allocationLimit": 5184,
+                      "boundaryId": "mana_8b"
                     },
                     {
                       "id": "mana_8c",
                       "name": "Lower Mangatainoka",
-                      "boundaryId": "mana_8c",
-                      "allocationLimit": 323
+                      "allocationLimit": 27913,
+                      "boundaryId": "mana_8c"
                     },
                     {
                       "id": "mana_8d",
                       "name": "Makakahi",
-                      "boundaryId": "mana_8d",
-                      "allocationLimit": 31
+                      "allocationLimit": 2694,
+                      "boundaryId": "mana_8d"
                     }
                   ]
                 },
                 {
                   "id": "mana_9",
                   "name": "Upper Gorge",
+                  "allocationLimit": 198288,
                   "boundaryId": "mana_9",
-                  "allocationLimit": 2295,
                   "children": [
                     {
                       "id": "mana_9a",
                       "name": "Upper Gorge",
-                      "boundaryId": "mana_9a",
-                      "allocationLimit": 2295
+                      "allocationLimit": 198288,
+                      "boundaryId": "mana_9a"
                     },
                     {
                       "id": "mana_9b",
                       "name": "Mangapapa",
-                      "boundaryId": "mana_9b",
-                      "allocationLimit": 15
+                      "allocationLimit": 1296,
+                      "boundaryId": "mana_9b"
                     },
                     {
                       "id": "mana_9c",
                       "name": "Mangaatua",
-                      "boundaryId": "mana_9c",
-                      "allocationLimit": 5
+                      "allocationLimit": 432,
+                      "boundaryId": "mana_9c"
                     },
                     {
                       "id": "mana_9d",
                       "name": "Upper Mangahao",
-                      "boundaryId": "mana_9d",
-                      "allocationLimit": 85
+                      "allocationLimit": 7344,
+                      "boundaryId": "mana_9d"
                     },
                     {
                       "id": "mana_9e",
                       "name": "Lower Mangahao",
-                      "boundaryId": "mana_9e",
-                      "allocationLimit": 85
+                      "allocationLimit": 7344,
+                      "boundaryId": "mana_9e"
+                    }
+                  ]
+                }
+              ],
+              "groundwaterLimits": [
+                {
+                  "id": "manawatu",
+                  "name": "Manawatu",
+                  "allocationLimit": 166000000,
+                  "areas": [
+                    {
+                      "id": "manawatu",
+                      "depth": "All depths",
+                      "boundaryId": "manawatu_gw"
+                    }
+                  ]
+                },
+                {
+                  "id": "tararua",
+                  "name": "Tararua",
+                  "allocationLimit": 239000000,
+                  "areas": [
+                    {
+                      "id": "tararua",
+                      "depth": "All depths",
+                      "boundaryId": "tararua_gw"
                     }
                   ]
                 }
@@ -483,116 +523,142 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "rang_1",
                   "name": "Upper Rangitikei",
-                  "boundaryId": "rang_1",
                   "allocationLimit": 0,
+                  "boundaryId": "rang_1",
                   "children": [
                     {
                       "id": "rang_1_sub",
                       "name": "Upper Rangitikei",
-                      "boundaryId": "rang_1",
-                      "allocationLimit": 0
-                    },
-                    {
-                      "id": "rang_2a",
-                      "name": "Middle Rangitikei",
-                      "boundaryId": "rang_2a",
-                      "allocationLimit": 0
-                    },
-                    {
-                      "id": "rang_2b",
-                      "name": "Pukeokahu- Mangaweka",
-                      "boundaryId": "rang_2b",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "rang_1"
                     }
                   ]
                 },
                 {
                   "id": "rang_2",
                   "name": "Middle Rangitikei",
+                  "allocationLimit": 52704,
                   "boundaryId": "rang_2",
-                  "allocationLimit": 0,
                   "children": [
+                    {
+                      "id": "rang_2a",
+                      "name": "Middle Rangitikei",
+                      "allocationLimit": 21600,
+                      "boundaryId": "rang_2a"
+                    },
+                    {
+                      "id": "rang_2b",
+                      "name": "Pukeokahu- Mangaweka",
+                      "allocationLimit": 52704,
+                      "boundaryId": "rang_2b"
+                    },
                     {
                       "id": "rang_2c",
                       "name": "Upper Moawhango",
-                      "boundaryId": "rang_2c",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "rang_2c"
                     },
                     {
                       "id": "rang_2d",
                       "name": "Middle Moawhango",
-                      "boundaryId": "rang_2d",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "rang_2d"
                     },
                     {
                       "id": "rang_2e",
                       "name": "Lower Moawhango",
-                      "boundaryId": "rang_2e",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "rang_2e"
                     },
                     {
                       "id": "rang_2f",
                       "name": "Upper Hautapu",
-                      "boundaryId": "rang_2f",
-                      "allocationLimit": 0
+                      "allocationLimit": 9936,
+                      "boundaryId": "rang_2f"
                     },
                     {
                       "id": "rang_2g",
                       "name": "Lower Hautapu",
-                      "boundaryId": "rang_2g",
-                      "allocationLimit": 0
+                      "allocationLimit": 12960,
+                      "boundaryId": "rang_2g"
                     }
                   ]
                 },
                 {
                   "id": "rang_3",
                   "name": "Lower Rangitikei",
+                  "allocationLimit": 141696,
                   "boundaryId": "rang_3",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "rang_3a",
                       "name": "Lower Rangitikei",
-                      "boundaryId": "rang_3a",
-                      "allocationLimit": 0
+                      "allocationLimit": 141696,
+                      "boundaryId": "rang_3a"
                     },
                     {
                       "id": "rang_3b",
                       "name": "Makohine",
-                      "boundaryId": "rang_3b",
-                      "allocationLimit": 0
+                      "allocationLimit": 864,
+                      "boundaryId": "rang_3b"
                     }
                   ]
                 },
                 {
                   "id": "rang_4",
                   "name": "Coastal Rangitikei",
+                  "allocationLimit": 285120,
                   "boundaryId": "rang_4",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "rang_4a",
                       "name": "Coastal Rangitikei",
-                      "boundaryId": "rang_4a",
-                      "allocationLimit": 0
+                      "allocationLimit": 213840,
+                      "boundaryId": "rang_4a"
                     },
                     {
                       "id": "rang_4b",
                       "name": "Tidal Rangitikei",
-                      "boundaryId": "rang_4b",
-                      "allocationLimit": 0
+                      "allocationLimit": 285120,
+                      "boundaryId": "rang_4b"
                     },
                     {
                       "id": "rang_4c",
                       "name": "Porewa",
-                      "boundaryId": "rang_4c",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "rang_4c"
                     },
                     {
                       "id": "rang_4d",
                       "name": "Tutaenui",
-                      "boundaryId": "rang_4d",
-                      "allocationLimit": 0
+                      "allocationLimit": 6653,
+                      "boundaryId": "rang_4d"
+                    }
+                  ]
+                }
+              ],
+              "groundwaterLimits": [
+                {
+                  "id": "rangitikei",
+                  "name": "Rangitikei",
+                  "allocationLimit": 75000000,
+                  "areas": [
+                    {
+                      "id": "rangitikei",
+                      "depth": "All depths",
+                      "boundaryId": "rangitikei_gw"
+                    }
+                  ]
+                },
+                {
+                  "id": "northern_rangitikei",
+                  "name": "Northern Rangitikei",
+                  "allocationLimit": 0,
+                  "areas": [
+                    {
+                      "id": "northern_rangitikei",
+                      "depth": "All depths",
+                      "boundaryId": "northern_rangitikei_gw"
                     }
                   ]
                 }
@@ -606,224 +672,250 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "whai_1",
                   "name": "Upper Whanganui",
+                  "allocationLimit": 518,
                   "boundaryId": "whai_1",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "whai_1_sub",
                       "name": "Upper Whanganui",
-                      "boundaryId": "whai_1",
-                      "allocationLimit": 0
+                      "allocationLimit": 518,
+                      "boundaryId": "whai_1"
                     }
                   ]
                 },
                 {
                   "id": "whai_2",
                   "name": "Cherry Grove",
+                  "allocationLimit": 15121,
                   "boundaryId": "whai_2",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "whai_2a",
                       "name": "Cherry Grove",
-                      "boundaryId": "whai_2a",
-                      "allocationLimit": 0
+                      "allocationLimit": 15121,
+                      "boundaryId": "whai_2a"
                     },
                     {
                       "id": "whai_2b",
                       "name": "Upper Whakapapa",
-                      "boundaryId": "whai_2b",
-                      "allocationLimit": 0
+                      "allocationLimit": 3937,
+                      "boundaryId": "whai_2b"
                     },
                     {
                       "id": "whai_2c",
                       "name": "Lower Whakapapa",
-                      "boundaryId": "whai_2c",
-                      "allocationLimit": 0
+                      "allocationLimit": 5517,
+                      "boundaryId": "whai_2c"
                     },
                     {
                       "id": "whai_2d",
                       "name": "Piopiotea",
-                      "boundaryId": "whai_2d",
-                      "allocationLimit": 0
+                      "allocationLimit": 80,
+                      "boundaryId": "whai_2d"
                     },
                     {
                       "id": "whai_2e",
                       "name": "Pungapunga",
-                      "boundaryId": "whai_2e",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_2e"
                     },
                     {
                       "id": "whai_2f",
                       "name": "Upper Ongarue",
-                      "boundaryId": "whai_2f",
-                      "allocationLimit": 0
+                      "allocationLimit": 1270,
+                      "boundaryId": "whai_2f"
                     },
                     {
                       "id": "whai_2g",
                       "name": "Lower Ongarue",
-                      "boundaryId": "whai_2g",
-                      "allocationLimit": 0
+                      "allocationLimit": 1422,
+                      "boundaryId": "whai_2g"
                     }
                   ]
                 },
                 {
                   "id": "whai_3",
                   "name": "Te Maire",
-                  "boundaryId": "whai_3",
                   "allocationLimit": 0,
+                  "boundaryId": "whai_3",
                   "children": [
                     {
                       "id": "whai_3_sub",
                       "name": "Te Maire",
-                      "boundaryId": "whai_3",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_3"
                     }
                   ]
                 },
                 {
                   "id": "whai_4",
                   "name": "Middle Whanganui",
-                  "boundaryId": "whai_4",
                   "allocationLimit": 0,
+                  "boundaryId": "whai_4",
                   "children": [
                     {
                       "id": "whai_4a",
                       "name": "Middle Whanganui",
-                      "boundaryId": "whai_4a",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_4a"
                     },
                     {
                       "id": "whai_4b",
                       "name": "Upper Ohura",
-                      "boundaryId": "whai_4b",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_4b"
                     },
                     {
                       "id": "whai_4c",
                       "name": "Lower Ohura",
-                      "boundaryId": "whai_4c",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_4c"
                     },
                     {
                       "id": "whai_4d",
                       "name": "Retaruke",
-                      "boundaryId": "whai_4d",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_4d"
                     }
                   ]
                 },
                 {
                   "id": "whai_5",
                   "name": "Pipiriki",
-                  "boundaryId": "whai_5",
                   "allocationLimit": 0,
+                  "boundaryId": "whai_5",
                   "children": [
                     {
                       "id": "whai_5a",
                       "name": "Pipiriki",
-                      "boundaryId": "whai_5a",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5a"
                     },
                     {
                       "id": "whai_5b",
                       "name": "Tangarakau",
-                      "boundaryId": "whai_5b",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5b"
                     },
                     {
                       "id": "whai_5c",
                       "name": "Whangamomona",
-                      "boundaryId": "whai_5c",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5c"
                     },
                     {
                       "id": "whai_5d",
                       "name": "Upper Manganui o te Ao",
-                      "boundaryId": "whai_5d",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5d"
                     },
                     {
                       "id": "whai_5e",
                       "name": "Makatote",
-                      "boundaryId": "whai_5e",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5e"
                     },
                     {
                       "id": "whai_5f",
                       "name": "Waimarino",
-                      "boundaryId": "whai_5f",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5f"
                     },
                     {
                       "id": "whai_5g",
                       "name": "Middle Manganui o te Ao",
-                      "boundaryId": "whai_5g",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5g"
                     },
                     {
                       "id": "whai_5h",
                       "name": "Mangaturuturu",
-                      "boundaryId": "whai_5h",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5h"
                     },
                     {
                       "id": "whai_5i",
                       "name": "Lower Manganui o te Ao",
-                      "boundaryId": "whai_5i",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5i"
                     },
                     {
                       "id": "whai_5j",
                       "name": "Orautoha",
-                      "boundaryId": "whai_5j",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_5j"
                     }
                   ]
                 },
                 {
                   "id": "whai_6",
                   "name": "Paetawa",
-                  "boundaryId": "whai_6",
                   "allocationLimit": 0,
+                  "boundaryId": "whai_6",
                   "children": [
                     {
                       "id": "whai_6_sub",
                       "name": "Paetawa",
-                      "boundaryId": "whai_6",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_6"
                     }
                   ]
                 },
                 {
                   "id": "whai_7",
                   "name": "Lower Whanganui",
-                  "boundaryId": "whai_7",
                   "allocationLimit": 0,
+                  "boundaryId": "whai_7",
                   "children": [
                     {
                       "id": "whai_7a",
                       "name": "Lower Whanganui",
-                      "boundaryId": "whai_7a",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_7a"
                     },
                     {
                       "id": "whai_7b",
                       "name": "Coastal Whanganui",
-                      "boundaryId": "whai_7b",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_7b"
                     },
                     {
                       "id": "whai_7c",
                       "name": "Upokongaro",
-                      "boundaryId": "whai_7c",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_7c"
                     },
                     {
                       "id": "whai_7d",
                       "name": "Matarawa",
-                      "boundaryId": "whai_7d",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whai_7d"
+                    }
+                  ]
+                }
+              ],
+              "groundwaterLimits": [
+                {
+                  "id": "whanganui",
+                  "name": "Whanganui",
+                  "allocationLimit": 46000000,
+                  "areas": [
+                    {
+                      "id": "whanganui",
+                      "depth": "All depths",
+                      "boundaryId": "whanganui_gw"
+                    }
+                  ]
+                },
+                {
+                  "id": "northern_whanganui",
+                  "name": "Northern Whanganui",
+                  "allocationLimit": 0,
+                  "areas": [
+                    {
+                      "id": "northern_whanganui",
+                      "depth": "All depths",
+                      "boundaryId": "northern_whanganui_gw"
                     }
                   ]
                 }
@@ -837,98 +929,112 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "whau_1",
                   "name": "Upper Whangaehu",
+                  "allocationLimit": 47520,
                   "boundaryId": "whau_1",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "whau_1a",
                       "name": "Upper Whangaehu",
-                      "boundaryId": "whau_1a",
-                      "allocationLimit": 0
+                      "allocationLimit": 47520,
+                      "boundaryId": "whau_1a"
                     },
                     {
                       "id": "whau_1b",
                       "name": "Waitangi",
-                      "boundaryId": "whau_1b",
-                      "allocationLimit": 0
+                      "allocationLimit": 9504,
+                      "boundaryId": "whau_1b"
                     },
                     {
                       "id": "whau_1c",
                       "name": "Tokiahuru",
-                      "boundaryId": "whau_1c",
-                      "allocationLimit": 0
+                      "allocationLimit": 41472,
+                      "boundaryId": "whau_1c"
                     }
                   ]
                 },
                 {
                   "id": "whau_2",
                   "name": "Middle Whangaehu",
+                  "allocationLimit": 52272,
                   "boundaryId": "whau_2",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "whau_2_sub",
                       "name": "Middle Whangaehu",
-                      "boundaryId": "whau_2",
-                      "allocationLimit": 0
+                      "allocationLimit": 52272,
+                      "boundaryId": "whau_2"
                     }
                   ]
                 },
                 {
                   "id": "whau_3",
                   "name": "Lower Whangaehu",
+                  "allocationLimit": 127008,
                   "boundaryId": "whau_3",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "whau_3a",
                       "name": "Lower Whangaehu",
-                      "boundaryId": "whau_3a",
-                      "allocationLimit": 0
+                      "allocationLimit": 127008,
+                      "boundaryId": "whau_3a"
                     },
                     {
                       "id": "whau_3b",
                       "name": "Upper Makotuku",
-                      "boundaryId": "whau_3b",
-                      "allocationLimit": 0
+                      "allocationLimit": 2506,
+                      "boundaryId": "whau_3b"
                     },
                     {
                       "id": "whau_3c",
                       "name": "Lower Makotuku",
-                      "boundaryId": "whau_3c",
-                      "allocationLimit": 0
+                      "allocationLimit": 3802,
+                      "boundaryId": "whau_3c"
                     },
                     {
                       "id": "whau_3d",
                       "name": "Upper Mangawhero",
-                      "boundaryId": "whau_3d",
-                      "allocationLimit": 0
+                      "allocationLimit": 20736,
+                      "boundaryId": "whau_3d"
                     },
                     {
                       "id": "whau_3e",
                       "name": "Lower Mangawhero",
-                      "boundaryId": "whau_3e",
-                      "allocationLimit": 0
+                      "allocationLimit": 24624,
+                      "boundaryId": "whau_3e"
                     },
                     {
                       "id": "whau_3f",
                       "name": "Makara",
-                      "boundaryId": "whau_3f",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "whau_3f"
                     }
                   ]
                 },
                 {
                   "id": "whau_4",
                   "name": "Coastal Whangaehu",
+                  "allocationLimit": 127008,
                   "boundaryId": "whau_4",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "whau_4_sub",
                       "name": "Coastal Whangaehu",
-                      "boundaryId": "whau_4",
-                      "allocationLimit": 0
+                      "allocationLimit": 127008,
+                      "boundaryId": "whau_4"
+                    }
+                  ]
+                }
+              ],
+              "groundwaterLimits": [
+                {
+                  "id": "whangaehu",
+                  "name": "Whangaehu",
+                  "allocationLimit": 122000000,
+                  "areas": [
+                    {
+                      "id": "whangaehu",
+                      "depth": "All depths",
+                      "boundaryId": "whangaehu_gw"
                     }
                   ]
                 }
@@ -942,26 +1048,40 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "tura_1",
                   "name": "Turakina",
+                  "allocationLimit": 12528,
                   "boundaryId": "tura_1",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "tura_1a",
                       "name": "Upper Turakina",
-                      "boundaryId": "tura_1a",
-                      "allocationLimit": 0
+                      "allocationLimit": 3024,
+                      "boundaryId": "tura_1a"
                     },
                     {
                       "id": "tura_1b",
                       "name": "Lower Turakina",
-                      "boundaryId": "tura_1b",
-                      "allocationLimit": 0
+                      "allocationLimit": 12528,
+                      "boundaryId": "tura_1b"
                     },
                     {
                       "id": "tura_1c",
                       "name": "Ratana",
-                      "boundaryId": "tura_1c",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "tura_1c"
+                    }
+                  ]
+                }
+              ],
+              "groundwaterLimits": [
+                {
+                  "id": "turakina",
+                  "name": "Turakina",
+                  "allocationLimit": 50000000,
+                  "areas": [
+                    {
+                      "id": "turakina",
+                      "depth": "All depths",
+                      "boundaryId": "turakina_gw"
                     }
                   ]
                 }
@@ -975,20 +1095,20 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "ohau_1",
                   "name": "Ohau",
+                  "allocationLimit": 24192,
                   "boundaryId": "ohau_1",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "ohau_1a",
                       "name": "Upper Ohau",
-                      "boundaryId": "ohau_1a",
-                      "allocationLimit": 0
+                      "allocationLimit": 24192,
+                      "boundaryId": "ohau_1a"
                     },
                     {
                       "id": "ohau_1b",
                       "name": "Lower Ohau",
-                      "boundaryId": "ohau_1b",
-                      "allocationLimit": 0
+                      "allocationLimit": 24192,
+                      "boundaryId": "ohau_1b"
                     }
                   ]
                 }
@@ -1002,14 +1122,14 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "owha_1",
                   "name": "Owahanga",
-                  "boundaryId": "owha_1",
                   "allocationLimit": 0,
+                  "boundaryId": "owha_1",
                   "children": [
                     {
                       "id": "owha_1_sub",
                       "name": "Owahanga",
-                      "boundaryId": "owha_1",
-                      "allocationLimit": 0
+                      "allocationLimit": 432,
+                      "boundaryId": "owha_1"
                     }
                   ]
                 }
@@ -1023,14 +1143,28 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "east_1",
                   "name": "East Coast",
-                  "boundaryId": "east_1",
                   "allocationLimit": 0,
+                  "boundaryId": "east_1",
                   "children": [
                     {
                       "id": "east_1_sub",
                       "name": "East Coast",
-                      "boundaryId": "east_1",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "east_1"
+                    }
+                  ]
+                }
+              ],
+              "groundwaterLimits": [
+                {
+                  "id": "east_coast",
+                  "name": "East Coast",
+                  "allocationLimit": 0,
+                  "areas": [
+                    {
+                      "id": "east_coast",
+                      "depth": "All depths",
+                      "boundaryId": "east_coast_gw"
                     }
                   ]
                 }
@@ -1044,137 +1178,136 @@ VALUES (8, 'ONE_PLAN_2023',
                 {
                   "id": "west_1",
                   "name": "Northern Coastal",
-                  "boundaryId": "west_1",
                   "allocationLimit": 0,
+                  "boundaryId": "west_1",
                   "children": [
                     {
                       "id": "west_1_sub",
                       "name": "Northern Coastal",
-                      "boundaryId": "west_1",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "west_1"
                     }
                   ]
                 },
                 {
                   "id": "west_2",
                   "name": "Kai Iwi",
+                  "allocationLimit": 3888,
                   "boundaryId": "west_2",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "west_2_sub",
                       "name": "Kai Iwi",
-                      "boundaryId": "west_2",
-                      "allocationLimit": 0
+                      "allocationLimit": 3888,
+                      "boundaryId": "west_2"
                     }
                   ]
                 },
                 {
                   "id": "west_3",
                   "name": "Mowhanau",
-                  "boundaryId": "west_3",
                   "allocationLimit": 0,
+                  "boundaryId": "west_3",
                   "children": [
                     {
                       "id": "west_3_sub",
                       "name": "Mowhanau",
-                      "boundaryId": "west_3",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "west_3"
                     }
                   ]
                 },
                 {
                   "id": "west_4",
                   "name": "Kaitoke Lakes",
-                  "boundaryId": "west_4",
                   "allocationLimit": 0,
+                  "boundaryId": "west_4",
                   "children": [
                     {
                       "id": "west_4_sub",
                       "name": "Kaitoke Lakes",
-                      "boundaryId": "west_4",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "west_4"
                     }
                   ]
                 },
                 {
                   "id": "west_5",
                   "name": "Southern Whanganui Lakes",
-                  "boundaryId": "west_5",
                   "allocationLimit": 0,
+                  "boundaryId": "west_5",
                   "children": [
                     {
                       "id": "west_5_sub",
                       "name": "Southern Whanganui Lakes",
-                      "boundaryId": "west_5",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "west_5"
                     }
                   ]
                 },
                 {
                   "id": "west_6",
                   "name": "Northern Manawatu Lakes",
-                  "boundaryId": "west_6",
                   "allocationLimit": 0,
+                  "boundaryId": "west_6",
                   "children": [
                     {
                       "id": "west_6_sub",
                       "name": "Northern Manawatu Lakes",
-                      "boundaryId": "west_6",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "west_6"
                     }
                   ]
                 },
                 {
                   "id": "west_7",
                   "name": "Waitarere",
-                  "boundaryId": "west_7",
                   "allocationLimit": 0,
+                  "boundaryId": "west_7",
                   "children": [
                     {
                       "id": "west_7_sub",
                       "name": "Waitarere",
-                      "boundaryId": "west_7",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "west_7"
                     }
                   ]
                 },
                 {
                   "id": "west_8",
                   "name": "Lake Papaitonga",
-                  "boundaryId": "west_8",
                   "allocationLimit": 0,
+                  "boundaryId": "west_8",
                   "children": [
                     {
                       "id": "west_8_sub",
                       "name": "Lake Papaitonga",
-                      "boundaryId": "west_8",
-                      "allocationLimit": 0
+                      "allocationLimit": 0,
+                      "boundaryId": "west_8"
                     }
                   ]
                 },
                 {
                   "id": "west_9",
                   "name": "Waikawa",
+                  "allocationLimit": 6048,
                   "boundaryId": "west_9",
-                  "allocationLimit": 0,
                   "children": [
                     {
                       "id": "west_9a",
                       "name": "Waikawa",
-                      "boundaryId": "west_9a",
-                      "allocationLimit": 0
+                      "allocationLimit": 6048,
+                      "boundaryId": "west_9a"
                     },
                     {
                       "id": "west_9b",
                       "name": "Manakau",
-                      "boundaryId": "west_9b",
-                      "allocationLimit": 0
+                      "allocationLimit": 432,
+                      "boundaryId": "west_9b"
                     }
                   ]
                 }
               ]
             }
           ]
-        }
-');
+        }');
