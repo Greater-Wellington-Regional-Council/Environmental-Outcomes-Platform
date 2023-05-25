@@ -46,8 +46,7 @@ export function useAppState(): [
         allPlanData.surfaceWaterSubUnitLimits
       );
 
-      // TODO: Merge SW and Cat A rows
-      // TODO: Handle fallback
+      // TODO: Handle this fallback properly - should only apply of no limits across all cats
       // if (groundwaterLimits.length === 0) {
       //   rows.push({
       //     depth: 'All',
@@ -56,6 +55,20 @@ export function useAppState(): [
       //   });
       //   return rows;
       // }
+      const catAGroundWaterLimitsView = filterGroupAndSort(
+        groundWaterLimitViews,
+        'A'
+      );
+      if (Object.keys(catAGroundWaterLimitsView).length === 0) {
+        catAGroundWaterLimitsView['All'] = [
+          {
+            groundWaterLimit: {
+              category: 'A',
+              depth: 'All',
+            },
+          },
+        ];
+      }
 
       setAppState({
         ...activeLimits,
@@ -63,10 +76,7 @@ export function useAppState(): [
         groundWaterZoneName,
         groundWaterZones,
         surfaceWaterLimitView,
-        catAGroundWaterLimitsView: filterGroupAndSort(
-          groundWaterLimitViews,
-          'A'
-        ),
+        catAGroundWaterLimitsView,
         catBGroundWaterLimitsView: filterGroupAndSort(
           groundWaterLimitViews,
           'B'
@@ -107,6 +117,10 @@ function buildSurfaceWaterLimitView(
   return {
     unitLimitToDisplay,
     subUnitLimitToDisplay,
+    unitAllocatedToDisplay:
+      surfaceWaterUnitLimit?.allocationAmount.toString() || '',
+    subUnitAllocatedToDisplay:
+      surfaceWaterSubUnitLimit?.allocationAmount.toString() || '',
   };
 }
 
@@ -182,17 +196,23 @@ function unitLimitsToDisplay(
       } else {
         return {
           unitLimitToDisplay: depletesFromUnitLimit?.allocationLimit.toString(),
+          unitAllocatedToDisplay:
+            depletesFromUnitLimit?.allocationAmount.toString(),
           subUnitLimitToDisplay:
             depletesFromSubunitLimit?.allocationLimit.toString(),
+          subUnitAllocatedToDisplay:
+            depletesFromSubunitLimit?.allocationAmount.toString(),
         };
       }
     case 'B':
       return {
         unitLimitToDisplay: 'RULE',
+        unitAllocatedToDisplay: groundWaterLimit.allocationAmount.toString(),
       };
     case 'C':
       return {
         unitLimitToDisplay: groundWaterLimit.allocationLimit.toString(),
+        unitAllocatedToDisplay: groundWaterLimit.allocationAmount.toString(),
       };
   }
 }

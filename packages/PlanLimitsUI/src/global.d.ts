@@ -40,6 +40,7 @@ interface SurfaceWaterLimit {
   planRegionId: number;
   parentSurfaceWaterLimitId: number;
   allocationLimit: number;
+  allocationAmount: number;
 }
 
 interface GroundWaterLimit {
@@ -48,6 +49,7 @@ interface GroundWaterLimit {
   name: string;
   planRegionId: number;
   allocationLimit: number;
+  allocationAmount: number;
   depth: string;
   category: string;
   depletionLimitId: number;
@@ -108,6 +110,8 @@ interface AppState extends ActiveLimits {
 interface SurfaceWaterLimitView {
   unitLimitToDisplay?: string;
   subUnitLimitToDisplay?: string;
+  unitAllocatedToDisplay?: string;
+  subUnitAllocatedToDisplay?: string;
 }
 
 interface GroundwaterLimitView {
@@ -116,4 +120,6 @@ interface GroundwaterLimitView {
   depletesFromSubunitLimit?: SurfaceWaterLimit;
   unitLimitToDisplay?: string;
   subUnitLimitToDisplay?: string;
+  unitAllocatedToDisplay?: string;
+  subUnitAllocatedToDisplay?: string;
 }
