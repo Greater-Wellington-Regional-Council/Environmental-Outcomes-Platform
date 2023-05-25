@@ -137,10 +137,16 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
   )
     return <></>;
 
+  const showSurfaceWaterLimits = ['Combined', 'Surface'].includes(
+    waterTakeFilter
+  );
+  const showGroundWaterLimits = ['Combined', 'Ground'].includes(
+    waterTakeFilter
+  );
+
   const showFootnote = true;
   let surfaceAndGroundCatASubUnitRowSpan = 1;
   let surfaceAndGroundCatAUnitRowSpan = 1;
-
   if (
     appState.catAGroundWaterLimitsView &&
     Object.values(appState.catAGroundWaterLimitsView).length > 0
@@ -185,7 +191,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
           </tr>
         </thead>
         <tbody>
-          {['Combined', 'Surface'].includes(waterTakeFilter) && (
+          {showSurfaceWaterLimits && (
             <LimitRow
               type="Surface"
               subUnitLimitRowSpan={surfaceAndGroundCatASubUnitRowSpan}
@@ -198,16 +204,21 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
               }
             ></LimitRow>
           )}
-          {appState.catAGroundWaterLimitsView &&
+          {showGroundWaterLimits &&
+            appState.catAGroundWaterLimitsView &&
             Object.keys(appState.catAGroundWaterLimitsView).map((key) =>
               appState.catAGroundWaterLimitsView[key].map((gwLimit, index) => (
                 <LimitRow
                   key={`${key}=${index}`}
                   type="Ground"
                   hideSubUnitLimit={
-                    index + 1 < surfaceAndGroundCatASubUnitRowSpan
+                    index + 1 < surfaceAndGroundCatASubUnitRowSpan &&
+                    showSurfaceWaterLimits
                   }
-                  hideUnitLimit={index + 1 < surfaceAndGroundCatAUnitRowSpan}
+                  hideUnitLimit={
+                    index + 1 < surfaceAndGroundCatAUnitRowSpan &&
+                    showSurfaceWaterLimits
+                  }
                   depth={gwLimit.groundWaterLimit.depth}
                   category={gwLimit.groundWaterLimit.category}
                   unitLimitToDisplay={gwLimit.unitLimitToDisplay}
@@ -216,7 +227,8 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
               ))
             )}
         </tbody>
-        {appState.catBGroundWaterLimitsView &&
+        {showGroundWaterLimits &&
+          appState.catBGroundWaterLimitsView &&
           Object.keys(appState.catBGroundWaterLimitsView).map((key) => (
             <tbody key={key}>
               {appState.catBGroundWaterLimitsView[key].map((gwLimit, index) => (
@@ -235,7 +247,8 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
               ))}
             </tbody>
           ))}
-        {appState.catCGroundWaterLimitsView &&
+        {showGroundWaterLimits &&
+          appState.catCGroundWaterLimitsView &&
           Object.keys(appState.catCGroundWaterLimitsView).map((key) => (
             <tbody key={key}>
               {appState.catCGroundWaterLimitsView[key].map((gwLimit, index) => (
