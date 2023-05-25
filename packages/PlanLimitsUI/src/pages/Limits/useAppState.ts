@@ -46,29 +46,36 @@ export function useAppState(): [
         allPlanData.surfaceWaterSubUnitLimits
       );
 
-      // TODO: Handle this fallback properly - should only apply of no limits across all cats
-      // if (groundwaterLimits.length === 0) {
-      //   rows.push({
-      //     depth: 'All',
-      //     useDefaultRuleForSubUnit: false,
-      //     useDefaultRuleForUnit: true,
-      //   });
-      //   return rows;
-      // }
-      const catAGroundWaterLimitsView = filterGroupAndSort(
-        groundWaterLimitViews,
-        'A'
-      );
-      if (Object.keys(catAGroundWaterLimitsView).length === 0) {
-        catAGroundWaterLimitsView['All'] = [
-          {
-            groundWaterLimit: {
-              category: 'A',
-              depth: 'All',
-            },
-          },
-        ];
-      }
+      // TODO: Extract this!
+      const gwLimitViews =
+        groundWaterLimitViews.length === 0
+          ? {
+              catAGroundWaterLimitsView: {
+                All: [
+                  {
+                    groundWaterLimit: {
+                      category: 'A',
+                      depth: 'All',
+                      unitLimitsToDisplay: 'RULE',
+                    },
+                  },
+                ],
+              },
+            }
+          : {
+              catAGroundWaterLimitsView: filterGroupAndSort(
+                groundWaterLimitViews,
+                'A'
+              ),
+              catBGroundWaterLimitsView: filterGroupAndSort(
+                groundWaterLimitViews,
+                'B'
+              ),
+              catCGroundWaterLimitsView: filterGroupAndSort(
+                groundWaterLimitViews,
+                'C'
+              ),
+            };
 
       setAppState({
         ...activeLimits,
@@ -76,15 +83,7 @@ export function useAppState(): [
         groundWaterZoneName,
         groundWaterZones,
         surfaceWaterLimitView,
-        catAGroundWaterLimitsView,
-        catBGroundWaterLimitsView: filterGroupAndSort(
-          groundWaterLimitViews,
-          'B'
-        ),
-        catCGroundWaterLimitsView: filterGroupAndSort(
-          groundWaterLimitViews,
-          'C'
-        ),
+        ...gwLimitViews,
       });
     },
     [setAppState]
