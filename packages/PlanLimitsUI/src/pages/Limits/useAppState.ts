@@ -19,7 +19,7 @@ export function useAppState(): [
   const setAppStateFromResult = useCallback(
     (activeLimits: ActiveLimits, allPlanData: AllPlanData) => {
       let flowSite = null;
-      if (activeLimits.flowLimit !== null) {
+      if (activeLimits.flowLimit) {
         flowSite = allPlanData.flowMeasurementSites.find(
           (fs) => fs.id === activeLimits.flowLimit.measuredAtSiteId
         );
@@ -34,9 +34,18 @@ export function useAppState(): [
         ...new Set(activeLimits.groundWaterLimits.map((gwl) => gwl.name)),
       ].join(', ');
 
+      const defaultGroundWaterLimit =
+        activeLimits.planRegion?.defaultGroundwaterLimit ||
+        allPlanData.plan.defaultGroundwaterLimit;
+
+      const defaultSurfaceWaterLimit =
+        activeLimits.planRegion?.defaultSurfaceWaterLimit ||
+        allPlanData.plan.defaultSurfaceWaterLimit;
+
       const surfaceWaterLimitView = buildSurfaceWaterLimitView(
         activeLimits.surfaceWaterUnitLimit,
         activeLimits.surfaceWaterSubUnitLimit,
+        defaultSurfaceWaterLimit,
         activeLimits.planRegion?.id
       );
 
@@ -50,7 +59,9 @@ export function useAppState(): [
       const gwLimitViews =
         groundWaterLimitViews.length === 0
           ? {
-              catAGroundWaterLimitsView: fallBackCatAGroundWaterLimit,
+              catAGroundWaterLimitsView: defaultCatAGroundWaterLimit(
+                defaultGroundWaterLimit
+              ),
             }
           : {
               catAGroundWaterLimitsView: filterGroupAndSort(
@@ -82,29 +93,36 @@ export function useAppState(): [
   return [appState, setAppStateFromResult];
 }
 
-const fallBackCatAGroundWaterLimit: GroupedGroundwaterLimitViews = {
-  all: [
-    {
-      groundWaterLimit: {
-        category: 'A',
-        depth: 'All',
-      } as GroundWaterLimit,
-      unitLimitView: {
-        overrideText: 'RULE',
+function defaultCatAGroundWaterLimit(
+  defaultLimit: string
+): GroupedGroundwaterLimitViews {
+  return {
+    all: [
+      {
+        groundWaterLimit: {
+          category: 'A',
+          depth: 'All',
+        } as GroundWaterLimit,
+        unitLimitView: {
+          limitToDiplay: defaultLimit,
+        },
+        subUnitLimitView: {},
       },
-      subUnitLimitView: {},
-    },
-  ],
-};
+    ],
+  };
+}
 
 function buildSurfaceWaterLimitView(
   surfaceWaterUnitLimit: SurfaceWaterLimit | null,
   surfaceWaterSubUnitLimit: SurfaceWaterLimit | null,
+  defaultSurfaceWaterLimit: string,
   planRegionId?: number
 ): SurfaceWaterLimitView {
   const unitLimitView: LimitView = {
     limit: surfaceWaterUnitLimit?.allocationLimit,
-    overrideText: surfaceWaterUnitLimit?.allocationLimit ? undefined : 'RULE',
+    overrideText: surfaceWaterUnitLimit?.allocationLimit
+      ? undefined
+      : defaultSurfaceWaterLimit,
     allocated: surfaceWaterUnitLimit?.allocationAmount,
   };
 
@@ -120,7 +138,7 @@ function buildSurfaceWaterLimitView(
     planRegionId === 4 &&
     Boolean(unitLimitView.limit)
   ) {
-    subUnitLimitView.overrideText = 'RULE';
+    subUnitLimitView.overrideText = defaultSurfaceWaterLimit;
   }
 
   return {
@@ -132,7 +150,8 @@ function buildSurfaceWaterLimitView(
 function buildGroundWaterLimitView(
   groundwaterLimits: GroundWaterLimit[],
   surfaceWaterUnitLimits: SurfaceWaterLimit[],
-  surfaceWaterSubUnitLimits: SurfaceWaterLimit[]
+  surfaceWaterSubUnitLimits: SurfaceWaterLimit[],
+  defaultGroundWaterLimit: string
 ) {
   return groundwaterLimits.map((groundWaterLimit) => {
     const depletesFrom = mapDepletesFrom(
@@ -143,6 +162,7 @@ function buildGroundWaterLimitView(
 
     const limitsToDisplay = unitLimitsToDisplay(
       groundWaterLimit,
+      defaultGroundWaterLimit,
       depletesFrom.depletesFromUnitLimit,
       depletesFrom.depletesFromSubunitLimit
     );
@@ -196,6 +216,7 @@ function mapDepletesFrom(
 
 function unitLimitsToDisplay(
   groundWaterLimit: GroundWaterLimit,
+  defaultGroundWaterLimit: string,
   depletesFromUnitLimit?: SurfaceWaterLimit,
   depletesFromSubunitLimit?: SurfaceWaterLimit
 ): { unitLimitView: LimitView; subUnitLimitView: LimitView } {
@@ -204,10 +225,10 @@ function unitLimitsToDisplay(
       if (!groundWaterLimit.depletionLimitId) {
         return {
           unitLimitView: {
-            overrideText: 'RULE',
+            overrideText: defaultGroundWaterLimit,
           },
           subUnitLimitView: {
-            overrideText: 'RULE',
+            overrideText: defaultGroundWaterLimit,
           },
         };
       }
@@ -224,7 +245,7 @@ function unitLimitsToDisplay(
     case 'B':
       return {
         unitLimitView: {
-          overrideText: 'RULE',
+          overrideText: defaultGroundWaterLimit,
           limit: groundWaterLimit.allocationLimit,
           allocated: groundWaterLimit.allocationAmount,
         },

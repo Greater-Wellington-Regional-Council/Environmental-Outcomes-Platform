@@ -151,6 +151,7 @@ export function usePlanLimitsData(councilId: number) {
   const data = isLoaded
     ? {
         councils: features!.councils.features.map((f) => f.properties),
+        plan: mapKeys(features!.plan, (value, key) => camelCase(key)),
         planRegions: features!.planRegions.features.map((f) => f.properties),
         surfaceWaterUnitLimits: features!.surfaceWaterUnitLimits.features.map(
           (f) => f.properties

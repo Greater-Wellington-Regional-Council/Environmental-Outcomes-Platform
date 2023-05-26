@@ -80,6 +80,7 @@ interface ViewLocation {
 type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
 
 interface AllPlanData {
+  plan: Plan;
   councils: Council[];
   planRegions: PlanRegion[];
   surfaceWaterUnitLimits: SurfaceWaterLimit[];
