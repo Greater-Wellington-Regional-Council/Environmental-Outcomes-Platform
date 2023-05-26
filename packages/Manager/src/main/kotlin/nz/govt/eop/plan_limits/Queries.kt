@@ -73,7 +73,7 @@ class Queries(@Autowired val context: DSLContext) {
                 WATER_ALLOCATIONS.AMOUNT.`as`("allocation_amount"),
                 SURFACE_WATER_LIMITS.BOUNDARY.`as`("geometry"))
             .from(SURFACE_WATER_LIMITS)
-            .join(WATER_ALLOCATIONS)
+            .leftJoin(WATER_ALLOCATIONS)
             .on(SURFACE_WATER_LIMITS.SOURCE_ID.eq(WATER_ALLOCATIONS.AREA_ID))
             .where(
                 SURFACE_WATER_LIMITS.PLAN_REGION_ID.`in`(
@@ -101,7 +101,7 @@ class Queries(@Autowired val context: DSLContext) {
             .from(GROUNDWATER_LIMITS)
             .join(GROUNDWATER_AREAS)
             .on(GROUNDWATER_LIMITS.ID.eq(GROUNDWATER_AREAS.GROUNDWATER_LIMIT_ID))
-            .join(WATER_ALLOCATIONS)
+            .leftJoin(WATER_ALLOCATIONS)
             .on(GROUNDWATER_LIMITS.SOURCE_ID.eq(WATER_ALLOCATIONS.AREA_ID))
             .where(
                 GROUNDWATER_LIMITS.PLAN_REGION_ID.`in`(
@@ -162,7 +162,7 @@ class Queries(@Autowired val context: DSLContext) {
             inline("type"),
             inline("FeatureCollection"),
             inline("features"),
-            jsonbArrayAgg(field("feature")))
+            coalesce(jsonbArrayAgg(field("feature")), jsonbArray()))
 
     val feature: Field<JSONB> =
         function(
