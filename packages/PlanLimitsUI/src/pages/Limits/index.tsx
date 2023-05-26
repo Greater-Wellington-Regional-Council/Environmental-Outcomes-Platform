@@ -65,16 +65,19 @@ export default function Limits() {
   return (
     <div className="flex">
       <main className="flex-1">
-        <Map
-          appState={appState}
-          setAppState={setAppState}
-          viewState={viewState}
-          setViewState={setViewState}
-          pinnedLocation={pinnedLocation}
-          setPinnedLocation={setPinnedLocation}
-          waterTakeFilter={waterTakeFilter}
-          planLimitsData={planLimitsData}
-        />
+        {/* TODO: Temp workaround to ensure limits for pinned locations are displayed on load */}
+        {planLimitsData.isLoaded && (
+          <Map
+            appState={appState}
+            setAppState={setAppState}
+            viewState={viewState}
+            setViewState={setViewState}
+            pinnedLocation={pinnedLocation}
+            setPinnedLocation={setPinnedLocation}
+            waterTakeFilter={waterTakeFilter}
+            planLimitsData={planLimitsData}
+          />
+        )}
       </main>
       <aside className="w-[36rem] h-screen overflow-y-scroll border-l border-gray-200">
         <Sidebar
