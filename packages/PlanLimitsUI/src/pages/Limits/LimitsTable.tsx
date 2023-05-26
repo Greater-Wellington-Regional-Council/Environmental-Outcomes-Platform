@@ -56,13 +56,9 @@ interface LimitRow {
   depth?: string;
   category?: string;
   subUnitLimitView: LimitView;
-  // subUnitLimitToDisplay?: string;
-  // subUnitAllocatedToDisplay?: string;
   subUnitLimitRowSpan?: number;
   hideSubUnitLimit?: boolean;
   unitLimitView: LimitView;
-  // unitAllocatedToDisplay?: string;
-  // unitLimitToDisplay?: string;
   unitLimitRowSpan?: number;
   hideUnitLimit?: boolean;
 }
@@ -156,14 +152,17 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
     surfaceAndGroundCatAUnitRowSpan =
       catALimits.filter(
         (gwLimitView) =>
+          appState.surfaceWaterUnitLimit &&
           gwLimitView.depletesFromUnitLimit?.id ===
-          appState.surfaceWaterUnitLimit?.id
+            appState.surfaceWaterUnitLimit?.id
       ).length + 1;
+
     surfaceAndGroundCatASubUnitRowSpan =
       catALimits.filter(
         (gwLimitView) =>
+          appState.surfaceWaterSubUnitLimit &&
           gwLimitView.depletesFromSubunitLimit?.id ===
-          appState.surfaceWaterSubUnitLimit?.id
+            appState.surfaceWaterSubUnitLimit?.id
       ).length + 1;
   }
 
