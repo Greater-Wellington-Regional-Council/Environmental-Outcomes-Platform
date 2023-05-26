@@ -35,11 +35,11 @@ export function useAppState(): [
       ].join(', ');
 
       const defaultGroundWaterLimit =
-        activeLimits.planRegion?.defaultGroundwaterLimit ||
+        activeLimits.planRegion?.defaultGroundwaterLimit ??
         allPlanData.plan.defaultGroundwaterLimit;
 
       const defaultSurfaceWaterLimit =
-        activeLimits.planRegion?.defaultSurfaceWaterLimit ||
+        activeLimits.planRegion?.defaultSurfaceWaterLimit ??
         allPlanData.plan.defaultSurfaceWaterLimit;
 
       const surfaceWaterLimitView = buildSurfaceWaterLimitView(
@@ -52,7 +52,8 @@ export function useAppState(): [
       const groundWaterLimitViews = buildGroundWaterLimitView(
         activeLimits.groundWaterLimits,
         allPlanData.surfaceWaterUnitLimits,
-        allPlanData.surfaceWaterSubUnitLimits
+        allPlanData.surfaceWaterSubUnitLimits,
+        defaultGroundWaterLimit
       );
 
       // TODO: Extract this!
@@ -100,7 +101,6 @@ function defaultCatAGroundWaterLimit(
     all: [
       {
         groundWaterLimit: {
-          category: 'A',
           depth: 'All',
         } as GroundWaterLimit,
         unitLimitView: {
@@ -291,15 +291,16 @@ function sortByDepth(groundwaterLimitsView: GroundwaterLimitView[]) {
 }
 
 function formatLimitView(limitView: LimitView) {
+  console.log(limitView);
   if (limitView.overrideText) {
     limitView.limitToDiplay = limitView.overrideText;
   } else if (limitView.limit) {
-    limitView.limitToDiplay == formatWaterQuantity(limitView.limit, 'L/s');
+    limitView.limitToDiplay = formatWaterQuantity(limitView.limit, 'L/s');
   }
 
   if (limitView.allocated) {
     limitView.allocatedToDiplay = formatWaterQuantity(
-      limitView.allocated,
+      Math.round(limitView.allocated),
       'L/s'
     );
   }
