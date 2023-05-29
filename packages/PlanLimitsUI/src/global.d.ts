@@ -3,15 +3,26 @@ interface Dictionary<T> {
   [index: string]: T;
 }
 
+interface link {
+  title: string;
+  url: string;
+}
+
 interface Council {
   id: number;
   slug: string;
   name: string;
-  headingText: string;
-  defaultViewLocation: {
-    latitude: number;
-    longitude: number;
-    zoom: number;
+  url: string;
+  logo: string;
+  footerLinks: links[];
+  labels: {
+    headingText: string;
+    surfaceWaterParent: string;
+    surfaceWaterChild: string;
+    region: string;
+    surfaceWaterParentLimit: string;
+    surfaceWaterChildLimit: string;
+    groundwaterLimit: string;
   };
 }
 

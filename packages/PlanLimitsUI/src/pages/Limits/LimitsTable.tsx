@@ -55,6 +55,7 @@ interface LimitRow {
   type: 'Surface' | 'Ground';
   depth?: string;
   category?: string;
+  hideCategory?: boolean;
   subUnitLimitView: LimitView;
   subUnitLimitRowSpan?: number;
   hideSubUnitLimit?: boolean;
@@ -66,6 +67,7 @@ function LimitRow({
   type,
   depth = BLANK_CELL_CHAR,
   category = BLANK_CELL_CHAR,
+  hideCategory = false,
   hideSubUnitLimit = false,
   subUnitLimitView,
   subUnitLimitRowSpan = 1,
@@ -77,7 +79,7 @@ function LimitRow({
     <tr>
       <FormattedTD>{type}</FormattedTD>
       <FormattedTD>{depth}</FormattedTD>
-      <FormattedTD>{category}</FormattedTD>
+      {!hideCategory && <FormattedTD>{category}</FormattedTD>}
       {!hideSubUnitLimit && (
         <>
           <FormattedTD rowSpan={subUnitLimitRowSpan}>
@@ -124,8 +126,13 @@ function AllocatedAmount({ limitView }: { limitView: LimitView }) {
 type Props = {
   waterTakeFilter: WaterTakeFilter;
   appState: AppState;
+  council: Council;
 };
-export default function LimitsTable({ waterTakeFilter, appState }: Props) {
+export default function LimitsTable({
+  waterTakeFilter,
+  appState,
+  council,
+}: Props) {
   if (
     !appState.surfaceWaterLimitView &&
     !appState.catAGroundWaterLimitsView &&
@@ -175,12 +182,14 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
           <tr>
             <FormattedTH rowSpan={2}>Type</FormattedTH>
             <FormattedTH rowSpan={2}>Depth</FormattedTH>
-            <FormattedTH rowSpan={2}>Category</FormattedTH>
+            {council.id === 3 && (
+              <FormattedTH rowSpan={2}>Category</FormattedTH>
+            )}
             <FormattedTH colSpan={2} className="text-center">
-              Sub-unit
+              {council.labels.surfaceWaterChild}
             </FormattedTH>
             <FormattedTH colSpan={2} className="text-center">
-              Unit
+              {council.labels.surfaceWaterParent}
             </FormattedTH>
           </tr>
           <tr>
@@ -195,6 +204,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
             <LimitRow
               type="Surface"
               {...appState.surfaceWaterLimitView}
+              hideCategory={council.id === 8}
               subUnitLimitRowSpan={surfaceAndGroundCatASubUnitRowSpan}
               unitLimitRowSpan={surfaceAndGroundCatAUnitRowSpan}
             ></LimitRow>
@@ -207,7 +217,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                   key={`${key}=${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
-                  category={gwLimit.groundWaterLimit.category}
+                  hideCategory={council.id === 8}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   hideSubUnitLimit={
                     showSurfaceWaterLimits &&
@@ -230,7 +240,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                   key={`${key}=${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
-                  category={gwLimit.groundWaterLimit.category}
+                  hideCategory={council.id === 8}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   subUnitLimitRowSpan={0}
                   hideSubUnitLimit={index > 0}
@@ -249,7 +259,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
                   key={`${key}=${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
-                  category={gwLimit.groundWaterLimit.category}
+                  hideCategory={council.id === 8}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   subUnitLimitRowSpan={0}
                   hideSubUnitLimit={index > 0}
@@ -260,7 +270,7 @@ export default function LimitsTable({ waterTakeFilter, appState }: Props) {
             </tbody>
           ))}
       </table>
-      {showFootnote && (
+      {showFootnote && council.id === 9 && (
         <>
           <div className="mt-3">
             <span id="PNRP41" className="underline">

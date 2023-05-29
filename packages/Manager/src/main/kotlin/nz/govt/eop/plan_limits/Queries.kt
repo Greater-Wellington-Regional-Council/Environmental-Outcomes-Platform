@@ -174,7 +174,7 @@ class Queries(@Autowired val context: DSLContext) {
             field("id"),
             inline("geometry"),
             // sdads
-            field("ST_AsGeoJSON(geometry, 6 ,2)::jsonb"),
+            field("ST_AsGeoJSON(ST_Transform(geometry, 4326), 6 ,2)::jsonb"),
             inline("properties"),
             field("to_jsonb(inputs) - 'id' - 'geometry'"))
 

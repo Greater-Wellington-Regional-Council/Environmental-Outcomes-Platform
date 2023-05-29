@@ -49,6 +49,13 @@ export function useAppState(): [
         activeLimits.planRegion?.id
       );
 
+      // Temp for horizons
+      activeLimits.groundWaterLimits.forEach((gwLimitView) => {
+        if (!gwLimitView.category) {
+          gwLimitView.category = 'C';
+        }
+      });
+
       const groundWaterLimitViews = buildGroundWaterLimitView(
         activeLimits.groundWaterLimits,
         allPlanData.surfaceWaterUnitLimits,
@@ -291,7 +298,6 @@ function sortByDepth(groundwaterLimitsView: GroundwaterLimitView[]) {
 }
 
 function formatLimitView(limitView: LimitView) {
-  console.log(limitView);
   if (limitView.overrideText) {
     limitView.limitToDiplay = limitView.overrideText;
   } else if (limitView.limit) {
