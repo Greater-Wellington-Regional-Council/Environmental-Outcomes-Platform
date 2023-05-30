@@ -14,7 +14,13 @@ interface Council {
   name: string;
   url: string;
   logo: string;
+  defaultViewLocation: ViewLocation;
   footerLinks: links[];
+  unitTypes: {
+    flow: string;
+    surface: string;
+    ground: string;
+  };
   labels: {
     headingText: string;
     surfaceWaterParent: string;

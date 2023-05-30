@@ -182,7 +182,7 @@ export default function LimitsTable({
           <tr>
             <FormattedTH rowSpan={2}>Type</FormattedTH>
             <FormattedTH rowSpan={2}>Depth</FormattedTH>
-            {council.id === 3 && (
+            {council.id !== 8 && (
               <FormattedTH rowSpan={2}>Category</FormattedTH>
             )}
             <FormattedTH colSpan={2} className="text-center">

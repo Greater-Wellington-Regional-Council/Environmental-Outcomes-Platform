@@ -4,6 +4,7 @@ import { councilAtom } from '../../lib/loader';
 import LimitsTable from './LimitsTable';
 import Button from '../../components/Button';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import formatWaterQuantity from './formatWaterQuantity';
 
 const LimitsListItem = ({
   title,
@@ -122,7 +123,10 @@ export default function Sidebar({
             title={'Minimum Flow or Restriction Flow'}
             text={
               appState.flowLimit
-                ? appState.flowLimit.minimumFlow
+                ? formatWaterQuantity(
+                    appState.flowLimit.minimumFlow,
+                    council.unitTypes.flow
+                  )
                 : appState.planRegion
                 ? appState.planRegion.defaultFlowManagementLimit
                 : 'None'

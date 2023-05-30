@@ -2,10 +2,9 @@ import { useState, useCallback } from 'react';
 import formatWaterQuantity from './formatWaterQuantity';
 import { groupBy } from 'lodash';
 
-export function useAppState(): [
-  AppState,
-  (activeLimits: ActiveLimits, allPlanData: AllPlanData) => void
-] {
+export function useAppState(
+  council: Council
+): [AppState, (activeLimits: ActiveLimits, allPlanData: AllPlanData) => void] {
   const [appState, setAppState] = useState<AppState>({
     planRegion: null,
     flowLimit: null,
@@ -46,7 +45,8 @@ export function useAppState(): [
         activeLimits.surfaceWaterUnitLimit,
         activeLimits.surfaceWaterSubUnitLimit,
         defaultSurfaceWaterLimit,
-        activeLimits.planRegion?.id
+        activeLimits.planRegion?.id,
+        council.unitTypes.surface
       );
 
       // Temp for horizons
@@ -60,7 +60,8 @@ export function useAppState(): [
         activeLimits.groundWaterLimits,
         allPlanData.surfaceWaterUnitLimits,
         allPlanData.surfaceWaterSubUnitLimits,
-        defaultGroundWaterLimit
+        defaultGroundWaterLimit,
+        council.unitTypes.ground
       );
 
       // TODO: Extract this!
@@ -123,7 +124,8 @@ function buildSurfaceWaterLimitView(
   surfaceWaterUnitLimit: SurfaceWaterLimit | null,
   surfaceWaterSubUnitLimit: SurfaceWaterLimit | null,
   defaultSurfaceWaterLimit: string,
-  planRegionId?: number
+  planRegionId?: number,
+  unit: string
 ): SurfaceWaterLimitView {
   const unitLimitView: LimitView = {
     limit: surfaceWaterUnitLimit?.allocationLimit,
@@ -149,8 +151,8 @@ function buildSurfaceWaterLimitView(
   }
 
   return {
-    unitLimitView: formatLimitView(unitLimitView),
-    subUnitLimitView: formatLimitView(subUnitLimitView),
+    unitLimitView: formatLimitView(unitLimitView, unit),
+    subUnitLimitView: formatLimitView(subUnitLimitView, unit),
   };
 }
 
@@ -158,7 +160,8 @@ function buildGroundWaterLimitView(
   groundwaterLimits: GroundWaterLimit[],
   surfaceWaterUnitLimits: SurfaceWaterLimit[],
   surfaceWaterSubUnitLimits: SurfaceWaterLimit[],
-  defaultGroundWaterLimit: string
+  defaultGroundWaterLimit: string,
+  unit: string
 ) {
   return groundwaterLimits.map((groundWaterLimit) => {
     const depletesFrom = mapDepletesFrom(
@@ -174,10 +177,12 @@ function buildGroundWaterLimitView(
       depletesFrom.depletesFromSubunitLimit
     );
     limitsToDisplay.subUnitLimitView = formatLimitView(
-      limitsToDisplay.subUnitLimitView
+      limitsToDisplay.subUnitLimitView,
+      unit
     );
     limitsToDisplay.unitLimitView = formatLimitView(
-      limitsToDisplay.unitLimitView
+      limitsToDisplay.unitLimitView,
+      unit
     );
 
     return {
@@ -297,11 +302,11 @@ function sortByDepth(groundwaterLimitsView: GroundwaterLimitView[]) {
   });
 }
 
-function formatLimitView(limitView: LimitView) {
+function formatLimitView(limitView: LimitView, unit: string) {
   if (limitView.overrideText) {
     limitView.limitToDiplay = limitView.overrideText;
   } else if (limitView.limit) {
-    limitView.limitToDiplay = formatWaterQuantity(limitView.limit, 'L/s');
+    limitView.limitToDiplay = formatWaterQuantity(limitView.limit, unit);
   }
 
   if (limitView.allocated) {

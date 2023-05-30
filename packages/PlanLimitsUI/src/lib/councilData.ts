@@ -14,6 +14,11 @@ export const Councils: Council[] = [
       longitude: 175.35,
       zoom: 8,
     },
+    unitTypes: {
+      flow: 'L/s',
+      surface: 'L/s',
+      ground: 'm³/year',
+    },
     footerLinks: [
       {
         text: 'Proposed Natural Resource Plan',
@@ -44,6 +49,11 @@ export const Councils: Council[] = [
       latitude: -40,
       longitude: 175.45,
       zoom: 8,
+    },
+    unitTypes: {
+      flow: 'm³/s',
+      surface: 'm³/day',
+      ground: 'm³/year',
     },
     footerLinks: [
       {

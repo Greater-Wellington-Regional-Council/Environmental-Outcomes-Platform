@@ -60,7 +60,7 @@ export default function Limits() {
   };
 
   const planLimitsData = usePlanLimitsData(council.id);
-  const [appState, setAppState] = useAppState();
+  const [appState, setAppState] = useAppState(council);
 
   return (
     <div className="flex">
