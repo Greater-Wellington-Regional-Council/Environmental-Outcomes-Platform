@@ -182,7 +182,7 @@ export default function LimitsTable({
           <tr>
             <FormattedTH rowSpan={2}>Type</FormattedTH>
             <FormattedTH rowSpan={2}>Depth</FormattedTH>
-            {council.id !== 8 && (
+            {council.hasGroundwaterCategories && (
               <FormattedTH rowSpan={2}>Category</FormattedTH>
             )}
             <FormattedTH colSpan={2} className="text-center">
@@ -204,7 +204,7 @@ export default function LimitsTable({
             <LimitRow
               type="Surface"
               {...appState.surfaceWaterLimitView}
-              hideCategory={council.id === 8}
+              hideCategory={!council.hasGroundwaterCategories}
               subUnitLimitRowSpan={surfaceAndGroundCatASubUnitRowSpan}
               unitLimitRowSpan={surfaceAndGroundCatAUnitRowSpan}
             ></LimitRow>
@@ -217,7 +217,7 @@ export default function LimitsTable({
                   key={`${key}=${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
-                  hideCategory={council.id === 8}
+                  hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   hideSubUnitLimit={
                     showSurfaceWaterLimits &&
@@ -240,7 +240,7 @@ export default function LimitsTable({
                   key={`${key}=${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
-                  hideCategory={council.id === 8}
+                  hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   subUnitLimitRowSpan={0}
                   hideSubUnitLimit={index > 0}
@@ -259,7 +259,7 @@ export default function LimitsTable({
                   key={`${key}=${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
-                  hideCategory={council.id === 8}
+                  hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   subUnitLimitRowSpan={0}
                   hideSubUnitLimit={index > 0}

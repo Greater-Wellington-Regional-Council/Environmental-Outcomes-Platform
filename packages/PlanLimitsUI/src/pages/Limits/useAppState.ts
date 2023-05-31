@@ -49,12 +49,11 @@ export function useAppState(
         council.unitTypes.surface
       );
 
-      // Temp for horizons
-      activeLimits.groundWaterLimits.forEach((gwLimitView) => {
-        if (!gwLimitView.category) {
-          gwLimitView.category = 'C';
-        }
-      });
+      if (!council.hasGroundwaterCategories) {
+        activeLimits.groundWaterLimits.forEach((gwl) => {
+          gwl.category = 'C';
+        });
+      }
 
       const groundWaterLimitViews = buildGroundWaterLimitView(
         activeLimits.groundWaterLimits,
@@ -272,7 +271,13 @@ function unitLimitsToDisplay(
         subUnitLimitView: {},
       };
     default:
-      throw new Error('Unknown category');
+      return {
+        unitLimitView: {
+          limit: groundWaterLimit.allocationLimit,
+          allocated: groundWaterLimit.allocationAmount,
+        },
+        subUnitLimitView: {},
+      };
   }
 }
 

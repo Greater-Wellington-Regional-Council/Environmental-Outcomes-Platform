@@ -16,6 +16,7 @@ interface Council {
   logo: string;
   defaultViewLocation: ViewLocation;
   footerLinks: links[];
+  hasGroundwaterCategories: boolean;
   unitTypes: {
     flow: string;
     surface: string;

@@ -14,6 +14,7 @@ export const Councils: Council[] = [
       longitude: 175.35,
       zoom: 8,
     },
+    hasGroundwaterCategories: true,
     unitTypes: {
       flow: 'L/s',
       surface: 'L/s',
@@ -50,6 +51,7 @@ export const Councils: Council[] = [
       longitude: 175.45,
       zoom: 8,
     },
+    hasGroundwaterCategories: false,
     unitTypes: {
       flow: 'm³/s',
       surface: 'm³/day',
