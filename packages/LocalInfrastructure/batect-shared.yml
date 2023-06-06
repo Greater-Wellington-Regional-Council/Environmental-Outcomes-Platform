@@ -16,10 +16,12 @@ containers:
 
       - type: cache
         name: gradle-cache
-        container: /root/.gradle
+        container: /home/container-user/.gradle
 
     working_directory: /code
-
+    run_as_current_user:
+      enabled: true
+      home_directory: /home/container-user
     environment:
       GRADLE_OPTS: -Dorg.gradle.daemon=false
 
@@ -35,7 +37,7 @@ containers:
 
       - type: cache
         name: npm_cache
-        container: /root/.npm
+        container: /home/container-user/.npm
 
     enable_init_process: true
     working_directory: /code
