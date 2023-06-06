@@ -1,78 +1,29 @@
+include:
+  - ../LocalInfrastructure/batect-shared.yml
+
 tasks:
   clean:
     description: Clean all outputs
     run:
-      container: build-env
+      container: java-build-env
       command: ./gradlew clean
 
   check:
     description: Validate and test the app
     dependencies:
-      - database
+      - test-database
     run:
-      container: build-env
+      container: java-build-env
       command: ./gradlew check
       environment:
-        CONFIG_DATABASE_HOST: database
+        CONFIG_DATABASE_HOST: test-database
 
   build:
     description: Build and test the App
     dependencies:
-      - database
+      - test-database
     run:
-      container: build-env
+      container: java-build-env
       command: ./gradlew bootJar
       environment:
-        CONFIG_DATABASE_HOST: database
-
-  runDatabase:
-    description: Run Database for Local Dev
-    run:
-      container: dev-database
-
-  runDev:
-    description: Run all services required for local development
-    run:
-      container: tileserver
-    dependencies:
-      - dev-database
-
-containers:
-  build-env:
-    image: eclipse-temurin:17
-    volumes:
-      - local: .
-        container: /code
-
-      - type: cache
-        name: gradle-cache
-        container: /root/.gradle
-
-    working_directory: /code
-
-    environment:
-      GRADLE_OPTS: -Dorg.gradle.daemon=false
-
-  dev-database:
-    build_directory: .batect/database
-    environment:
-      POSTGRES_PASSWORD: password
-    ports:
-      - local: 5432
-        container: 5432
-    volumes:
-      - local: .postgres
-        container: /var/lib/postgresql/data
-
-  database:
-    build_directory: .batect/database
-    environment:
-      POSTGRES_PASSWORD: password
-
-  tileserver:
-    image: pramsey/pg_tileserv:20221019
-    environment:
-      DATABASE_URL: postgres://eop_tileserver_user:password@dev-database:5432/eop_dev
-    ports:
-      - local: 7800
-        container: 7800
+        CONFIG_DATABASE_HOST: test-database

@@ -1,0 +1,2 @@
+include:
+  - ./batect-shared.yml
