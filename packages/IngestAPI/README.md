@@ -12,7 +12,7 @@
 As a quick start, running a build will ensure you've got the prerequisites installed correctly:
 
 * Start two terminal sessions
-* In one session run start an instance of Postgres:  ```./batect runSupportServices```
+* In one session, start services required for development ```./batect --output=all runSupportServices```
 * In a second session build the application ```./gradlew check```
 
 And if successful, everything you need is installed.
@@ -24,8 +24,7 @@ with plugins for Kotlin and Gradle also works (though support for running inline
 ### Running
 
 * Start two terminal sessions
-* In one session, start services required for development (the Kafka + associated services)
-  ```./batect runSupportServices```
+* In one session, start services required for development ```./batect --output=all runSupportServices```
 * In a second session start the application ```./gradlew bootRun```
 
 ### Code Formatting
