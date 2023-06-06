@@ -8,6 +8,7 @@ on:
   push:
     paths:
       - .github/workflows/manager.yml
+      - packages/LocalInfrastructure/**
       - packages/Manager/**
 
 env:

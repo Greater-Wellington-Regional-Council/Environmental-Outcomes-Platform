@@ -8,6 +8,7 @@ on:
   push:
     paths:
       - .github/workflows/ingest-api.yml
+      - packages/LocalInfrastructure/**
       - packages/IngestAPI/**
 
 env:
