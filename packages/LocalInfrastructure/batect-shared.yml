@@ -9,7 +9,7 @@ tasks:
 
 containers:
   java-build-env:
-    image: eclipse-temurin:17
+    image: eclipse-temurin:18
     volumes:
       - local: <{batect.project_directory}
         container: /code

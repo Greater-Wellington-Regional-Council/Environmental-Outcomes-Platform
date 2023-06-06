@@ -16,6 +16,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BATECT_CACHE_TYPE: directory
+      BATECT_ENABLE_TELEMETRY: false    
     defaults:
       run:
         working-directory: ./packages/Manager
