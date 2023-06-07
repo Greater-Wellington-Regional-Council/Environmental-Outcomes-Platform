@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - .github/workflows/plan-limits-ui.yml
+      - packages/LocalInfrastructure/**
       - packages/PlanLimitsUI/**
 
 jobs:

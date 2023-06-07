@@ -12,7 +12,7 @@
 As a quick start, running a build will ensure you've got the prerequisites installed correctly:
 
 * Start two terminal sessions
-* In one session run start an instance of Postgres:  ```./batect runDatabase```
+* In one session, start services required for development ```./batect --output=all runSupportServices```
 * In a second session build the application ```./gradlew check```
 
 And if successful, everything you need is installed.
@@ -20,14 +20,13 @@ And if successful, everything you need is installed.
 For day to day development use your IDE of choice. IntelliJ's community edition is a good full-featured IDE or VSCode
 with plugins for Kotlin and Gradle also works (though support for running inline is limited.)
 
-> Running via `./batect runDatabase` will store postgres data in the .postgres folder, you can delete this folder to
+> Running via `./batect runSupportServices` will store data in the `packages/LocalInfrastructure/.volumes` folder, you can delete this folder to
 > start from a clean slate.
 
 ### Running
 
 * Start two terminal sessions
-* In one session, start services required for development (the database and tilserver)
-  ```./batect runDev```
+* In one session, start services required for development ```./batect --output=all runSupportServices```
 * In a second session start the application ```./gradlew bootRun```
 
 ### Code Formatting
@@ -69,7 +68,7 @@ The table below lists all the config settings that can be controlled via the env
 
 The application is configured to use different users when running migration scripts vs normal running of the
 application. This requires some bootstrapping of a new database using the super-user to set up the initial access. For
-local development setup this is handled in [the docker container init script](.batect/database/init.sql)
+local development setup this is handled in [the docker container init script](packages/LocalInfrastructure/.batect/database/init.sql)
 
 When setting up a new deployment environment of a database for EOP Manager this script will need to be run manually with
 super-user privilege

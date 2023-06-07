@@ -8,6 +8,7 @@ on:
   push:
     paths:
       - .github/workflows/manager.yml
+      - packages/LocalInfrastructure/**
       - packages/Manager/**
 
 env:
@@ -16,6 +17,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BATECT_CACHE_TYPE: directory
+      BATECT_ENABLE_TELEMETRY: false    
     defaults:
       run:
         working-directory: ./packages/Manager
