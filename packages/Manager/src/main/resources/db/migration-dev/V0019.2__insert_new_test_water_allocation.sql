@@ -1,0 +1,1 @@
+INSERT INTO water_allocations(area_id, amount, last_updated_ingest_id, created_at, updated_at, received_at) VALUES('RuamahangaTotalSW', 7000, 'dev-import', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
