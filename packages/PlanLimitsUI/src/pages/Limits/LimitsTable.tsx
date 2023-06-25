@@ -217,6 +217,7 @@ export default function LimitsTable({
                   key={`${key}=${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
+                  category="A"
                   hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   hideSubUnitLimit={
@@ -239,6 +240,7 @@ export default function LimitsTable({
                 <LimitRow
                   key={`${key}=${index}`}
                   type="Ground"
+                  category="B"
                   depth={gwLimit.groundWaterLimit.depth}
                   hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
@@ -259,6 +261,7 @@ export default function LimitsTable({
                   key={`${key}=${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
+                  category="C"
                   hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   subUnitLimitRowSpan={0}
