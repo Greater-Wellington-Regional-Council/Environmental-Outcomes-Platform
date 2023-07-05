@@ -1,0 +1,29 @@
+include:
+  - ../LocalInfrastructure/batect-shared.yml
+
+tasks:
+  clean:
+    description: Clean all outputs
+    run:
+      container: java-build-env
+      command: ./gradlew clean
+
+  check:
+    description: Validate and test the app
+    dependencies:
+      - test-database
+    run:
+      container: java-build-env
+      command: ./gradlew check
+      environment:
+        CONFIG_DATABASE_HOST: test-database
+
+  build:
+    description: Build and test the App
+    dependencies:
+      - test-database
+    run:
+      container: java-build-env
+      command: ./gradlew bootJar
+      environment:
+        CONFIG_DATABASE_HOST: test-database
