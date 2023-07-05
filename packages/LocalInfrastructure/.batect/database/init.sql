@@ -11,6 +11,8 @@ CREATE DATABASE eop_test;
 -- Our Schema relies on PostGIS being enabled and must be done as a super-user
 CREATE EXTENSION postgis;
 
+CREATE ROLE developers NOINHERIT;
+
 -- By default the PUBLIC role has very permissive access to the public schema this is to lock that down to only GRANTED permissions
 REVOKE ALL PRIVILEGES ON SCHEMA public FROM PUBLIC;
 
@@ -30,10 +32,17 @@ CREATE USER eop_tileserver_user WITH PASSWORD 'password' NOINHERIT;
 -- run pre-migrations in dev
 GRANT USAGE ON SCHEMA public TO eop_tileserver_user;
 
-CREATE ROLE developers NOINHERIT;
+-- Access for the hilltop_crawler application
+CREATE SCHEMA hilltop_crawler;
+REVOKE ALL PRIVILEGES ON SCHEMA hilltop_crawler FROM PUBLIC;
 
+CREATE USER eop_hilltop_crawler_migrations_user WITH PASSWORD 'password' NOINHERIT;
+GRANT ALL ON SCHEMA hilltop_crawler TO eop_hilltop_crawler_migrations_user WITH GRANT OPTION;
+
+CREATE USER eop_hilltop_crawler_app_user WITH PASSWORD 'password' NOINHERIT;
 
 \c eop_test
 CREATE EXTENSION postgis;
+CREATE SCHEMA hilltop_crawler;
 
 -- Test DB will just be access via the super-user so no explicit roles needed
