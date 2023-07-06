@@ -27,7 +27,6 @@ dependencies {
   // @see https://github.com/etiennestuder/gradle-jooq-plugin/issues/209#issuecomment-1056578392
   jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 
-  runtimeOnly("org.springframework.boot:spring-boot-devtools")
   runtimeOnly("org.postgresql:postgresql")
   runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.3")
 
@@ -40,6 +39,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
   implementation("org.flywaydb:flyway-core")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
