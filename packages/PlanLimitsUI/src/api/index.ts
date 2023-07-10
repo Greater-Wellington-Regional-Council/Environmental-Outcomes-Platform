@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import type { FeatureCollection, Geometry } from 'geojson';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { camelCase, mapKeys } from 'lodash';
@@ -115,13 +114,16 @@ export function usePlanLimitsData(councilId: number) {
     '/plan-limits/flow-measurement-sites'
   );
   const flowLimits = useFeatureQueryWith<FlowLimit>('/plan-limits/flow-limits');
+
   const plan = useQuery({
     enabled: Boolean(manifest),
-    queryKey: ['/plan-limits/plan', councilId],
+    queryKey: ['/plan-limits/plan', councilId, manifest],
     refetchOnWindowFocus: false,
     queryFn: () =>
       fetchFromAPI<Plan>(
         `/plan-limits/plan?councilId=${councilId}&v=${
+          // We use ! here since we know manifest will be populated when this executes because of the enabled check
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           manifest!['/plan-limits/plan']
         }`
       ),
@@ -148,23 +150,23 @@ export function usePlanLimitsData(councilId: number) {
       }
     : undefined;
 
-  const data = isLoaded
+  const data = features
     ? {
-        councils: features!.councils.features.map((f) => f.properties),
-        plan: mapKeys(features!.plan, (value, key) => camelCase(key)),
-        planRegions: features!.planRegions.features.map((f) => f.properties),
-        surfaceWaterUnitLimits: features!.surfaceWaterUnitLimits.features.map(
+        councils: features.councils.features.map((f) => f.properties),
+        plan: mapKeys(features.plan, (value, key) => camelCase(key)),
+        planRegions: features.planRegions.features.map((f) => f.properties),
+        surfaceWaterUnitLimits: features.surfaceWaterUnitLimits.features.map(
           (f) => f.properties
         ),
         surfaceWaterSubUnitLimits:
-          features!.surfaceWaterSubUnitLimits.features.map((f) => f.properties),
-        groundWaterLimits: features!.groundWaterLimits.features.map(
+          features.surfaceWaterSubUnitLimits.features.map((f) => f.properties),
+        groundWaterLimits: features.groundWaterLimits.features.map(
           (feature) => feature.properties
         ),
-        flowLimits: features!.flowLimits.features.map(
+        flowLimits: features.flowLimits.features.map(
           (feature) => feature.properties
         ),
-        flowMeasurementSites: features!.flowMeasurementSites.features.map(
+        flowMeasurementSites: features.flowMeasurementSites.features.map(
           (feature) => feature.properties
         ),
       }

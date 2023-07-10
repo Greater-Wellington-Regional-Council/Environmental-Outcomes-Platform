@@ -14,7 +14,7 @@ class OverlayControl implements IControl {
   }
 
   onRemove() {
-    this._container!.remove();
+    this._container.remove();
   }
 
   getElement() {
