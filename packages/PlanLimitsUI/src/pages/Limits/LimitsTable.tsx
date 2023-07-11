@@ -2,6 +2,8 @@ import { twMerge } from 'tailwind-merge';
 import { pick } from 'lodash';
 
 const BLANK_CELL_CHAR = '-';
+
+// TODO this may need to be changed to be pulled out of the plan data
 const GROUNDWATER_CATEGORY_B_RULE = (
   <span className="text-xs">
     See 4.1 of PNRP
@@ -10,6 +12,10 @@ const GROUNDWATER_CATEGORY_B_RULE = (
     </sup>
   </span>
 );
+
+// TODO this may need to be changed to be pulled out of the plan data. Note that the default text "See P121 of PRNP" is in the plan JSON.
+// But that doesn't include the info about having a link to the plan pdf.
+// Need to decide if we want this behaviour entirely driven from the plan JSON, or if we want to hardcode some of it.
 const DEFAULT_RULE = (
   <span className="text-xs">
     See P121 of PRNP
@@ -83,7 +89,9 @@ function LimitRow({
       {!hideSubUnitLimit && (
         <>
           <FormattedTD rowSpan={subUnitLimitRowSpan}>
-            {subUnitLimitView.limitToDiplay || BLANK_CELL_CHAR}
+            {subUnitLimitView.overrideText
+              ? DEFAULT_RULE
+              : subUnitLimitView.limitToDisplay || BLANK_CELL_CHAR}
           </FormattedTD>
           <FormattedTD rowSpan={subUnitLimitRowSpan}>
             <AllocatedAmount limitView={subUnitLimitView} />
@@ -93,7 +101,9 @@ function LimitRow({
       {!hideUnitLimit && (
         <>
           <FormattedTD rowSpan={unitLimitRowSpan}>
-            {unitLimitView.limitToDiplay || BLANK_CELL_CHAR}
+            {unitLimitView.overrideText
+              ? DEFAULT_RULE
+              : unitLimitView.limitToDisplay || BLANK_CELL_CHAR}
           </FormattedTD>
           <FormattedTD rowSpan={unitLimitRowSpan}>
             <AllocatedAmount limitView={unitLimitView} />
@@ -108,7 +118,7 @@ function AllocatedAmount({ limitView }: { limitView: LimitView }) {
   if (!limitView.allocated) return <>{BLANK_CELL_CHAR}</>;
   return (
     <>
-      {limitView.allocatedToDiplay}
+      {limitView.allocatedToDisplay}
       <br />
       <span
         className={
@@ -176,7 +186,6 @@ export default function LimitsTable({
   return (
     <>
       <h3 className="text-lg uppercase mb-2 tracking-wider">Limits</h3>
-
       <table className="border-collapse border">
         <thead>
           <tr>
@@ -214,7 +223,7 @@ export default function LimitsTable({
             Object.keys(appState.catAGroundWaterLimitsView).map((key) =>
               appState.catAGroundWaterLimitsView[key].map((gwLimit, index) => (
                 <LimitRow
-                  key={`${key}=${index}`}
+                  key={`A-${key}-${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
                   category="A"
@@ -228,7 +237,7 @@ export default function LimitsTable({
                     showSurfaceWaterLimits &&
                     index + 1 < surfaceAndGroundCatAUnitRowSpan
                   }
-                ></LimitRow>
+                />
               ))
             )}
         </tbody>
@@ -238,17 +247,24 @@ export default function LimitsTable({
             <tbody key={key}>
               {appState.catBGroundWaterLimitsView[key].map((gwLimit, index) => (
                 <LimitRow
-                  key={`${key}=${index}`}
+                  key={`B-${key}-${index}`}
                   type="Ground"
                   category="B"
                   depth={gwLimit.groundWaterLimit.depth}
                   hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
-                  subUnitLimitRowSpan={0}
+                  subUnitLimitRowSpan={
+                    appState.catBGroundWaterLimitsView[key].length > 1 ? 0 : 1
+                  }
                   hideSubUnitLimit={index > 0}
-                  unitLimitRowSpan={0}
+                  unitLimitRowSpan={
+                    appState.catBGroundWaterLimitsView[key].length > 1 ? 0 : 1
+                  }
                   hideUnitLimit={index > 0}
-                ></LimitRow>
+                  unitLimitView={{
+                    limitToDisplay: GROUNDWATER_CATEGORY_B_RULE,
+                  }}
+                />
               ))}
             </tbody>
           ))}
@@ -258,17 +274,21 @@ export default function LimitsTable({
             <tbody key={key}>
               {appState.catCGroundWaterLimitsView[key].map((gwLimit, index) => (
                 <LimitRow
-                  key={`${key}=${index}`}
+                  key={`C-${key}-${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
                   category="C"
                   hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
-                  subUnitLimitRowSpan={0}
+                  subUnitLimitRowSpan={
+                    appState.catCGroundWaterLimitsView[key].length > 1 ? 0 : 1
+                  }
                   hideSubUnitLimit={index > 0}
-                  unitLimitRowSpan={0}
+                  unitLimitRowSpan={
+                    appState.catCGroundWaterLimitsView[key].length > 1 ? 0 : 1
+                  }
                   hideUnitLimit={index > 0}
-                ></LimitRow>
+                />
               ))}
             </tbody>
           ))}

@@ -111,7 +111,7 @@ function defaultCatAGroundWaterLimit(
           depth: 'All',
         } as GroundWaterLimit,
         unitLimitView: {
-          limitToDiplay: defaultLimit,
+          overrideText: defaultLimit,
         },
         subUnitLimitView: {},
       },
@@ -309,13 +309,13 @@ function sortByDepth(groundwaterLimitsView: GroundwaterLimitView[]) {
 
 function formatLimitView(limitView: LimitView, unit: string) {
   if (limitView.overrideText) {
-    limitView.limitToDiplay = limitView.overrideText;
+    limitView.limitToDisplay = limitView.overrideText;
   } else if (limitView.limit) {
-    limitView.limitToDiplay = formatWaterQuantity(limitView.limit, unit);
+    limitView.limitToDisplay = formatWaterQuantity(limitView.limit, unit);
   }
 
   if (limitView.allocated) {
-    limitView.allocatedToDiplay = formatWaterQuantity(
+    limitView.allocatedToDisplay = formatWaterQuantity(
       Math.round(limitView.allocated),
       'L/s'
     );

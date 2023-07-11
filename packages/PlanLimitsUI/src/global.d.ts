@@ -133,8 +133,8 @@ interface LimitView {
   allocated?: number;
   allocatedPercent?: number;
   overrideText?: string;
-  limitToDiplay?: string;
-  allocatedToDiplay?: string;
+  limitToDisplay?: string;
+  allocatedToDisplay?: string;
 }
 
 interface SurfaceWaterLimitView {
