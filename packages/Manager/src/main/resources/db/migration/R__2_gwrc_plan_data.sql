@@ -1314,6 +1314,6 @@ VALUES (9, 'PRNP_2023',
               "defaultFlowManagementLimit": "Refer to Policy WC.P1"
             }
           ],
-          "defaultGroundwaterLimit": "See P121 of PRNP",
-          "defaultSurfaceWaterLimit": "See P121 of PRNP"
+          "defaultGroundwaterLimit": "Refer to Policy P121 of PRNP",
+          "defaultSurfaceWaterLimit": "Refer to Policy P121 of PRNP"
         }');

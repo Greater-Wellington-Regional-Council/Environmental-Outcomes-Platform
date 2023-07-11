@@ -6,7 +6,7 @@ const BLANK_CELL_CHAR = '-';
 // TODO this may need to be changed to be pulled out of the plan data
 const GROUNDWATER_CATEGORY_B_RULE = (
   <span className="text-xs">
-    See 4.1 of PNRP
+    Refer to Table 4.1 of PNRP
     <sup>
       <a href="#PNRP41">1</a>
     </sup>
@@ -18,7 +18,7 @@ const GROUNDWATER_CATEGORY_B_RULE = (
 // Need to decide if we want this behaviour entirely driven from the plan JSON, or if we want to hardcode some of it.
 const DEFAULT_RULE = (
   <span className="text-xs">
-    See P121 of PRNP
+    Refer to Policy P121 of PRNP
     <sup>
       <a href="#PRNP121">2</a>
     </sup>
