@@ -1203,7 +1203,7 @@ VALUES (9, 'PRNP_2023',
               },
               "surfaceWaterLimits": [
                 {
-                  "id": "RuamahangaSW",
+                  "id": "RuamahangaTotalSW",
                   "name": "Ruamāhanga River and tributaries, upstream of (but not including) the confluence with the Lake Wairarapa outflow",
                   "children": [
                     {

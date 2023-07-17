@@ -44,6 +44,7 @@ interface Plan {
 
 interface PlanRegion {
   id: number;
+  sourceId: string;
   planId: number;
   name: string;
   defaultSurfaceWaterLimit: string;

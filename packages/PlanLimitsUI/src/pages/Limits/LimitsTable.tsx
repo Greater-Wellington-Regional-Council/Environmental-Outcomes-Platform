@@ -3,27 +3,22 @@ import { pick } from 'lodash';
 
 const BLANK_CELL_CHAR = '-';
 
-// TODO this may need to be changed to be pulled out of the plan data
-const GROUNDWATER_CATEGORY_B_RULE = (
-  <span className="text-xs">
-    Refer to Table 4.1 of PNRP
-    <sup>
-      <a href="#PNRP41">1</a>
-    </sup>
-  </span>
-);
-
-// TODO this may need to be changed to be pulled out of the plan data. Note that the default text "See P121 of PRNP" is in the plan JSON.
-// But that doesn't include the info about having a link to the plan pdf.
-// Need to decide if we want this behaviour entirely driven from the plan JSON, or if we want to hardcode some of it.
-const DEFAULT_RULE = (
-  <span className="text-xs">
-    Refer to Policy P121 of PRNP
-    <sup>
-      <a href="#PRNP121">2</a>
-    </sup>
-  </span>
-);
+const footNoteTexts = [
+  {
+    number: 1,
+    id: 'PNRP41',
+    text: 'Refer to Table 4.1 of PNRP',
+    href: 'https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=52',
+    footNoteText: 'Table 4.1 of the Proposed Natural Resource Plan Limits',
+  },
+  {
+    number: 2,
+    id: 'PRNP121',
+    text: 'Refer to Policy P121 of PRNP',
+    href: 'https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=59',
+    footNoteText: 'Policy P121 of the Proposed Natural Resource Plan Limits',
+  },
+];
 
 function FormattedTD(props: {
   children?: React.ReactElement | string;
@@ -89,9 +84,7 @@ function LimitRow({
       {!hideSubUnitLimit && (
         <>
           <FormattedTD rowSpan={subUnitLimitRowSpan}>
-            {subUnitLimitView.overrideText
-              ? DEFAULT_RULE
-              : subUnitLimitView.limitToDisplay || BLANK_CELL_CHAR}
+            <LimitAmount limitView={subUnitLimitView} />
           </FormattedTD>
           <FormattedTD rowSpan={subUnitLimitRowSpan}>
             <AllocatedAmount limitView={subUnitLimitView} />
@@ -101,9 +94,7 @@ function LimitRow({
       {!hideUnitLimit && (
         <>
           <FormattedTD rowSpan={unitLimitRowSpan}>
-            {unitLimitView.overrideText
-              ? DEFAULT_RULE
-              : unitLimitView.limitToDisplay || BLANK_CELL_CHAR}
+            <LimitAmount limitView={unitLimitView} />
           </FormattedTD>
           <FormattedTD rowSpan={unitLimitRowSpan}>
             <AllocatedAmount limitView={unitLimitView} />
@@ -130,6 +121,29 @@ function AllocatedAmount({ limitView }: { limitView: LimitView }) {
         {limitView.allocatedPercent}%
       </span>
     </>
+  );
+}
+
+function LimitAmount({ limitView }: { limitView: LimitView }) {
+  const footNoteItem = footNoteTexts.find(
+    (item) => item.text === limitView.limitToDisplay
+  );
+
+  if (footNoteItem) {
+    return (
+      <span className="text-xs">
+        {limitView.limitToDisplay}
+        <sup>
+          <a href={`#${footNoteItem.id}`}>{footNoteItem.number}</a>
+        </sup>
+      </span>
+    );
+  }
+
+  return limitView.limitToDisplay ? (
+    <>{limitView.limitToDisplay}</>
+  ) : (
+    <>{BLANK_CELL_CHAR}</>
   );
 }
 
@@ -226,7 +240,7 @@ export default function LimitsTable({
                   key={`A-${key}-${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
-                  category="A"
+                  category={gwLimit.groundWaterLimit.category}
                   hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   hideSubUnitLimit={
@@ -249,7 +263,7 @@ export default function LimitsTable({
                 <LimitRow
                   key={`B-${key}-${index}`}
                   type="Ground"
-                  category="B"
+                  category={gwLimit.groundWaterLimit.category}
                   depth={gwLimit.groundWaterLimit.depth}
                   hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
@@ -261,9 +275,6 @@ export default function LimitsTable({
                     appState.catBGroundWaterLimitsView[key].length > 1 ? 0 : 1
                   }
                   hideUnitLimit={index > 0}
-                  unitLimitView={{
-                    limitToDisplay: GROUNDWATER_CATEGORY_B_RULE,
-                  }}
                 />
               ))}
             </tbody>
@@ -277,7 +288,7 @@ export default function LimitsTable({
                   key={`C-${key}-${index}`}
                   type="Ground"
                   depth={gwLimit.groundWaterLimit.depth}
-                  category="C"
+                  category={gwLimit.groundWaterLimit.category}
                   hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   subUnitLimitRowSpan={
@@ -295,32 +306,23 @@ export default function LimitsTable({
       </table>
       {showFootnote && council.id === 9 && (
         <>
-          <div className="mt-3">
-            <span id="PNRP41" className="underline">
-              <sup>1</sup>
-            </span>
-            <a
-              href="https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=52"
-              className="text-sm flex-1 underline"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Table 4.1 of the Proposed Natural Resource Plan Limits
-            </a>
-          </div>
-          <div>
-            <span id="PNRP121" className="underline">
-              <sup>2</sup>
-            </span>
-            <a
-              href="https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=59"
-              className="text-sm flex-1 underline"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Policy P121 of the Proposed Natural Resource Plan Limits
-            </a>
-          </div>
+          {footNoteTexts.map(
+            ({ number, id, text, href, footNoteText }, index) => (
+              <div key={number} className={index === 0 ? 'mt-3' : ''}>
+                <span id={id} className="underline">
+                  <sup>{number}</sup>
+                </span>
+                <a
+                  href={href}
+                  className="text-sm flex-1 underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {footNoteText}
+                </a>
+              </div>
+            )
+          )}
         </>
       )}
     </>

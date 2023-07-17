@@ -29,7 +29,7 @@ export function useAppState(
         (gl) => gl.id
       );
       const groundWaterZoneName = [
-        // Contructing then destructuring from a Set leaves us with unique values
+        // Constructing then destructuring from a Set leaves us with unique values
         ...new Set(activeLimits.groundWaterLimits.map((gwl) => gwl.name)),
       ].join(', ');
 
@@ -45,7 +45,7 @@ export function useAppState(
         activeLimits.surfaceWaterUnitLimit,
         activeLimits.surfaceWaterSubUnitLimit,
         defaultSurfaceWaterLimit,
-        activeLimits.planRegion?.id,
+        activeLimits.planRegion?.sourceId,
         council.unitTypes.surface
       );
 
@@ -109,9 +109,10 @@ function defaultCatAGroundWaterLimit(
       {
         groundWaterLimit: {
           depth: 'All',
+          category: '-',
         } as GroundWaterLimit,
         unitLimitView: {
-          overrideText: defaultLimit,
+          limitToDisplay: defaultLimit,
         },
         subUnitLimitView: {},
       },
@@ -123,7 +124,7 @@ function buildSurfaceWaterLimitView(
   surfaceWaterUnitLimit: SurfaceWaterLimit | null,
   surfaceWaterSubUnitLimit: SurfaceWaterLimit | null,
   defaultSurfaceWaterLimit: string,
-  planRegionId?: number,
+  planRegionId?: string,
   unit: string
 ): SurfaceWaterLimitView {
   const unitLimitView: LimitView = {
@@ -138,12 +139,12 @@ function buildSurfaceWaterLimitView(
     limit: surfaceWaterSubUnitLimit?.allocationLimit,
     allocated: surfaceWaterSubUnitLimit?.allocationAmount,
   };
-  // Ruamahanga (Whaitua '4') uses 2 levels of surface water units. So in areas
+  // Ruamahanga (Whaitua s with source_id ='493cb5ae-4086-4649-8d3a-6d41ee9fded7' in the new plan model) uses 2 levels of surface water units. So in areas
   // where there is no value at the Subunit and there is a management unit,
   // limit P121 applies.
   if (
     !subUnitLimitView.limit &&
-    planRegionId === 4 &&
+    planRegionId === '493cb5ae-4086-4649-8d3a-6d41ee9fded7' &&
     Boolean(unitLimitView.limit)
   ) {
     subUnitLimitView.overrideText = defaultSurfaceWaterLimit;
@@ -256,7 +257,7 @@ function unitLimitsToDisplay(
     case 'B':
       return {
         unitLimitView: {
-          overrideText: defaultGroundWaterLimit,
+          overrideText: 'Refer to Table 4.1 of PNRP',
           limit: groundWaterLimit.allocationLimit,
           allocated: groundWaterLimit.allocationAmount,
         },
@@ -317,7 +318,7 @@ function formatLimitView(limitView: LimitView, unit: string) {
   if (limitView.allocated) {
     limitView.allocatedToDisplay = formatWaterQuantity(
       Math.round(limitView.allocated),
-      'L/s'
+      unit
     );
   }
 
