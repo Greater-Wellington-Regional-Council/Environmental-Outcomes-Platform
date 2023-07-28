@@ -3,19 +3,31 @@ import { showDisclaimerAtom } from '../../components/Disclaimer';
 import { councilAtom } from '../../lib/loader';
 import LimitsTable from './LimitsTable';
 import Button from '../../components/Button';
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowTopRightOnSquareIcon,
+  QuestionMarkCircleIcon,
+} from '@heroicons/react/24/outline';
 import formatWaterQuantity from './formatWaterQuantity';
 
 const LimitsListItem = ({
   title,
   text,
+  reference,
 }: {
   title: string;
   text: string | JSX.Element;
+  reference?: string;
 }) => (
   <div className="mb-4">
     <dt className="font-semibold">{title}</dt>
-    <dd>{text}</dd>
+    <dd>
+      {text}
+      {reference && (
+        <a href={reference} target="_blank">
+          <QuestionMarkCircleIcon className="h-4 inline pl-1 align-text-top" />
+        </a>
+      )}
+    </dd>
   </div>
 );
 
@@ -77,6 +89,7 @@ export default function Sidebar({
           <LimitsListItem
             title={council.labels.region}
             text={appState.planRegion?.name ?? 'None'}
+            reference={appState.planRegion?.referenceUrl}
           />
           {['Surface', 'Combined'].includes(waterTakeFilter) && (
             <>

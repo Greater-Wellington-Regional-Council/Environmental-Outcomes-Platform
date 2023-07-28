@@ -27,7 +27,8 @@ CREATE OR REPLACE VIEW plan_regions
              default_surface_water_limit,
              default_groundwater_limit,
              default_flow_management_site,
-             default_flow_management_limit)
+             default_flow_management_limit,
+             reference_url)
 AS
 WITH temp_plan_regions AS (SELECT p.council_id,
                                   p.id                                        AS plan_id,
@@ -45,7 +46,8 @@ SELECT ROW_NUMBER() OVER (),
        region ->> 'defaultSurfaceWaterLimit',
        region ->> 'defaultGroundwaterLimit',
        region ->> 'defaultFlowManagementSite',
-       region ->> 'defaultFlowManagementLimit'
+       region ->> 'defaultFlowManagementLimit',
+       region ->> 'referenceUrl'
 FROM temp_plan_regions;
 
 

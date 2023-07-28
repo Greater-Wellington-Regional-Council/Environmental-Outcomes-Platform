@@ -23,11 +23,11 @@ export const Councils: Council[] = [
     footerLinks: [
       {
         text: 'Proposed Natural Resource Plan',
-        url: 'https://pnrp.gw.govt.nz/home/pnrp-final-appeals-version-2022',
+        url: 'https://pnrp.gw.govt.nz/',
       },
       {
         text: 'Water allocation rules',
-        url: 'http://pnrp.gw.govt.nz/assets/Uploads/Chapter-5.5-Rules-Water-Allocation-Appeal-version-2022.pdf',
+        url: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=276',
       },
     ],
     labels: {

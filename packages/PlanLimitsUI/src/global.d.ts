@@ -47,6 +47,7 @@ interface PlanRegion {
   sourceId: string;
   planId: number;
   name: string;
+  referenceUrl?: string;
   defaultSurfaceWaterLimit: string;
   defaultGroundwaterLimit: string;
   defaultFlowManagementSite: string;
