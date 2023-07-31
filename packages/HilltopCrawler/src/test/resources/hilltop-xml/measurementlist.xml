@@ -1,0 +1,614 @@
+<?xml version="1.0" ?>
+<HilltopServer>
+    <Agency>Horizons</Agency>
+    <DataSource Name="Rainfall" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Incremental</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2018-02-13T17:48:00</From>
+        <To>2023-03-07T09:42:00</To>
+        <IndentMeasurements>1</IndentMeasurements>
+        <Measurement Name="Rainfall">
+            <Item>1</Item>
+            <RequestAs>Rainfall [Rainfall]</RequestAs>
+            <Divisor>1000</Divisor>
+            <Units>mm</Units>
+            <Format>#.###</Format>
+        </Measurement>
+        <Measurement Name="Cumulative Dry Days">
+            <Item>1</Item>
+            <RequestAs>Cumulative Dry Days [Rainfall]</RequestAs>
+            <Units>Dry Days</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-03-07T00:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Cumulative Wet Days">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Cumulative Wet Days</RequestAs>
+            <Units>Rain Days</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-03-07T00:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Identify Fortnightly Gaps">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Identify Fortnightly Gaps</RequestAs>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-03-07T09:42:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Moving Total (3 Hours)">
+            <Item>1</Item>
+            <RequestAs>Moving Total (3 Hours) [Rainfall]</RequestAs>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T20:48:00</VMStart>
+            <VMFinish>2023-03-07T09:42:00</VMFinish>
+        </Measurement>
+        <Measurement Name="NEMS - Rainfall (Longterm Dev)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>NEMS - Rainfall (Longterm Dev)</RequestAs>
+            <Units>%</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Performance Monitoring</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-03-07T00:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Precipitation Total (1 Day)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Precipitation Total (1 Day)</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Statistics</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-03-07T00:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Precipitation Total (1 Hour)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Precipitation Total (1 Hour)</RequestAs>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Statistics</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-03-07T09:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Precipitation Total (Gap Series)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Precipitation Total (Gap Series)</RequestAs>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-03-07T00:00:00</VMFinish>
+        </Measurement>
+    </DataSource>
+    <DataSource Name="Voltage" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Instant</Interpolation>
+        <ItemFormat>1</ItemFormat>
+        <From>2021-07-01T00:00:00</From>
+        <To>2023-06-08T12:00:00</To>
+        <Measurement Name="Voltage">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Voltage</RequestAs>
+            <Units>Volts</Units>
+            <Format>#.##</Format>
+        </Measurement>
+        <Measurement Name="VM Voltage (Missing Record)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>VM Voltage (Missing Record)</RequestAs>
+            <Units>Gap</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Performance Monitoring</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2021-07-01T00:00:00</VMStart>
+            <VMFinish>2023-06-08T12:00:00</VMFinish>
+        </Measurement>
+    </DataSource>
+    <DataSource Name="SCADA Rainfall" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdSeries</TSType>
+        <DataType>Rain6</DataType>
+        <Interpolation>Incremental</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2018-02-13T17:48:00</From>
+        <To>2023-06-07T06:00:00</To>
+        <IndentMeasurements>1</IndentMeasurements>
+        <Measurement Name="Rainfall">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Rainfall</RequestAs>
+            <Divisor>1000</Divisor>
+            <Units>mm</Units>
+            <Format>####.#</Format>
+        </Measurement>
+        <Measurement Name="Cumulative Dry Days">
+            <Item>1</Item>
+            <RequestAs>Cumulative Dry Days [SCADA Rainfall]</RequestAs>
+            <Units>days &lt; 2.5mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Statistics</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-06-07T00:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Modelling Rainfall (15 Mins)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Modelling Rainfall (15 Mins)</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Statistics</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Moving Total (1 Hour)">
+            <Item>1</Item>
+            <RequestAs>Moving Total (1 Hour) [SCADA Rainfall]</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T18:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Moving Total (12 Hours)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Moving Total (12 Hours)</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-14T05:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Moving Total (24 hours)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Moving Total (24 hours)</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-14T17:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Moving Total (3 Hours)">
+            <Item>1</Item>
+            <RequestAs>Moving Total (3 Hours) [SCADA Rainfall]</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T20:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Moving Total (48 hours)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Moving Total (48 hours)</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-15T17:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Moving Total (6 Hours)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Moving Total (6 Hours)</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T23:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Moving Total (72 hours)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Moving Total (72 hours)</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-16T17:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="NEMS - Rainfall Check Period">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>NEMS - Rainfall Check Period</RequestAs>
+            <Units>Days</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Performance Monitoring</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2022-02-02T12:54:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Rainfall Total (1 Day)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Rainfall Total (1 Day)</RequestAs>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Statistics</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-06-07T00:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Rainfall Total (1 Hour)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Rainfall Total (1 Hour)</RequestAs>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Statistics</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Rainfall Total (15 Min)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Rainfall Total (15 Min)</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Statistics</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Rainfall Total (6 min Corrected)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Rainfall Total (6 min Corrected)</RequestAs>
+            <Divisor>1000</Divisor>
+            <Units>um</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Performance Monitoring</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Rainfall Total (6 min)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Rainfall Total (6 min)</RequestAs>
+            <Divisor>1000</Divisor>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Statistics</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Runoff">
+            <Item>1</Item>
+            <RequestAs>Runoff [SCADA Rainfall]</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T19:18:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+        <Measurement Name="SCADA Rain Inspection Deviation">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>SCADA Rain Inspection Deviation</RequestAs>
+            <Units>%</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Performance Monitoring</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2022-02-02T12:54:00</VMFinish>
+        </Measurement>
+        <Measurement Name="VM Intensity Checker (mm/hr)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>VM Intensity Checker (mm/hr)</RequestAs>
+            <Units>mm/hr</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Performance Monitoring</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2018-02-13T17:48:00</VMStart>
+            <VMFinish>2023-06-07T06:00:00</VMFinish>
+        </Measurement>
+    </DataSource>
+    <DataSource Name="SCADA Rainfall (backup)" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdSeries</TSType>
+        <DataType>Rain6</DataType>
+        <Interpolation>Incremental</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2021-01-02T14:57:28</From>
+        <To>2023-06-06T07:22:24</To>
+        <IndentMeasurements>1</IndentMeasurements>
+        <Measurement Name="Rainfall (backup)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Rainfall (backup)</RequestAs>
+            <Divisor>1000</Divisor>
+            <Units>mm</Units>
+            <Format>####.#</Format>
+        </Measurement>
+        <Measurement Name="Runoff (backup)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Runoff (backup)</RequestAs>
+            <Units>mm</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Virtual Measurements</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2021-01-02T14:57:28</VMStart>
+            <VMFinish>2023-06-06T07:22:24</VMFinish>
+        </Measurement>
+    </DataSource>
+    <DataSource Name="Air Temperature (1.5m)" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Instant</Interpolation>
+        <ItemFormat>1</ItemFormat>
+        <From>2021-01-01T00:00:00</From>
+        <To>2023-06-08T13:00:00</To>
+        <Measurement Name="Air Temperature (1.5m)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Air Temperature (1.5m)</RequestAs>
+            <Units>&#186;C</Units>
+            <Format>###.#</Format>
+        </Measurement>
+        <Measurement Name="Hourly Air Temperature (1.5m)">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Hourly Air Temperature (1.5m)</RequestAs>
+            <Units>&#186;C</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Hourly Averages</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2021-01-01T00:00:00</VMStart>
+            <VMFinish>2023-06-08T12:00:00</VMFinish>
+        </Measurement>
+    </DataSource>
+    <DataSource Name="Relative Humidity" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Instant</Interpolation>
+        <ItemFormat>1</ItemFormat>
+        <From>2021-01-01T00:00:00</From>
+        <To>2023-06-08T13:00:00</To>
+        <Measurement Name="Relative Humidity">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Relative Humidity</RequestAs>
+            <Units>%</Units>
+            <Format>###.##</Format>
+        </Measurement>
+        <Measurement Name="Dew Point Temperature">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Dew Point Temperature</RequestAs>
+            <Units>DegC</Units>
+            <Format>##.##</Format>
+            <VM>1</VM>
+            <VMStart>2021-01-01T00:00:00</VMStart>
+            <VMFinish>2023-06-08T12:30:00</VMFinish>
+        </Measurement>
+        <Measurement Name="Hourly Relative Humidity">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Hourly Relative Humidity</RequestAs>
+            <Units>%</Units>
+            <Format>#.##</Format>
+            <MeasurementGroup>Hourly Averages</MeasurementGroup>
+            <VM>1</VM>
+            <VMStart>2021-01-01T00:00:00</VMStart>
+            <VMFinish>2023-06-08T12:00:00</VMFinish>
+        </Measurement>
+    </DataSource>
+    <DataSource Name="Campbell Signature" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Instant</Interpolation>
+        <ItemFormat>1</ItemFormat>
+        <From>2021-01-01T00:00:00</From>
+        <To>2023-06-08T12:00:00</To>
+        <SensorGroup>Logger Status</SensorGroup>
+        <Measurement Name="Campbell Signature">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Campbell Signature</RequestAs>
+            <Format>$$$</Format>
+        </Measurement>
+    </DataSource>
+    <DataSource Name="Campbell Software Version" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Instant</Interpolation>
+        <ItemFormat>1</ItemFormat>
+        <From>2021-01-01T00:00:00</From>
+        <To>2023-06-08T12:00:00</To>
+        <SensorGroup>Logger Status</SensorGroup>
+        <Measurement Name="Campbell Software Version">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Campbell Software Version</RequestAs>
+            <Units>Version</Units>
+            <Format>#.##</Format>
+        </Measurement>
+    </DataSource>
+    <DataSource Name="Rainfall" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdQualSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Event</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2018-02-13T17:48:00</From>
+        <To>2023-03-07T09:42:00</To>
+        <IndentMeasurements>1</IndentMeasurements>
+    </DataSource>
+    <DataSource Name="Voltage" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdQualSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Event</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2021-07-01T00:00:00</From>
+        <To>2023-06-08T12:00:00</To>
+    </DataSource>
+    <DataSource Name="SCADA Rainfall" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdQualSeries</TSType>
+        <DataType>Rain6</DataType>
+        <Interpolation>Event</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2018-02-13T17:48:00</From>
+        <To>2023-06-07T06:00:00</To>
+        <IndentMeasurements>1</IndentMeasurements>
+    </DataSource>
+    <DataSource Name="SCADA Rainfall (backup)" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdQualSeries</TSType>
+        <DataType>Rain6</DataType>
+        <Interpolation>Event</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2021-01-02T14:57:28</From>
+        <To>2023-06-06T07:22:24</To>
+        <IndentMeasurements>1</IndentMeasurements>
+    </DataSource>
+    <DataSource Name="Air Temperature (1.5m)" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdQualSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Event</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2021-01-01T00:00:00</From>
+        <To>2023-06-08T13:00:00</To>
+    </DataSource>
+    <DataSource Name="Relative Humidity" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdQualSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Event</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2021-01-01T00:00:00</From>
+        <To>2023-06-08T13:00:00</To>
+    </DataSource>
+    <DataSource Name="Campbell Signature" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdQualSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Event</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2021-01-01T00:00:00</From>
+        <To>2023-06-08T12:00:00</To>
+        <SensorGroup>Logger Status</SensorGroup>
+    </DataSource>
+    <DataSource Name="Campbell Software Version" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>1</NumItems>
+        <TSType>StdQualSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Event</Interpolation>
+        <ItemFormat>0</ItemFormat>
+        <From>2021-01-01T00:00:00</From>
+        <To>2023-06-08T12:00:00</To>
+        <SensorGroup>Logger Status</SensorGroup>
+    </DataSource>
+    <DataSource Name="Rainfall" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>4</NumItems>
+        <TSType>CheckSeries</TSType>
+        <DataType>SimpleTimeSeries</DataType>
+        <Interpolation>Discrete</Interpolation>
+        <ItemFormat>140</ItemFormat>
+        <From>2018-02-13T17:48:00</From>
+        <To>2022-02-02T12:54:00</To>
+        <IndentMeasurements>1</IndentMeasurements>
+        <Measurement Name="Check Gauge Total">
+            <Item>1</Item>
+            <RequestAs>Check Gauge Total [Rainfall]</RequestAs>
+            <Divisor>1000</Divisor>
+            <Units>mm</Units>
+            <Format>#.#</Format>
+            <MeasurementGroup>NEMS Rainfall</MeasurementGroup>
+        </Measurement>
+        <Measurement Name="Recorder Time">
+            <Item>2</Item>
+            <RequestAs>Recorder Time [Rainfall]</RequestAs>
+            <Format>###</Format>
+            <MeasurementGroup>NEMS Rainfall</MeasurementGroup>
+        </Measurement>
+        <Measurement Name="Recorder Total">
+            <Item>3</Item>
+            <RequestAs>Recorder Total [Rainfall]</RequestAs>
+            <Format>###</Format>
+            <MeasurementGroup>NEMS Rainfall</MeasurementGroup>
+        </Measurement>
+        <Measurement Name="Comment">
+            <Item>4</Item>
+            <RequestAs>Comment [Rainfall]</RequestAs>
+            <Format>###</Format>
+            <MeasurementGroup>NEMS Rainfall</MeasurementGroup>
+        </Measurement>
+    </DataSource>
+    <DataSource Name="SCADA Rainfall" Site="Ahuahu at Te Tuhi Junction">
+        <NumItems>4</NumItems>
+        <TSType>CheckSeries</TSType>
+        <DataType>Rain6</DataType>
+        <Interpolation>Discrete</Interpolation>
+        <ItemFormat>140</ItemFormat>
+        <From>2018-02-13T17:48:00</From>
+        <To>2022-02-02T12:54:00</To>
+        <IndentMeasurements>1</IndentMeasurements>
+        <Measurement Name="Check Gauge Total">
+            <Item>1</Item>
+            <DefaultMeasurement/>
+            <RequestAs>Check Gauge Total</RequestAs>
+            <Divisor>1000</Divisor>
+            <Units>mm</Units>
+            <Format>#.#</Format>
+        </Measurement>
+        <Measurement Name="Recorder Time">
+            <Item>2</Item>
+            <RequestAs>Recorder Time [SCADA Rainfall]</RequestAs>
+            <Format>###</Format>
+        </Measurement>
+        <Measurement Name="Recorder Total">
+            <Item>3</Item>
+            <RequestAs>Recorder Total [SCADA Rainfall]</RequestAs>
+            <Format>###</Format>
+        </Measurement>
+        <Measurement Name="Comment">
+            <Item>4</Item>
+            <RequestAs>Comment [SCADA Rainfall]</RequestAs>
+            <Format>###</Format>
+        </Measurement>
+    </DataSource>
+</HilltopServer>

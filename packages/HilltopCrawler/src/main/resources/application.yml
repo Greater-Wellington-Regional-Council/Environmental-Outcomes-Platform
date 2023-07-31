@@ -1,0 +1,36 @@
+spring:
+  main:
+    banner-mode: off
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        max.request.size: 134217728
+        buffer.memory: 134217728
+        spring:
+          json.add.type.headers: false
+      compression-type: gzip
+
+  datasource:
+    url: jdbc:postgresql://${CONFIG_DATABASE_HOST:localhost}:${CONFIG_DATABASE_PORT:5432}/${CONFIG_DATABASE_NAME:eop_dev}
+    username: ${CONFIG_DATABASE_USERNAME:postgres}
+    password: ${CONFIG_DATABASE_PASSWORD:password}
+    hikari:
+      schema: hilltop_crawler
+
+  flyway:
+    schemas: hilltop_crawler
+    locations: classpath:/db/migration
+    user: ${CONFIG_DATABASE_MIGRATIONS_USERNAME:eop_hilltop_crawler_migrations_user}
+    password: ${CONFIG_DATABASE_MIGRATIONS_PASSWORD:password}
+
+crawler:
+  topicReplicas: 1
+
+logging:
+  level:
+    root: INFO
+    nz.govt.eop: INFO
+    nz.govt.eop.hilltop_crawler.TaskProcessor: DEBUG

@@ -9,6 +9,8 @@ tasks:
 containers:
   java-build-env:
     image: eclipse-temurin:18
+    environment:
+      GRADLE_OPTS: -Dorg.gradle.daemon=false
     volumes:
       - local: <{batect.project_directory}
         container: /code
@@ -21,8 +23,6 @@ containers:
     run_as_current_user:
       enabled: true
       home_directory: /home/container-user
-    environment:
-      GRADLE_OPTS: -Dorg.gradle.daemon=false
 
   node-build-env:
     image: node:18.14.0
@@ -78,13 +78,14 @@ containers:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - 22181:2181
+    volumes:
+      - .volumes/zookeeper/data:/var/lib/zookeeper/data:rw
+      - .volumes/zookeeper/log:/var/lib/zookeeper/log:rw
 
   kafka:
     image: confluentinc/cp-kafka:latest
     dependencies:
       - zookeeper
-    ports:
-      - 29092:29092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -92,13 +93,17 @@ containers:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - 29092:29092
+    volumes:
+      - .volumes/kafka/data:/var/lib/kafka/data:rw
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     dependencies:
       - kafka
-    ports:
-      - 8081:8080
     environment:
       KAFKA_CLUSTERS_0_NAME: kafka
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    ports:
+      - 8081:8080
