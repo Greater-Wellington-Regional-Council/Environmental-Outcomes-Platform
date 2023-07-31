@@ -23,8 +23,8 @@ const LimitsListItem = ({
     <dd>
       {text}
       {reference && (
-        <a href={reference} target="_blank">
-          <QuestionMarkCircleIcon className="h-4 inline pl-1 align-text-top" />
+        <a href={reference} target="_blank" rel="noreferrer">
+          <QuestionMarkCircleIcon className="h-5 inline pl-1 align-text-top" />
         </a>
       )}
     </dd>
