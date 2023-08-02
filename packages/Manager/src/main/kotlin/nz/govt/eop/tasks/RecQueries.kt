@@ -6,7 +6,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 
 /**
- * Given a starting river segment(s) return all upstream connected segments to form the overall
+ * Given starting river segment(s) return all upstream connected segments to form the overall
  * catchment above that point. River segments can be passed in to be excluded, which will exclude
  * that segment and any branches above those segments.
  *
