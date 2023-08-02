@@ -1,245 +1,98 @@
 import { useState, useCallback } from 'react';
-import mapboxgl from 'mapbox-gl';
 import formatWaterQuantity from './formatWaterQuantity';
-import defaultFlowLimitAndSite from './defaultFlowLimitAndSite';
+import { groupBy } from 'lodash';
 
-export type Whaitua = {
-  id: number;
-  name: string;
-  defaultFlowLimitAndSite: JSX.Element;
-};
-
-export type FlowLimitBoundary = {
-  id: number;
-  name: string;
-  siteId: number;
-  flowRestriction: string;
-};
-
-export type AppState = {
-  whaitua: Whaitua | null;
-  flowLimitBoundary: FlowLimitBoundary | null;
-
-  surfaceWaterMgmtUnitId: string | null;
-  surfaceWaterMgmtUnitDescription?: string | null;
-  surfaceWaterMgmtUnitLimit?: string;
-  surfaceWaterMgmtUnitAllocated?: string;
-  surfaceWaterMgmtUnitAllocatedPercentage?: number;
-
-  surfaceWaterMgmtSubUnitId: string | null;
-  surfaceWaterMgmtSubUnitDescription?: string | null;
-  surfaceWaterMgmtSubUnitLimit?: string;
-  surfaceWaterMgmtSubUnitAllocated?: string;
-  surfaceWaterMgmtSubUnitAllocatedPercentage?: number;
-  swLimit?: SWLimit;
-
-  gwLimits?: GWLimit[];
-  groundWaterZones: Array<number>;
-  groundWaterZoneName?: string;
-};
-
-function setWhaitua(activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) {
-  const whaitua = activeFeatures.find((f) => f.layer.id === 'whaitua');
-  if (!whaitua) return null;
-
-  const id = Number(whaitua.id);
-  return {
-    id,
-    name: whaitua.properties?.name,
-    defaultFlowLimitAndSite: defaultFlowLimitAndSite(id),
-  };
-}
-
-function setFlowLimitBoundary(activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) {
-  const flowLimitBoundary = activeFeatures.find(
-    (f) => f.layer.id === 'minimumFlowLimitBoundaries'
-  );
-  if (!flowLimitBoundary) return null;
-
-  const properties = flowLimitBoundary.properties!;
-  return {
-    id: Number(flowLimitBoundary.id),
-    name: properties.name,
-    siteId: Number(properties.site_id),
-    flowRestriction: formatWaterQuantity(
-      properties.plan_minimum_flow_value,
-      properties.plan_minimum_flow_unit
-    ),
-  };
-}
-
-export function useAppState(): [
-  AppState,
-  (result: mapboxgl.MapboxGeoJSONFeature[]) => void
-] {
+export function useAppState(
+  council: Council
+): [AppState, (activeLimits: ActiveLimits, allPlanData: AllPlanData) => void] {
   const [appState, setAppState] = useState<AppState>({
-    whaitua: null,
-    flowLimitBoundary: null,
-    surfaceWaterMgmtUnitId: 'NONE',
-    surfaceWaterMgmtUnitDescription: null,
-    surfaceWaterMgmtSubUnitId: 'NONE',
-    surfaceWaterMgmtSubUnitDescription: null,
+    planRegion: null,
+    flowLimit: null,
+    flowSite: null,
+    surfaceWaterUnitLimit: null,
+    surfaceWaterSubUnitLimit: null,
+    groundWaterLimits: [],
     groundWaterZones: [],
   });
 
   const setAppStateFromResult = useCallback(
-    (activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) => {
-      const whaitua = setWhaitua(activeFeatures);
-      const flowLimitBoundary = setFlowLimitBoundary(activeFeatures);
+    (activeLimits: ActiveLimits, allPlanData: AllPlanData) => {
+      let flowSite = null;
+      if (activeLimits.flowLimit) {
+        flowSite = allPlanData.flowMeasurementSites.find(
+          (fs) => fs.id === activeLimits.flowLimit.measuredAtSiteId
+        );
+        if (!flowSite) throw new Error('Flow site not found');
+      }
 
-      const result = activeFeatures;
-      // Surface water MgmtUnit
-      const surfaceWaterMgmtUnitId =
-        findFeatureId(result, 'surfaceWaterMgmtUnits') || null;
-      const surfaceWaterMgmtUnitDescription = findFeature(
-        result,
-        'surfaceWaterMgmtUnits',
-        'name'
-      );
-      const surfaceWaterMgmtUnitLimitAmount = findFeature(
-        result,
-        'surfaceWaterMgmtUnits',
-        'allocation_amount'
-      );
-      const surfaceWaterMgmtUnitLimit = surfaceWaterMgmtUnitLimitAmount
-        ? formatWaterQuantity(
-            Number(surfaceWaterMgmtUnitLimitAmount),
-            findFeature(
-              result,
-              'surfaceWaterMgmtUnits',
-              'allocation_amount_unit'
-            ) as string
-          )
-        : undefined;
-
-      const surfaceWaterMgmtUnitAllocatedAmount = findFeature(
-        result,
-        'surfaceWaterMgmtUnits',
-        'allocated_amount'
-      );
-      const surfaceWaterMgmtUnitAllocated = surfaceWaterMgmtUnitAllocatedAmount
-        ? formatWaterQuantity(
-            Math.round(Number(surfaceWaterMgmtUnitAllocatedAmount)),
-            findFeature(
-              result,
-              'surfaceWaterMgmtUnits',
-              'allocation_amount_unit'
-            ) as string
-          )
-        : undefined;
-
-      const surfaceWaterMgmtUnitAllocatedPercentage =
-        surfaceWaterMgmtUnitLimitAmount && surfaceWaterMgmtUnitAllocatedAmount
-          ? Math.round(
-              (Number(surfaceWaterMgmtUnitAllocatedAmount) /
-                Number(surfaceWaterMgmtUnitLimitAmount)) *
-                100
-            )
-          : undefined;
-
-      // Surface water MgmtSubUnit
-      const surfaceWaterMgmtSubUnitId =
-        findFeatureId(result, 'surfaceWaterMgmtSubUnits') || null;
-      const surfaceWaterMgmtSubUnitDescription = findFeature(
-        result,
-        'surfaceWaterMgmtSubUnits',
-        'name'
-      );
-      const surfaceWaterMgmtSubUnitLimitAmount = findFeature(
-        result,
-        'surfaceWaterMgmtSubUnits',
-        'allocation_amount'
-      );
-      const surfaceWaterMgmtSubUnitLimit = surfaceWaterMgmtSubUnitLimitAmount
-        ? formatWaterQuantity(
-            Number(surfaceWaterMgmtSubUnitLimitAmount),
-            findFeature(
-              result,
-              'surfaceWaterMgmtSubUnits',
-              'allocation_amount_unit'
-            ) as string
-          )
-        : undefined;
-
-      const surfaceWaterMgmtSubUnitAllocatedAmount = findFeature(
-        result,
-        'surfaceWaterMgmtSubUnits',
-        'allocated_amount'
-      );
-      const surfaceWaterMgmtSubUnitAllocated =
-        surfaceWaterMgmtSubUnitAllocatedAmount
-          ? formatWaterQuantity(
-              Math.round(Number(surfaceWaterMgmtSubUnitAllocatedAmount)),
-              findFeature(
-                result,
-                'surfaceWaterMgmtSubUnits',
-                'allocation_amount_unit'
-              ) as string
-            )
-          : undefined;
-
-      const surfaceWaterMgmtSubUnitAllocatedPercentage =
-        surfaceWaterMgmtSubUnitLimitAmount &&
-        surfaceWaterMgmtSubUnitAllocatedAmount
-          ? Math.round(
-              (Number(surfaceWaterMgmtSubUnitAllocatedAmount) /
-                Number(surfaceWaterMgmtSubUnitLimitAmount)) *
-                100
-            )
-          : undefined;
-
-      const swLimit = getSwLimit(
-        whaitua?.id,
-        surfaceWaterMgmtUnitLimit,
-        surfaceWaterMgmtSubUnitLimit
-      );
-
-      // Groundwater
-      const groundWaterZonesData = result
-        .filter((value) => value.layer.id === 'groundWater')
-        .sort((a, b) => {
-          // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
-          const alphabet = '0123456789>';
-          const first = a.properties?.depth.charAt(0);
-          const second = b.properties?.depth.charAt(0);
-          return alphabet.indexOf(first) - alphabet.indexOf(second);
-        });
-
-      const groundWaterZones = groundWaterZonesData.map(
-        (item) => item.id as number
+      const groundWaterZones = activeLimits.groundWaterLimits.map(
+        (gl) => gl.id
       );
       const groundWaterZoneName = [
-        // Contructing then destructuring from a Set leaves us with unique values
-        ...new Set(
-          groundWaterZonesData.map((item) => item.properties!['name'])
-        ),
+        // Constructing then destructuring from a Set leaves us with unique values
+        ...new Set(activeLimits.groundWaterLimits.map((gwl) => gwl.name)),
       ].join(', ');
 
-      const gwLimits = getGwLimits(
-        groundWaterZonesData as mapboxgl.MapboxGeoJSONFeature[]
+      const defaultGroundWaterLimit =
+        activeLimits.planRegion?.defaultGroundwaterLimit ??
+        allPlanData.plan.defaultGroundwaterLimit;
+
+      const defaultSurfaceWaterLimit =
+        activeLimits.planRegion?.defaultSurfaceWaterLimit ??
+        allPlanData.plan.defaultSurfaceWaterLimit;
+
+      const surfaceWaterLimitView = buildSurfaceWaterLimitView(
+        activeLimits.surfaceWaterUnitLimit,
+        activeLimits.surfaceWaterSubUnitLimit,
+        defaultSurfaceWaterLimit,
+        activeLimits.planRegion?.sourceId,
+        council.unitTypes.surface
       );
 
+      if (!council.hasGroundwaterCategories) {
+        activeLimits.groundWaterLimits.forEach((gwl) => {
+          gwl.category = 'C';
+        });
+      }
+
+      const groundWaterLimitViews = buildGroundWaterLimitView(
+        activeLimits.groundWaterLimits,
+        allPlanData.surfaceWaterUnitLimits,
+        allPlanData.surfaceWaterSubUnitLimits,
+        defaultGroundWaterLimit,
+        council.unitTypes.ground
+      );
+
+      // TODO: Extract this!
+      const gwLimitViews =
+        groundWaterLimitViews.length === 0
+          ? {
+              catAGroundWaterLimitsView: defaultCatAGroundWaterLimit(
+                defaultGroundWaterLimit
+              ),
+            }
+          : {
+              catAGroundWaterLimitsView: filterGroupAndSort(
+                groundWaterLimitViews,
+                'A'
+              ),
+              catBGroundWaterLimitsView: filterGroupAndSort(
+                groundWaterLimitViews,
+                'B'
+              ),
+              catCGroundWaterLimitsView: filterGroupAndSort(
+                groundWaterLimitViews,
+                'C'
+              ),
+            };
+
       setAppState({
-        whaitua,
-        flowLimitBoundary,
-
-        // SW
-        surfaceWaterMgmtUnitId,
-        surfaceWaterMgmtUnitDescription,
-        surfaceWaterMgmtUnitLimit,
-        surfaceWaterMgmtUnitAllocated,
-        surfaceWaterMgmtUnitAllocatedPercentage,
-        surfaceWaterMgmtSubUnitId,
-        surfaceWaterMgmtSubUnitDescription,
-        surfaceWaterMgmtSubUnitLimit,
-        surfaceWaterMgmtSubUnitAllocated,
-        surfaceWaterMgmtSubUnitAllocatedPercentage,
-
-        swLimit,
-        // GW
+        ...activeLimits,
+        flowSite,
         groundWaterZoneName,
         groundWaterZones,
-        gwLimits,
+        surfaceWaterLimitView,
+        ...gwLimitViews,
       });
     },
     [setAppState]
@@ -248,208 +101,231 @@ export function useAppState(): [
   return [appState, setAppStateFromResult];
 }
 
-const findFeature = (
-  features: mapboxgl.MapboxGeoJSONFeature[],
-  layer: string,
-  prop: string
-) =>
-  features.find((feat) => feat.layer.id === layer)?.properties?.[prop] as
-    | string
-    | undefined;
-
-const findFeatureId = (
-  features: mapboxgl.MapboxGeoJSONFeature[],
-  layer: string
-) => features.find((feat) => feat.layer.id === layer)?.id as string;
-
-interface SWLimit {
-  subUnitLimit?: string;
-  unitLimit?: string;
-  useDefaultRuleForUnit: boolean;
-  useDefaultRuleForSubUnit: boolean;
-  mergeUnit?: boolean;
-  mergeSubUnit?: boolean;
+function defaultCatAGroundWaterLimit(
+  defaultLimit: string
+): GroupedGroundwaterLimitViews {
+  return {
+    all: [
+      {
+        groundWaterLimit: {
+          depth: 'All',
+          category: '-',
+        } as GroundWaterLimit,
+        unitLimitView: {
+          limitToDisplay: defaultLimit,
+        },
+        subUnitLimitView: {},
+      },
+    ],
+  };
 }
 
-function getSwLimit(
-  whaituaId?: number,
-  surfaceWaterMgmtUnitLimit?: string,
-  surfaceWaterMgmtSubUnitLimit?: string
-): SWLimit {
-  const stat = {
-    unitLimit: surfaceWaterMgmtUnitLimit,
-    subUnitLimit: surfaceWaterMgmtSubUnitLimit,
-
-    useDefaultRuleForUnit: !surfaceWaterMgmtUnitLimit,
-
-    // Ruamahanga (Whaitua '4') uses 2 levels of surface water units. So in areas
-    // where there is no value at the Subunit and there is a management unit,
-    // limit P121 applies.
-    useDefaultRuleForSubUnit:
-      !surfaceWaterMgmtSubUnitLimit &&
-      whaituaId === 4 &&
-      Boolean(surfaceWaterMgmtUnitLimit),
+function buildSurfaceWaterLimitView(
+  surfaceWaterUnitLimit: SurfaceWaterLimit | null,
+  surfaceWaterSubUnitLimit: SurfaceWaterLimit | null,
+  defaultSurfaceWaterLimit: string,
+  planRegionId?: string,
+  unit: string
+): SurfaceWaterLimitView {
+  const unitLimitView: LimitView = {
+    limit: surfaceWaterUnitLimit?.allocationLimit,
+    overrideText: surfaceWaterUnitLimit?.allocationLimit
+      ? undefined
+      : defaultSurfaceWaterLimit,
+    allocated: surfaceWaterUnitLimit?.allocationAmount,
   };
-  return stat;
-}
 
-interface GWLimit {
-  depth: string;
-  category?: string;
-  subUnitLimit?: string;
-  unitLimit?: string;
-  useDefaultRuleForUnit: boolean;
-  useDefaultRuleForSubUnit: boolean;
-  parentSWUnitId?: number;
-  parentSWSubUnitId?: number;
-  unitAllocated?: {
-    amount?: string;
-    percentage?: number;
+  const subUnitLimitView: LimitView = {
+    limit: surfaceWaterSubUnitLimit?.allocationLimit,
+    allocated: surfaceWaterSubUnitLimit?.allocationAmount,
   };
-  subUnitAllocated?: {
-    amount?: string;
-    percentage?: number;
-  };
-  mergeUnit?: boolean;
-  mergeSubUnit?: boolean;
-  groundwaterAllocationAmountId?: number;
-}
-
-function getGwLimits(activeFeatures: mapboxgl.MapboxGeoJSONFeature[]) {
-  const rows: GWLimit[] = [];
-  if (activeFeatures.length === 0) {
-    rows.push({
-      depth: 'All',
-      useDefaultRuleForSubUnit: false,
-      useDefaultRuleForUnit: true,
-    });
-    return rows;
+  // Ruamahanga (Whaitua s with source_id ='493cb5ae-4086-4649-8d3a-6d41ee9fded7' in the new plan model) uses 2 levels of surface water units. So in areas
+  // where there is no value at the Subunit and there is a management unit,
+  // limit P121 applies.
+  if (
+    !subUnitLimitView.limit &&
+    planRegionId === '493cb5ae-4086-4649-8d3a-6d41ee9fded7' &&
+    Boolean(unitLimitView.limit)
+  ) {
+    subUnitLimitView.overrideText = defaultSurfaceWaterLimit;
   }
 
-  activeFeatures
-    .filter((feature) => feature.properties?.category === 'Category A')
-    .forEach((feature) => {
-      if (
-        !feature.properties?.surface_water_unit_allocation_amount &&
-        !feature.properties?.surface_water_sub_unit_allocation_amount
-      ) {
-        rows.push({
-          depth: feature.properties?.depth,
-          category: 'A',
-          useDefaultRuleForSubUnit: true,
-          useDefaultRuleForUnit: true,
-        });
-      } else {
-        const unitLimit = feature.properties
-          ?.surface_water_unit_allocation_amount
-          ? formatWaterQuantity(
-              feature.properties.surface_water_unit_allocation_amount,
-              feature.properties.surface_water_unit_allocation_amount_unit
-            )
-          : undefined;
-
-        const subUnitLimit = feature.properties
-          ?.surface_water_sub_unit_allocation_amount
-          ? formatWaterQuantity(
-              feature.properties.surface_water_sub_unit_allocation_amount,
-              feature.properties.surface_water_sub_unit_allocation_amount_unit
-            )
-          : undefined;
-
-        rows.push({
-          depth: feature.properties?.depth,
-          category: 'A',
-          unitLimit,
-          subUnitLimit,
-          useDefaultRuleForSubUnit: false,
-          useDefaultRuleForUnit: false,
-          unitAllocated: allocatedProps(
-            feature.properties?.surface_water_unit_allocation_amount,
-            feature.properties?.surface_water_unit_allocated_amount,
-            feature.properties?.surface_water_unit_allocation_amount_unit
-          ),
-          subUnitAllocated: allocatedProps(
-            feature.properties?.surface_water_sub_unit_allocation_amount,
-            feature.properties?.surface_water_sub_unit_allocated_amount,
-            feature.properties?.surface_water_sub_unit_allocation_amount_unit
-          ),
-          parentSWUnitId:
-            feature.properties?.surface_water_unit_allocation_amount_id,
-          parentSWSubUnitId:
-            feature.properties?.surface_water_sub_unit_allocation_amount_id,
-          groundwaterAllocationAmountId:
-            feature.properties?.groundwater_allocation_amount_id,
-        });
-      }
-    });
-
-  activeFeatures
-    .filter((feature) => feature.properties?.category === 'Category B')
-    .forEach((feature) => {
-      rows.push({
-        depth: feature.properties?.depth,
-        category: 'B',
-        useDefaultRuleForUnit: true,
-        useDefaultRuleForSubUnit: false,
-        unitAllocated: allocatedProps(
-          feature.properties?.groundwater_allocation_amount,
-          feature.properties?.groundwater_allocated_amount,
-          feature.properties?.groundwater_allocation_amount_unit
-        ),
-        parentSWUnitId:
-          feature.properties?.surface_water_unit_allocation_amount_id,
-        parentSWSubUnitId:
-          feature.properties?.surface_water_sub_unit_allocation_amount_id,
-        groundwaterAllocationAmountId:
-          feature.properties?.groundwater_allocation_amount_id,
-      });
-    });
-
-  activeFeatures
-    .filter((feature) => feature.properties?.category === 'Category C')
-    .forEach((feature) => {
-      const limit = formatWaterQuantity(
-        feature.properties?.groundwater_allocation_amount,
-        feature.properties?.groundwater_allocation_amount_unit
-      );
-
-      rows.push({
-        depth: feature.properties?.depth,
-        category: 'C',
-        unitLimit: limit,
-        useDefaultRuleForSubUnit: false,
-        useDefaultRuleForUnit: false,
-        unitAllocated: allocatedProps(
-          feature.properties?.groundwater_allocation_amount,
-          feature.properties?.groundwater_allocated_amount,
-          feature.properties?.groundwater_allocation_amount_unit
-        ),
-        parentSWUnitId:
-          feature.properties?.surface_water_unit_allocation_amount_id,
-        parentSWSubUnitId:
-          feature.properties?.surface_water_sub_unit_allocation_amount_id,
-        groundwaterAllocationAmountId:
-          feature.properties?.groundwater_allocation_amount_id,
-      });
-    });
-
-  return rows;
+  return {
+    unitLimitView: formatLimitView(unitLimitView, unit),
+    subUnitLimitView: formatLimitView(subUnitLimitView, unit),
+  };
 }
 
-function allocatedProps(
-  limitAmount: string,
-  allocatedAmount: string,
+function buildGroundWaterLimitView(
+  groundwaterLimits: GroundWaterLimit[],
+  surfaceWaterUnitLimits: SurfaceWaterLimit[],
+  surfaceWaterSubUnitLimits: SurfaceWaterLimit[],
+  defaultGroundWaterLimit: string,
   unit: string
 ) {
-  let amount;
-  let percentage;
-  if (allocatedAmount && unit) {
-    amount = formatWaterQuantity(Math.round(Number(allocatedAmount)), unit);
-    if (limitAmount) {
-      percentage = Math.round(
-        (Number(allocatedAmount) / Number(limitAmount)) * 100
+  return groundwaterLimits.map((groundWaterLimit) => {
+    const depletesFrom = mapDepletesFrom(
+      groundWaterLimit,
+      surfaceWaterUnitLimits,
+      surfaceWaterSubUnitLimits
+    );
+
+    const limitsToDisplay = unitLimitsToDisplay(
+      groundWaterLimit,
+      defaultGroundWaterLimit,
+      depletesFrom.depletesFromUnitLimit,
+      depletesFrom.depletesFromSubunitLimit
+    );
+    limitsToDisplay.subUnitLimitView = formatLimitView(
+      limitsToDisplay.subUnitLimitView,
+      unit
+    );
+    limitsToDisplay.unitLimitView = formatLimitView(
+      limitsToDisplay.unitLimitView,
+      unit
+    );
+
+    return {
+      groundWaterLimit,
+      ...depletesFrom,
+      ...limitsToDisplay,
+    };
+  });
+}
+
+function mapDepletesFrom(
+  limit: GroundWaterLimit,
+  surfaceWaterUnitLimits: SurfaceWaterLimit[],
+  surfaceWaterSubUnitLimits: SurfaceWaterLimit[]
+) {
+  let depletesFromUnitLimit;
+  let depletesFromSubunitLimit;
+  if (limit.depletionLimitId) {
+    depletesFromSubunitLimit = surfaceWaterSubUnitLimits.find(
+      (sw) => sw.id === limit.depletionLimitId
+    );
+    let depletesFromUnitLimitId: number | undefined;
+    if (
+      depletesFromSubunitLimit &&
+      depletesFromSubunitLimit.parentSurfaceWaterLimitId
+    ) {
+      depletesFromUnitLimitId =
+        depletesFromSubunitLimit.parentSurfaceWaterLimitId;
+    } else if (!depletesFromSubunitLimit) {
+      depletesFromUnitLimitId = limit.depletionLimitId;
+    }
+    if (depletesFromUnitLimitId) {
+      depletesFromUnitLimit = surfaceWaterUnitLimits.find(
+        (sw) => sw.id === depletesFromUnitLimitId
       );
     }
   }
-  return { amount, percentage };
+  return {
+    depletesFromUnitLimit,
+    depletesFromSubunitLimit,
+  };
+}
+
+function unitLimitsToDisplay(
+  groundWaterLimit: GroundWaterLimit,
+  defaultGroundWaterLimit: string,
+  depletesFromUnitLimit?: SurfaceWaterLimit,
+  depletesFromSubunitLimit?: SurfaceWaterLimit
+): { unitLimitView: LimitView; subUnitLimitView: LimitView } {
+  switch (groundWaterLimit.category) {
+    case 'A':
+      if (!groundWaterLimit.depletionLimitId) {
+        return {
+          unitLimitView: {
+            overrideText: defaultGroundWaterLimit,
+          },
+          subUnitLimitView: {
+            overrideText: defaultGroundWaterLimit,
+          },
+        };
+      }
+      return {
+        unitLimitView: {
+          limit: depletesFromUnitLimit?.allocationLimit,
+          allocated: depletesFromUnitLimit?.allocationAmount,
+        },
+        subUnitLimitView: {
+          limit: depletesFromSubunitLimit?.allocationLimit,
+          allocated: depletesFromSubunitLimit?.allocationAmount,
+        },
+      };
+    case 'B':
+      return {
+        unitLimitView: {
+          overrideText: 'Refer to Table 4.1 of PNRP',
+          limit: groundWaterLimit.allocationLimit,
+          allocated: groundWaterLimit.allocationAmount,
+        },
+        subUnitLimitView: {},
+      };
+    case 'C':
+      return {
+        unitLimitView: {
+          limit: groundWaterLimit.allocationLimit,
+          allocated: groundWaterLimit.allocationAmount,
+        },
+        subUnitLimitView: {},
+      };
+    default:
+      return {
+        unitLimitView: {
+          limit: groundWaterLimit.allocationLimit,
+          allocated: groundWaterLimit.allocationAmount,
+        },
+        subUnitLimitView: {},
+      };
+  }
+}
+
+function filterGroupAndSort(
+  limitViews: GroundwaterLimitView[],
+  category: string
+) {
+  const filtered = limitViews.filter(
+    (lv) => lv.groundWaterLimit.category === category
+  );
+  const grouped = groupBy(filtered, (lv) => lv.groundWaterLimit.limitId);
+
+  Object.values(grouped).forEach((group) => {
+    sortByDepth(group);
+  });
+
+  return grouped;
+}
+
+function sortByDepth(groundwaterLimitsView: GroundwaterLimitView[]) {
+  return groundwaterLimitsView.sort((a, b) => {
+    // This specific sorting is ok because the set of values we have for Depths can always be sorted by the first character currently
+    const alphabet = '0123456789>';
+    const first = a.groundWaterLimit.depth.charAt(0);
+    const second = b.groundWaterLimit.depth.charAt(0);
+    return alphabet.indexOf(first) - alphabet.indexOf(second);
+  });
+}
+
+function formatLimitView(limitView: LimitView, unit: string) {
+  if (limitView.overrideText) {
+    limitView.limitToDisplay = limitView.overrideText;
+  } else if (limitView.limit) {
+    limitView.limitToDisplay = formatWaterQuantity(limitView.limit, unit);
+  }
+
+  if (limitView.allocated) {
+    limitView.allocatedToDisplay = formatWaterQuantity(
+      Math.round(limitView.allocated),
+      unit
+    );
+  }
+
+  if (limitView.limit && limitView.allocated) {
+    limitView.allocatedPercent = Math.round(
+      (limitView.allocated / limitView.limit) * 100
+    );
+  }
+  return limitView;
 }

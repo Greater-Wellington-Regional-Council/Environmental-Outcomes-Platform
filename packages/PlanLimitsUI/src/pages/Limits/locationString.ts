@@ -1,14 +1,3 @@
-export type PinnedLocation = {
-  longitude: number;
-  latitude: number;
-};
-
-export type ViewLocation = {
-  longitude: number;
-  latitude: number;
-  zoom: number;
-};
-
 export function parseLocationString(
   locationString: string
 ): ViewLocation | null {
