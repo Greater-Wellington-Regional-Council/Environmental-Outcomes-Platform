@@ -8,7 +8,7 @@ tasks:
 
 containers:
   java-build-env:
-    image: eclipse-temurin:18
+    image: eclipse-temurin:17
     environment:
       GRADLE_OPTS: -Dorg.gradle.daemon=false
     volumes:
