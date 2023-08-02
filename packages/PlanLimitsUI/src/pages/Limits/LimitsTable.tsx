@@ -8,14 +8,14 @@ const footNoteTexts = [
     number: 1,
     id: 'PNRP41',
     text: 'Refer to Table 4.1 of PNRP',
-    href: 'https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=52',
+    href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=133',
     footNoteText: 'Table 4.1 of the Proposed Natural Resource Plan Limits',
   },
   {
     number: 2,
     id: 'PRNP121',
     text: 'Refer to Policy P121 of PRNP',
-    href: 'https://pnrp.gw.govt.nz/assets/Uploads/7-Chapter-4-Policies-Appeal-version-2022-FORMATTED.pdf#page=59',
+    href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=139',
     footNoteText: 'Policy P121 of the Proposed Natural Resource Plan Limits',
   },
 ];

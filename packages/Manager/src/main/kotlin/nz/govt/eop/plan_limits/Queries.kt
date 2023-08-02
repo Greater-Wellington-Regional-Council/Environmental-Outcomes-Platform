@@ -49,6 +49,7 @@ class Queries(@Autowired val context: DSLContext) {
                 PLAN_REGIONS.ID,
                 PLAN_REGIONS.PLAN_ID,
                 PLAN_REGIONS.NAME,
+                PLAN_REGIONS.REFERENCE_URL,
                 PLAN_REGIONS.SOURCE_ID,
                 PLAN_REGIONS.BOUNDARY.`as`("geometry"),
                 PLAN_REGIONS.DEFAULT_SURFACE_WATER_LIMIT,
