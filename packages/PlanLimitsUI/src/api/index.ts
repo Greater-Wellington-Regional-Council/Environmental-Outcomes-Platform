@@ -1,5 +1,5 @@
 import type { FeatureCollection, Geometry } from 'geojson';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { camelCase, mapKeys } from 'lodash';
 
 const DEV_HOST_REGEX = /.*\.gw-eop-dev\.tech$/;
@@ -121,6 +121,7 @@ export function usePlanLimitsData(councilId: number) {
   );
   const flowLimits = useFeatureQueryWith<FlowLimit>('/plan-limits/flow-limits');
 
+  // TODO: can we re-use useFeatureQueryWith here?
   const plan = useQuery({
     enabled: Boolean(manifest),
     queryKey: ['/plan-limits/plan', councilId, manifest],
@@ -135,6 +136,8 @@ export function usePlanLimitsData(councilId: number) {
       ),
   });
 
+  // Simplify the data transformation here, and potentially combine with
+  // mapFeatureCollectionPropsToType
   const isLoaded =
     councils.isSuccess &&
     planRegions.isSuccess &&
@@ -185,39 +188,4 @@ export function usePlanLimitsData(councilId: number) {
   };
 }
 
-const key = 'manifest';
-
-function useGeoJsonQueries() {
-  const { data: manifest } = useQuery({
-    queryKey: [key],
-    refetchOnWindowFocus: false,
-    queryFn: () => fetchFromAPI<{ [key: string]: string }>('/manifest'),
-  });
-
-  const queries = [
-    '/layers/councils',
-    '/layers/whaitua',
-    '/layers/surface-water-management-units',
-    '/layers/surface-water-management-sub-units',
-    '/layers/flow-management-sites',
-    '/layers/flow-limits',
-    '/layers/groundwater-zones',
-  ].map((path) => {
-    return {
-      // This defers execution until the manifest query has loaded
-      enabled: Boolean(manifest),
-      // eslint-disable-next-line @tanstack/query/exhaustive-deps
-      queryKey: [path],
-      refetchOnWindowFocus: false,
-      queryFn: () =>
-        // We use ! here since we know manifest will be populated when this executes
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        fetchFromAPI<FeatureCollection>(`${path}?v=${manifest![path]}`),
-    };
-  });
-
-  return useQueries({ queries });
-}
-
-export type GeoJsonQueries = ReturnType<typeof useGeoJsonQueries>;
 export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;

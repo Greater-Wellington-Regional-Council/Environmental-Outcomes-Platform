@@ -65,9 +65,11 @@ function mapFeatureLayer<T extends Identifyable>(
   layerName: string,
   collection: T[]
 ) {
+  // TODO: Throw if there is more than one result?
   return mapFeatureLayers<T>(features, layerName, collection)[0];
 }
 
+// TODO: Push this into useAppState?
 function mapAllFeatures(
   features: mapboxgl.MapboxGeoJSONFeature[],
   appPlanData: AllPlanData
