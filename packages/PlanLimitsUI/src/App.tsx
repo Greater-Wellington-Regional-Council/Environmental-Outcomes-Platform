@@ -6,19 +6,24 @@ import {
   useRouteError,
   isRouteErrorResponse,
 } from 'react-router-dom';
-import { loader, defaultAppPath } from './lib/loader';
+import { loader, councilLoader, defaultAppPath } from './lib/loader';
 import Layout from './Layout';
 import Limits from './pages/Limits';
+import Usage from './pages/Usage';
 
 export const routes: RouteObject[] = [
   {
     element: <Layout />,
     errorElement: <ErrorPage />,
     children: [
-      // This redirects "/" and "/limits" to a default location
       {
         path: '/limits?',
         element: <Navigate replace to={defaultAppPath} />,
+      },
+      {
+        path: '/limits/:council/usage',
+        loader: councilLoader,
+        element: <Usage />,
       },
       {
         path: '/limits/:council/:location?',

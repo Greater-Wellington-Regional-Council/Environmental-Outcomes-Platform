@@ -16,8 +16,11 @@
   "dependencies": {
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.16",
+    "@nivo/calendar": "^0.83.0",
+    "@nivo/heatmap": "^0.83.0",
     "@tanstack/react-query": "^4.27.0",
     "@types/geojson": "^7946.0.10",
+    "date-fns": "^2.30.0",
     "jotai": "^2.0.3",
     "lodash": "^4.17.21",
     "mapbox-gl": "npm:empty-npm-package@^1.0.0",
