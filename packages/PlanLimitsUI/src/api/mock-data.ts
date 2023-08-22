@@ -15,8 +15,9 @@ noise(window);
 
 const DATE_FORMAT = 'yyyy-MM-dd';
 
-function rnd(n) {
-  return window.noise.perlin2(0.1, n / 100);
+window.noise.seed(Math.random());
+function rnd(x, y) {
+  return window.noise.perlin2(x / 5, y / 5);
 }
 
 function generateInterval() {
@@ -31,17 +32,17 @@ function generateInterval() {
 
 export function generateHeatmapData() {
   const interval = generateInterval();
-  return Areas.map((area) => {
+  return Areas.map((area, areaIndex) => {
     // const data = eachMonthOfInterval(interval).map((month) => {
     //   return {
     //     x: format(month, 'MMM yy'),
     //     y: Math.round(Math.random() * 100),
     //   };
     // });
-    const data = eachWeekOfInterval(interval).map((month) => {
+    const data = eachWeekOfInterval(interval).map((month, monthIndex) => {
       return {
         x: '' + format(month, 'yyyy-MM-dd'),
-        y: Math.random(),
+        y: Math.abs(rnd(areaIndex, monthIndex)),
       };
     });
 
@@ -58,11 +59,11 @@ export function generateDailyUsageData() {
   const start = addYears(today, -1);
   const interval = generateInterval();
 
-  return Areas.map((area) => {
-    const data = eachDayOfInterval(interval).map((day) => {
+  return Areas.map((area, areaIndex) => {
+    const data = eachDayOfInterval(interval).map((day, dayIndex) => {
       return {
         day: format(day, DATE_FORMAT),
-        value: Math.round(Math.random() * 100),
+        value: Math.round(Math.abs(rnd(areaIndex, dayIndex)) * 100),
       };
     });
     return {
