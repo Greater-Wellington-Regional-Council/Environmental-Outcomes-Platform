@@ -17,6 +17,7 @@ export function useAppState(
 
   const setAppStateFromResult = useCallback(
     (activeLimits: ActiveLimits, allPlanData: AllPlanData) => {
+      // TODO: Early exit if no plan region?
       let flowSite = null;
       if (activeLimits.flowLimit) {
         flowSite = allPlanData.flowMeasurementSites.find(
@@ -49,6 +50,7 @@ export function useAppState(
         council.unitTypes.surface
       );
 
+      // TODO: Comment on why we are doing this
       if (!council.hasGroundwaterCategories) {
         activeLimits.groundWaterLimits.forEach((gwl) => {
           gwl.category = 'C';
@@ -127,13 +129,21 @@ function buildSurfaceWaterLimitView(
   planRegionId?: string,
   unit: string
 ): SurfaceWaterLimitView {
-  const unitLimitView: LimitView = {
-    limit: surfaceWaterUnitLimit?.allocationLimit,
-    overrideText: surfaceWaterUnitLimit?.allocationLimit
-      ? undefined
-      : defaultSurfaceWaterLimit,
-    allocated: surfaceWaterUnitLimit?.allocationAmount,
-  };
+  // const unitLimitView: LimitView = {
+  //   limit: surfaceWaterUnitLimit?.allocationLimit,
+  //   overrideText: surfaceWaterUnitLimit?.allocationLimit
+  //     ? undefined
+  //     : defaultSurfaceWaterLimit,
+  //   allocated: surfaceWaterUnitLimit?.allocationAmount,
+  // };
+  const unitLimitView: LimitView = surfaceWaterUnitLimit
+    ? {
+        limit: surfaceWaterUnitLimit.allocationLimit,
+        allocated: surfaceWaterUnitLimit.allocationAmount,
+      }
+    : {
+        overrideText: defaultSurfaceWaterLimit,
+      };
 
   const subUnitLimitView: LimitView = {
     limit: surfaceWaterSubUnitLimit?.allocationLimit,
@@ -198,12 +208,14 @@ function mapDepletesFrom(
   surfaceWaterUnitLimits: SurfaceWaterLimit[],
   surfaceWaterSubUnitLimits: SurfaceWaterLimit[]
 ) {
+  // TODO: Add a verbal desc of what this is doing
   let depletesFromUnitLimit;
   let depletesFromSubunitLimit;
   if (limit.depletionLimitId) {
     depletesFromSubunitLimit = surfaceWaterSubUnitLimits.find(
       (sw) => sw.id === limit.depletionLimitId
     );
+
     let depletesFromUnitLimitId: number | undefined;
     if (
       depletesFromSubunitLimit &&
