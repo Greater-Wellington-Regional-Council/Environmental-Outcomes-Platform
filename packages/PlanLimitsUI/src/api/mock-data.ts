@@ -10,8 +10,14 @@ import {
   getYear,
   format,
 } from 'date-fns';
+import noise from '../noise.js';
+noise(window);
 
 const DATE_FORMAT = 'yyyy-MM-dd';
+
+function rnd(n) {
+  return window.noise.perlin2(0.1, n / 100);
+}
 
 function generateInterval() {
   const today = new Date();
@@ -34,8 +40,8 @@ export function generateHeatmapData() {
     // });
     const data = eachWeekOfInterval(interval).map((month) => {
       return {
-        x: format(month, 'yyyy-MM-dd'),
-        y: Math.round(Math.random() * 100),
+        x: '' + format(month, 'yyyy-MM-dd'),
+        y: Math.random(),
       };
     });
 

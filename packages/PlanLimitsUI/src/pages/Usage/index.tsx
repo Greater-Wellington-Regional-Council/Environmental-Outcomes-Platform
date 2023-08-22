@@ -5,7 +5,19 @@ import {
   generateHeatmapData,
 } from '../../api/mock-data';
 import { ResponsiveTimeRange } from '@nivo/calendar';
-import { ResponsiveHeatMapCanvas } from '@nivo/heatmap';
+import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
+
+const CustomTooltip = ({ cell }: { cell: ComputedCell<any> }) => {
+  return (
+    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
+      {cell.serieId}
+      <br />
+      Week of {cell.data.x}
+      <br />
+      Usage: <strong>{cell.formattedValue}</strong>
+    </div>
+  );
+};
 
 export default function Usage() {
   const [council] = useAtom(councilAtom);
@@ -18,10 +30,13 @@ export default function Usage() {
         Telemetered water usage against allocation for {council.name} by area
       </h1>
 
-      <div className="w-full h-[800px] mb-4">
+      <h2>Weekly</h2>
+      <div className="w-full h-[700px] mb-8">
         <ResponsiveHeatMapCanvas
+          tooltip={CustomTooltip}
           data={heatmapData}
-          margin={{ top: 80, right: 50, bottom: 0, left: 120 }}
+          valueFormat={'=-0.0~%'}
+          margin={{ top: 80, right: 80, bottom: 0, left: 120 }}
           colors={{
             type: 'sequential',
             scheme: 'oranges',
@@ -44,7 +59,7 @@ export default function Usage() {
               tickSize: 3,
               tickSpacing: 4,
               tickOverlap: false,
-              tickFormat: '>-.2s',
+              tickFormat: '=-0.0~%',
               titleAlign: 'start',
               titleOffset: 4,
             },
@@ -54,9 +69,16 @@ export default function Usage() {
 
       {allUsageData.map((usageDataForArea) => (
         <div key={usageDataForArea.area} className="w-full h-44 mb-8">
-          <h2 className="mb-2">{usageDataForArea.area}</h2>
+          <h2 className="mb-2">Daily - {usageDataForArea.area}</h2>
           <div className="h-44">
             <ResponsiveTimeRange
+              tooltip={(data) => (
+                <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
+                  <strong>{data.day}</strong>
+                  <br />
+                  Usage: <strong>{data.value}%</strong>
+                </div>
+              )}
               data={usageDataForArea.data}
               from={usageDataForArea.start}
               to={usageDataForArea.end}
