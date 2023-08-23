@@ -152,6 +152,8 @@ function HeatMap({ usageData }) {
         colors={{
           type: 'sequential',
           scheme: 'oranges',
+          minValue: 0,
+          maxValue: 1,
         }}
       />
     </div>
@@ -164,8 +166,7 @@ const CustomTooltip = ({ cell }: { cell: ComputedCell<any> }) => {
   const usageValue = Math.round(Total * cell.value);
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      <strong>{formatNumber.format(usageValue)}</strong> used of 17,842m
-      <sup>3</sup>/day
+      {formatNumber.format(usageValue)} of 17,842 m<sup>3</sup>/day
     </div>
   );
 };

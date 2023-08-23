@@ -1,7 +1,7 @@
 import {
   addYears,
   addDays,
-  addWeeks,
+  getDayOfYear,
   eachDayOfInterval,
   eachWeekOfInterval,
   getDate,
@@ -42,7 +42,7 @@ export function sevenDayUsage(offset: number) {
         data: eachDayOfInterval({ start, end }).map((date, dayIndex) => {
           return {
             x: format(date, 'EEE d'),
-            y: Math.abs(rnd(23, getDate(date))),
+            y: 2 * Math.abs(rnd(50, getDayOfYear(date))),
           };
         }),
       },
