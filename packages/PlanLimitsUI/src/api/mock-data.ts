@@ -1,9 +1,8 @@
-import { take } from 'lodash';
 import {
   addYears,
   addDays,
+  addWeeks,
   eachDayOfInterval,
-  eachMonthOfInterval,
   eachWeekOfInterval,
   getDate,
   getMonth,
@@ -30,6 +29,27 @@ function generateInterval() {
   };
 }
 
+export function sevenDayUsage(offset: number) {
+  const today = new Date();
+  const end = addDays(today, offset * 7 - 1);
+  const start = addDays(end, -6);
+  return {
+    start,
+    end,
+    data: [
+      {
+        id: 'Usage',
+        data: eachDayOfInterval({ start, end }).map((date, dayIndex) => {
+          return {
+            x: format(date, 'EEE d'),
+            y: Math.abs(rnd(23, getDate(date))),
+          };
+        }),
+      },
+    ],
+  };
+}
+
 export function generateHeatmapData() {
   const interval = generateInterval();
   return Areas.map((area, areaIndex) => {
@@ -41,7 +61,7 @@ export function generateHeatmapData() {
     // });
     const data = eachWeekOfInterval(interval).map((month, monthIndex) => {
       return {
-        x: '' + format(month, 'yyyy-MM-dd'),
+        x: format(month, 'yyyy-MM-dd'),
         y: Math.abs(rnd(areaIndex, monthIndex)),
       };
     });

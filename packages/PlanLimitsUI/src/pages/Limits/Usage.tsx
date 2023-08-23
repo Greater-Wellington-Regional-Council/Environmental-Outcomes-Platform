@@ -1,48 +1,20 @@
+import { format } from 'date-fns';
 import { useState } from 'react';
-import clsx from 'clsx';
 import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
+import { sevenDayUsage } from '../../api/mock-data';
 
 type DisplayOptions = 'table' | 'sections';
 
-const TestData = [
-  {
-    id: 'Usage',
-    data: [
-      {
-        x: 'Sun',
-        y: 0.1,
-      },
-      {
-        x: 'Mon',
-        y: 0.3,
-      },
-      {
-        x: 'Tue',
-        y: 0.4,
-      },
-      {
-        x: 'Wed',
-        y: 0.6,
-      },
-      {
-        x: 'Thu',
-        y: 0.4,
-      },
-      {
-        x: 'Fri',
-        y: 0.2,
-      },
-      {
-        x: 'Sat',
-        y: 0.8,
-      },
-    ],
-  },
-];
-
 export default function Usage() {
   const [displayOption, setDisplayOption] = useState<DisplayOptions>('table');
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [usageData, setUsageData] = useState(sevenDayUsage(weekOffset));
+
+  const updateData = (newOffset: number) => {
+    setWeekOffset(newOffset);
+    setUsageData(sevenDayUsage(newOffset));
+  };
 
   return (
     <>
@@ -64,7 +36,15 @@ export default function Usage() {
         </button>
       </div> */}
       <div className="mb-4">
-        {displayOption === 'table' ? <Table /> : <Sections />}
+        {displayOption === 'table' ? (
+          <Table
+            usageData={usageData}
+            updateData={updateData}
+            weekOffset={weekOffset}
+          />
+        ) : (
+          <Sections />
+        )}
       </div>
       <a
         href="usage"
@@ -79,7 +59,7 @@ export default function Usage() {
   );
 }
 
-function Table() {
+function Table({ usageData, updateData, weekOffset }) {
   return (
     <table className="border-collapse w-full">
       <thead>
@@ -103,10 +83,27 @@ function Table() {
           <td className="border text-center p-0">
             <div className="flex flex-col">
               <div className="p-2 bg-gray-100 text-xs border-b">
-                Past 7 days
+                Week ending {format(usageData.end, 'do LLLL y')}
               </div>
-              <div className="p-2 text-sm">
-                <HeatMap />
+              <div className="px-2 text-sm">
+                <HeatMap usageData={usageData} />
+              </div>
+              <div className="w-full flex justify-between p-2 text-xs">
+                <button
+                  className="underline"
+                  onClick={() => updateData(weekOffset - 1)}
+                >
+                  View earlier data
+                </button>
+
+                {weekOffset < 0 && (
+                  <button
+                    className="underline"
+                    onClick={() => updateData(weekOffset + 1)}
+                  >
+                    View later data
+                  </button>
+                )}
               </div>
             </div>
           </td>
@@ -144,12 +141,12 @@ function Sections() {
   );
 }
 
-function HeatMap() {
+function HeatMap({ usageData }) {
   return (
     <div className="h-16">
       <ResponsiveHeatMapCanvas
         tooltip={CustomTooltip}
-        data={TestData}
+        data={usageData.data}
         valueFormat={'=-0.0~%'}
         margin={{ top: 30, bottom: 0, left: 0 }}
         colors={{
@@ -161,14 +158,14 @@ function HeatMap() {
   );
 }
 const Total = 17842;
-const format = Intl.NumberFormat();
+const formatNumber = Intl.NumberFormat();
 
 const CustomTooltip = ({ cell }: { cell: ComputedCell<any> }) => {
   const usageValue = Math.round(Total * cell.value);
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      <strong>{format.format(usageValue)}</strong> used of 17,842m<sup>3</sup>
-      /day
+      <strong>{formatNumber.format(usageValue)}</strong> used of 17,842m
+      <sup>3</sup>/day
     </div>
   );
 };
