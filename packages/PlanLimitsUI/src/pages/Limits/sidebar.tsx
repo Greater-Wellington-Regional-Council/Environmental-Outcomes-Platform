@@ -8,6 +8,7 @@ import {
   QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline';
 import formatWaterQuantity from './formatWaterQuantity';
+import Usage from './Usage';
 
 const LimitsListItem = ({
   title,
@@ -153,6 +154,9 @@ export default function Sidebar({
             appState={appState}
           />
         )}
+        <div className="mb-6">
+          <Usage />
+        </div>
       </div>
 
       <footer className="px-6 py-4 border-t flex items-start">

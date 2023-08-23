@@ -2,6 +2,7 @@ import type { FeatureCollection, Geometry } from 'geojson';
 import { useQuery } from '@tanstack/react-query';
 import { camelCase, mapKeys } from 'lodash';
 
+const REVIEW_HOST_REGEX = /.*\.amplifyapp\.com$/;
 const DEV_HOST_REGEX = /.*\.gw-eop-dev\.tech$/;
 const STAGE_HOST_REGEX = /.*\.gw-eop-stage\.tech$/;
 const PROD_HOSTNAME = 'plan-limits.eop.gw.govt.nz';
@@ -10,12 +11,12 @@ const determineBackendUri = (hostname: string) => {
     return 'https://data.eop.gw.govt.nz';
   }
 
-  if (DEV_HOST_REGEX.test(hostname)) {
-    return 'https://data.gw-eop-dev.tech';
-  }
-
   if (STAGE_HOST_REGEX.test(hostname)) {
     return 'https://data.gw-eop-stage.tech';
+  }
+
+  if (DEV_HOST_REGEX.test(hostname) || REVIEW_HOST_REGEX.test(hostname)) {
+    return 'https://data.gw-eop-dev.tech';
   }
 
   return 'http://localhost:8080';
