@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 
 type DisplayOptions = 'table' | 'sections';
 
@@ -46,7 +47,7 @@ export default function Usage() {
   return (
     <>
       <h3 className="text-lg uppercase mb-2 tracking-wider">Usage</h3>
-      <div className="mb-4">
+      {/* <div className="mb-4">
         Show as:
         <button
           className={clsx('mx-2', displayOption === 'table' && 'font-bold')}
@@ -61,8 +62,19 @@ export default function Usage() {
         >
           Sections
         </button>
+      </div> */}
+      <div className="mb-4">
+        {displayOption === 'table' ? <Table /> : <Sections />}
       </div>
-      <div>{displayOption === 'table' ? <Table /> : <Sections />}</div>
+      <a
+        href="usage"
+        className="text-sm underline block mb-2"
+        target="_blank"
+        rel="noreferrer"
+      >
+        View more detailed SW usage
+        <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
+      </a>
     </>
   );
 }
