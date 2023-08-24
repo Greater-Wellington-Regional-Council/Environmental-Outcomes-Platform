@@ -112,7 +112,7 @@ function Table({ usageData, updateData, weekOffset }) {
           <td className="border p-2 text-center bg-gray-100">GW</td>
           <td className="border p-2 text-center text-sm">
             40,000
-            <br />m<sup>3</sup>/day
+            <br />m<sup>3</sup>/year
           </td>
           <td className="border text-center p-0">
             <div className="flex flex-col">
