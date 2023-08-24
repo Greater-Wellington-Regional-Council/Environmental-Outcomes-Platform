@@ -60,7 +60,7 @@ export default function Sidebar({
             appState={appState}
           />
         )}
-        <div className="mb-6">
+        <div className="my-6">
           <UsageTable />
         </div>
       </div>
