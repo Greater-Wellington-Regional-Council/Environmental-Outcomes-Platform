@@ -5,7 +5,7 @@ import {
   createPinnedLocationString,
   parseLocationString,
   parsePinnedLocation,
-} from '../pages/Limits/locationString';
+} from './locationString';
 
 import { Councils, DefaultCouncil } from './councilData';
 

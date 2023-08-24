@@ -2,11 +2,11 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
-import { sevenDayUsage } from '../../api/mock-data';
+import { sevenDayUsage } from '../../../api/mock-data';
 
 type DisplayOptions = 'table' | 'sections';
 
-export default function Usage() {
+export default function UsageTable() {
   const [displayOption, setDisplayOption] = useState<DisplayOptions>('table');
   const [weekOffset, setWeekOffset] = useState(0);
   const [usageData, setUsageData] = useState(sevenDayUsage(weekOffset));

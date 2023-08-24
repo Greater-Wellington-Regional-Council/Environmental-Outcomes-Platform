@@ -1,14 +1,15 @@
 import { useAtom } from 'jotai';
-import { showDisclaimerAtom } from '../../components/Disclaimer';
-import { councilAtom } from '../../lib/loader';
-import LimitsTable from './LimitsTable';
-import Button from '../../components/Button';
 import {
   ArrowTopRightOnSquareIcon,
   QuestionMarkCircleIcon,
 } from '@heroicons/react/24/outline';
-import formatWaterQuantity from './formatWaterQuantity';
-import Usage from './Usage';
+
+import { showDisclaimerAtom } from '../../../components/Disclaimer';
+import { councilAtom } from '../../../lib/loader';
+import LimitsTable from './LimitsTable';
+import Button from '../../../components/Button';
+import Usage from './UsageTable';
+import formatWaterQuantity from '../../../lib/formatWaterQuantity';
 
 const LimitsListItem = ({
   title,
