@@ -23,23 +23,24 @@ export default function Sidebar({
       <Header council={council} />
 
       <div className=" border-gray-200 px-6 py-4">
-        <div className="pb-4 flex flex-row justify-around">
+        <div className="mb-2 flex flex-row justify-end gap-2 items-center">
+          <div>View:</div>
           <Button
-            text="Surface water view"
+            text="Surface water"
             onClick={() => {
               setWaterTakeFilter('Surface');
             }}
             active={waterTakeFilter === 'Surface'}
           />
           <Button
-            text="Groundwater view"
+            text="Groundwater"
             onClick={() => {
               setWaterTakeFilter('Ground');
             }}
             active={waterTakeFilter === 'Ground'}
           />
           <Button
-            text="Combined view"
+            text="Combined"
             onClick={() => {
               setWaterTakeFilter('Combined');
             }}

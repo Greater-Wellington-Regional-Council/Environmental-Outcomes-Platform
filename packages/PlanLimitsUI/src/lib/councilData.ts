@@ -35,9 +35,9 @@ export const Councils: Council[] = [
       region: 'Whaitua',
       surfaceWaterParent: 'Unit',
       surfaceWaterChild: 'Sub-unit',
-      surfaceWaterParentLimit: 'Surface Water Catchment Unit',
-      surfaceWaterChildLimit: 'Surface Water Catchment Sub-unit',
-      groundwaterLimit: 'Groundwater Catchment Unit',
+      surfaceWaterParentLimit: 'Surface Water Unit',
+      surfaceWaterChildLimit: 'Surface Water Sub-unit',
+      groundwaterLimit: 'Groundwater Unit',
     },
   },
   {

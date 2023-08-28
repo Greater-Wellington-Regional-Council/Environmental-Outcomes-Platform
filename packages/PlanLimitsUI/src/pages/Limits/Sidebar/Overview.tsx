@@ -10,13 +10,13 @@ const LimitsListItem = ({
   text: string | JSX.Element;
   reference?: string;
 }) => (
-  <div className="mb-4">
-    <dt className="font-semibold">{title}</dt>
-    <dd>
+  <div className="mb-2 flex">
+    <dt className="text-sm font-semibold w-44 flex-none text-right">{title}</dt>
+    <dd className="ml-2 text-sm">
       {text}
       {reference && (
         <a href={reference} target="_blank" rel="noreferrer">
-          <QuestionMarkCircleIcon className="h-5 inline pl-1 align-text-top" />
+          <QuestionMarkCircleIcon className="h-5 inline pl-1" />
         </a>
       )}
     </dd>
@@ -34,8 +34,8 @@ export default function Overview({
 }) {
   return (
     <>
-      <h3 className="text-lg uppercase mb-2 tracking-wider">Area</h3>
-      <dl className="mb-6">
+      <h3 className="text-lg uppercase tracking-wider">Area</h3>
+      <dl className="mb-2">
         <LimitsListItem
           title={council.labels.region}
           text={appState.planRegion?.name ?? 'None'}

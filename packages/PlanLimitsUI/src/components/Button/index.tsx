@@ -5,9 +5,9 @@ type Props = {
 };
 
 const defaultStyles =
-  'px-2 py-1 font-semibold text-sm bg-white text-nui rounded-full shadow-sm border-2 border-nui hover:bg-nui hover:text-white transition-colors duration-150 ease-in-out';
+  'px-2 py-1 text-sm bg-white text-nui rounded-full shadow-sm border-2 border-nui hover:bg-nui hover:text-white transition-colors duration-150 ease-in-out';
 const activeStyles =
-  'px-2 py-1 font-semibold text-sm bg-nui text-white rounded-full shadow-sm border-2 border-nui';
+  'px-2 py-1 text-sm bg-nui text-white rounded-full shadow-sm border-2 border-nui';
 
 export default function Button({ text, active = false, onClick }: Props) {
   return (
