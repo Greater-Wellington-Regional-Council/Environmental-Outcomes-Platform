@@ -96,15 +96,12 @@ export function generateDailyUsageData() {
 }
 
 const Areas = [
+  // Ruamahanga Whaitua
   'Booths',
   'Huangarua',
-  'Hutt',
   'Kopuaranga',
   'LakeWairarapa',
-  'Mangaone',
   'Mangatarere',
-  'Orongorongo',
-  'Otaki',
   'Otukura',
   'Papawai',
   'Parkvale',
@@ -112,10 +109,16 @@ const Areas = [
   'Ruamahanga-Middle',
   'Ruamahanga-Upper',
   'Tauherenikau',
-  'Waikanae',
   'Waingawa',
-  'Wainuiomata',
   'Waiohine',
   'Waipoua',
+  // Kāpiti Whaitua
+  'Mangaone',
+  'Otaki',
+  'Waikanae',
   'Waitohu',
+  // Te Whanganui-a-Tara Whaitua
+  'Hutt',
+  'Orongorongo',
+  'Wainuiomata',
 ];
