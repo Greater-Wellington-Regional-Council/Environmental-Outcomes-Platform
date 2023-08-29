@@ -1,6 +1,7 @@
 import { useAtom } from 'jotai';
 import { councilAtom } from '../../lib/loader';
 import {
+  generateMockData,
   generateDailyUsageData,
   generateHeatmapData,
 } from '../../api/mock-data';
@@ -23,19 +24,20 @@ export default function Usage() {
   const [council] = useAtom(councilAtom);
   const allUsageData = generateDailyUsageData();
   const heatmapData = generateHeatmapData();
+  const mockData = generateMockData();
 
   return (
     <div className="p-4">
       <div className="flex items-baseline justify-between">
         <h1 id="top" className="text-xl font-light mb-2 uppercase">
-          Surface Water Usage
+          Water Usage
         </h1>
         <p className="mb-2">
           Telemetered usage against allocation for {council.name}
         </p>
       </div>
 
-      <h2 className="text-lg">Weekly</h2>
+      <h2 className="text-lg">Surface Water Weekly</h2>
       <div className="w-full h-[400px] mb-8">
         <ResponsiveHeatMapCanvas
           onClick={(cell) => {
@@ -45,18 +47,59 @@ export default function Usage() {
           tooltip={CustomTooltip}
           data={heatmapData}
           valueFormat={'=-0.0~%'}
-          margin={{ top: 60, right: 60, bottom: 0, left: 110 }}
+          margin={{ top: 60, right: 70, bottom: 0, left: 130 }}
           colors={{
             type: 'sequential',
             scheme: 'oranges',
-            // minValue: 0,
-            // maxValue: 1,
+            minValue: 0,
+            maxValue: 1,
           }}
           enableLabels={false}
           axisTop={{
             tickSize: 0,
             tickRotation: -45,
           }}
+          borderWidth={1}
+          borderColor={'#ddd'}
+          axisLeft={{
+            tickSize: 0,
+          }}
+          animate={false}
+          legends={[
+            {
+              anchor: 'right',
+              direction: 'column',
+              translateX: 30,
+              translateY: 20,
+              length: 200,
+              thickness: 10,
+              tickSize: 5,
+              tickSpacing: 5,
+              tickOverlap: false,
+              tickFormat: '=-0.0~%',
+            },
+          ]}
+        />
+      </div>
+
+      <h2 className="text-lg">Ground Water Yearly</h2>
+      <div className="w-full h-[400px] mb-8">
+        <ResponsiveHeatMapCanvas
+          isInteractive={false}
+          data={mockData.gwAnnual}
+          valueFormat={'=-0.0~%'}
+          margin={{ top: 20, right: 70, bottom: 0, left: 130 }}
+          colors={{
+            type: 'sequential',
+            scheme: 'oranges',
+            minValue: 0,
+            maxValue: 1,
+          }}
+          // enableLabels={false}
+          // axisTop={{
+          //   tickSize: 0,
+          //   tickRotation: -45,
+          // }}
           borderWidth={1}
           borderColor={'#ddd'}
           axisLeft={{
@@ -103,7 +146,7 @@ export default function Usage() {
                 data={usageDataForArea.data}
                 from={usageDataForArea.start}
                 to={usageDataForArea.end}
-                margin={{ top: 20, right: 60, bottom: 0, left: 40 }}
+                margin={{ top: 20, right: 60, bottom: 0, left: 60 }}
                 weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
                 dayBorderWidth={1}
                 dayBorderColor={'#ddd'}

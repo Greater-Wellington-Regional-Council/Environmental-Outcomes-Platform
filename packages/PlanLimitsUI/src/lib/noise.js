@@ -14,7 +14,7 @@
  *
  */
 
-export default function noise(global) {
+export default function perlin2(global) {
   var module = (global.noise = {});
 
   function Grad(x, y, z) {
