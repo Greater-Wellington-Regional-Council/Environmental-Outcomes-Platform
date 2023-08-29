@@ -10,7 +10,6 @@ import {
   format,
 } from 'date-fns';
 import noise from '../lib/noise.js';
-import perlin from '../lib/perlin';
 noise(window);
 const DATE_FORMAT = 'yyyy-MM-dd';
 window.noise.seed(Math.random());
@@ -31,6 +30,7 @@ export function generateMockData() {
   const swWeekly = surfaceWaterWeekly(lastYear);
 
   return {
+    regions: Regions,
     start: lastYear.start,
     end: lastYear.end,
     gwAnnual,
@@ -70,8 +70,7 @@ export function surfaceWaterWeekly(interval: Interval) {
 export function groundWaterAnnual(interval: Interval) {
   // TODO: Correlate this to SW usage average...
   return GWAreas.map((area, areaIndex) => {
-    const value =
-      Math.abs(perlin.get(Math.random() * 100, areaIndex / 100)) * 2;
+    const value = Math.abs(rnd(Math.random() * 100, areaIndex)) * 1.8;
     return {
       id: area.source_id,
       data: [
@@ -146,16 +145,6 @@ const SWAreas = [
     source_id: 'OrongorongoSW',
   },
   {
-    name: 'Ruamāhanga River and tributaries, upstream of (but not including) the confluence with the Lake Wairarapa outflow',
-    region: 'Ruamahanga Whaitua',
-    source_id: 'RuamahangaTotalSW',
-  },
-  {
-    name: 'Lake Wairarapa and tributaries above the confluence of the Lake Wairarapa outflow with the Ruamāhanga River',
-    region: 'Ruamahanga Whaitua',
-    source_id: 'LakeWairarapaSW',
-  },
-  {
     name: 'Mangaone Stream and tributaries',
     region: 'Kāpiti Whaitua',
     source_id: 'MangaoneSW',
@@ -164,6 +153,16 @@ const SWAreas = [
     name: 'Ōtaki River and tributaries',
     region: 'Kāpiti Whaitua',
     source_id: 'OtakiSW',
+  },
+  {
+    name: 'Ruamāhanga River and tributaries, upstream of (but not including) the confluence with the Lake Wairarapa outflow',
+    region: 'Ruamahanga Whaitua',
+    source_id: 'RuamahangaTotalSW',
+  },
+  {
+    name: 'Lake Wairarapa and tributaries above the confluence of the Lake Wairarapa outflow with the Ruamāhanga River',
+    region: 'Ruamahanga Whaitua',
+    source_id: 'LakeWairarapaSW',
   },
   {
     name: 'Waikanae River and tributaries',
@@ -258,6 +257,16 @@ const GWAreas = [
     region: 'Te Whanganui-a-Tara Whaitua',
     source_id: 'Upper HuttGW',
   },
+  {
+    name: 'Waikanae River',
+    region: 'Kāpiti Whaitua',
+    source_id: 'WaikanaeRiverGW',
+  },
+  {
+    name: 'Waitohu Stream subcatchment',
+    region: 'Kāpiti Whaitua',
+    source_id: 'WaitohuGW',
+  },
   { name: 'Dry River', region: 'Ruamahanga Whaitua', source_id: 'Dry RiverGW' },
   {
     name: 'Fernhill-Tiffen',
@@ -320,14 +329,4 @@ const GWAreas = [
   { name: 'Raumati', region: 'Kāpiti Whaitua', source_id: 'RaumatiGW' },
   { name: 'Te Horo', region: 'Kāpiti Whaitua', source_id: 'Te HoroGW' },
   { name: 'Waikanae', region: 'Kāpiti Whaitua', source_id: 'WaikanaeGW' },
-  {
-    name: 'Waikanae River',
-    region: 'Kāpiti Whaitua',
-    source_id: 'WaikanaeRiverGW',
-  },
-  {
-    name: 'Waitohu Stream subcatchment',
-    region: 'Kāpiti Whaitua',
-    source_id: 'WaitohuGW',
-  },
 ];

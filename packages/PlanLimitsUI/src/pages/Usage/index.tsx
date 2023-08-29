@@ -78,7 +78,6 @@ export default function Usage() {
       <h2 className="text-lg">Ground Water Yearly</h2>
       <div className="w-full h-[400px] mb-8">
         <ResponsiveHeatMapCanvas
-          isInteractive={false}
           data={mockData.gwAnnual}
           valueFormat={'=-0.0~%'}
           margin={{ top: 20, right: 70, bottom: 0, left: 130 }}
@@ -88,11 +87,10 @@ export default function Usage() {
             minValue: 0,
             maxValue: 1,
           }}
-          // enableLabels={false}
-          // axisTop={{
-          //   tickSize: 0,
-          //   tickRotation: -45,
-          // }}
+          enableLabels={false}
+          axisTop={{
+            tickSize: 0,
+          }}
           borderWidth={1}
           borderColor={'#ddd'}
           axisLeft={{
@@ -119,12 +117,17 @@ export default function Usage() {
       {mockData.swDaily.map((usageDataForArea) => (
         <div key={usageDataForArea.area.source_id} className="w-full mb-6">
           <div className="flex items-baseline justify-between">
-            <h2
-              id={`daily-${usageDataForArea.area.source_id}`}
-              className="text-lg"
-            >
-              Surface Water Daily - {usageDataForArea.area.source_id}
-            </h2>
+            <div>
+              <h2
+                id={`daily-${usageDataForArea.area.source_id}`}
+                className="text-lg inline-block"
+              >
+                Surface Water Daily - {usageDataForArea.area.source_id}
+              </h2>
+              <span className="text-sm ml-4">
+                {usageDataForArea.area.region} region
+              </span>
+            </div>
             <a className="underline text-sm mr-16" href="#top">
               Back to top
             </a>
