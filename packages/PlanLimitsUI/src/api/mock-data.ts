@@ -24,14 +24,82 @@ interface Interval {
   end: Date;
 }
 
+export function generateMockData() {
+  const lastYear = generateInterval();
+  const gwAnnual = groundWaterAnnual(lastYear);
+  const swDaily = surfaceWaterDaily(lastYear);
+  const swWeekly = surfaceWaterWeekly(lastYear);
+
+  return {
+    start: lastYear.start,
+    end: lastYear.end,
+    gwAnnual,
+    swDaily,
+    swWeekly,
+  };
+}
+
 function generateInterval() {
   const today = new Date();
   const end = addDays(today, -1);
   const start = addYears(today, -1);
+
   return {
     start: new Date(getYear(start), getMonth(start), getDate(start)),
     end: new Date(getYear(end), getMonth(end), getDate(end)),
   };
+}
+
+export function surfaceWaterWeekly(interval: Interval) {
+  return SWAreas.map((area, areaIndex) => {
+    const data = eachWeekOfInterval(interval).map((month, monthIndex) => {
+      console.log(month);
+      return {
+        x: format(month, 'yyyy-MM-dd'),
+        y: Math.abs(rnd(areaIndex, monthIndex)),
+      };
+    });
+
+    return {
+      id: area.source_id,
+      data,
+    };
+  });
+}
+
+export function groundWaterAnnual(interval: Interval) {
+  // TODO: Correlate this to SW usage average...
+  return GWAreas.map((area, areaIndex) => {
+    const value =
+      Math.abs(perlin.get(Math.random() * 100, areaIndex / 100)) * 2;
+    return {
+      id: area.source_id,
+      data: [
+        {
+          x: `${format(interval.start, DATE_FORMAT)} - ${format(
+            interval.end,
+            DATE_FORMAT
+          )}`,
+          y: value,
+        },
+      ],
+    };
+  });
+}
+
+export function surfaceWaterDaily(interval: Interval) {
+  return SWAreas.map((area, areaIndex) => {
+    const data = eachDayOfInterval(interval).map((day, dayIndex) => {
+      return {
+        day: format(day, DATE_FORMAT),
+        value: 2 * Math.round(Math.abs(rnd(areaIndex, dayIndex)) * 100),
+      };
+    });
+    return {
+      area,
+      data,
+    };
+  });
 }
 
 export function sevenDayUsage(offset: number) {
@@ -54,102 +122,6 @@ export function sevenDayUsage(offset: number) {
     ],
   };
 }
-
-export function generateHeatmapData() {
-  const interval = generateInterval();
-  return Areas.map((area, areaIndex) => {
-    const data = eachWeekOfInterval(interval).map((month, monthIndex) => {
-      return {
-        x: format(month, 'yyyy-MM-dd'),
-        y: Math.abs(rnd(areaIndex, monthIndex)),
-      };
-    });
-
-    return {
-      id: area,
-      data,
-    };
-  });
-}
-
-export function generateDailyUsageData() {
-  const today = new Date();
-  const end = addDays(today, -1);
-  const start = addYears(today, -1);
-  const interval = generateInterval();
-
-  return Areas.map((area, areaIndex) => {
-    const data = eachDayOfInterval(interval).map((day, dayIndex) => {
-      return {
-        day: format(day, DATE_FORMAT),
-        value: Math.round(Math.abs(rnd(areaIndex, dayIndex)) * 100),
-      };
-    });
-    return {
-      area,
-      data,
-      start: format(start, DATE_FORMAT),
-      end: format(end, DATE_FORMAT),
-    };
-  });
-}
-
-export function generateMockData() {
-  const lastYear = generateInterval();
-  return {
-    gwAnnual: groundWaterUsage(lastYear),
-  };
-}
-
-export function groundWaterUsage(interval: Interval) {
-  // TODO: Correlate this to SW usage average...
-  return GWAreas.map((area, areaIndex) => {
-    // const value = Math.abs(rnd2(Math.random() * 100, areaIndex / 50)) * 2;
-    const value =
-      Math.abs(perlin.get(Math.random() * 100, areaIndex / 100)) * 2;
-    console.log(value);
-    return {
-      id: area.source_id,
-      data: [
-        {
-          x: `${format(interval.start, DATE_FORMAT)} - ${format(
-            interval.end,
-            DATE_FORMAT
-          )}`,
-          y: value,
-        },
-      ],
-    };
-  });
-}
-
-const Areas = [
-  // Ruamahanga Whaitua
-  'Booths',
-  'Huangarua',
-  'Kopuaranga',
-  'LakeWairarapa',
-  'Mangatarere',
-  'Otukura',
-  'Papawai',
-  'Parkvale',
-  'Ruamahanga-Lower',
-  'Ruamahanga-Middle',
-  'Ruamahanga-Upper',
-  'Tauherenikau',
-  'Waingawa',
-  'Waiohine',
-  'Waipoua',
-  // Kāpiti Whaitua
-  'Mangaone',
-  'Otaki',
-  'Waikanae',
-  'Waitohu',
-  // Te Whanganui-a-Tara Whaitua
-  'Hutt',
-  'Orongorongo',
-  'Wainuiomata',
-];
 
 const Regions = [
   'Ruamahanga Whaitua',
