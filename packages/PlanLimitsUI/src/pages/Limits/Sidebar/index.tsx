@@ -17,6 +17,8 @@ export default function Sidebar({
   setWaterTakeFilter: (value: WaterTakeFilter) => void;
 }) {
   const [council] = useAtom(councilAtom);
+  const swUnit = appState.surfaceWaterSubUnitLimit?.id;
+  const gwUnit = appState.groundWaterLimits[0]?.id;
 
   return (
     <>
@@ -61,9 +63,11 @@ export default function Sidebar({
             appState={appState}
           />
         )}
-        <div className="my-6">
-          <UsageTable />
-        </div>
+        {(swUnit || gwUnit) && (
+          <div className="my-6">
+            <UsageTable swUnit={swUnit} gwUnit={gwUnit} />
+          </div>
+        )}
       </div>
 
       <Footer council={council} />

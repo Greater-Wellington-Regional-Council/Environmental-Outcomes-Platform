@@ -2,18 +2,22 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
-import { sevenDayUsage } from '../../../api/mock-data';
+import { sevenDaySWUsage, gwUsage } from '../../../api/mock-data';
 
 type DisplayOptions = 'table' | 'sections';
 
-export default function UsageTable() {
+export default function UsageTable({
+  gwUnit,
+  swUnit,
+}: {
+  gwUnit?: number;
+  swUnit?: number;
+}) {
   const [displayOption, setDisplayOption] = useState<DisplayOptions>('table');
   const [weekOffset, setWeekOffset] = useState(0);
-  const [usageData, setUsageData] = useState(sevenDayUsage(weekOffset));
-
-  const updateData = (newOffset: number) => {
-    setWeekOffset(newOffset);
-    setUsageData(sevenDayUsage(newOffset));
+  const usageData = {
+    swUsage: sevenDaySWUsage(weekOffset, swUnit),
+    gwUsage: gwUsage(gwUnit),
   };
 
   return (
@@ -39,7 +43,7 @@ export default function UsageTable() {
         {displayOption === 'table' ? (
           <Table
             usageData={usageData}
-            updateData={updateData}
+            setWeekOffset={setWeekOffset}
             weekOffset={weekOffset}
           />
         ) : (
@@ -59,7 +63,7 @@ export default function UsageTable() {
   );
 }
 
-function Table({ usageData, updateData, weekOffset }) {
+function Table({ usageData, weekOffset, setWeekOffset }) {
   return (
     <table className="border-collapse w-full">
       <thead>
@@ -74,57 +78,61 @@ function Table({ usageData, updateData, weekOffset }) {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td className="border p-2 text-center bg-gray-100">SW</td>
-          <td className="border p-2 text-center text-sm">
-            17,842
-            <br />m<sup>3</sup>/day
-          </td>
-          <td className="border text-center p-0">
-            <div className="flex flex-col">
-              <div className="p-2 bg-gray-100 text-xs border-b">
-                Week ending {format(usageData.end, 'do LLLL y')}
-              </div>
-              <div className="px-2 text-sm">
-                <HeatMap usageData={usageData} />
-              </div>
-              <div className="w-full flex justify-between p-2 text-xs">
-                <button
-                  className="underline"
-                  onClick={() => updateData(weekOffset - 1)}
-                >
-                  View earlier data
-                </button>
-
-                {weekOffset < 0 && (
+        {usageData.swUsage && (
+          <tr>
+            <td className="border p-2 text-center bg-gray-100">SW</td>
+            <td className="border p-2 text-center text-sm">
+              {usageData.swUsage.allocation}
+              <br />m<sup>3</sup>/day
+            </td>
+            <td className="border text-center p-0">
+              <div className="flex flex-col">
+                <div className="p-2 bg-gray-100 text-xs border-b">
+                  Week ending {format(usageData.swUsage.end, 'do LLLL y')}
+                </div>
+                <div className="px-2 text-sm">
+                  <HeatMap usageData={usageData.swUsage} />
+                </div>
+                <div className="w-full flex justify-between p-2 text-xs">
                   <button
                     className="underline"
-                    onClick={() => updateData(weekOffset + 1)}
+                    onClick={() => setWeekOffset(weekOffset - 1)}
                   >
-                    View later data
+                    View earlier data
                   </button>
-                )}
+
+                  {weekOffset < 0 && (
+                    <button
+                      className="underline"
+                      onClick={() => setWeekOffset(weekOffset + 1)}
+                    >
+                      View later data
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td className="border p-2 text-center bg-gray-100">GW</td>
-          <td className="border p-2 text-center text-sm">
-            40,000
-            <br />m<sup>3</sup>/year
-          </td>
-          <td className="border text-center p-0">
-            <div className="flex flex-col">
-              <div className="p-2 bg-gray-100 text-xs border-b">2023</div>
-              <div className="p-2 text-sm">
-                20,000 m<sup>3</sup>/year
-                <br />
-                50%
+            </td>
+          </tr>
+        )}
+        {usageData.gwUsage && (
+          <tr>
+            <td className="border p-2 text-center bg-gray-100">GW</td>
+            <td className="border p-2 text-center text-sm">
+              {usageData.gwUsage.allocation}
+              <br />m<sup>3</sup>/year
+            </td>
+            <td className="border text-center p-0">
+              <div className="flex flex-col">
+                <div className="p-2 bg-gray-100 text-xs border-b">2023</div>
+                <div className="p-2 text-sm">
+                  {usageData.gwUsage.usage} m<sup>3</sup>/year
+                  <br />
+                  {usageData.gwUsage.percent}%
+                </div>
               </div>
-            </div>
-          </td>
-        </tr>
+            </td>
+          </tr>
+        )}
       </tbody>
     </table>
   );

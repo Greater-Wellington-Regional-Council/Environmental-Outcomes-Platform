@@ -101,25 +101,51 @@ export function surfaceWaterDaily(interval: Interval) {
   });
 }
 
-export function sevenDayUsage(offset: number) {
-  const today = new Date();
-  const end = addDays(today, offset * 7 - 1);
-  const start = addDays(end, -6);
-  return {
-    start,
-    end,
-    data: [
-      {
-        id: 'Usage',
-        data: eachDayOfInterval({ start, end }).map((date, dayIndex) => {
-          return {
-            x: format(date, 'EEE d'),
-            y: 2 * Math.abs(rnd(50, getDayOfYear(date))),
-          };
-        }),
-      },
-    ],
-  };
+const allGWUsage = new Map();
+const allSWUsage = new Map();
+const formatNumber = Intl.NumberFormat();
+
+export function gwUsage(gwUnit?: number) {
+  if (!gwUnit) return;
+
+  if (!allGWUsage.has(gwUnit)) {
+    const allocation = Math.round(Math.random() * 100000);
+    const usage = Math.round(Math.random() * 100000);
+    allGWUsage.set(gwUnit, {
+      allocation: formatNumber.format(allocation),
+      usage: formatNumber.format(usage),
+      percent: Math.round((usage / allocation) * 100),
+    });
+  }
+  return allGWUsage.get(gwUnit);
+}
+
+export function sevenDaySWUsage(offset: number, swUnit?: number) {
+  if (!swUnit) return;
+  if (!allSWUsage.has(swUnit)) {
+    const allocation = Math.round(Math.random() * 100000);
+    const today = new Date();
+    const end = addDays(today, offset * 7 - 1);
+    const start = addDays(end, -6);
+    allSWUsage.set(swUnit, {
+      allocation: formatNumber.format(allocation),
+      start,
+      end,
+      data: [
+        {
+          id: 'Usage',
+          data: eachDayOfInterval({ start, end }).map((date) => {
+            return {
+              x: format(date, 'EEE d'),
+              y: 2 * Math.abs(rnd(swUnit, getDayOfYear(date))),
+            };
+          }),
+        },
+      ],
+    });
+  }
+
+  return allSWUsage.get(swUnit);
 }
 
 const Regions = [
