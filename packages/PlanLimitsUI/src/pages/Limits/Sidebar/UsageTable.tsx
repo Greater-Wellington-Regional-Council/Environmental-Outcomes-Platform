@@ -13,7 +13,6 @@ export default function UsageTable({
   gwUnit?: number;
   swUnit?: number;
 }) {
-  const [displayOption, setDisplayOption] = useState<DisplayOptions>('table');
   const [weekOffset, setWeekOffset] = useState(0);
   const usageData = {
     swUsage: sevenDaySWUsage(weekOffset, swUnit),
@@ -23,32 +22,12 @@ export default function UsageTable({
   return (
     <>
       <h3 className="text-lg uppercase mb-2 tracking-wider">Usage</h3>
-      {/* <div className="mb-4">
-        Show as:
-        <button
-          className={clsx('mx-2', displayOption === 'table' && 'font-bold')}
-          onClick={() => setDisplayOption('table')}
-        >
-          Table
-        </button>
-        |
-        <button
-          className={clsx('mx-2', displayOption === 'sections' && 'font-bold')}
-          onClick={() => setDisplayOption('sections')}
-        >
-          Sections
-        </button>
-      </div> */}
       <div className="mb-4">
-        {displayOption === 'table' ? (
-          <Table
-            usageData={usageData}
-            setWeekOffset={setWeekOffset}
-            weekOffset={weekOffset}
-          />
-        ) : (
-          <Sections />
-        )}
+        <Table
+          usageData={usageData}
+          setWeekOffset={setWeekOffset}
+          weekOffset={weekOffset}
+        />
       </div>
       <a
         href="usage"
@@ -135,17 +114,6 @@ function Table({ usageData, weekOffset, setWeekOffset }) {
         )}
       </tbody>
     </table>
-  );
-}
-
-function Sections() {
-  return (
-    <>
-      <h4 className="font-semibold">Surface water</h4>
-      Consented: 17,842 m3 / day Usage: 20,842 m3 / day
-      <h4 className="font-semibold">Groundwater</h4>
-      Consented: 40,000 m3/year Usage: 20,000 m3/year 50%
-    </>
   );
 }
 
