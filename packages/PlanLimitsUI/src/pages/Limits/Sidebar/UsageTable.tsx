@@ -56,7 +56,7 @@ export default function UsageTable({
         target="_blank"
         rel="noreferrer"
       >
-        View more detailed SW usage
+        View more detailed usage
         <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
       </a>
     </>

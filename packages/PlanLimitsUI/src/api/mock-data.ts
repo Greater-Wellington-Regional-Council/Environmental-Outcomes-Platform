@@ -156,6 +156,16 @@ const Regions = [
 
 const SWAreas = [
   {
+    name: 'Mangaone Stream and tributaries',
+    region: 'Kāpiti Whaitua',
+    source_id: 'MangaoneSW',
+  },
+  {
+    name: 'Ōtaki River and tributaries',
+    region: 'Kāpiti Whaitua',
+    source_id: 'OtakiSW',
+  },
+  {
     name: 'Wainuiomata River and tributaries',
     region: 'Te Whanganui-a-Tara Whaitua',
     source_id: 'WainuiomataSW',
@@ -169,16 +179,6 @@ const SWAreas = [
     name: 'Orongorongo River and tributaries',
     region: 'Te Whanganui-a-Tara Whaitua',
     source_id: 'OrongorongoSW',
-  },
-  {
-    name: 'Mangaone Stream and tributaries',
-    region: 'Kāpiti Whaitua',
-    source_id: 'MangaoneSW',
-  },
-  {
-    name: 'Ōtaki River and tributaries',
-    region: 'Kāpiti Whaitua',
-    source_id: 'OtakiSW',
   },
   {
     name: 'Ruamāhanga River and tributaries, upstream of (but not including) the confluence with the Lake Wairarapa outflow',
@@ -273,6 +273,15 @@ const SWAreas = [
 ];
 
 const GWAreas = [
+  { name: 'Ōtaki', region: 'Kāpiti Whaitua', source_id: 'OtakiGW' },
+  {
+    name: 'Ōtaki River subcatchment',
+    region: 'Kāpiti Whaitua',
+    source_id: 'OtakiRiverGW',
+  },
+  { name: 'Raumati', region: 'Kāpiti Whaitua', source_id: 'RaumatiGW' },
+  { name: 'Te Horo', region: 'Kāpiti Whaitua', source_id: 'Te HoroGW' },
+  { name: 'Waikanae', region: 'Kāpiti Whaitua', source_id: 'WaikanaeGW' },
   {
     name: 'Lower Hutt',
     region: 'Te Whanganui-a-Tara Whaitua',
@@ -346,13 +355,4 @@ const GWAreas = [
   },
   { name: 'Waingawa', region: 'Ruamahanga Whaitua', source_id: 'WaingawaGW' },
   { name: 'Waiohine', region: 'Ruamahanga Whaitua', source_id: 'WaiohineGW' },
-  { name: 'Ōtaki', region: 'Kāpiti Whaitua', source_id: 'OtakiGW' },
-  {
-    name: 'Ōtaki River subcatchment',
-    region: 'Kāpiti Whaitua',
-    source_id: 'OtakiRiverGW',
-  },
-  { name: 'Raumati', region: 'Kāpiti Whaitua', source_id: 'RaumatiGW' },
-  { name: 'Te Horo', region: 'Kāpiti Whaitua', source_id: 'Te HoroGW' },
-  { name: 'Waikanae', region: 'Kāpiti Whaitua', source_id: 'WaikanaeGW' },
 ];
