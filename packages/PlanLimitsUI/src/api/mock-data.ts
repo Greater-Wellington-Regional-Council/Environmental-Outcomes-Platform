@@ -122,12 +122,13 @@ export function gwUsage(gwUnit?: number) {
 
 export function sevenDaySWUsage(offset: number, swUnit?: number) {
   if (!swUnit) return;
-  if (!allSWUsage.has(swUnit)) {
+  const key = `${swUnit}-${offset.toString()}`;
+  if (!allSWUsage.has(key)) {
     const allocation = Math.round(Math.random() * 100000);
     const today = new Date();
     const end = addDays(today, offset * 7 - 1);
     const start = addDays(end, -6);
-    allSWUsage.set(swUnit, {
+    allSWUsage.set(key, {
       allocation: formatNumber.format(allocation),
       start,
       end,
@@ -145,7 +146,7 @@ export function sevenDaySWUsage(offset: number, swUnit?: number) {
     });
   }
 
-  return allSWUsage.get(swUnit);
+  return allSWUsage.get(key);
 }
 
 const Regions = [
