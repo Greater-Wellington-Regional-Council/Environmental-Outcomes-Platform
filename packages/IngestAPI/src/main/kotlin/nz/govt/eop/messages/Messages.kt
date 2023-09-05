@@ -4,9 +4,20 @@ import java.math.BigDecimal
 import java.time.Instant
 import nz.govt.eop.ingest.api.WaterAllocation
 
+enum class ConsentStatus {
+  new,
+  updated,
+  deleted
+}
+
 data class WaterAllocationMessage(
+    val consentId: String,
+    val status: ConsentStatus,
     val areaId: String,
-    val amount: BigDecimal,
+    val allocation: BigDecimal,
+    val meteredAllocationDaily: BigDecimal,
+    val meteredAllocationYearly: BigDecimal,
+    val meters: List<String>,
     val ingestId: String,
     val receivedAt: Instant
 ) {
@@ -14,5 +25,15 @@ data class WaterAllocationMessage(
       allocation: WaterAllocation,
       ingestId: String,
       receivedAt: Instant
-  ) : this(allocation.areaId, allocation.amount, ingestId, receivedAt) {}
+  ) : this(
+      allocation.consentId,
+      allocation.status,
+      allocation.areaId,
+      allocation.allocation,
+      allocation.meteredAllocationDaily,
+      allocation.meteredAllocationYearly,
+      allocation.meters,
+      ingestId,
+      receivedAt,
+  ) {}
 }
