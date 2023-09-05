@@ -17,6 +17,7 @@ data class WaterAllocation(
     val status: ConsentStatus,
     val areaId: String,
     val allocation: BigDecimal,
+    val isMetered: Boolean,
     val meteredAllocationDaily: BigDecimal,
     val meteredAllocationYearly: BigDecimal,
     val meters: List<String>,

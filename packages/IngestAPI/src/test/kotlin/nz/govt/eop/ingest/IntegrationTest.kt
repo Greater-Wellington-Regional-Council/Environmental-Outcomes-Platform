@@ -57,9 +57,9 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
               "ingestId": "1",
               "allocations":
                 [
-                    { "consentId":  "20540", "status":  "new", "areaId":  "OrongorongoSW", "allocation": 87.0, "meteredAllocationDaily": 0.0, "meteredAllocationYearly": 0.0, "meters": [] },
-                    { "consentId":  "20544", "status":  "updated", "areaId":  "Wairarapa CoastSW", "allocation": 2.1, "meteredAllocationDaily": 4147.2, "meteredAllocationYearly": 622080.0, "meters": ["S25/5314"] },
-                    { "consentId":  "20548", "status":  "deleted", "areaId":  "OtakiSW", "allocation": 1.13, "meteredAllocationDaily": 6912.0, "meteredAllocationYearly": 1036800.0, "meters": ["BP34/0044", "BP34/0064", "T26/0871"] }
+                    { "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocation": 87.0, "isMetered": true, "meteredAllocationDaily": 0.0, "meteredAllocationYearly": 0.0, "meters": [] },
+                    { "consentId":  "20544", "status":  "active", "areaId":  "Wairarapa CoastSW", "allocation": 2.1, "isMetered": false, "meteredAllocationDaily": 4147.2, "meteredAllocationYearly": 622080.0, "meters": ["S25/5314"] },
+                    { "consentId":  "20548", "status":  "inactive", "areaId":  "OtakiSW", "allocation": 1.13, "isMetered": true, "meteredAllocationDaily": 6912.0, "meteredAllocationYearly": 1036800.0, "meters": ["BP34/0044", "BP34/0064", "T26/0871"] }
                 ]
             }
         """

@@ -5,9 +5,8 @@ import java.time.Instant
 import nz.govt.eop.ingest.api.WaterAllocation
 
 enum class ConsentStatus {
-  new,
-  updated,
-  deleted
+  active,
+  inactive
 }
 
 data class WaterAllocationMessage(
@@ -15,6 +14,7 @@ data class WaterAllocationMessage(
     val status: ConsentStatus,
     val areaId: String,
     val allocation: BigDecimal,
+    val isMetered: Boolean,
     val meteredAllocationDaily: BigDecimal,
     val meteredAllocationYearly: BigDecimal,
     val meters: List<String>,
@@ -30,6 +30,7 @@ data class WaterAllocationMessage(
       allocation.status,
       allocation.areaId,
       allocation.allocation,
+      allocation.isMetered,
       allocation.meteredAllocationDaily,
       allocation.meteredAllocationYearly,
       allocation.meters,
