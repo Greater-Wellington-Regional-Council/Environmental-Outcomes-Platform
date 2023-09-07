@@ -10,6 +10,7 @@ enum class ConsentStatus {
 }
 
 data class WaterAllocationMessage(
+    val sourceId: String,
     val consentId: String,
     val status: ConsentStatus,
     val areaId: String,
@@ -26,6 +27,7 @@ data class WaterAllocationMessage(
       ingestId: String,
       receivedAt: Instant
   ) : this(
+      allocation.sourceId,
       allocation.consentId,
       allocation.status,
       allocation.areaId,

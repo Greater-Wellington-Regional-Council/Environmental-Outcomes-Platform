@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 data class WaterAllocation(
+    val sourceId: String,
     val consentId: String,
     val status: ConsentStatus,
     val areaId: String,

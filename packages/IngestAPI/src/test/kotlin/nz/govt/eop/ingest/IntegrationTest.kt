@@ -57,9 +57,9 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
               "ingestId": "1",
               "allocations":
                 [
-                    { "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocation": 87.0, "isMetered": true, "meteredAllocationDaily": 0.0, "meteredAllocationYearly": 0.0, "meters": [] },
-                    { "consentId":  "20544", "status":  "active", "areaId":  "Wairarapa CoastSW", "allocation": 2.1, "isMetered": false, "meteredAllocationDaily": null, "meteredAllocationYearly": null, "meters": ["S25/5314"] },
-                    { "consentId":  "20548", "status":  "inactive", "areaId":  "OtakiSW", "allocation": 1.13, "isMetered": true, "meteredAllocationDaily": 6912.0, "meteredAllocationYearly": 1036800.0, "meters": ["BP34/0044", "BP34/0064", "T26/0871"] }
+                    { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocation": 87.0, "isMetered": true, "meteredAllocationDaily": 0.0, "meteredAllocationYearly": 0.0, "meters": [] },
+                    { "sourceId": "Wairarapa-20544", "consentId":  "20544", "status":  "active", "areaId":  "Wairarapa CoastSW", "allocation": 2.1, "isMetered": false, "meteredAllocationDaily": null, "meteredAllocationYearly": null, "meters": ["S25/5314"] },
+                    { "sourceId": "OtakiSW-20548", "consentId":  "20548", "status":  "inactive", "areaId":  "OtakiSW", "allocation": 1.13, "isMetered": true, "meteredAllocationDaily": 6912.0, "meteredAllocationYearly": 1036800.0, "meters": ["BP34/0044", "BP34/0064", "T26/0871"] }
                 ]
             }
         """
