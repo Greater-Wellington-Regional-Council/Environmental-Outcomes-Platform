@@ -8,9 +8,21 @@ import nz.govt.eop.consumers.WATER_ALLOCATION_TOPIC_NAME
 import nz.govt.eop.consumers.hilltop_crawler.HILLTOP_RAW_DATA_TOPIC_NAME
 import org.apache.kafka.common.header.Headers
 
+enum class ConsentStatus {
+  active,
+  inactive
+}
+
 data class WaterAllocationMessage(
+    val sourceId: String,
+    val consentId: String,
+    val status: ConsentStatus,
     val areaId: String,
-    val amount: BigDecimal,
+    val allocation: BigDecimal,
+    val isMetered: Boolean,
+    val meteredAllocationDaily: BigDecimal,
+    val meteredAllocationYearly: BigDecimal,
+    val meters: List<String>,
     val ingestId: String,
     val receivedAt: Instant
 )
