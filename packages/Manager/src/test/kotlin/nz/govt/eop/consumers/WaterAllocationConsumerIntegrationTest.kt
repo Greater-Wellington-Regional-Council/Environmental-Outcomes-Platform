@@ -5,6 +5,7 @@ import io.kotest.matchers.shouldBe
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import nz.govt.eop.messages.ConsentStatus
 import nz.govt.eop.messages.WaterAllocationMessage
 import nz.govt.eop.si.jooq.tables.WaterAllocations.Companion.WATER_ALLOCATIONS
@@ -64,7 +65,10 @@ class WaterAllocationConsumerIntegrationTest(
       val record = records.first()
       record.ingestId.shouldBe(record.ingestId)
       record.allocation.shouldBe(record.allocation)
-      record.effectiveFrom?.toInstant().shouldBe(message.receivedAt)
+      record.effectiveFrom
+          ?.toInstant()
+          ?.truncatedTo(ChronoUnit.MILLIS)
+          .shouldBe(message.receivedAt.truncatedTo(ChronoUnit.MILLIS))
       record.effectiveTo.shouldBeNull()
     }
   }

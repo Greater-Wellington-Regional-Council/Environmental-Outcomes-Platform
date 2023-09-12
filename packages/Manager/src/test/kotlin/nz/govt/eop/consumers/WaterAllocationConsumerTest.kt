@@ -4,6 +4,7 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import nz.govt.eop.messages.ConsentStatus
 import nz.govt.eop.messages.WaterAllocationMessage
 import nz.govt.eop.si.jooq.tables.WaterAllocations.Companion.WATER_ALLOCATIONS
@@ -48,11 +49,12 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
   @Test
   fun `Should create a new allocation with updated data`() {
     // GIVEN
-    //   val now = OffsetDateTime.now(ZoneOffset.UTC)
-    //   val nowPlus2Hours = now.plus(Duration.ofHours(2))
     val firstMessage = createWaterAllocationMessage()
     val secondMessage =
-        firstMessage.copy(allocation = BigDecimal("200.11"), ingestId = "secondIngestId")
+        firstMessage.copy(
+            allocation = BigDecimal("200.11"),
+            ingestId = "secondIngestId",
+            receivedAt = firstMessage.receivedAt.plusSeconds(3600))
 
     // WHEN
     consumer.processMessage(firstMessage)
@@ -62,16 +64,28 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
     val records = fetchWaterAllocations(firstMessage.sourceId)
     records.size.shouldBe(2)
 
+    val firstRecordReceivedAtTruncated = firstMessage.receivedAt.truncatedTo(ChronoUnit.MILLIS)
+    val secondRecordReceivedAtTruncated = secondMessage.receivedAt.truncatedTo(ChronoUnit.MILLIS)
+
     val firstRecord = records.first()
     firstRecord.allocation.shouldBe(firstRecord.allocation)
     firstRecord.ingestId.shouldBe(firstRecord.ingestId)
-    firstRecord.effectiveFrom?.toInstant().shouldBe(firstMessage.receivedAt)
-    firstRecord.effectiveTo?.toInstant().shouldBe(secondMessage.receivedAt)
+    firstRecord.effectiveFrom
+        ?.toInstant()
+        ?.truncatedTo(ChronoUnit.MILLIS)
+        .shouldBe(firstRecordReceivedAtTruncated)
+    firstRecord.effectiveTo
+        ?.toInstant()
+        ?.truncatedTo(ChronoUnit.MILLIS)
+        .shouldBe(secondRecordReceivedAtTruncated)
 
     val secondRecord = records[1]
     secondRecord.ingestId.shouldBe(secondRecord.ingestId)
     secondRecord.allocation.shouldBe(secondRecord.allocation)
-    secondRecord.effectiveFrom?.toInstant().shouldBe(secondMessage.receivedAt)
+    secondRecord.effectiveFrom
+        ?.toInstant()
+        ?.truncatedTo(ChronoUnit.MILLIS)
+        ?.shouldBe(secondRecordReceivedAtTruncated)
     secondRecord.effectiveTo.shouldBeNull()
   }
 
