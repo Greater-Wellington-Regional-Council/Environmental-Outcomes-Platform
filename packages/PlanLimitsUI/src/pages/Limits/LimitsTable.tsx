@@ -9,14 +9,14 @@ const footNoteTexts = [
     id: 'PNRP41',
     text: 'Refer to Table 4.1 of PNRP',
     href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=133',
-    footNoteText: 'Table 4.1 of the Proposed Natural Resource Plan Limits',
+    footNoteText: 'Table 4.1 of the Natural Resource Plan',
   },
   {
     number: 2,
     id: 'PRNP121',
     text: 'Refer to Policy P121 of PRNP',
     href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=139',
-    footNoteText: 'Policy P121 of the Proposed Natural Resource Plan Limits',
+    footNoteText: 'Policy P121 of the Natural Resource Plan',
   },
 ];
 
@@ -199,7 +199,7 @@ export default function LimitsTable({
 
   return (
     <>
-      <h3 className="text-lg uppercase mb-2 tracking-wider">Limits</h3>
+      <h3 className="text-lg uppercase mb-2 tracking-wider">Allocations</h3>
       <table className="border-collapse border">
         <thead>
           <tr>
@@ -216,10 +216,10 @@ export default function LimitsTable({
             </FormattedTH>
           </tr>
           <tr>
-            <FormattedTH>Limit</FormattedTH>
-            <FormattedTH>Allocated</FormattedTH>
-            <FormattedTH>Limit</FormattedTH>
-            <FormattedTH>Allocated</FormattedTH>
+            <FormattedTH>Allocation Amount</FormattedTH>
+            <FormattedTH>Consented Core Allocation</FormattedTH>
+            <FormattedTH>Allocation Amount</FormattedTH>
+            <FormattedTH>Consented Core Allocation</FormattedTH>
           </tr>
         </thead>
         <tbody>

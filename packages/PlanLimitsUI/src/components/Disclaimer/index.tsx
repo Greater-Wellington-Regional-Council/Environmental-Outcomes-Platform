@@ -38,7 +38,7 @@ export default function Disclaimer() {
       <div className="fixed inset-0 flex items-center justify-center">
         <Dialog.Panel className="mx-auto max-w-2xl rounded bg-white p-6">
           <Dialog.Title className="text-xl mb-4">
-            Greater Wellington Proposed Natural Resource Plan Limits
+            Greater Wellington Natural Resources Plan Water Allocations
           </Dialog.Title>
           <h3 className="mb-2 uppercase">Conditions of use</h3>
           <p className="mb-4">
