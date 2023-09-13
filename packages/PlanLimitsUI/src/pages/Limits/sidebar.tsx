@@ -23,8 +23,14 @@ const LimitsListItem = ({
     <dd>
       {text}
       {reference && (
-        <a href={reference} target="_blank" rel="noreferrer">
-          <QuestionMarkCircleIcon className="h-5 inline pl-1 align-text-top" />
+        <a
+          className="text-sm underline block"
+          href={reference}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Plan details for this area
+          <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
         </a>
       )}
     </dd>
