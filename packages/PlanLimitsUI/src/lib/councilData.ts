@@ -33,8 +33,8 @@ export const Councils: Council[] = [
     labels: {
       headingText: 'Natural Resources Plan Water Allocations',
       region: 'Whaitua',
-      surfaceWaterParent: 'Management Unit',
-      surfaceWaterChild: 'Management Sub-unit',
+      surfaceWaterParent: 'Catchment Management Unit',
+      surfaceWaterChild: 'Catchment Management Sub-unit',
       surfaceWaterParentLimit: 'Surface Water Catchment Management Unit',
       surfaceWaterChildLimit: 'Surface Water Catchment Management Sub-unit',
       groundwaterLimit: 'Groundwater Catchment Management Unit',
