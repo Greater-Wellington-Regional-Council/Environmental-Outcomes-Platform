@@ -22,7 +22,7 @@ export const Councils: Council[] = [
     },
     footerLinks: [
       {
-        text: 'Proposed Natural Resource Plan',
+        text: 'Natural Resource Plan',
         url: 'https://pnrp.gw.govt.nz/',
       },
       {
@@ -31,13 +31,13 @@ export const Councils: Council[] = [
       },
     ],
     labels: {
-      headingText: 'Proposed Natural Resource Plan Limits',
+      headingText: 'Natural Resources Plan Water Allocations',
       region: 'Whaitua',
-      surfaceWaterParent: 'Unit',
-      surfaceWaterChild: 'Sub-unit',
-      surfaceWaterParentLimit: 'Surface Water Catchment Unit',
-      surfaceWaterChildLimit: 'Surface Water Catchment Sub-unit',
-      groundwaterLimit: 'Groundwater Catchment Unit',
+      surfaceWaterParent: 'Catchment Management Unit',
+      surfaceWaterChild: 'Catchment Management Sub-unit',
+      surfaceWaterParentLimit: 'Surface Water Catchment Management Unit',
+      surfaceWaterChildLimit: 'Surface Water Catchment Management Sub-unit',
+      groundwaterLimit: 'Groundwater Catchment Management Unit',
     },
   },
   {
