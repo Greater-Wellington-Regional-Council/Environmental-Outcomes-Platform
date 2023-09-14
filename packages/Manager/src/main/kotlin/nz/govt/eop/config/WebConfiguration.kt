@@ -13,6 +13,7 @@ class WebConfiguration : WebMvcConfigurer {
         .addMapping("/**")
         .allowedOriginPatterns(
             "http://localhost:[*]",
+            "https://*.amplifyapp.com",
             "https://*.gw-eop-dev.tech",
             "https://*.gw-eop-stage.tech",
             "https://*.eop.gw.govt.nz")
