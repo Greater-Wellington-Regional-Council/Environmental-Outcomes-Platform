@@ -3,10 +3,7 @@ import { showDisclaimerAtom } from '../../components/Disclaimer';
 import { councilAtom } from '../../lib/loader';
 import LimitsTable from './LimitsTable';
 import Button from '../../components/Button';
-import {
-  ArrowTopRightOnSquareIcon,
-  QuestionMarkCircleIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import formatWaterQuantity from './formatWaterQuantity';
 
 const LimitsListItem = ({
@@ -29,7 +26,7 @@ const LimitsListItem = ({
           target="_blank"
           rel="noreferrer"
         >
-          Plan details for this area
+          Plan details
           <ArrowTopRightOnSquareIcon className="h-4 inline pl-1 align-text-bottom" />
         </a>
       )}
