@@ -51,7 +51,7 @@ export default function Sidebar({
       <header className="flex items-center px-6 py-4">
         <div className="flex-1">
           <h1 className="text-xl font-light">{council.labels.headingText}</h1>
-          <h2>Water Quantity Limits</h2>
+          <h2>Water Quantity</h2>
         </div>
         <a href={council.url} title={`Go to the ${council.name} website`}>
           <img
