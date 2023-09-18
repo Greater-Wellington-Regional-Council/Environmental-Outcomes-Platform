@@ -44,20 +44,30 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
             post("/water-allocations")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{"notIngestId": "1", "allocations": [{"areaId":  "1", "amount": 1.0}]}"""))
+                .content("""{"notIngestId": "1", "allocations": []}"""))
         .andExpect(status().isBadRequest)
   }
 
   @Test
   fun `Should post records to Kafka Topic`() {
     val consumer = createKafkaConsumer(broker)
+    val testData =
+        """
+            {
+              "ingestId": "1",
+              "allocations":
+                [
+                    { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocation": 87.0, "isMetered": true, "meteredAllocationDaily": 0.0, "meteredAllocationYearly": 0.0, "meters": [] },
+                    { "sourceId": "Wairarapa-20544", "consentId":  "20544", "status":  "active", "areaId":  "Wairarapa CoastSW", "allocation": 2.1, "isMetered": false, "meteredAllocationDaily": null, "meteredAllocationYearly": null, "meters": ["S25/5314"] },
+                    { "sourceId": "OtakiSW-20548", "consentId":  "20548", "status":  "inactive", "areaId":  "OtakiSW", "allocation": 1.13, "isMetered": true, "meteredAllocationDaily": 6912.0, "meteredAllocationYearly": 1036800.0, "meters": ["BP34/0044", "BP34/0064", "T26/0871"] }
+                ]
+            }
+        """
     mvc.perform(
             post("/water-allocations")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{"ingestId": "1", "allocations": [{"areaId":  "1", "amount": 1.0}, {"areaId":  "2", "amount": 2.0}, {"areaId":  "3", "amount": 3.0}]}"""))
+                .content(testData))
         .andExpect(status().isOk)
 
     val records = KafkaTestUtils.getRecords(consumer)
