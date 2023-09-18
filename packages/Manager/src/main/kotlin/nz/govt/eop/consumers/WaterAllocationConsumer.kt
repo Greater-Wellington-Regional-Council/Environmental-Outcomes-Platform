@@ -72,7 +72,6 @@ class WaterAllocationConsumer(@Autowired val context: DSLContext) {
                   now)
               .execute()
 
-      logger.info { "Inserted new allocation" }
       logger.info { "Consumed allocation for source_id:${allocation.sourceId}" }
     }
   }

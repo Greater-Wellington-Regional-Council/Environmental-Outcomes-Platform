@@ -4,7 +4,6 @@ import java.math.BigInteger
 import java.security.MessageDigest
 import java.time.Instant
 import org.jooq.DSLContext
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Component
 const val MANIFEST_CACHE_KEY = "QUERY_MANIFEST"
 
 @Component
-class Manifest(@Autowired val queries: Queries, val context: DSLContext) {
+class Manifest(val queries: Queries, val context: DSLContext) {
 
   @Cacheable(cacheNames = [MANIFEST_CACHE_KEY])
   fun get(councilId: Int): Map<String, String> {
@@ -23,11 +22,6 @@ class Manifest(@Autowired val queries: Queries, val context: DSLContext) {
     //  Hard coded to just Wellington until we have more data since empty results
     //  for individual queries cause errors
     update(9)
-
-    //    val councils = context.selectFrom(COUNCILS).fetch()
-    //    for (council in councils) {
-    //      update(council.id!!)
-    //    }
   }
   @CachePut(cacheNames = [MANIFEST_CACHE_KEY])
   fun update(councilId: Int): Map<String, String> {

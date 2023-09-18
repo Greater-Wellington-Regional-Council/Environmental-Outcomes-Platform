@@ -4,6 +4,7 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import nz.govt.eop.messages.ConsentStatus
 import nz.govt.eop.messages.WaterAllocationMessage
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jooq.JooqTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+
+fun OffsetDateTime.truncateToMillis(): Instant = this.truncatedTo(ChronoUnit.MILLIS).toInstant()
 
 @ActiveProfiles("test")
 @JooqTest
@@ -70,22 +73,13 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
     val firstRecord = records.first()
     firstRecord.allocation.shouldBe(firstRecord.allocation)
     firstRecord.ingestId.shouldBe(firstRecord.ingestId)
-    firstRecord.effectiveFrom
-        ?.toInstant()
-        ?.truncatedTo(ChronoUnit.MILLIS)
-        .shouldBe(firstRecordReceivedAtTruncated)
-    firstRecord.effectiveTo
-        ?.toInstant()
-        ?.truncatedTo(ChronoUnit.MILLIS)
-        .shouldBe(secondRecordReceivedAtTruncated)
+    firstRecord.effectiveFrom!!.truncateToMillis().shouldBe(firstRecordReceivedAtTruncated)
+    firstRecord.effectiveTo!!.truncateToMillis().shouldBe(secondRecordReceivedAtTruncated)
 
     val secondRecord = records[1]
     secondRecord.ingestId.shouldBe(secondRecord.ingestId)
     secondRecord.allocation.shouldBe(secondRecord.allocation)
-    secondRecord.effectiveFrom
-        ?.toInstant()
-        ?.truncatedTo(ChronoUnit.MILLIS)
-        ?.shouldBe(secondRecordReceivedAtTruncated)
+    secondRecord.effectiveFrom!!.truncateToMillis().shouldBe(secondRecordReceivedAtTruncated)
     secondRecord.effectiveTo.shouldBeNull()
   }
 
