@@ -48,7 +48,7 @@ When the application boots, it will automatically create any topics needed.
 
 The support services started by Batect include a Management UI for Kafka, which you can access at http://localhost:8081.
 
-[Kaf](https://github.com/birdayz/kaf) is also a useful CLI for Kafka, which can be run via 
+[Kaf](https://github.com/birdayz/kaf) is also a useful CLI for Kafka, which can be run via sshuttle.
 
 ## SSL
 

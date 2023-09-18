@@ -54,7 +54,7 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
   useJUnitPlatform()
-  this.testLogging { this.showStandardStreams = true }
+  this.testLogging { this.showStandardStreams = false }
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
