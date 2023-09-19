@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("org.springframework.boot") version "3.0.5"
-  id("io.spring.dependency-management") version "1.1.0"
-  kotlin("jvm") version "1.8.10"
-  kotlin("plugin.spring") version "1.8.10"
+  id("org.springframework.boot") version "3.1.3"
+  id("io.spring.dependency-management") version "1.1.3"
+  kotlin("jvm") version "1.8.22"
+  kotlin("plugin.spring") version "1.8.22"
   id("com.diffplug.spotless") version "6.18.0"
   id("org.flywaydb.flyway") version "9.1.6"
 }
@@ -32,12 +32,15 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.kafka:spring-kafka")
+  implementation("org.apache.kafka:kafka-streams")
   implementation("org.flywaydb:flyway-core")
+  implementation("com.bucket4j:bucket4j-core:8.3.0")
   implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
-  testImplementation("io.kotest:kotest-assertions-core:5.4.2")
+  testImplementation("io.kotest:kotest-assertions-core:5.7.2")
+  testImplementation("io.kotest:kotest-assertions-json:5.7.2")
 }
 
 // Don't repackage build in a "-plain" Jar
