@@ -1,9 +1,12 @@
 package nz.govt.eop.consumers
 
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
+import java.time.temporal.ChronoUnit
+import nz.govt.eop.messages.ConsentStatus
 import nz.govt.eop.messages.WaterAllocationMessage
 import nz.govt.eop.si.jooq.tables.WaterAllocations.Companion.WATER_ALLOCATIONS
 import nz.govt.eop.si.jooq.tables.records.WaterAllocationsRecord
@@ -38,22 +41,43 @@ class WaterAllocationConsumerIntegrationTest(
   fun `Should process message from topic and store in DB`() {
     // GIVEN
     val message =
-        WaterAllocationMessage("area-id-create", BigDecimal("100.11"), "ingest-id", Instant.now())
+        WaterAllocationMessage(
+            "sourceId",
+            "consentId",
+            ConsentStatus.valueOf("active"),
+            "area-id-create",
+            BigDecimal("100.11"),
+            true,
+            BigDecimal("10.0"),
+            BigDecimal("10.0"),
+            listOf("meter-0", "meter-1"),
+            "firstIngestId",
+            Instant.now())
 
     // WHEN
-    template.send(WATER_ALLOCATION_TOPIC_NAME, message.areaId, message)
+    template.send(WATER_ALLOCATION_TOPIC_NAME, message.sourceId, message)
 
     // THEN
     Awaitility.waitAtMost(Duration.ofSeconds(5)).untilAsserted {
-      val records = fetchWaterAllocations(message.areaId)
+      val records = fetchWaterAllocations(message.sourceId)
       records.size.shouldBe(1)
+
       val record = records.first()
-      record.amount.shouldBe(message.amount)
-      record.lastUpdatedIngestId.shouldBe(message.ingestId)
+      record.ingestId.shouldBe(record.ingestId)
+      record.allocation.shouldBe(record.allocation)
+      record.effectiveFrom
+          ?.toInstant()
+          ?.truncatedTo(ChronoUnit.MILLIS)
+          .shouldBe(message.receivedAt.truncatedTo(ChronoUnit.MILLIS))
+      record.effectiveTo.shouldBeNull()
     }
   }
 
-  fun fetchWaterAllocations(areaId: String): Result<WaterAllocationsRecord> {
-    return context.selectFrom(WATER_ALLOCATIONS).where(WATER_ALLOCATIONS.AREA_ID.eq(areaId)).fetch()
+  fun fetchWaterAllocations(sourceId: String): Result<WaterAllocationsRecord> {
+    return context
+        .selectFrom(WATER_ALLOCATIONS)
+        .where(WATER_ALLOCATIONS.SOURCE_ID.eq(sourceId))
+        .orderBy(WATER_ALLOCATIONS.EFFECTIVE_FROM.asc())
+        .fetch()
   }
 }

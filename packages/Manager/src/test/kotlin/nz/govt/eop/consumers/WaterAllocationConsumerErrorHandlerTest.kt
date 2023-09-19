@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
+import nz.govt.eop.messages.ConsentStatus
 import nz.govt.eop.messages.WaterAllocationMessage
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -44,13 +45,24 @@ class WaterAllocationConsumerErrorHandlerTest(
     dltConsumer.subscribe(listOf("$WATER_ALLOCATION_TOPIC_NAME.manager-consumer.DLT"))
 
     val firstMessage =
-        WaterAllocationMessage("poison", BigDecimal("100.11"), "ingest-id", Instant.now())
-    val secondMessage =
-        WaterAllocationMessage("areaid", BigDecimal("100.11"), "ingest-id", Instant.now())
+        WaterAllocationMessage(
+            "sourceId",
+            "consentId",
+            ConsentStatus.valueOf("active"),
+            "area-id",
+            BigDecimal("100.11"),
+            true,
+            BigDecimal("10.0"),
+            BigDecimal("10.0"),
+            listOf("meter-0", "meter-1"),
+            "firstIngestId",
+            Instant.now())
+
+    val secondMessage = firstMessage.copy(sourceId = "poison")
 
     // WHEN
     template.send(WATER_ALLOCATION_TOPIC_NAME, "poison", firstMessage)
-    template.send(WATER_ALLOCATION_TOPIC_NAME, "areaid", secondMessage)
+    template.send(WATER_ALLOCATION_TOPIC_NAME, "sourceId", secondMessage)
 
     // THEN
 
@@ -83,7 +95,7 @@ class FakeConsumer {
   fun processMessage(allocation: WaterAllocationMessage) {
     timesCalled++
 
-    if (allocation.areaId == "poison") {
+    if (allocation.sourceId == "poison") {
       // Fake that processing fails
       throw RuntimeException("Fake failure")
     } else {
