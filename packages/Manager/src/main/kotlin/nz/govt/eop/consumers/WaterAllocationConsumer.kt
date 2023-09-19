@@ -28,39 +28,51 @@ class WaterAllocationConsumer(@Autowired val context: DSLContext) {
     val now = OffsetDateTime.now(ZoneOffset.UTC)
 
     withLoggingContext("ingestId" to allocation.ingestId) {
-      logger.info { "Consuming allocation for area_id:${allocation.areaId}" }
-      val result =
+      logger.info { "Consuming allocation for source_id:${allocation.sourceId}" }
+
+      val updateResult =
+          context
+              .update(WATER_ALLOCATIONS)
+              .set(WATER_ALLOCATIONS.EFFECTIVE_TO, receivedAtUTC)
+              .where(WATER_ALLOCATIONS.SOURCE_ID.eq(allocation.sourceId))
+              .and(WATER_ALLOCATIONS.EFFECTIVE_TO.isNull())
+              .execute()
+      logger.info { "Set effective_to for existing allocation. Rows affected:${updateResult}" }
+
+      val insertResult =
           context
               .insertInto(WATER_ALLOCATIONS)
               .columns(
+                  WATER_ALLOCATIONS.SOURCE_ID,
+                  WATER_ALLOCATIONS.CONSENT_ID,
+                  WATER_ALLOCATIONS.STATUS,
                   WATER_ALLOCATIONS.AREA_ID,
-                  WATER_ALLOCATIONS.AMOUNT,
-                  WATER_ALLOCATIONS.LAST_UPDATED_INGEST_ID,
+                  WATER_ALLOCATIONS.ALLOCATION,
+                  WATER_ALLOCATIONS.IS_METERED,
+                  WATER_ALLOCATIONS.METERED_ALLOCATION_DAILY,
+                  WATER_ALLOCATIONS.METERED_ALLOCATION_YEARLY,
+                  WATER_ALLOCATIONS.METERS,
+                  WATER_ALLOCATIONS.EFFECTIVE_FROM,
+                  WATER_ALLOCATIONS.INGEST_ID,
                   WATER_ALLOCATIONS.CREATED_AT,
-                  WATER_ALLOCATIONS.UPDATED_AT,
-                  WATER_ALLOCATIONS.RECEIVED_AT)
+                  WATER_ALLOCATIONS.UPDATED_AT)
               .values(
+                  allocation.sourceId,
+                  allocation.consentId,
+                  allocation.status.toString(),
                   allocation.areaId,
-                  allocation.amount,
+                  allocation.allocation,
+                  allocation.isMetered,
+                  allocation.meteredAllocationDaily,
+                  allocation.meteredAllocationYearly,
+                  allocation.meters.toTypedArray(),
+                  receivedAtUTC,
                   allocation.ingestId,
                   now,
-                  now,
-                  receivedAtUTC)
-              .onConflict(WATER_ALLOCATIONS.AREA_ID)
-              .doUpdate()
-              .set(WATER_ALLOCATIONS.AMOUNT, allocation.amount)
-              .set(WATER_ALLOCATIONS.LAST_UPDATED_INGEST_ID, allocation.ingestId)
-              .set(WATER_ALLOCATIONS.UPDATED_AT, now)
-              .set(WATER_ALLOCATIONS.RECEIVED_AT, receivedAtUTC)
-              .where(WATER_ALLOCATIONS.RECEIVED_AT.lt(receivedAtUTC))
+                  now)
               .execute()
 
-      if (result == 0) {
-        logger.warn {
-          "Old water allocation received for area_id:${allocation.areaId}, not updated."
-        }
-      }
-      logger.info { "Consumed allocation for area_id:${allocation.areaId}" }
+      logger.info { "Consumed allocation for source_id:${allocation.sourceId}" }
     }
   }
 }
