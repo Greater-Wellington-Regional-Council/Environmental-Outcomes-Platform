@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: manager
   main:
     banner-mode: off
   datasource:
@@ -21,6 +23,21 @@ spring:
         spring.json.value.type.method: nz.govt.eop.messages.KafkaMessageTypes.determineTypeFromTopicName
         spring.json.trusted.packages: nz.govt.eop.*
 
+    streams:
+      properties:
+        num.stream.threads: 8
+        max.poll.records: 100
+        default:
+          key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+          value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+      application-id: nz.govt.eop.consumers.manager
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"
+
 server:
   compression:
     enabled: true
@@ -32,3 +49,4 @@ logging:
     nz.govt.eop: INFO
     org.jooq.Constants: OFF
     org.jooq: INFO
+    org.apache.kafka: WARN

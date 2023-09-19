@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate
 @EnableKafka
 @EnableCaching
 @SpringBootApplication
-class Application() {
+class Application {
   @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
 }
 
