@@ -1,6 +1,7 @@
 package nz.govt.eop.consumers.observations
 
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import java.math.BigDecimal
 import java.sql.Timestamp
 import java.time.OffsetDateTime
@@ -9,16 +10,17 @@ import net.postgis.jdbc.PGgeometry
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.TestInputTopic
 import org.apache.kafka.streams.TopologyTestDriver
-import org.apache.kafka.streams.errors.StreamsException
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.kafka.support.serializer.JsonSerde
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 
 @ActiveProfiles("test")
 @JdbcTest
@@ -41,8 +43,15 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
                 JsonSerde(ObservationMessage::class.java).noTypeInfo().serializer())
   }
 
+  @BeforeEach
+  fun cleanDb() {
+    jdbcTemplate.execute("TRUNCATE TABLE observations CASCADE")
+    jdbcTemplate.execute("TRUNCATE TABLE observation_sites_measurements CASCADE")
+    jdbcTemplate.execute("TRUNCATE TABLE observation_sites CASCADE")
+  }
+
   @Nested
-  inner class SiteDetailsMessageHandling {
+  open inner class SiteDetailsMessageHandling {
     @Test
     fun `should create site when none exists`() {
 
@@ -75,8 +84,9 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       result["location"] shouldBe null
     }
 
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     @Test
-    fun `should update site when one exists`() {
+    open fun `should update site when one exists`() {
 
       // GIVEN
       val firstMessage = SiteDetailsMessage(1, "C", null)
@@ -91,15 +101,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       result["council_id"] shouldBe 1
       result["name"] shouldBe "C"
       result["location"] shouldBe PGgeometry(createPoint(1, 2))
-
-      // This fails because of the @Transactionl forcing a single transaction for the whole test
-      // which means the updated_at is the same as the created_at because they both use the `NOW()`
-      // function
-      // which is the same in a single transaction, adding the @Rollback(false) annotation to the
-      // test
-      // method
-      // will make it pass, but would require a cleanup of the database after the test
-      // result["created_at"] shouldNotBe result["updated_at"]
+      result["created_at"] shouldNotBe result["updated_at"]
     }
 
     @Test
@@ -117,13 +119,29 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       val result = jdbcTemplate.queryForMap("SELECT * FROM observation_sites")
       result["council_id"] shouldBe 16
     }
+
+    @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    open fun `should process messages after an error`() {
+      // GIVEN
+      val messageThatWillFail = SiteDetailsMessage(365, "SITE", null)
+      val message2 = SiteDetailsMessage(1, "SITE", null)
+
+      // WHEN
+      inputTopic.pipeInput(messageThatWillFail.toKey(), messageThatWillFail)
+      inputTopic.pipeInput(message2.toKey(), message2)
+
+      // THEN
+      val result = jdbcTemplate.queryForMap("SELECT * FROM observation_sites")
+      result["council_id"] shouldBe 1
+    }
   }
 
   @Nested
   inner class ObservationDataMessageHandling {
 
     @Test
-    fun `should throw error when site doesn't exist`() {
+    fun `should not throw error when site doesn't exist`() {
       // GIVEN
       val observationMessage =
           ObservationDataMessage(
@@ -135,9 +153,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
                       OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
 
       // WHEN / THEN
-      assertThrows<StreamsException> {
-        inputTopic.pipeInput(observationMessage.toKey(), observationMessage)
-      }
+      inputTopic.pipeInput(observationMessage.toKey(), observationMessage)
     }
 
     @Test
