@@ -11,6 +11,15 @@ spring:
         mechanism: SCRAM-SHA-512
         jaas:
           config: org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_SASL_USERNAME}" password="${KAFKA_SASL_PASSWORD}";
+management:
+  endpoints:
+    enabled-by-default: false
+  web:
+    exposure:
+      include: "health"
+  endpoint:
+    health:
+      enabled: true
 
 logging:
   level:
@@ -19,3 +28,4 @@ logging:
     org.jooq.Constants: OFF
     org.jooq: INFO
     org.springframework.web.servlet.resource.ResourceHttpRequestHandler: ERROR # this logs WARN's for paths that are probably being scanned by bots
+    org.apache.kafka: WARN
