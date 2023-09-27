@@ -1,4 +1,4 @@
-package nz.govt.eop.consumers
+package nz.govt.eop.consumers.observations
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo

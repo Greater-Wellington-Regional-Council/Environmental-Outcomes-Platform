@@ -1,4 +1,4 @@
-package nz.govt.eop.consumers
+package nz.govt.eop.consumers.observations
 
 import io.kotest.matchers.shouldBe
 import java.math.BigDecimal

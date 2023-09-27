@@ -1,56 +1,18 @@
-package nz.govt.eop.consumers
+package nz.govt.eop.consumers.observations
 
 import java.sql.PreparedStatement
 import java.sql.Timestamp
 import java.sql.Types
 import net.postgis.jdbc.geometry.Geometry
 import net.postgis.jdbc.geometry.Point
-import org.apache.kafka.streams.StreamsBuilder
-import org.apache.kafka.streams.kstream.Consumed
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Profile
 import org.springframework.dao.EmptyResultDataAccessException
-import org.springframework.jdbc.core.*
+import org.springframework.jdbc.core.BatchPreparedStatementSetter
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.SingleColumnRowMapper
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
-import org.springframework.kafka.annotation.EnableKafkaStreams
-import org.springframework.kafka.support.serializer.JsonSerde
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-
-@Profile("hilltop-consumer")
-@EnableKafkaStreams
-@Component
-class ObservationsConsumer(val store: ObservationStore) {
-  @Autowired
-  fun buildPipeline(streamsBuilder: StreamsBuilder) {
-
-    val messageStream =
-        streamsBuilder.stream(
-            "observations",
-            Consumed.with(
-                JsonSerde(ObservationMessageKey::class.java),
-                JsonSerde(ObservationMessage::class.java)))
-
-    messageStream.foreach { _, value ->
-      when (value) {
-        is SiteDetailsMessage -> {
-          store.storeSite(value.councilId, value.siteName, value.location)
-        }
-        is ObservationDataMessage -> {
-          store.storeObservations(
-              value.councilId, value.siteName, value.measurementName, value.observations)
-        }
-      }
-    }
-  }
-}
-
-fun createPoint(easting: Int, northing: Int): Point {
-  val point = Point(easting.toDouble(), northing.toDouble())
-  point.setSrid(2193)
-  return point
-}
 
 @Component
 class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
@@ -186,4 +148,10 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
       ps.setInt(2, existingSiteId)
     }
   }
+}
+
+fun createPoint(easting: Int, northing: Int): Point {
+  val point = Point(easting.toDouble(), northing.toDouble())
+  point.setSrid(2193)
+  return point
 }
