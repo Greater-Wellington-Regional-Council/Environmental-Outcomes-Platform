@@ -1,4 +1,4 @@
-package nz.govt.eop.hilltop_crawler.worker
+package nz.govt.eop.hilltop_crawler.fetcher
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo

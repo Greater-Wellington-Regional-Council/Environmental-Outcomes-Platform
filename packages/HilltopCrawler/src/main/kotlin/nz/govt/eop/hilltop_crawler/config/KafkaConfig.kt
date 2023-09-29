@@ -4,18 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import nz.govt.eop.hilltop_crawler.ApplicationConfiguration
 import nz.govt.eop.hilltop_crawler.HILLTOP_RAW_DATA_TOPIC_NAME
 import nz.govt.eop.hilltop_crawler.OUTPUT_DATA_TOPIC_NAME
-import nz.govt.eop.hilltop_crawler.worker.HilltopMessage
-import nz.govt.eop.hilltop_crawler.worker.HilltopMessageKey
+import nz.govt.eop.hilltop_crawler.fetcher.HilltopMessage
+import nz.govt.eop.hilltop_crawler.fetcher.HilltopMessageKey
 import org.apache.kafka.clients.admin.NewTopic
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.kafka.annotation.EnableKafka
+import org.springframework.kafka.annotation.EnableKafkaStreams
 import org.springframework.kafka.config.TopicBuilder
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.support.serializer.JsonSerializer
 
+@EnableKafka
+@EnableKafkaStreams
 @Configuration
 class KafkaConfig(
     val applicationConfiguration: ApplicationConfiguration,

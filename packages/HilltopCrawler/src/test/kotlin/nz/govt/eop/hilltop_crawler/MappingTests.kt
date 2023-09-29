@@ -8,7 +8,9 @@ import java.time.temporal.Temporal
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopDatasource
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopMeasurement
 import org.junit.jupiter.api.Test
+import org.springframework.test.context.ActiveProfiles
 
+@ActiveProfiles("test")
 class MappingTests {
 
   @Test

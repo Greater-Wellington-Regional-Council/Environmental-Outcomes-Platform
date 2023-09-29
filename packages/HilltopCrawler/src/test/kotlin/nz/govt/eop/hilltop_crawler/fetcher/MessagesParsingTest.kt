@@ -1,4 +1,4 @@
-package nz.govt.eop.hilltop_crawler.worker
+package nz.govt.eop.hilltop_crawler.fetcher
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -9,7 +9,9 @@ import java.time.YearMonth
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import org.springframework.test.context.ActiveProfiles
 
+@ActiveProfiles("test")
 class MessagesParsingTest {
   val objectMapper =
       Jackson2ObjectMapperBuilder()

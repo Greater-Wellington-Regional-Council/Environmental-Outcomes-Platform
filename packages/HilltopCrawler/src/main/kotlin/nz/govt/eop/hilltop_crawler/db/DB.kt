@@ -6,7 +6,7 @@ import java.sql.ResultSet
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import nz.govt.eop.hilltop_crawler.worker.HilltopMessageType
+import nz.govt.eop.hilltop_crawler.fetcher.HilltopMessageType
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 
@@ -35,6 +35,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
       val id: Int,
       val sourceId: Int,
       val requestType: HilltopMessageType,
+      val nextFetchAt: Instant,
       val fetchUri: URI,
       val previousDataHash: String?,
   )
@@ -44,7 +45,9 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
   enum class HilltopFetchStatus {
     SUCCESS,
     UNCHANGED,
+    FETCH_ERROR,
     HILLTOP_ERROR,
+    PARSE_ERROR
   }
 
   val hilltopSourcesRowMapper: (rs: ResultSet, rowNum: Int) -> HilltopSourcesRow = { rs, _ ->
@@ -95,7 +98,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
       template
           .query(
               """
-        SELECT id, source_id, request_type, base_url, previous_data_hash
+        SELECT id, source_id, request_type, next_fetch_at, base_url, previous_data_hash
         FROM hilltop_fetch_tasks
         WHERE next_fetch_at < NOW()
         ORDER BY next_fetch_at, id
@@ -107,6 +110,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
                     rs.getInt("id"),
                     rs.getInt("source_id"),
                     HilltopMessageType.valueOf(rs.getString("request_type")),
+                    rs.getTimestamp("next_fetch_at").toInstant(),
                     URI(rs.getString("base_url")),
                     rs.getString("previous_data_hash"))
               }
@@ -114,7 +118,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
 
   fun requeueTask(
       id: Int,
-      currentContentHash: String,
+      currentContentHash: String?,
       currentResult: HilltopFetchResult,
       nextFetchAt: Instant
   ) {

@@ -2,8 +2,8 @@ package nz.govt.eop.hilltop_crawler.producer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopXmlParsers
-import nz.govt.eop.hilltop_crawler.worker.*
-import nz.govt.eop.hilltop_crawler.worker.HilltopMessageType.*
+import nz.govt.eop.hilltop_crawler.fetcher.*
+import nz.govt.eop.hilltop_crawler.fetcher.HilltopMessageType.*
 import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.producer.internals.BuiltInPartitioner
 import org.apache.kafka.streams.KeyValue

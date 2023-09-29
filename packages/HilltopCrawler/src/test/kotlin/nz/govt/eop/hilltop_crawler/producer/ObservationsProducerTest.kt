@@ -12,7 +12,7 @@ import java.util.*
 import nz.govt.eop.hilltop_crawler.HILLTOP_RAW_DATA_TOPIC_NAME
 import nz.govt.eop.hilltop_crawler.OUTPUT_DATA_TOPIC_NAME
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopXmlParsers
-import nz.govt.eop.hilltop_crawler.worker.*
+import nz.govt.eop.hilltop_crawler.fetcher.*
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.TestInputTopic
 import org.apache.kafka.streams.TestOutputTopic
