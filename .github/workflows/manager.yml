@@ -51,7 +51,7 @@ jobs:
         if: always()
         with:
           name: reports
-          path: format('{0}/build/reports', env.WORKING_DIR)
+          path: ${{ env.WORKING_DIR }}/build/reports
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
