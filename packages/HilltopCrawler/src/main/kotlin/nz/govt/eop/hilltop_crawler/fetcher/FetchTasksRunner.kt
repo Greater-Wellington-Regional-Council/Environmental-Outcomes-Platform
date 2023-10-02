@@ -27,9 +27,9 @@ class FetchTasksRunner(val taskScheduler: TaskScheduler, val processor: FetchTas
    */
   @PostConstruct
   fun startTasks() {
-    logger.info { "Starting " }
+    logger.info { "Starting" }
     (1..TASKS_TO_RUN).forEach { id ->
-      taskScheduler.scheduleWithFixedDelay({ processTasks(id) }, Duration.ofSeconds(10000))
+      taskScheduler.scheduleWithFixedDelay({ processTasks(id) }, Duration.ofSeconds(10))
     }
   }
 
