@@ -148,7 +148,7 @@ class TaskMappersTests {
                       "2000-01-01T00:00:00Z",
                       "StdSeries",
                       listOf(
-                          HilltopMeasurement("some measurement name", "some datasource name", 1)))))
+                          HilltopMeasurement("some datasource name", "some datasource name", 1)))))
 
       // WHEN
       val result = underTest.buildNewTasksList()
@@ -176,7 +176,7 @@ class TaskMappersTests {
                       "2000-01-01T00:00:00Z",
                       "StdSeries",
                       listOf(
-                          HilltopMeasurement("some measurement name", "some datasource name", 1))),
+                          HilltopMeasurement("some datasource name", "some datasource name", 1))),
                   HilltopDatasource(
                       "another datasource name",
                       "some site name",
@@ -185,7 +185,7 @@ class TaskMappersTests {
                       "StdSeries",
                       listOf(
                           HilltopMeasurement(
-                              "some measurement name", "another datasource name", 1))),
+                              "another datasource name", "another datasource name", 1))),
               ))
 
       // WHEN
@@ -219,7 +219,7 @@ class TaskMappersTests {
                       "2000-06-01T00:00:00Z",
                       "StdSeries",
                       listOf(
-                          HilltopMeasurement("some measurement name", "some datasource name", 1))),
+                          HilltopMeasurement("some datasource name", "some datasource name", 1))),
               ))
 
       // WHEN
@@ -274,8 +274,7 @@ class TaskMappersTests {
                       "2000-01-01T00:00:00Z",
                       "StdSeries",
                       listOf(
-                          HilltopMeasurement(
-                              "some measurement name", "check me out like this", 1))),
+                          HilltopMeasurement("some datasource name", "check me out like this", 1))),
               ))
 
       // WHEN
@@ -290,6 +289,30 @@ class TaskMappersTests {
                   "http://some.uri?Service=Hilltop&Request=GetData&Site=some%20site%20name&Measurement=check%20me%20out%20like%20this&from=2000-01-01T00:00&to=2000-01-31T23:59:59",
               ),
           )
+    }
+
+    @Test
+    fun `should handle when message no Measurements which are not Virtual and have the same name as the datasource`() {
+      // GIVEN
+      val underTest =
+          createRecordForTesting(
+              listOf(
+                  HilltopDatasource(
+                      "some datasource name",
+                      "some site name",
+                      "2000-01-01T00:00:00Z",
+                      "2000-01-01T00:00:00Z",
+                      "StdSeries",
+                      listOf(
+                          HilltopMeasurement(
+                              "some datasource name", "check me out like this", 1, 1))),
+              ))
+
+      // WHEN
+      val result = underTest.buildNewTasksList()
+
+      // THEN
+      result shouldHaveSize 0
     }
 
     @Test

@@ -120,6 +120,11 @@ class MeasurementsListTaskMapper(
           .filter { sourceConfig.config.measurementNames.contains(it.name) }
           .filter { it.type == "StdSeries" }
           .filter { it.measurements.isNotEmpty() }
+          .filter {
+            it.measurements.firstOrNull {
+              sourceConfig.config.measurementNames.contains(it.name) && it.vm == null
+            } != null
+          }
           .flatMap {
             val fromDate =
                 LocalDate.parse(
@@ -127,7 +132,12 @@ class MeasurementsListTaskMapper(
             val toDate =
                 LocalDate.parse(it.to.subSequence(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
-            val requestAs = it.measurements.filter { it.vm == null }.first().requestAs
+            val requestAs =
+                it.measurements
+                    .first {
+                      sourceConfig.config.measurementNames.contains(it.name) && it.vm == null
+                    }
+                    .requestAs
 
             generateMonthSequence(fromDate, toDate).map { yearMonth ->
               DB.HilltopFetchTaskCreate(
