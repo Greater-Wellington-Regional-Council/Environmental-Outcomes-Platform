@@ -47,7 +47,8 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
     UNCHANGED,
     FETCH_ERROR,
     HILLTOP_ERROR,
-    PARSE_ERROR
+    PARSE_ERROR,
+    UNKNOWN_ERROR
   }
 
   val hilltopSourcesRowMapper: (rs: ResultSet, rowNum: Int) -> HilltopSourcesRow = { rs, _ ->

@@ -12,8 +12,7 @@ import nz.govt.eop.hilltop_crawler.HilltopCrawlerTestConfiguration
 import nz.govt.eop.hilltop_crawler.db.DB
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.*
-import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -500,6 +499,50 @@ class FetchTaskProcessorIntegrationTest(
     }
 
     verifyNoInteractions(mockKafka)
+  }
+
+  @Test
+  fun `should reschedule a task when an unknown error occurs`() {
+    // For this faking that the kafka component threw an exception and just making sure the task
+    // still was rescheduled for later
+
+    // GIVEN
+    val sourceId = createDefaultSource(jdbcTemplate)
+
+    createFetchTask(
+        jdbcTemplate,
+        sourceId,
+        "SITES_LIST",
+        "http://example.com",
+        "2021-01-01 00:00:00",
+    )
+
+    val input = this.javaClass.getResource("/hilltop-xml/SitesResponse-list.xml")!!.readText()
+
+    mockServer
+        .expect(requestTo("http://example.com"))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withSuccess(input, null))
+
+    doThrow(RuntimeException("Something went wrong")).whenever(mockKafka).send(any())
+
+    // WHEN
+    val result = underTest.runNextTask()
+
+    // THEN
+    mockServer.verify()
+
+    result shouldBe true
+
+    val tasks = listTasksToProcess(jdbcTemplate)
+
+    // Has updated the row we just fetched
+    tasks.forOne {
+      it.fetchUri shouldBe URI("http://example.com")
+      it.requestType shouldBe HilltopMessageType.SITES_LIST
+      it.previousDataHash shouldBe null
+      it.nextFetchAt shouldBeAfter Instant.now()
+    }
   }
 }
 
