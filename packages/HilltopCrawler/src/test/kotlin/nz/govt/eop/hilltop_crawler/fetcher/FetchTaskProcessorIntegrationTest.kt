@@ -1,7 +1,5 @@
 package nz.govt.eop.hilltop_crawler.fetcher
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import io.kotest.inspectors.forExactly
 import io.kotest.inspectors.forOne
 import io.kotest.matchers.collections.shouldHaveSize
@@ -10,18 +8,16 @@ import io.kotest.matchers.date.shouldBeBefore
 import io.kotest.matchers.shouldBe
 import java.net.URI
 import java.time.Instant
-import nz.govt.eop.hilltop_crawler.api.parsers.HilltopXmlParsers
-import nz.govt.eop.hilltop_crawler.api.requests.HilltopFetcher
+import nz.govt.eop.hilltop_crawler.HilltopCrawlerTestConfiguration
 import nz.govt.eop.hilltop_crawler.db.DB
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.mockito.kotlin.argumentCaptor
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpMethod
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
@@ -30,30 +26,21 @@ import org.springframework.test.web.client.MockRestServiceServer
 import org.springframework.test.web.client.match.MockRestRequestMatchers.method
 import org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo
 import org.springframework.test.web.client.response.MockRestResponseCreators.*
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 
 @ActiveProfiles("test")
-@JdbcTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SpringBootTest
+@Import(HilltopCrawlerTestConfiguration::class)
+@Transactional
 class FetchTaskProcessorIntegrationTest(
-    @Autowired private val jdbcTemplate: JdbcTemplate,
-    @Autowired private val restTemplate: RestTemplate
+    @Autowired val underTest: FetchTaskProcessor,
+    @Autowired val restTemplate: RestTemplate,
+    @Autowired val jdbcTemplate: JdbcTemplate,
+    @Autowired val mockKafka: HilltopMessageClient
 ) {
 
-  val mockServer = MockRestServiceServer.createServer(restTemplate)
-  final val mockKafka = mock(HilltopMessageClient::class.java)
-
-  private val objectMapper =
-      Jackson2ObjectMapperBuilder()
-          .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-          .build<ObjectMapper>()
-
-  val underTest =
-      FetchTaskProcessor(
-          DB(jdbcTemplate, objectMapper),
-          HilltopFetcher(restTemplate),
-          HilltopXmlParsers(),
-          mockKafka)
+  private final val mockServer = MockRestServiceServer.createServer(restTemplate)
 
   @BeforeEach
   fun resetMocks() {

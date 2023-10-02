@@ -20,7 +20,7 @@ class TaskMappersTests {
   @Nested
   inner class SitesListTaskMapperTests {
 
-    fun createRecordForTesting(sites: List<HilltopSite> = emptyList()) =
+    private fun createRecordForTesting(sites: List<HilltopSite> = emptyList()) =
         SitesListTaskMapper(
             DB.HilltopSourcesRow(
                 1,

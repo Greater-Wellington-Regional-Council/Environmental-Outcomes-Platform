@@ -8,8 +8,8 @@ import java.time.temporal.ChronoUnit.DAYS
 import java.time.temporal.ChronoUnit.MINUTES
 import kotlin.random.Random
 import mu.KotlinLogging
+import nz.govt.eop.hilltop_crawler.api.HilltopFetcher
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopXmlParsers
-import nz.govt.eop.hilltop_crawler.api.requests.HilltopFetcher
 import nz.govt.eop.hilltop_crawler.db.DB
 import nz.govt.eop.hilltop_crawler.db.DB.HilltopFetchResult
 import nz.govt.eop.hilltop_crawler.db.DB.HilltopFetchStatus.*

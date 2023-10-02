@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit
 import nz.govt.eop.hilltop_crawler.api.requests.buildSiteListUrl
 import nz.govt.eop.hilltop_crawler.db.DB
 import nz.govt.eop.hilltop_crawler.fetcher.HilltopMessageType.SITES_LIST
+import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component
  * relies on how the code is structured to ensure that the fetch task will only be created if it
  * does not already exist.
  */
+@Profile("!test")
 @Component
 class CheckForNewSourcesTask(val db: DB) {
 

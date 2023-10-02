@@ -1,4 +1,4 @@
-package nz.govt.eop.hilltop_crawler.api.requests
+package nz.govt.eop.hilltop_crawler.api
 
 import io.github.bucket4j.Bandwidth
 import io.github.bucket4j.BlockingBucket

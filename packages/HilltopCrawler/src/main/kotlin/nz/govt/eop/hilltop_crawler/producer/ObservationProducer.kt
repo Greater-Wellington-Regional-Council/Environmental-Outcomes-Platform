@@ -12,9 +12,11 @@ import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.Produced
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Profile
 import org.springframework.kafka.support.serializer.JsonSerde
 import org.springframework.stereotype.Component
 
+@Profile("!test")
 @Component
 class ObservationProducer(
     val parsers: HilltopXmlParsers,

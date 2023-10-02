@@ -1,7 +1,6 @@
 package nz.govt.eop.hilltop_crawler.producer
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
 import java.math.BigDecimal
@@ -10,6 +9,7 @@ import java.time.OffsetDateTime
 import java.time.YearMonth
 import java.util.*
 import nz.govt.eop.hilltop_crawler.HILLTOP_RAW_DATA_TOPIC_NAME
+import nz.govt.eop.hilltop_crawler.HilltopCrawlerTestConfiguration
 import nz.govt.eop.hilltop_crawler.OUTPUT_DATA_TOPIC_NAME
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopXmlParsers
 import nz.govt.eop.hilltop_crawler.fetcher.*
@@ -18,23 +18,23 @@ import org.apache.kafka.streams.TestInputTopic
 import org.apache.kafka.streams.TestOutputTopic
 import org.apache.kafka.streams.TopologyTestDriver
 import org.junit.jupiter.api.Test
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.kafka.config.TopicBuilder
 import org.springframework.kafka.support.serializer.JsonSerde
 import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
-class ObservationsProducerTest {
+@SpringBootTest
+@Import(HilltopCrawlerTestConfiguration::class)
+class ObservationsProducerTest(@Autowired val objectMapper: ObjectMapper) {
 
-  private val inputTopic: TestInputTopic<HilltopMessageKey, HilltopMessage>
-  private val outputTopic: TestOutputTopic<ObservationMessageKey, ObservationMessage>
+  private final val inputTopic: TestInputTopic<HilltopMessageKey, HilltopMessage>
+  private final val outputTopic: TestOutputTopic<ObservationMessageKey, ObservationMessage>
 
   init {
     val streamsBuilder = StreamsBuilder()
-    val objectMapper =
-        Jackson2ObjectMapperBuilder()
-            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .build<ObjectMapper>()
 
     ObservationProducer(
             HilltopXmlParsers(),
