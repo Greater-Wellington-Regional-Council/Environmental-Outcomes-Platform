@@ -85,8 +85,8 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
   fun createFetchTask(request: HilltopFetchTaskCreate) {
     template.update(
         """
-        INSERT INTO hilltop_fetch_tasks (source_id, request_type, base_url) VALUES (?,?,?)
-        ON CONFLICT DO NOTHING 
+        INSERT INTO hilltop_fetch_tasks (source_id, request_type, fetch_url) VALUES (?,?,?)
+        ON CONFLICT(source_id, request_type, fetch_url) DO NOTHING 
         """
             .trimIndent(),
         request.sourceId,
@@ -98,7 +98,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
       template
           .query(
               """
-        SELECT id, source_id, request_type, next_fetch_at, base_url, previous_data_hash
+        SELECT id, source_id, request_type, next_fetch_at, fetch_url, previous_data_hash
         FROM hilltop_fetch_tasks
         WHERE next_fetch_at < NOW()
         ORDER BY next_fetch_at, id
@@ -111,7 +111,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
                     rs.getInt("source_id"),
                     HilltopMessageType.valueOf(rs.getString("request_type")),
                     rs.getTimestamp("next_fetch_at").toInstant(),
-                    URI(rs.getString("base_url")),
+                    URI(rs.getString("fetch_url")),
                     rs.getString("previous_data_hash"))
               }
           .firstOrNull()

@@ -15,12 +15,12 @@ CREATE TABLE hilltop_fetch_tasks
     id                 SERIAL      NOT NULL,
     source_id          INT         NOT NULL,
     request_type       VARCHAR     NOT NULL,
-    base_url           VARCHAR     NOT NULL,
+    fetch_url          VARCHAR     NOT NULL,
     next_fetch_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     previous_data_hash VARCHAR,
-    previous_history   JSONB DEFAULT '[]'::JSONB,
+    previous_history   JSONB                DEFAULT '[]'::JSONB,
     created_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
-    UNIQUE (source_id, request_type, base_url),
+    UNIQUE (source_id, request_type, fetch_url),
     FOREIGN KEY (source_id) REFERENCES hilltop_sources (id)
 );

@@ -519,7 +519,7 @@ class FetchTaskProcessorIntegrationTest(
 fun listTasksToProcess(template: JdbcTemplate): List<DB.HilltopFetchTaskRow> =
     template.query(
         """
-        SELECT id, source_id, request_type, next_fetch_at, base_url, previous_data_hash
+        SELECT *
         FROM hilltop_fetch_tasks
         ORDER BY next_fetch_at, id
         """
@@ -529,7 +529,7 @@ fun listTasksToProcess(template: JdbcTemplate): List<DB.HilltopFetchTaskRow> =
               rs.getInt("source_id"),
               HilltopMessageType.valueOf(rs.getString("request_type")),
               rs.getTimestamp("next_fetch_at").toInstant(),
-              URI(rs.getString("base_url")),
+              URI(rs.getString("fetch_url")),
               rs.getString("previous_data_hash"))
         }
 
@@ -556,7 +556,7 @@ fun createFetchTask(
     previousDataHash: String? = null
 ) =
     template.update(
-        """INSERT INTO hilltop_fetch_tasks (source_id, request_type, base_url, next_fetch_at, previous_data_hash) VALUES (?, ?, ?, ?::TIMESTAMP, ?)""",
+        """INSERT INTO hilltop_fetch_tasks (source_id, request_type, fetch_url, next_fetch_at, previous_data_hash) VALUES (?, ?, ?, ?::TIMESTAMP, ?)""",
         sourceId,
         requestType,
         url,
