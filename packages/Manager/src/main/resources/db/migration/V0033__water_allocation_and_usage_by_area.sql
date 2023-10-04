@@ -14,9 +14,9 @@ area_defaults as (
 	from all_areas cross join all_dates
 ),
 usage as (
-	select area_id, date(effective_from) as date, allocation, allocation_daily, metered_allocation_yearly, case when is_metered = true then daily_usage else 0 end as daily_usage
+	select area_id, date(effective_from) as date, allocation, allocation_daily, metered_allocation_yearly, case when is_metered = true then daily_usage else null end as daily_usage
 	from effective_daily_consents
-	inner join observed_water_use_aggregated_daily
+	left outer join observed_water_use_aggregated_daily
 	on day_observed_at = date(effective_daily_consents.effective_from)
 	and site_id::varchar in(
 		select unnest(meters)
