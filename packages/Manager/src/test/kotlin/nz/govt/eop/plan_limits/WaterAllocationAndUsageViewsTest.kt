@@ -9,13 +9,11 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import nz.govt.eop.messages.ConsentStatus
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.DataClassRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.query
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
 import org.springframework.test.context.ActiveProfiles
@@ -69,72 +67,246 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
           "ingest-id",
           testEffectiveFrom.toInstant(ZoneOffset.UTC),
           null)
-  @BeforeEach
-  fun resetTestData() {
-    truncateTestData()
-  }
 
   @Test
   fun `should be empty with no allocations`() {
-    truncateTestData()
+    // GIVEN
+    // WHEN
     val result =
         jdbcTemplate.queryForObject(
             "select count(*) from water_allocation_and_usage_by_area", Int::class.java)
+
+    // THEN
     result shouldBe 0
   }
 
   @Test
-  fun `should include a year of data for each area`() {
+  fun `should include a year of data for an area`() {
+    // GIVEN
     createTestAllocation(testAllocation)
+
+    // WHEN
     val result =
         jdbcTemplate.queryForMap(
             "select count(*) as count, min(date) as min_date, max(date) as max_date from water_allocation_and_usage_by_area where area_id = '${testAllocation.areaId}'")
+
+    // THEN
     arrayOf(365L, 366L) shouldContain result["count"] as Long
     val min = LocalDate.parse(result["min_date"].toString())
     val max = LocalDate.parse(result["max_date"].toString())
     min.plusYears(1) shouldBe max
   }
   @Test
-  fun `should use default allocation before the effective date`() {
+  fun `should use default allocation data before the effective date`() {
+    // GIVEN
     createTestAllocation(testAllocation)
+
+    // WHEN
     val dateFilter = testEffectiveFrom.toString()
-    val result =
-        jdbcTemplate.query(
-            """select * from water_allocation_and_usage_by_area where date < '$dateFilter'""",
-            DataClassRowMapper.newInstance(WaterAllocationUsageRow::class.java))
-    result.forAll {
-      it.areaId shouldBe testAllocation.areaId
-      it.allocation shouldBe BigDecimal(0)
-      it.allocationDaily shouldBe BigDecimal(0)
-      it.meteredAllocationYearly shouldBe BigDecimal(0)
-      it.dailyUsage shouldBe BigDecimal(0)
-    }
+    val results =
+        queryAllocationsAndUsage(
+            "where area_id = '${testAllocation.areaId}' and date < '$dateFilter'")
+
+    // THEN
+    checkResults(results, testAreaId, BigDecimal(0), BigDecimal(0), BigDecimal(0))
   }
 
   @Test
-  fun `should aggregate allocation from the effective date`() {
+  fun `should aggregate allocation data from the effective date`() {
+    // GIVEN
     createTestAllocation(testAllocation)
+
+    // WHEN
     val dateFilter = testEffectiveFrom.toString()
-    val result =
-        jdbcTemplate.query(
-            """select * from water_allocation_and_usage_by_area where date >= '$dateFilter'""",
-            DataClassRowMapper.newInstance(WaterAllocationUsageRow::class.java))
-    result.forAll {
-      it.areaId shouldBe testAllocation.areaId
-      it.allocation shouldBe testAllocation.allocation
-      it.allocationDaily shouldBe testAllocation.meteredAllocationDaily
-      it.meteredAllocationYearly shouldBe testAllocation.meteredAllocationYearly
-      it.dailyUsage shouldBe BigDecimal(0)
-    }
+    val results =
+        queryAllocationsAndUsage(
+            "where area_id = '${testAllocation.areaId}' and date >= '$dateFilter'")
+
+    // THEN
+    checkResults(
+        results,
+        testAllocation.areaId,
+        testAllocation.allocation,
+        testAllocation.meteredAllocationDaily,
+        testAllocation.meteredAllocationYearly)
+  }
+  @Test
+  fun `should handle an allocation being effective before the earliest time period`() {
+    // GIVEN
+    val dateOlderThanAYear = LocalDate.now().atStartOfDay().minusYears(2).toInstant(ZoneOffset.UTC)
+    val oldAllocation = testAllocation.copy(effectiveFrom = dateOlderThanAYear)
+    createTestAllocation(oldAllocation)
+
+    // WHEN
+    val results =
+        queryAllocationsAndUsage(
+            "where area_id = '${oldAllocation.areaId}' and date >= '$dateOlderThanAYear'")
+
+    // THEN
+    checkResults(
+        results,
+        oldAllocation.areaId,
+        oldAllocation.allocation,
+        oldAllocation.meteredAllocationDaily,
+        oldAllocation.meteredAllocationYearly)
   }
 
-  fun `should aggregate observation data`() {}
-  fun `should handle changes to allocations`() {}
-  fun `should handle changes to allocations in the same day`() {}
-  fun `should use null data before an allocation is effective`() {}
-  fun `should handle an allocation being before the earliest time period`() {}
-  fun `should not include allocation data when a consent status is not active`() {}
-  fun `should not include an allocations observations when is_metered is false`() {}
+  @Test
+  fun `should aggregate observation data`() {
+    // GIVEN
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(10)
+    createTestAllocation(testAllocation)
+    createTestObservation(testSiteId, 10, observationDate.toInstant(ZoneOffset.UTC))
+
+    // WHEN
+    val whereClause = "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'"
+
+    // THEN
+    val result = queryAllocationsAndUsage(whereClause)
+    result.size shouldBe 1
+    result[0].dailyUsage.compareTo(BigDecimal(864)) shouldBe 0
+
+    // GIVEN
+    createTestObservation(testSiteId, 5, observationDate.plusHours(1).toInstant(ZoneOffset.UTC))
+
+    // WHEN
+    val secondResult = queryAllocationsAndUsage(whereClause)
+
+    // THEN
+    secondResult[0].dailyUsage.compareTo(BigDecimal(648)) shouldBe 0
+  }
+
+  @Test
+  fun `should handle changes to allocation data`() {
+    // GIVEN
+    val allocationUpdatedAt = LocalDate.now().atStartOfDay().minusDays(10)
+    val initialAllocation =
+        testAllocation.copy(effectiveTo = allocationUpdatedAt.toInstant(ZoneOffset.UTC))
+    createTestAllocation(initialAllocation)
+    val updateAllocation =
+        testAllocation.copy(
+            allocation = BigDecimal(200),
+            meteredAllocationDaily = BigDecimal(20),
+            meteredAllocationYearly = BigDecimal(20),
+            meters = listOf(),
+            effectiveFrom = allocationUpdatedAt.toInstant(ZoneOffset.UTC))
+    createTestAllocation(updateAllocation)
+    createTestObservation(testSiteId, 10, allocationUpdatedAt.toInstant(ZoneOffset.UTC))
+
+    // WHEN
+    val resultBeforeUpdate =
+        queryAllocationsAndUsage(
+            "where area_id = '${initialAllocation.areaId}' and date >= '${initialAllocation.effectiveFrom}' and date < '${allocationUpdatedAt}'")
+
+    // THEN
+    checkResults(
+        resultBeforeUpdate,
+        initialAllocation.areaId,
+        initialAllocation.allocation,
+        initialAllocation.meteredAllocationDaily,
+        initialAllocation.meteredAllocationYearly,
+        BigDecimal(0))
+
+    // WHEN
+    val resultAfterUpdate =
+        queryAllocationsAndUsage(
+            "where area_id = '${updateAllocation.areaId}' and date >= '${allocationUpdatedAt}'")
+
+    // THEN
+    checkResults(
+        resultAfterUpdate,
+        updateAllocation.areaId,
+        updateAllocation.allocation,
+        updateAllocation.meteredAllocationDaily,
+        updateAllocation.meteredAllocationYearly,
+        BigDecimal(0))
+  }
+
+  @Test
+  fun `should handle changes to allocation data in the same day`() {
+    // GIVEN
+    val firstAllocationUpdatedAt = LocalDate.now().atStartOfDay().minusDays(10)
+    val secondAllocationUpdatedAt = firstAllocationUpdatedAt.plusHours(2)
+    createTestAllocation(
+        testAllocation.copy(effectiveTo = firstAllocationUpdatedAt.toInstant(ZoneOffset.UTC)))
+    createTestAllocation(
+        testAllocation.copy(
+            allocation = BigDecimal(20),
+            effectiveFrom = firstAllocationUpdatedAt.toInstant(ZoneOffset.UTC),
+            effectiveTo = secondAllocationUpdatedAt.toInstant(ZoneOffset.UTC)))
+    createTestAllocation(
+        testAllocation.copy(
+            allocation = BigDecimal(30),
+            effectiveFrom = secondAllocationUpdatedAt.toInstant(ZoneOffset.UTC)))
+
+    // WHEN
+    val results =
+        queryAllocationsAndUsage(
+            "where area_id = '${testAllocation.areaId}' and date = '${secondAllocationUpdatedAt}'")
+
+    // THEN
+    checkResults(results, testAreaId, allocation = BigDecimal(30))
+  }
+  @Test
+  fun `should not include allocation data when a consent status is not active`() {
+    // GIVEN
+    val allocationUpdatedAt = LocalDate.now().atStartOfDay().minusDays(10)
+    val initialAllocation =
+        testAllocation.copy(effectiveTo = allocationUpdatedAt.toInstant(ZoneOffset.UTC))
+    createTestAllocation(initialAllocation)
+    val updatedAllocation =
+        testAllocation.copy(
+            effectiveFrom = allocationUpdatedAt.toInstant(ZoneOffset.UTC),
+            status = ConsentStatus.inactive)
+    createTestAllocation(updatedAllocation)
+
+    // WHEN
+    val results =
+        queryAllocationsAndUsage(
+            "where area_id = '${updatedAllocation.areaId}' and date >= '${allocationUpdatedAt}'")
+
+    // THEN
+    checkResults(results, updatedAllocation.areaId, BigDecimal(0), BigDecimal(0), BigDecimal(0))
+  }
+  @Test
+  fun `should not include an allocations observations when is_metered is false`() {
+    // GIVEN
+    val allocationWithIsMeteredFalse = testAllocation.copy(isMetered = false)
+    createTestAllocation(allocationWithIsMeteredFalse)
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(10)
+    createTestObservation(testSiteId, 10, observationDate.toInstant(ZoneOffset.UTC))
+
+    // WHEN
+    val result =
+        queryAllocationsAndUsage(
+            "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'")
+
+    // THEN
+    result[0].dailyUsage.compareTo(BigDecimal(0)) shouldBe 0
+  }
+
+  fun queryAllocationsAndUsage(whereClause: String): MutableList<WaterAllocationUsageRow> =
+      jdbcTemplate.query(
+          """select * from water_allocation_and_usage_by_area $whereClause""",
+          DataClassRowMapper.newInstance(WaterAllocationUsageRow::class.java))
+
+  fun checkResults(
+      results: List<WaterAllocationUsageRow>,
+      areaId: String? = null,
+      allocation: BigDecimal? = null,
+      meteredAllocationDaily: BigDecimal? = null,
+      meteredAllocationYearly: BigDecimal? = null,
+      dailyUsage: BigDecimal? = null
+  ) {
+    results.forAll {
+      if (areaId != null) it.areaId shouldBe areaId
+      if (allocation != null) it.allocation shouldBe allocation
+      if (meteredAllocationDaily != null) it.allocationDaily shouldBe meteredAllocationDaily
+      if (meteredAllocationYearly != null)
+          it.meteredAllocationYearly shouldBe meteredAllocationYearly
+      if (dailyUsage != null) it.dailyUsage shouldBe dailyUsage
+    }
+  }
 
   fun truncateTestData() {
     jdbcTemplate.execute("truncate water_allocations cascade")
@@ -144,7 +316,6 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
   }
 
   fun createTestAllocation(allocation: AllocationRow) {
-
     val effectiveTo = if (allocation.effectiveTo != null) "'${allocation.effectiveTo}'" else null
     val meters = allocation.meters.joinToString(",")
 
@@ -182,7 +353,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
 
   fun createOrRetrieveSiteAndMeasurement(siteId: Int): Int {
     val councilId = 9
-    val measurementName = "Water Meter Reading"
+    val measurementName = "Water Meter Volume"
     val keyHolder: KeyHolder = GeneratedKeyHolder()
 
     jdbcTemplate.update(
