@@ -285,6 +285,51 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     result[0].dailyUsage.compareTo(BigDecimal(0)) shouldBe 0
   }
 
+  @Test
+  fun `should aggregate allocation data for different areas separately`() {
+    // GIVEN
+    createTestAllocation(testAllocation)
+    val secondAllocationInSameArea =
+        testAllocation.copy(sourceId = "another-source-same-area", meters = listOf("2", "3"))
+    createTestAllocation(secondAllocationInSameArea)
+
+    val allocationInDifferentArea =
+        testAllocation.copy(
+            areaId = "different-area-id",
+            sourceId = "another-source-different-area",
+            meters = listOf("4"))
+    createTestAllocation(allocationInDifferentArea)
+
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(10)
+    createTestObservation(testSiteId, 10, observationDate.toInstant(ZoneOffset.UTC))
+    createTestObservation(
+        secondAllocationInSameArea.meters[0].toInt(), 5, observationDate.toInstant(ZoneOffset.UTC))
+    createTestObservation(
+        secondAllocationInSameArea.meters[1].toInt(), 5, observationDate.toInstant(ZoneOffset.UTC))
+    createTestObservation(
+        allocationInDifferentArea.meters.first().toInt(),
+        30,
+        observationDate.toInstant(ZoneOffset.UTC))
+
+    // WHEN
+    val results =
+        queryAllocationsAndUsage(
+            "where area_id = '${testAllocation.areaId}' and date = '$observationDate'")
+
+    // THEN
+    results.size shouldBe 1
+    checkResults(
+        results,
+        testAllocation.areaId,
+        testAllocation.allocation + secondAllocationInSameArea.allocation,
+        testAllocation.meteredAllocationDaily + secondAllocationInSameArea.meteredAllocationDaily,
+        testAllocation.meteredAllocationYearly + secondAllocationInSameArea.meteredAllocationYearly)
+
+    // TODO: Add an assertion for the aggregated amount in results for testAllocation.areaId
+    // TODO: Add assertions for separate results matching allocationInDifferentArea.areaId
+
+  }
+
   fun queryAllocationsAndUsage(whereClause: String): MutableList<WaterAllocationUsageRow> =
       jdbcTemplate.query(
           """select * from water_allocation_and_usage_by_area $whereClause""",
@@ -359,7 +404,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     jdbcTemplate.update(
         """
         INSERT INTO observation_sites (id, council_id, name)
-        VALUES ($siteId, $councilId, 'Test site')
+        VALUES ($siteId, $councilId, 'Test site $siteId')
         ON CONFLICT (id) DO NOTHING
         """)
 
