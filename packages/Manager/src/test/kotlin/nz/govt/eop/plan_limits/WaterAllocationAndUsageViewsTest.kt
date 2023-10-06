@@ -94,7 +94,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     arrayOf(365L, 366L) shouldContain result["count"] as Long
     val min = LocalDate.parse(result["min_date"].toString())
     val max = LocalDate.parse(result["max_date"].toString())
-    min.plusYears(1) shouldBe max
+    min.plusYears(1).plusDays(-1) shouldBe max
   }
   @Test
   fun `should use default allocation data before the effective date`() {
