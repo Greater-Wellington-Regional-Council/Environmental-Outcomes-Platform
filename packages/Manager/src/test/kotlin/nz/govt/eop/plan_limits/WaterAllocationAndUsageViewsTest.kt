@@ -326,13 +326,13 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         testAllocation.meteredAllocationYearly + secondAllocationInSameArea.meteredAllocationYearly,
         BigDecimal(1728))
 
-      // WHEN
-      val resultsInADifferentArea =
-          queryAllocationsAndUsage(
-              "where area_id = '${allocationInDifferentArea.areaId}' and date = '$observationDate'")
+    // WHEN
+    val resultsInADifferentArea =
+        queryAllocationsAndUsage(
+            "where area_id = '${allocationInDifferentArea.areaId}' and date = '$observationDate'")
 
-      // THEN
-      resultsInADifferentArea[0].dailyUsage.compareTo(BigDecimal(2592)) shouldBe 0
+    // THEN
+    resultsInADifferentArea[0].dailyUsage.compareTo(BigDecimal(2592)) shouldBe 0
   }
 
   fun queryAllocationsAndUsage(whereClause: String): MutableList<WaterAllocationUsageRow> =
@@ -351,7 +351,8 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     results.forAll {
       if (areaId != null) it.areaId shouldBe areaId
       if (allocation != null) it.allocation.compareTo(allocation) shouldBe 0
-      if (meteredAllocationDaily != null) it.allocationDaily.compareTo(meteredAllocationDaily) shouldBe 0
+      if (meteredAllocationDaily != null)
+          it.allocationDaily.compareTo(meteredAllocationDaily) shouldBe 0
       if (meteredAllocationYearly != null)
           it.meteredAllocationYearly.compareTo(meteredAllocationYearly) shouldBe 0
       if (dailyUsage != null) it.dailyUsage.compareTo(dailyUsage) shouldBe 0
