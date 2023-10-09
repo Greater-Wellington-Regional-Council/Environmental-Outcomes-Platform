@@ -33,6 +33,11 @@ effective_consents_with_defaults as (
      from effective_daily_consents
         where area_id is not null and status = 'active'
 ),
+observed_water_use_with_sites as (
+    select owu.*, os.name as site_name
+    from observed_water_use_aggregated_daily owu
+    inner join observation_sites os on os.id = owu.site_id
+),
 expanded_meters_per_area as
     (select effective_on, area_id, UNNEST(meters) as meter from effective_consents_with_defaults where is_metered = true),
 meter_use_by_area as (select effective_on,
@@ -40,7 +45,7 @@ meter_use_by_area as (select effective_on,
                              meter,
                              use.daily_usage
                              from expanded_meters_per_area
-                             left join observed_water_use_aggregated_daily use on effective_on = day_observed_at and meter = site_id::varchar),
+                             left join observed_water_use_with_sites use on effective_on = day_observed_at and meter = site_name),
 total_daily_use_by_area as (select area_id,
                               effective_on as date,
                               SUM(daily_usage) as daily_usage

@@ -402,7 +402,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     jdbcTemplate.update(
         """
         INSERT INTO observation_sites (id, council_id, name)
-        VALUES ($siteId, $councilId, 'Test site $siteId')
+        VALUES ($siteId, $councilId, '$siteId')
         ON CONFLICT (id) DO NOTHING
         """)
 
