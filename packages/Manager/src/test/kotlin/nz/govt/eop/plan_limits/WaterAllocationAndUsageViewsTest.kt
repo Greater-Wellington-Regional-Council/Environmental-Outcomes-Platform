@@ -323,11 +323,16 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         testAllocation.areaId,
         testAllocation.allocation + secondAllocationInSameArea.allocation,
         testAllocation.meteredAllocationDaily + secondAllocationInSameArea.meteredAllocationDaily,
-        testAllocation.meteredAllocationYearly + secondAllocationInSameArea.meteredAllocationYearly)
+        testAllocation.meteredAllocationYearly + secondAllocationInSameArea.meteredAllocationYearly,
+        BigDecimal(1728))
 
-    // TODO: Add an assertion for the aggregated amount in results for testAllocation.areaId
-    // TODO: Add assertions for separate results matching allocationInDifferentArea.areaId
+      // WHEN
+      val resultsInADifferentArea =
+          queryAllocationsAndUsage(
+              "where area_id = '${allocationInDifferentArea.areaId}' and date = '$observationDate'")
 
+      // THEN
+      resultsInADifferentArea[0].dailyUsage.compareTo(BigDecimal(2592)) shouldBe 0
   }
 
   fun queryAllocationsAndUsage(whereClause: String): MutableList<WaterAllocationUsageRow> =
@@ -345,19 +350,12 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
   ) {
     results.forAll {
       if (areaId != null) it.areaId shouldBe areaId
-      if (allocation != null) it.allocation shouldBe allocation
-      if (meteredAllocationDaily != null) it.allocationDaily shouldBe meteredAllocationDaily
+      if (allocation != null) it.allocation.compareTo(allocation) shouldBe 0
+      if (meteredAllocationDaily != null) it.allocationDaily.compareTo(meteredAllocationDaily) shouldBe 0
       if (meteredAllocationYearly != null)
-          it.meteredAllocationYearly shouldBe meteredAllocationYearly
-      if (dailyUsage != null) it.dailyUsage shouldBe dailyUsage
+          it.meteredAllocationYearly.compareTo(meteredAllocationYearly) shouldBe 0
+      if (dailyUsage != null) it.dailyUsage.compareTo(dailyUsage) shouldBe 0
     }
-  }
-
-  fun truncateTestData() {
-    jdbcTemplate.execute("truncate water_allocations cascade")
-    jdbcTemplate.execute("truncate observations cascade")
-    jdbcTemplate.execute("truncate observation_sites_measurements cascade")
-    jdbcTemplate.execute("truncate observation_sites cascade")
   }
 
   fun createTestAllocation(allocation: AllocationRow) {
