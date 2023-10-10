@@ -39,8 +39,6 @@ class FetchTasksRunner(val taskScheduler: TaskScheduler, val processor: FetchTas
         val hadWorkToDo = processor.runNextTask()
         if (!hadWorkToDo) {
           return
-        } else {
-          Thread.yield()
         }
       } catch (e: InterruptedException) {
         return
