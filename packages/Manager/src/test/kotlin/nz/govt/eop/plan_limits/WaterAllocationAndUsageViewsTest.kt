@@ -268,6 +268,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     // THEN
     checkResults(results, updatedAllocation.areaId, BigDecimal(0), BigDecimal(0), BigDecimal(0))
   }
+
   @Test
   fun `should not include an allocations observations when is_metered is false`() {
     // GIVEN
