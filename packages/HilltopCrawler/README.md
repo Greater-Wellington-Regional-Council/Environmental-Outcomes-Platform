@@ -56,6 +56,26 @@ This process is built around three main components:
 
 Currently, the Manager component listens to the `observations` topic and stores the data from that in a DB table.
 
+## Task Queue
+
+The task queue is currently a custom implementation on top of a single table `hilltop_fetch_tasks`.
+
+This is a slightly specialized queue where
+
+* Each task has a scheduled run time backed by the  `next_fecth_at` column
+* Each time a task runs it will be re-queued for some time in the future
+* The same task can be added multiple times and rely on Postgres “ON CONFLICT DO NOTHING” to avoid the task being added
+  multiple times
+
+The implementation relies on the postgres `SKIP LOCKED` feature to allow multiple worker threads to pull from the queue
+at the same time without getting the same task.
+
+See this [reference](https://www.2ndquadrant.com/en/blog/what-is-select-skip-locked-for-in-postgresql-9-5/) for
+discussion about the `SKIP LOCKED` query.
+
+The queue implementation is fairly simple for this specific use. If it becomes more of a generic work queue then a 
+standard implemention such as Quartz might be worthwhile moving to.
+
 ## Example Configuration
 
 These are a couple of insert statements that are not stored in migration scripts, so developer machines don't index
