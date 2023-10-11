@@ -23,6 +23,7 @@ class Manifest(val queries: Queries, val context: DSLContext) {
     //  for individual queries cause errors
     update(9)
   }
+
   @CachePut(cacheNames = [MANIFEST_CACHE_KEY])
   fun update(councilId: Int): Map<String, String> {
     return generate(councilId)

@@ -97,6 +97,7 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
         "firstIngestId",
         Instant.now())
   }
+
   fun fetchWaterAllocations(sourceId: String): Result<WaterAllocationsRecord> {
     return context
         .selectFrom(WATER_ALLOCATIONS)
