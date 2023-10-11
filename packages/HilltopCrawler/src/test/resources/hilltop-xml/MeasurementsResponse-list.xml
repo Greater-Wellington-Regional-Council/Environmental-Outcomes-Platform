@@ -7,7 +7,7 @@
         <DataType>SimpleTimeSeries</DataType>
         <Interpolation>Incremental</Interpolation>
         <ItemFormat>0</ItemFormat>
-        <From>2018-02-13T17:48:00</From>
+        <From>2023-03-13T17:48:00</From>
         <To>2023-03-07T09:42:00</To>
         <IndentMeasurements>1</IndentMeasurements>
         <Measurement Name="Rainfall">
