@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component
  * It makes sure any new rows added to the DB will start to be pulled from within an hour.
  *
  * Each time it runs, it will create the initial fetch task for each source found in the DB. This
- * relies on how the code is structured to ensure that the fetch task will only be created if it
- * does not already exist.
+ * relies on the task queue (via "ON CONFLICT DO NOTHING") making sure that duplicate tasks will not
+ * be created.
  */
 @Profile("!test")
 @Component
