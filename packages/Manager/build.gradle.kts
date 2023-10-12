@@ -203,13 +203,15 @@ tasks.register("loadSampleData") {
 
 tasks.register("refreshSampleData") {
   dependsOn("flywayMigrate")
-  doLast { println("refreshSampleData.")
+  doLast {
+    println("Refresh Sample Data Dates")
 
     SingleConnectionDataSource(
       dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
       .let {
-        JdbcTemplate(it).let {
-          it.execute("UPDATE observations SET observed_at = observed_at + INTERVAL '1 YEAR';")
+        it.connection.use { connection ->
+          executeSqlScript(
+            connection, FileSystemResource("./sample-data/update_observation_dates.sql"))
         }
       }
   }
