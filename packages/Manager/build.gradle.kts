@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.support.EncodedResource
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.SingleConnectionDataSource
 import org.springframework.jdbc.datasource.init.ScriptUtils
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
@@ -207,5 +208,14 @@ tasks.register("loadSampleData") {
 
 tasks.register("refreshSampleData") {
   dependsOn("flywayMigrate")
-  doLast { println("refreshSampleData - TODO rebase observations data off current time.") }
+  doLast { println("refreshSampleData.")
+
+    SingleConnectionDataSource(
+      dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+      .let {
+        JdbcTemplate(it).let {
+          it.execute("UPDATE observations SET observed_at = observed_at + INTERVAL '1 YEAR';")
+        }
+      }
+  }
 }
