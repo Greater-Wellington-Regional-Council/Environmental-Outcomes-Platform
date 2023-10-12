@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
+import org.springframework.core.io.FileSystemResource
+import org.springframework.jdbc.datasource.SingleConnectionDataSource
+import org.springframework.jdbc.datasource.init.ScriptUtils
 
 plugins {
   id("org.springframework.boot") version "3.1.3"
@@ -19,6 +22,14 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories { mavenCentral() }
+
+buildscript {
+  repositories { mavenCentral() }
+  dependencies {
+    "classpath"(group = "org.springframework", name = "spring-jdbc", version = "6.0.12")
+    "classpath"(group = "org.postgresql", name = "postgresql", version = "42.6.0")
+  }
+}
 
 ext["jooq.version"] = jooq.version.get()
 
@@ -78,13 +89,15 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 
 val dbConfig =
     mapOf(
-        "url" to
+        "devUrl" to
+            "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?: "localhost"}:5432/eop_dev",
+        "testUrl" to
             "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?: "localhost"}:5432/eop_test",
         "user" to "postgres",
         "password" to "password")
 
 flyway {
-  url = dbConfig["url"]
+  url = dbConfig["testUrl"]
   user = dbConfig["user"]
   password = dbConfig["password"]
   schemas = arrayOf("public")
@@ -98,7 +111,7 @@ jooq {
         logging = org.jooq.meta.jaxb.Logging.WARN
         jdbc.apply {
           driver = "org.postgresql.Driver"
-          url = dbConfig["url"]
+          url = dbConfig["testUrl"]
           user = dbConfig["user"]
           password = dbConfig["password"]
         }
@@ -165,4 +178,26 @@ testlogger {
   showPassedStandardStreams = false
   showSkippedStandardStreams = false
   showFailedStandardStreams = true
+}
+
+tasks.register("loadSampleData") {
+  dependsOn("flywayMigrate")
+  doLast {
+    println("Loading Sample Data")
+    SingleConnectionDataSource(
+            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+        .let {
+          it.connection.use { connection ->
+            ScriptUtils.executeSqlScript(
+                connection, FileSystemResource("./sample-data/allocation_data.sql"))
+            ScriptUtils.executeSqlScript(
+                connection, FileSystemResource("./sample-data/observation_data.sql"))
+          }
+        }
+  }
+}
+
+tasks.register("refreshSampleData") {
+  dependsOn("flywayMigrate")
+  doLast { println("refreshSampleData - TODO rebase observations data off current time.") }
 }
