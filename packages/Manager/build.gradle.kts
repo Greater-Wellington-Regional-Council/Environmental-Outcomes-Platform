@@ -194,11 +194,6 @@ tasks.register("loadSampleData") {
           it.connection.use { connection ->
             executeSqlScript(
                 connection, FileSystemResource("./sample-data/allocation_data.sql"))
-
-            executeSqlScript(
-                connection, EncodedResource(FileSystemResource("./sample-data/observation_data_function.sql")), false, false, DEFAULT_COMMENT_PREFIX, EOF_STATEMENT_SEPARATOR1,
-              DEFAULT_BLOCK_COMMENT_START_DELIMITER, DEFAULT_BLOCK_COMMENT_END_DELIMITER
-            )
             executeSqlScript(
                 connection, FileSystemResource("./sample-data/observation_data.sql"))
           }
