@@ -1,8 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.support.EncodedResource
 import org.springframework.jdbc.datasource.SingleConnectionDataSource
 import org.springframework.jdbc.datasource.init.ScriptUtils
+import org.springframework.jdbc.datasource.init.ScriptUtils.*
+import org.springframework.jdbc.datasource.init.ScriptUtils.EOF_STATEMENT_SEPARATOR as EOF_STATEMENT_SEPARATOR1
 
 plugins {
   id("org.springframework.boot") version "3.1.3"
@@ -188,9 +191,14 @@ tasks.register("loadSampleData") {
             dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
         .let {
           it.connection.use { connection ->
-            ScriptUtils.executeSqlScript(
+            executeSqlScript(
                 connection, FileSystemResource("./sample-data/allocation_data.sql"))
-            ScriptUtils.executeSqlScript(
+
+            executeSqlScript(
+                connection, EncodedResource(FileSystemResource("./sample-data/observation_data_function.sql")), false, false, DEFAULT_COMMENT_PREFIX, EOF_STATEMENT_SEPARATOR1,
+              DEFAULT_BLOCK_COMMENT_START_DELIMITER, DEFAULT_BLOCK_COMMENT_END_DELIMITER
+            )
+            executeSqlScript(
                 connection, FileSystemResource("./sample-data/observation_data.sql"))
           }
         }
