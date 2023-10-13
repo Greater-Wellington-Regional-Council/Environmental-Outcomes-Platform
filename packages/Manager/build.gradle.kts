@@ -1,12 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 import org.springframework.core.io.FileSystemResource
-import org.springframework.core.io.support.EncodedResource
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.SingleConnectionDataSource
-import org.springframework.jdbc.datasource.init.ScriptUtils
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
-import org.springframework.jdbc.datasource.init.ScriptUtils.EOF_STATEMENT_SEPARATOR as EOF_STATEMENT_SEPARATOR1
 
 plugins {
   id("org.springframework.boot") version "3.1.3"
@@ -192,10 +188,8 @@ tasks.register("loadSampleData") {
             dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
         .let {
           it.connection.use { connection ->
-            executeSqlScript(
-                connection, FileSystemResource("./sample-data/allocation_data.sql"))
-            executeSqlScript(
-                connection, FileSystemResource("./sample-data/observation_data.sql"))
+            executeSqlScript(connection, FileSystemResource("./sample-data/allocation_data.sql"))
+            executeSqlScript(connection, FileSystemResource("./sample-data/observation_data.sql"))
           }
         }
   }
@@ -207,12 +201,12 @@ tasks.register("refreshSampleData") {
     println("Refresh Sample Data Dates")
 
     SingleConnectionDataSource(
-      dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
-      .let {
-        it.connection.use { connection ->
-          executeSqlScript(
-            connection, FileSystemResource("./sample-data/update_observation_dates.sql"))
+            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+        .let {
+          it.connection.use { connection ->
+            executeSqlScript(
+                connection, FileSystemResource("./sample-data/update_observation_dates.sql"))
+          }
         }
-      }
   }
 }

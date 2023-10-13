@@ -1,3 +1,4 @@
+BEGIN;
 TRUNCATE TABLE water_allocations RESTART IDENTITY CASCADE;
 
 INSERT INTO water_allocations (area_id, ingest_id, source_id, consent_id, status, is_metered, allocation, meters, effective_from, effective_to, created_at, updated_at)
@@ -51,3 +52,5 @@ VALUES ('BoothsSW', 'SAMPLE-DATA-INGEST', 'SAMPLE-SOURCE-01', 'SAMPLE-CONSENT-ID
        ('WaitohuGW', 'SAMPLE-DATA-INGEST', 'SAMPLE-SOURCE-48', 'SAMPLE-CONSENT-ID', 'active', true, 10, '{"TEST-METER-48"}', '2000-01-01', '2099-01-01', NOW(), NOW()),
        ('WgnHarbour,HuttGW', 'SAMPLE-DATA-INGEST', 'SAMPLE-SOURCE-49', 'SAMPLE-CONSENT-ID', 'active', true, 10, '{"TEST-METER-49"}', '2000-01-01', '2099-01-01', NOW(), NOW()),
        ('WgnHarbour,HuttSW', 'SAMPLE-DATA-INGEST', 'SAMPLE-SOURCE-50', 'SAMPLE-CONSENT-ID', 'active', true, 10, '{"TEST-METER-50"}', '2000-01-01', '2099-01-01', NOW(), NOW());
+
+COMMIT;

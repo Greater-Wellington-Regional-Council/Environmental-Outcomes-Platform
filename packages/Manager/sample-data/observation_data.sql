@@ -1,3 +1,5 @@
+BEGIN;
+
 TRUNCATE TABLE observations RESTART IDENTITY CASCADE;
 TRUNCATE TABLE observation_sites_measurements RESTART IDENTITY CASCADE;
 TRUNCATE TABLE observation_sites RESTART IDENTITY CASCADE;
@@ -756,3 +758,4 @@ SELECT osm.id, tmp.observed_at, tmp.amount
 FROM temp_observation_data tmp,
      observation_sites_measurements osm;
 
+COMMIT;
