@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^4.27.0",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/lodash": "^4.14.194",
