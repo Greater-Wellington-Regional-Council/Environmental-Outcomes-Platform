@@ -10,7 +10,7 @@ plugins {
   kotlin("jvm") version "1.8.22"
   kotlin("plugin.spring") version "1.8.22"
   id("com.diffplug.spotless") version "6.18.0"
-  id("org.flywaydb.flyway") version "9.1.6"
+  id("org.flywaydb.flyway") version "9.22.3"
   id("nu.studer.jooq") version "8.0"
   id("com.adarshr.test-logger") version "3.2.0"
 }
