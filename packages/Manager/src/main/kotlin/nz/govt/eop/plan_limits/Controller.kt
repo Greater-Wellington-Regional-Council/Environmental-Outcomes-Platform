@@ -1,14 +1,18 @@
 package nz.govt.eop.plan_limits
 
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit.DAYS
 import java.util.concurrent.TimeUnit
 import org.jooq.*
 import org.springframework.http.CacheControl
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.server.ResponseStatusException
 
 @Controller
 class Controller(val context: DSLContext, val queries: Queries, val manifest: Manifest) {
@@ -78,5 +82,29 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
         .body(queries.flowLimits(councilId))
+  }
+
+  @RequestMapping("/plan-limits/weekly-usage", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun weeklyUsage(
+      @RequestParam(name = "councilId") councilId: Int,
+      @RequestParam("from") from: LocalDate,
+      @RequestParam("to") to: LocalDate,
+      @RequestParam("areaId") areaId: String?
+  ): ResponseEntity<String> {
+    if (from >= to) {
+      throw ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "The parameter \"to\" must be after \"from\"")
+    }
+    val difference = DAYS.between(from, to)
+    if (difference < 1 || difference >= 366) {
+      throw ResponseStatusException(
+          HttpStatus.BAD_REQUEST,
+          "The duration between \"from\" and \"to\" should be more than one day and at most one year")
+    }
+
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        .body(queries.weeklyUsage(councilId, from, to, areaId))
   }
 }
