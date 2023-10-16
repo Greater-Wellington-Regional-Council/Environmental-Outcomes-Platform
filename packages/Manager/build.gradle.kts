@@ -5,14 +5,17 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
-  id("org.springframework.boot") version "3.1.3"
+  id("org.springframework.boot") version "3.1.4"
   id("io.spring.dependency-management") version "1.1.3"
+
   kotlin("jvm") version "1.8.22"
   kotlin("plugin.spring") version "1.8.22"
+
   id("com.diffplug.spotless") version "6.18.0"
+  id("com.adarshr.test-logger") version "4.0.0"
+
   id("org.flywaydb.flyway") version "9.22.3"
   id("nu.studer.jooq") version "8.0"
-  id("com.adarshr.test-logger") version "3.2.0"
 }
 
 group = "nz.govt.eop"
