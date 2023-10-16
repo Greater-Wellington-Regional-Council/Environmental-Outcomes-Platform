@@ -37,7 +37,7 @@ dependencies {
   implementation("org.apache.kafka:kafka-streams")
   implementation("com.bucket4j:bucket4j-core:8.3.0")
   implementation("org.flywaydb:flyway-core")
-  implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+  implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
