@@ -3,10 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("org.springframework.boot") version "3.1.4"
   id("io.spring.dependency-management") version "1.1.3"
+
   kotlin("jvm") version "1.8.22"
   kotlin("plugin.spring") version "1.8.22"
+
   id("com.diffplug.spotless") version "6.18.0"
-  id("com.adarshr.test-logger") version "3.2.0"
+  id("com.adarshr.test-logger") version "4.0.0"
 }
 
 group = "nz.govt.eop"
