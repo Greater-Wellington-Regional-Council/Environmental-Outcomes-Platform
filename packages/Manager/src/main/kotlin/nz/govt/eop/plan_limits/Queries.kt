@@ -1,5 +1,6 @@
 package nz.govt.eop.plan_limits
 
+import java.time.LocalDate
 import nz.govt.eop.si.jooq.tables.Councils.Companion.COUNCILS
 import nz.govt.eop.si.jooq.tables.FlowLimits.Companion.FLOW_LIMITS
 import nz.govt.eop.si.jooq.tables.FlowMeasurementSites.Companion.FLOW_MEASUREMENT_SITES
@@ -8,8 +9,10 @@ import nz.govt.eop.si.jooq.tables.GroundwaterLimits.Companion.GROUNDWATER_LIMITS
 import nz.govt.eop.si.jooq.tables.PlanRegions.Companion.PLAN_REGIONS
 import nz.govt.eop.si.jooq.tables.Plans.Companion.PLANS
 import nz.govt.eop.si.jooq.tables.SurfaceWaterLimits.Companion.SURFACE_WATER_LIMITS
+import nz.govt.eop.si.jooq.tables.WaterAllocationAndUsageByArea.Companion.WATER_ALLOCATION_AND_USAGE_BY_AREA
 import nz.govt.eop.si.jooq.tables.WaterAllocationsByArea.Companion.WATER_ALLOCATIONS_BY_AREA
 import org.jooq.*
+import org.jooq.impl.DSL
 import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -150,6 +153,34 @@ class Queries(@Autowired val context: DSLContext) {
                         .where(PLANS.COUNCIL_ID.eq(councilId))))
 
     return buildFeatureCollection(context, innerQuery)
+  }
+
+  fun weeklyUsage(councilId: Int, from: LocalDate, to: LocalDate, areaId: String? = null): String {
+    var whereCondition = DSL.noCondition()
+    if (areaId != null) {
+      whereCondition = whereCondition.and(WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID.eq(areaId))
+    }
+
+    val innerQuery =
+        select(
+                WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID,
+                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION).`as`("total_allocation"),
+                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION_DAILY)
+                    .`as`("metered_daily_allocation"),
+                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.METERED_ALLOCATION_YEARLY)
+                    .`as`("metered_yearly_allocation"),
+                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.DAILY_USAGE).`as`("daily_usage"))
+            .from(WATER_ALLOCATION_AND_USAGE_BY_AREA)
+            .where(whereCondition)
+            .and(WATER_ALLOCATION_AND_USAGE_BY_AREA.DATE.ge(from))
+            .and(WATER_ALLOCATION_AND_USAGE_BY_AREA.DATE.le(to))
+            .groupBy(WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID)
+
+    val featureCollection: Field<JSONB> =
+        coalesce(function("json_agg", JSONB::class.java, field("inputs")), jsonArray())
+
+    val result = context.select(featureCollection).from(innerQuery.asTable("inputs")).fetch()
+    return result.firstNotNullOf { it.value1().toString() }
   }
 
   private fun <R : Record> buildFeatureCollection(
