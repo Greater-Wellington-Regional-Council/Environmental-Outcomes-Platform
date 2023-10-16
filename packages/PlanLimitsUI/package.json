@@ -34,7 +34,7 @@
     "@tanstack/eslint-plugin-query": "^4.27.0",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.4.3",
+    "@testing-library/user-event": "^14.5.1",
     "@types/lodash": "^4.14.194",
     "@types/react": "^18.0.31",
     "@types/react-dom": "^18.0.11",
@@ -59,6 +59,6 @@
     "typescript": "^5.0.2",
     "vite": "^4.2.1",
     "vite-plugin-rewrite-all": "^1.0.1",
-    "vitest": "^0.29.8"
+    "vitest": "^0.34.6"
   }
 }
