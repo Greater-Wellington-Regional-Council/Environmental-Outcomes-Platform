@@ -16,7 +16,7 @@ import Map, {
 } from 'react-map-gl';
 import type { PlanLimitsData } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
-import Button from '../../components/Button';
+import Button from '../../components/RoundedButton';
 import RiverTilesSource from './RiverTilesSource';
 import flowMarkerImage from '../../images/marker_flow.svg';
 
