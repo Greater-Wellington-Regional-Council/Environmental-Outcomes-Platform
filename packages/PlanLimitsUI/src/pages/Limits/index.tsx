@@ -6,7 +6,6 @@ import { useAtom } from 'jotai';
 import { councilAtom } from '../../lib/loader';
 import { useAppState } from '../../lib/useAppState';
 import { usePlanLimitsData } from '../../api';
-// import { usePlanLimitsData } from '../../api';
 import Map from './map';
 import Sidebar from './Sidebar';
 import {

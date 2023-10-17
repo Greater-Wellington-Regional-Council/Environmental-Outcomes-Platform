@@ -33,6 +33,15 @@ interface Council {
   };
 }
 
+// To do - camelise
+interface Usage {
+  area_id: number;
+  total_allocation: number;
+  metered_daily_allocation: number;
+  metered_yearly_allocation: number;
+  daily_usage: number;
+}
+
 interface Plan {
   id: number;
   councilId: number;

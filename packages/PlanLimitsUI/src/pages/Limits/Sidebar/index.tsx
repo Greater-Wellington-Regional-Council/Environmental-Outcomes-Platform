@@ -4,6 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Overview from './Overview';
 import LimitsTable from './LimitsTable';
+import UsageTable from './UsageTable';
 import Button from '../../../components/Button';
 
 export default function Sidebar({
@@ -53,11 +54,16 @@ export default function Sidebar({
         />
 
         {appState.planRegion && (
-          <LimitsTable
-            council={council}
-            waterTakeFilter={waterTakeFilter}
-            appState={appState}
-          />
+          <>
+            <LimitsTable
+              council={council}
+              waterTakeFilter={waterTakeFilter}
+              appState={appState}
+            />
+            <div className="my-6">
+              <UsageTable council={council} />
+            </div>
+          </>
         )}
       </div>
 

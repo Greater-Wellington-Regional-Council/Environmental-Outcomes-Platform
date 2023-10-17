@@ -189,4 +189,20 @@ export function usePlanLimitsData(councilId: number) {
   };
 }
 
+export function useUsageData(councilId: number, from: string, to: string) {
+  console.log('loading');
+  const usage = useQuery({
+    queryKey: ['/plan-limits/water-usage', councilId, from, to],
+    // These settings prevent a refetch within in the same browser session
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: Infinity,
+    queryFn: () =>
+      fetchFromAPI<Usage[]>(
+        `/plan-limits/water-usage?councilId=${councilId}&from=${from}&to=${to}`
+      ),
+  });
+  return usage;
+}
+
 export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;
