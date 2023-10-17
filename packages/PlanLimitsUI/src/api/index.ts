@@ -189,7 +189,7 @@ export function usePlanLimitsData(councilId: number) {
   };
 }
 
-export function useUsageData(councilId: number, from: string, to: string) {
+export function useUsageQuery(councilId: number, from: string, to: string) {
   console.log('loading');
   const usage = useQuery({
     queryKey: ['/plan-limits/water-usage', councilId, from, to],

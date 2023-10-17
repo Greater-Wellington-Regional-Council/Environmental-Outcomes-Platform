@@ -35,7 +35,7 @@ interface Council {
 
 // To do - camelise
 interface Usage {
-  area_id: number;
+  area_id: string;
   total_allocation: number;
   metered_daily_allocation: number;
   metered_yearly_allocation: number;
@@ -65,6 +65,7 @@ interface PlanRegion {
 
 interface SurfaceWaterLimit {
   id: number;
+  sourceId: string;
   name: string;
   planRegionId: number;
   parentSurfaceWaterLimitId: number;
@@ -75,6 +76,7 @@ interface SurfaceWaterLimit {
 interface GroundWaterLimit {
   id: number;
   limitId: number;
+  sourceId: string;
   name: string;
   planRegionId: number;
   allocationLimit: number;
