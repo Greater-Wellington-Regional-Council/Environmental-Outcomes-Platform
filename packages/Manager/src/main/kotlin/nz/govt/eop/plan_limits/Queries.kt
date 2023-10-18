@@ -72,6 +72,7 @@ class Queries(@Autowired val context: DSLContext) {
         select(
                 SURFACE_WATER_LIMITS.ID,
                 SURFACE_WATER_LIMITS.PLAN_REGION_ID,
+                SURFACE_WATER_LIMITS.SOURCE_ID,
                 SURFACE_WATER_LIMITS.PARENT_SURFACE_WATER_LIMIT_ID,
                 SURFACE_WATER_LIMITS.NAME,
                 SURFACE_WATER_LIMITS.ALLOCATION_LIMIT,
@@ -99,6 +100,7 @@ class Queries(@Autowired val context: DSLContext) {
                 GROUNDWATER_AREAS.DEPLETION_LIMIT_ID,
                 GROUNDWATER_AREAS.BOUNDARY.`as`("geometry"),
                 GROUNDWATER_LIMITS.ID.`as`("limit_id"),
+                GROUNDWATER_LIMITS.SOURCE_ID,
                 GROUNDWATER_LIMITS.PLAN_REGION_ID,
                 GROUNDWATER_LIMITS.NAME,
                 GROUNDWATER_LIMITS.ALLOCATION_LIMIT,
@@ -155,7 +157,7 @@ class Queries(@Autowired val context: DSLContext) {
     return buildFeatureCollection(context, innerQuery)
   }
 
-  fun weeklyUsage(councilId: Int, from: LocalDate, to: LocalDate, areaId: String? = null): String {
+  fun waterUsage(councilId: Int, from: LocalDate, to: LocalDate, areaId: String? = null): String {
     var whereCondition = DSL.noCondition()
     if (areaId != null) {
       whereCondition = whereCondition.and(WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID.eq(areaId))
@@ -164,6 +166,7 @@ class Queries(@Autowired val context: DSLContext) {
     val innerQuery =
         select(
                 WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID,
+                WATER_ALLOCATION_AND_USAGE_BY_AREA.DATE,
                 sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION).`as`("total_allocation"),
                 sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION_DAILY)
                     .`as`("metered_daily_allocation"),
@@ -174,7 +177,8 @@ class Queries(@Autowired val context: DSLContext) {
             .where(whereCondition)
             .and(WATER_ALLOCATION_AND_USAGE_BY_AREA.DATE.ge(from))
             .and(WATER_ALLOCATION_AND_USAGE_BY_AREA.DATE.le(to))
-            .groupBy(WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID)
+            .groupBy(
+                WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID, WATER_ALLOCATION_AND_USAGE_BY_AREA.DATE)
 
     val featureCollection: Field<JSONB> =
         coalesce(function("json_agg", JSONB::class.java, field("inputs")), jsonArray())
