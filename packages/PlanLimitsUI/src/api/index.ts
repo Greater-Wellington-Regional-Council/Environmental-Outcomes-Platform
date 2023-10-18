@@ -190,7 +190,6 @@ export function usePlanLimitsData(councilId: number) {
 }
 
 export function useUsageQuery(councilId: number, from: string, to: string) {
-  console.log('loading');
   const usage = useQuery({
     queryKey: ['/plan-limits/water-usage', councilId, from, to],
     // These settings prevent a refetch within in the same browser session

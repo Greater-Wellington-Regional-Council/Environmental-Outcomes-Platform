@@ -1,5 +1,32 @@
 import { useUsageQuery } from '../api';
 import { format, addDays, addWeeks, parse } from 'date-fns';
+import { groupBy, sumBy } from 'lodash';
+import type { UseQueryResult } from '@tanstack/react-query';
+
+export interface GWandSWUsage {
+  sw: UsageHeatmapData[];
+  gw: UsageHeatmapData[];
+}
+
+export interface WaterUseData {
+  from: Date;
+  to: Date;
+  formattedFrom: string;
+  formattedTo: string;
+  usage?: GWandSWUsage;
+}
+
+export interface UsageHeatmapData {
+  id: string;
+  data: {
+    x: string;
+    y: number;
+  }[];
+}
+
+type useWaterUseData = UseQueryResult & {
+  data: WaterUseData;
+};
 
 export default function useWaterUseData(
   councilId: number,
@@ -26,7 +53,7 @@ export default function useWaterUseData(
   return {
     ...usageData,
     data,
-  };
+  } as useWaterUseData;
 }
 
 function transformUsageData(
@@ -35,21 +62,39 @@ function transformUsageData(
   gwAreaIds: string[]
 ) {
   const swUsagePerDay = usageData.filter((ud) => ud.area_id === swAreaId);
-  const swHeatmapData = [
+  const gwUsagePerDay = usageData.filter((ud) =>
+    gwAreaIds.includes(ud.area_id)
+  );
+
+  return {
+    sw: transformUsageForHeatMap(swUsagePerDay),
+    gw: transformUsageForHeatMap(gwUsagePerDay),
+  };
+}
+
+function transformUsageForHeatMap(usage: Usage[]) {
+  if (usage.length === 0) return [];
+
+  const usageGroupedByDay = groupBy<Usage>(usage, 'date');
+
+  return [
     {
       id: 'Usage',
-      data: swUsagePerDay.map((d) => {
+      data: Object.keys(usageGroupedByDay).map((date) => {
+        const usage = sumBy(usageGroupedByDay[date], 'daily_usage');
+        const allocation = sumBy(
+          usageGroupedByDay[date],
+          'metered_daily_allocation'
+        );
+
         return {
-          x: format(parse(d.date, 'yyyy-MM-dd', new Date()), 'EEE d'),
+          usage,
+          allocation,
+          x: format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d'),
           // y: (d.daily_usage / d.metered_daily_allocation) * 100,
-          y: (d.daily_usage / 100) * 100,
+          y: usage <= 0 ? 0 : usage / allocation,
         };
       }),
     },
   ];
-  console.log('swHeatmapData', swHeatmapData);
-
-  return {
-    swHeatmapData,
-  };
 }

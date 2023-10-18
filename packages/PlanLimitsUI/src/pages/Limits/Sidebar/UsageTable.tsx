@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
-import useWaterUseData from '../../../lib/useWaterUseData';
+import useWaterUseData, {
+  type UsageHeatmapData,
+  type GWandSWUsage,
+} from '../../../lib/useWaterUseData';
 import Button from '../../../components/Button';
 import { LoadingIndicator } from '../../../components/Indicators';
 
@@ -64,12 +67,7 @@ export default function UsageTable({
       </div>
 
       <div className="mb-4">
-        <Table
-          to={waterUseData.data.to}
-          setWeekOffset={setWeekOffset}
-          weekOffset={weekOffset}
-          usage={waterUseData.data.usage}
-        />
+        <Table usage={waterUseData.data.usage} />
       </div>
 
       <a
@@ -85,7 +83,7 @@ export default function UsageTable({
   );
 }
 
-function Table({ to, weekOffset, setWeekOffset, usage }) {
+function Table({ usage }: { usage?: GWandSWUsage }) {
   return (
     <table className="border-collapse w-full">
       <thead>
@@ -99,33 +97,42 @@ function Table({ to, weekOffset, setWeekOffset, usage }) {
       <tbody>
         <tr className="h-18">
           <td className="border p-2 text-center bg-gray-100">SW</td>
-          {usage && (
-            <td className="border p-0">
-              <HeatMap data={usage.swHeatmapData} />
-            </td>
-          )}
-
-          {!usage && (
-            <td className="border text-center h-16">
-              <LoadingIndicator />
-            </td>
-          )}
+          <UsageCell usage={usage?.sw} />
         </tr>
         <tr>
           <td className="border p-2 text-center bg-gray-100">GW</td>
-          <td className="border"></td>
+          <UsageCell usage={usage?.gw} />
         </tr>
       </tbody>
     </table>
   );
 }
 
-function HeatMap({ data }) {
+function UsageCell({ usage }: { usage?: UsageHeatmapData[] }) {
+  if (!usage) {
+    return (
+      <td className="border text-center h-16">
+        <LoadingIndicator />
+      </td>
+    );
+  }
+
+  if (usage.length === 0) {
+    return <td className="border text-center h-16">No data</td>;
+  }
+  return (
+    <td className="border p-0">
+      <HeatMap usage={usage} />
+    </td>
+  );
+}
+
+function HeatMap({ usage }: { usage: UsageHeatmapData[] }) {
   return (
     <div className="h-16">
       <ResponsiveHeatMapCanvas
         tooltip={CustomTooltip}
-        data={data}
+        data={usage}
         valueFormat={'=-0.0~%'}
         margin={{ top: 30, bottom: 0, left: 0 }}
         colors={{
@@ -138,13 +145,14 @@ function HeatMap({ data }) {
     </div>
   );
 }
-const Total = 17842;
+
 const formatNumber = Intl.NumberFormat();
+
 const CustomTooltip = ({ cell }: { cell: ComputedCell<any> }) => {
-  const usageValue = Math.round(Total * cell.value);
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      {formatNumber.format(usageValue)} of 17,842 m<sup>3</sup>/day
+      {formatNumber.format(cell.data.usage)} of{' '}
+      {formatNumber.format(cell.data.allocation)} m<sup>3</sup>/day
     </div>
   );
 };
