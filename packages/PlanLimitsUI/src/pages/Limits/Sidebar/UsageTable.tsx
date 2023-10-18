@@ -3,14 +3,16 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
 import useWaterUseData, {
-  type UsageHeatmapData,
-  type GWandSWUsage,
+  type HeatmapData,
+  type SWAndGWHeatmapData,
+  type HeatmapDataItem,
 } from '../../../lib/useWaterUseData';
 import Button from '../../../components/Button';
 import { LoadingIndicator } from '../../../components/Indicators';
 
 const MIN_OFFSET = -52;
 const MAX_OFFSET = 0;
+const formatNumber = Intl.NumberFormat();
 
 type Props = {
   waterTakeFilter: WaterTakeFilter;
@@ -28,6 +30,7 @@ export default function UsageTable({
   const handleUpdateDateOffset = (change: number) => {
     const updatedOffet = weekOffset + change;
     if (updatedOffet < MIN_OFFSET || updatedOffet > MAX_OFFSET) return;
+
     setWeekOffset(updatedOffet);
   };
 
@@ -68,7 +71,7 @@ export default function UsageTable({
 
       <div className="mb-4">
         <Table
-          usage={waterUseData.data.usage}
+          data={waterUseData.data.usage}
           waterTakeFilter={waterTakeFilter}
         />
       </div>
@@ -87,10 +90,10 @@ export default function UsageTable({
 }
 
 function Table({
-  usage,
+  data,
   waterTakeFilter,
 }: {
-  usage?: GWandSWUsage;
+  data?: SWAndGWHeatmapData;
   waterTakeFilter: WaterTakeFilter;
 }) {
   return (
@@ -107,7 +110,7 @@ function Table({
         {['Surface', 'Combined'].includes(waterTakeFilter) && (
           <tr className="h-18">
             <td className="border p-2 text-center bg-gray-100">SW</td>
-            {!usage && (
+            {!data && (
               <td
                 rowSpan={waterTakeFilter === 'Surface' ? 1 : 2}
                 className={`border text-center ${
@@ -117,18 +120,18 @@ function Table({
                 <LoadingIndicator />
               </td>
             )}
-            {usage && <UsageCell usage={usage.sw} />}
+            {data && <UsageCell data={data.sw} />}
           </tr>
         )}
         {['Ground', 'Combined'].includes(waterTakeFilter) && (
           <tr>
             <td className="border p-2 text-center bg-gray-100">GW</td>
-            {!usage && waterTakeFilter === 'Ground' && (
+            {!data && waterTakeFilter === 'Ground' && (
               <td className="border text-center h-16">
                 <LoadingIndicator />
               </td>
             )}
-            {usage && <UsageCell usage={usage.gw} />}
+            {data && <UsageCell data={data.gw} />}
           </tr>
         )}
       </tbody>
@@ -136,18 +139,18 @@ function Table({
   );
 }
 
-function UsageCell({ usage }: { usage: UsageHeatmapData[] }) {
-  if (usage.length === 0) {
+function UsageCell({ data }: { data: HeatmapData[] }) {
+  if (data.length === 0) {
     return <td className="border text-center h-16">No data</td>;
   }
   return (
     <td className="border p-0">
-      <HeatMap usage={usage} />
+      <HeatMap usage={data} />
     </td>
   );
 }
 
-function HeatMap({ usage }: { usage: UsageHeatmapData[] }) {
+function HeatMap({ usage }: { usage: HeatmapData[] }) {
   return (
     <div className="h-16">
       <ResponsiveHeatMapCanvas
@@ -166,9 +169,7 @@ function HeatMap({ usage }: { usage: UsageHeatmapData[] }) {
   );
 }
 
-const formatNumber = Intl.NumberFormat();
-
-const CustomTooltip = ({ cell }: { cell: ComputedCell<any> }) => {
+const CustomTooltip = ({ cell }: { cell: ComputedCell<HeatmapDataItem> }) => {
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
       {formatNumber.format(cell.data.usage)} of{' '}

@@ -60,7 +60,7 @@ export default function Sidebar({
               waterTakeFilter={waterTakeFilter}
               appState={appState}
             />
-            <div className="my-6">
+            <div className="my-8">
               <UsageTable
                 council={council}
                 appState={appState}

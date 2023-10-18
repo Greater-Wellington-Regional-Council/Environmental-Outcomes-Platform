@@ -1,11 +1,23 @@
-import { useUsageQuery } from '../api';
+import type { UseQueryResult } from '@tanstack/react-query';
+import { useWaterUseQuery } from '../api';
 import { format, addDays, addWeeks, parse } from 'date-fns';
 import { groupBy, sumBy } from 'lodash';
-import type { UseQueryResult } from '@tanstack/react-query';
 
-export interface GWandSWUsage {
-  sw: UsageHeatmapData[];
-  gw: UsageHeatmapData[];
+export interface HeatmapDataItem {
+  usage: number;
+  allocation: number;
+  x: string;
+  y: number;
+}
+
+export interface HeatmapData {
+  id: string;
+  data: HeatmapDataItem[];
+}
+
+export interface SWAndGWHeatmapData {
+  sw: HeatmapData[];
+  gw: HeatmapData[];
 }
 
 export interface WaterUseData {
@@ -13,15 +25,7 @@ export interface WaterUseData {
   to: Date;
   formattedFrom: string;
   formattedTo: string;
-  usage?: GWandSWUsage;
-}
-
-export interface UsageHeatmapData {
-  id: string;
-  data: {
-    x: string;
-    y: number;
-  }[];
+  heatmapData?: SWAndGWHeatmapData;
 }
 
 type useWaterUseData = UseQueryResult & {
@@ -39,7 +43,11 @@ export default function useWaterUseData(
   const from = addDays(to, -6);
   const formattedFrom = format(from, 'yyyy-MM-dd');
   const formattedTo = format(to, 'yyyy-MM-dd');
-  const usageData = useUsageQuery(councilId, formattedFrom, formattedTo);
+  const waterUseQueryResult = useWaterUseQuery(
+    councilId,
+    formattedFrom,
+    formattedTo
+  );
 
   const data = {
     from,
@@ -47,32 +55,31 @@ export default function useWaterUseData(
     formattedFrom,
     formattedTo,
     usage:
-      usageData.data && transformUsageData(usageData.data, swAreaId, gwAreaIds),
+      waterUseQueryResult.data &&
+      transformWaterUseData(waterUseQueryResult.data, swAreaId, gwAreaIds),
   };
 
   return {
-    ...usageData,
+    ...waterUseQueryResult,
     data,
   } as useWaterUseData;
 }
 
-function transformUsageData(
-  usageData: Usage[],
+function transformWaterUseData(
+  usage: Usage[],
   swAreaId: string,
   gwAreaIds: string[]
 ) {
-  const swUsagePerDay = usageData.filter((ud) => ud.area_id === swAreaId);
-  const gwUsagePerDay = usageData.filter((ud) =>
-    gwAreaIds.includes(ud.area_id)
-  );
+  const swUsagePerDay = usage.filter((u) => u.area_id === swAreaId);
+  const gwUsagePerDay = usage.filter((u) => gwAreaIds.includes(u.area_id));
 
   return {
-    sw: transformUsageForHeatMap(swUsagePerDay),
-    gw: transformUsageForHeatMap(gwUsagePerDay),
+    sw: transformUsageToHeatMap(swUsagePerDay),
+    gw: transformUsageToHeatMap(gwUsagePerDay),
   };
 }
 
-function transformUsageForHeatMap(usage: Usage[]) {
+function transformUsageToHeatMap(usage: Usage[]) {
   if (usage.length === 0) return [];
 
   const usageGroupedByDay = groupBy<Usage>(usage, 'date');
@@ -91,7 +98,6 @@ function transformUsageForHeatMap(usage: Usage[]) {
           usage,
           allocation,
           x: format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d'),
-          // y: (d.daily_usage / d.metered_daily_allocation) * 100,
           y: usage <= 0 ? 0 : usage / allocation,
         };
       }),
