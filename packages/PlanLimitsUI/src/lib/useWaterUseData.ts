@@ -70,8 +70,8 @@ function transformWaterUseData(
   swAreaId: string,
   gwAreaIds: string[]
 ) {
-  const swUsagePerDay = usage.filter((u) => u.area_id === swAreaId);
-  const gwUsagePerDay = usage.filter((u) => gwAreaIds.includes(u.area_id));
+  const swUsagePerDay = usage.filter((u) => u.areaId === swAreaId);
+  const gwUsagePerDay = usage.filter((u) => gwAreaIds.includes(u.areaId));
 
   return {
     sw: transformUsageToHeatMap(swUsagePerDay),
@@ -88,10 +88,10 @@ function transformUsageToHeatMap(usage: Usage[]) {
     {
       id: 'Usage',
       data: Object.keys(usageGroupedByDay).map((date) => {
-        const usage = sumBy(usageGroupedByDay[date], 'daily_usage');
+        const usage = sumBy(usageGroupedByDay[date], 'dailyUsage');
         const allocation = sumBy(
           usageGroupedByDay[date],
-          'metered_daily_allocation'
+          'meteredDailyAllocation'
         );
 
         return {

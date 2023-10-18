@@ -165,14 +165,14 @@ class Queries(@Autowired val context: DSLContext) {
 
     val innerQuery =
         select(
-                WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID,
+                WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID.`as`("areaId"),
                 WATER_ALLOCATION_AND_USAGE_BY_AREA.DATE,
-                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION).`as`("total_allocation"),
+                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION).`as`("allocation"),
                 sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION_DAILY)
-                    .`as`("metered_daily_allocation"),
+                    .`as`("meteredDailyAllocation"),
                 sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.METERED_ALLOCATION_YEARLY)
-                    .`as`("metered_yearly_allocation"),
-                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.DAILY_USAGE).`as`("daily_usage"))
+                    .`as`("meteredYearlyAllocation"),
+                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.DAILY_USAGE).`as`("dailyUsage"))
             .from(WATER_ALLOCATION_AND_USAGE_BY_AREA)
             .where(whereCondition)
             .and(WATER_ALLOCATION_AND_USAGE_BY_AREA.DATE.ge(from))
