@@ -55,13 +55,17 @@ export default function Sidebar({
 
         {appState.planRegion && (
           <>
-            {/* <LimitsTable
+            <LimitsTable
               council={council}
               waterTakeFilter={waterTakeFilter}
               appState={appState}
-            /> */}
+            />
             <div className="my-6">
-              <UsageTable council={council} appState={appState} />
+              <UsageTable
+                council={council}
+                appState={appState}
+                waterTakeFilter={waterTakeFilter}
+              />
             </div>
           </>
         )}

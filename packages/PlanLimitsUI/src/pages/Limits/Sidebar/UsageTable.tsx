@@ -67,7 +67,10 @@ export default function UsageTable({
       </div>
 
       <div className="mb-4">
-        <Table usage={waterUseData.data.usage} />
+        <Table
+          usage={waterUseData.data.usage}
+          waterTakeFilter={waterTakeFilter}
+        />
       </div>
 
       <a
@@ -83,7 +86,13 @@ export default function UsageTable({
   );
 }
 
-function Table({ usage }: { usage?: GWandSWUsage }) {
+function Table({
+  usage,
+  waterTakeFilter,
+}: {
+  usage?: GWandSWUsage;
+  waterTakeFilter: WaterTakeFilter;
+}) {
   return (
     <table className="border-collapse w-full">
       <thead>
@@ -95,28 +104,39 @@ function Table({ usage }: { usage?: GWandSWUsage }) {
         </tr>
       </thead>
       <tbody>
-        <tr className="h-18">
-          <td className="border p-2 text-center bg-gray-100">SW</td>
-          <UsageCell usage={usage?.sw} />
-        </tr>
-        <tr>
-          <td className="border p-2 text-center bg-gray-100">GW</td>
-          <UsageCell usage={usage?.gw} />
-        </tr>
+        {['Surface', 'Combined'].includes(waterTakeFilter) && (
+          <tr className="h-18">
+            <td className="border p-2 text-center bg-gray-100">SW</td>
+            {!usage && (
+              <td
+                rowSpan={waterTakeFilter === 'Surface' ? 1 : 2}
+                className={`border text-center ${
+                  waterTakeFilter === 'Surface' ? 'h-16' : 'h-32'
+                }`}
+              >
+                <LoadingIndicator />
+              </td>
+            )}
+            {usage && <UsageCell usage={usage.sw} />}
+          </tr>
+        )}
+        {['Ground', 'Combined'].includes(waterTakeFilter) && (
+          <tr>
+            <td className="border p-2 text-center bg-gray-100">GW</td>
+            {!usage && waterTakeFilter === 'Ground' && (
+              <td className="border text-center h-16">
+                <LoadingIndicator />
+              </td>
+            )}
+            {usage && <UsageCell usage={usage.gw} />}
+          </tr>
+        )}
       </tbody>
     </table>
   );
 }
 
-function UsageCell({ usage }: { usage?: UsageHeatmapData[] }) {
-  if (!usage) {
-    return (
-      <td className="border text-center h-16">
-        <LoadingIndicator />
-      </td>
-    );
-  }
-
+function UsageCell({ usage }: { usage: UsageHeatmapData[] }) {
   if (usage.length === 0) {
     return <td className="border text-center h-16">No data</td>;
   }
