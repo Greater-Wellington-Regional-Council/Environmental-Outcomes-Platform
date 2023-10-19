@@ -8,7 +8,10 @@ import useWaterUseData, {
   type HeatmapDataItem,
 } from '../../../lib/useWaterUseData';
 import Button from '../../../components/Button';
-import { LoadingIndicator } from '../../../components/Indicators';
+import {
+  LoadingIndicator,
+  ErrorIndicator,
+} from '../../../components/Indicators';
 
 const MIN_OFFSET = -52;
 const MAX_OFFSET = 0;
@@ -38,7 +41,7 @@ export default function UsageTable({
     council.id,
     appState.surfaceWaterSubUnitLimit?.sourceId || '',
     appState.groundWaterLimits.map((gwl) => gwl.sourceId),
-    weekOffset
+    weekOffset,
   );
 
   return (
@@ -71,6 +74,7 @@ export default function UsageTable({
 
       <div className="mb-4">
         <Table
+          loadingError={Boolean(waterUseData.error)}
           data={waterUseData.data.usage}
           waterTakeFilter={waterTakeFilter}
         />
@@ -90,9 +94,11 @@ export default function UsageTable({
 }
 
 function Table({
+  loadingError,
   data,
   waterTakeFilter,
 }: {
+  loadingError: boolean;
   data?: SWAndGWHeatmapData;
   waterTakeFilter: WaterTakeFilter;
 }) {
@@ -117,7 +123,11 @@ function Table({
                   waterTakeFilter === 'Surface' ? 'h-16' : 'h-32'
                 }`}
               >
-                <LoadingIndicator />
+                {loadingError ? (
+                  <ErrorIndicator>Error loading data</ErrorIndicator>
+                ) : (
+                  <LoadingIndicator />
+                )}
               </td>
             )}
             {data && <UsageCell data={data.sw} />}
@@ -128,7 +138,11 @@ function Table({
             <td className="border p-2 text-center bg-gray-100">GW</td>
             {!data && waterTakeFilter === 'Ground' && (
               <td className="border text-center h-16">
-                <LoadingIndicator />
+                {loadingError ? (
+                  <ErrorIndicator>Error loading data</ErrorIndicator>
+                ) : (
+                  <LoadingIndicator />
+                )}
               </td>
             )}
             {data && <UsageCell data={data.gw} />}
