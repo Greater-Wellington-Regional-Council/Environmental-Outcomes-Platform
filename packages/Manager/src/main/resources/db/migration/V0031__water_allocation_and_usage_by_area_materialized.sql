@@ -1,7 +1,6 @@
-DROP VIEW IF EXISTS water_allocation_and_usage_by_area;
+drop view if exists water_allocation_and_usage_by_area;
 
-CREATE MATERIALIZED VIEW  water_allocation_and_usage_by_area AS
-
+create materialized view  water_allocation_and_usage_by_area as
 with all_days as (
     select distinct date(effective_on) as effective_on from effective_daily_consents
 ),
@@ -74,6 +73,14 @@ with all_days as (
          from total_daily_allocation_by_area
                   left join total_daily_use_by_area using (area_id, date)
      )
-SELECT *
-FROM allocated_joined_with_use
-WITH NO DATA;
+select *
+from allocated_joined_with_use
+--- This prevents initial generation so we don't block the app booting when migrations
+--- are run as part of app-deploy
+with no data;
+
+create index on water_allocation_and_usage_by_area (date);
+--- A unique index is required to refresh the view concurrently
+create unique index on water_allocation_and_usage_by_area (date, area_id);
+
+alter materialized view water_allocation_and_usage_by_area owner to materialized_views_role;

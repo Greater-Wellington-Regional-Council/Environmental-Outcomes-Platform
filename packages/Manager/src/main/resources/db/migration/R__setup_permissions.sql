@@ -23,3 +23,7 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO developers;
 
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
   GRANT USAGE, SELECT ON SEQUENCES TO developers;
+
+GRANT USAGE, CREATE ON SCHEMA public TO materialized_views_role;
+GRANT materialized_views_role TO eop_manager_app_user;
+GRANT materialized_views_role TO eop_manager_migrations_user WITH ADMIN OPTION;

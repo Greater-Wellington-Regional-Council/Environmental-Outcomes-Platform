@@ -15,6 +15,6 @@ class WaterAllocationViewUpdater(val jdbcTemplate: JdbcTemplate) {
   @Transactional
   fun refresh() {
     jdbcTemplate.update(
-        "REFRESH MATERIALIZED VIEW CONCURRENTLY water_allocation_and_usage_by_area;")
+        "SET ROLE materialized_views_role; REFRESH MATERIALIZED VIEW CONCURRENTLY water_allocation_and_usage_by_area;")
   }
 }

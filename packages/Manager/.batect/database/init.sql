@@ -32,6 +32,9 @@ GRANT USAGE ON SCHEMA public TO eop_tileserver_user;
 
 CREATE ROLE developers NOINHERIT;
 
+-- We need a role which can be shared by the eop_manager_migrations_user and
+--- eop_manager_app_user for creating and refreshing materialized views 
+CREATE ROLE materialized_views_role;
 
 \c eop_test
 CREATE EXTENSION postgis;
