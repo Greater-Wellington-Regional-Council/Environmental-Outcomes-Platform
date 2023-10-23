@@ -75,12 +75,18 @@ with all_days as (
      )
 select *
 from allocated_joined_with_use
---- This prevents initial generation so we don't block the app booting when migrations
---- are run as part of app-deploy
+-- This prevents initial generation so we don't block the app booting when migrations
+-- are run as part of app-deploy
 with no data;
 
 create index on water_allocation_and_usage_by_area (date);
---- A unique index is required to refresh the view concurrently
+-- A unique index is required to refresh the view concurrently
 create unique index on water_allocation_and_usage_by_area (date, area_id);
 
 alter materialized view water_allocation_and_usage_by_area owner to materialized_views_role;
+
+-- After changing the owner, we need to ensure eop_manager_migrations_user still
+-- has rights on the table for commands in R__setup_permissions.sql to be able to
+-- to run without error
+set role materialized_views_role;
+grant all ON table water_allocation_and_usage_by_area to eop_manager_migrations_user;
