@@ -1,6 +1,6 @@
 import { atom, useAtom } from 'jotai';
 import { Dialog } from '@headlessui/react';
-import Button from '../Button';
+import Button from '../RoundedButton';
 
 const LOCAL_STORAGE_KEY = 'disclaimer-agreed';
 

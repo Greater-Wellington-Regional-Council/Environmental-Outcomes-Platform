@@ -33,6 +33,15 @@ interface Council {
   };
 }
 
+interface Usage {
+  date: string;
+  areaId: string;
+  allocation: number;
+  meteredDailyAllocation: number;
+  meteredYearlyAllocation: number;
+  dailyUsage: number;
+}
+
 interface Plan {
   id: number;
   councilId: number;
@@ -56,6 +65,7 @@ interface PlanRegion {
 
 interface SurfaceWaterLimit {
   id: number;
+  sourceId: string;
   name: string;
   planRegionId: number;
   parentSurfaceWaterLimitId: number;
@@ -66,6 +76,7 @@ interface SurfaceWaterLimit {
 interface GroundWaterLimit {
   id: number;
   limitId: number;
+  sourceId: string;
   name: string;
   planRegionId: number;
   allocationLimit: number;
@@ -118,8 +129,6 @@ interface ActiveLimits {
   groundWaterLimits: GroundWaterLimit[];
 }
 
-type GroupedGroundwaterLimitViews = Dictionary<GroundwaterLimitView[]>;
-
 interface AppState extends ActiveLimits {
   flowSite: FlowMeasurementSite | null;
   groundWaterZones: Array<number>;
@@ -129,6 +138,8 @@ interface AppState extends ActiveLimits {
   catBGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
   catCGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
 }
+
+type GroupedGroundwaterLimitViews = Dictionary<GroundwaterLimitView[]>;
 
 interface LimitView {
   limit?: number;
@@ -142,10 +153,6 @@ interface LimitView {
 interface SurfaceWaterLimitView {
   unitLimitView: LimitView;
   subUnitLimitView: LimitView;
-  // unitLimitToDisplay?: string;
-  // subUnitLimitToDisplay?: string;
-  // unitAllocatedToDisplay?: string;
-  // subUnitAllocatedToDisplay?: string;
 }
 
 interface GroundwaterLimitView {
@@ -154,8 +161,4 @@ interface GroundwaterLimitView {
   depletesFromSubunitLimit?: SurfaceWaterLimit;
   unitLimitView: LimitView;
   subUnitLimitView: LimitView;
-  // unitLimitToDisplay?: string;
-  // subUnitLimitToDisplay?: string;
-  // unitAllocatedToDisplay?: string;
-  // subUnitAllocatedToDisplay?: string;
 }
