@@ -86,7 +86,7 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
 
   @RequestMapping("/plan-limits/water-usage", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun weeklyUsage(
+  fun waterUsage(
       @RequestParam(name = "councilId") councilId: Int,
       @RequestParam("from") from: LocalDate,
       @RequestParam("to") to: LocalDate,
