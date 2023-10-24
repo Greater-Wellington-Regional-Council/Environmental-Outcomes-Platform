@@ -84,9 +84,9 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
         .body(queries.flowLimits(councilId))
   }
 
-  @RequestMapping("/plan-limits/weekly-usage", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @RequestMapping("/plan-limits/water-usage", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun weeklyUsage(
+  fun waterUsage(
       @RequestParam(name = "councilId") councilId: Int,
       @RequestParam("from") from: LocalDate,
       @RequestParam("to") to: LocalDate,
@@ -105,6 +105,6 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
 
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.weeklyUsage(councilId, from, to, areaId))
+        .body(queries.waterUsage(councilId, from, to, areaId))
   }
 }
