@@ -1,17 +1,17 @@
-import { expect, afterEach, vi } from 'vitest';
+import { beforeAll, afterEach, afterAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
-import matchers from '@testing-library/jest-dom/matchers';
+import '@testing-library/jest-dom/vitest';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
 
 // extends Vitest's expect method with methods from react-testing-library
-expect.extend(matchers);
+// expect.extend(matchers);
 
 const server = setupServer(
   // For now, simply mock all requests to return an empty object.
   rest.get('http://localhost:8080/:path', (req, res, ctx) => {
     return res(ctx.json({}));
-  })
+  }),
 );
 
 beforeAll(() => server.listen());
