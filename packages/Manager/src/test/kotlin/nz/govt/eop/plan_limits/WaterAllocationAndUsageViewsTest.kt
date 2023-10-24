@@ -71,6 +71,8 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
   @Test
   fun `should be empty with no allocations`() {
     // GIVEN
+    materializeView()
+
     // WHEN
     val result =
         jdbcTemplate.queryForObject(
@@ -84,6 +86,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
   fun `should include a year of data for an area`() {
     // GIVEN
     createTestAllocation(testAllocation)
+    materializeView()
 
     // WHEN
     val result =
@@ -100,6 +103,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
   fun `should use default allocation data before the effective date`() {
     // GIVEN
     createTestAllocation(testAllocation)
+    materializeView()
 
     // WHEN
     val dateFilter = testEffectiveFrom.toString()
@@ -115,6 +119,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
   fun `should aggregate allocation data from the effective date`() {
     // GIVEN
     createTestAllocation(testAllocation)
+    materializeView()
 
     // WHEN
     val dateFilter = testEffectiveFrom.toString()
@@ -136,6 +141,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     val dateOlderThanAYear = LocalDate.now().atStartOfDay().minusYears(2).toInstant(ZoneOffset.UTC)
     val oldAllocation = testAllocation.copy(effectiveFrom = dateOlderThanAYear)
     createTestAllocation(oldAllocation)
+    materializeView()
 
     // WHEN
     val results =
@@ -157,6 +163,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     val observationDate = LocalDate.now().atStartOfDay().minusDays(10)
     createTestAllocation(testAllocation)
     createTestObservation(testSiteId, 10, observationDate.toInstant(ZoneOffset.UTC))
+    materializeView()
 
     // WHEN
     val whereClause = "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'"
@@ -168,6 +175,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
 
     // GIVEN
     createTestObservation(testSiteId, 5, observationDate.plusHours(1).toInstant(ZoneOffset.UTC))
+    materializeView()
 
     // WHEN
     val secondResult = queryAllocationsAndUsage(whereClause)
@@ -192,6 +200,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
             effectiveFrom = allocationUpdatedAt.toInstant(ZoneOffset.UTC))
     createTestAllocation(updateAllocation)
     createTestObservation(testSiteId, 10, allocationUpdatedAt.toInstant(ZoneOffset.UTC))
+    materializeView()
 
     // WHEN
     val resultBeforeUpdate =
@@ -238,6 +247,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         testAllocation.copy(
             allocation = BigDecimal(30),
             effectiveFrom = secondAllocationUpdatedAt.toInstant(ZoneOffset.UTC)))
+    materializeView()
 
     // WHEN
     val results =
@@ -259,6 +269,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
             effectiveFrom = allocationUpdatedAt.toInstant(ZoneOffset.UTC),
             status = ConsentStatus.inactive)
     createTestAllocation(updatedAllocation)
+    materializeView()
 
     // WHEN
     val results =
@@ -276,6 +287,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     createTestAllocation(allocationWithIsMeteredFalse)
     val observationDate = LocalDate.now().atStartOfDay().minusDays(10)
     createTestObservation(testSiteId, 10, observationDate.toInstant(ZoneOffset.UTC))
+    materializeView()
 
     // WHEN
     val result =
@@ -311,6 +323,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         allocationInDifferentArea.meters.first().toInt(),
         30,
         observationDate.toInstant(ZoneOffset.UTC))
+    materializeView()
 
     // WHEN
     val results =
@@ -421,5 +434,9 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         },
         keyHolder)
     return keyHolder.keys?.get("id") as Int
+  }
+
+  fun materializeView() {
+    jdbcTemplate.execute("REFRESH MATERIALIZED VIEW water_allocation_and_usage_by_area;")
   }
 }
