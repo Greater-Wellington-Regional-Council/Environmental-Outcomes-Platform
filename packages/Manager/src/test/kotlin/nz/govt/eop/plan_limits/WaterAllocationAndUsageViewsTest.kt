@@ -9,6 +9,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import nz.govt.eop.messages.ConsentStatus
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -68,6 +69,10 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
           testEffectiveFrom.toInstant(ZoneOffset.UTC),
           null)
 
+  @BeforeEach
+  fun materializeView() {
+    jdbcTemplate.execute("REFRESH MATERIALIZED VIEW water_allocation_and_usage_by_area;")
+  }
   @Test
   fun `should be empty with no allocations`() {
     // GIVEN
