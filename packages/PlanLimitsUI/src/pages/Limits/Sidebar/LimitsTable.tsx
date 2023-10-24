@@ -173,6 +173,8 @@ export default function LimitsTable({
   );
 
   const showFootnote = true;
+
+  // TODO: Comment and extract this logic
   let surfaceAndGroundCatASubUnitRowSpan = 1;
   let surfaceAndGroundCatAUnitRowSpan = 1;
   if (

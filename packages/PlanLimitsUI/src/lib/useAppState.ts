@@ -3,7 +3,7 @@ import formatWaterQuantity from './formatWaterQuantity';
 import { groupBy } from 'lodash';
 
 export function useAppState(
-  council: Council
+  council: Council,
 ): [AppState, (activeLimits: ActiveLimits, allPlanData: AllPlanData) => void] {
   const [appState, setAppState] = useState<AppState>({
     planRegion: null,
@@ -12,29 +12,30 @@ export function useAppState(
     surfaceWaterUnitLimit: null,
     surfaceWaterSubUnitLimit: null,
     groundWaterLimits: [],
-    groundWaterZones: []
+    groundWaterZones: [],
   });
 
   const setAppStateFromResult = useCallback(
     (activeLimits: ActiveLimits, allPlanData: AllPlanData) => {
+      // TODO: Early exit if no plan region?
       let flowSite = null;
       if (activeLimits.flowLimit) {
         flowSite = allPlanData.flowMeasurementSites.find(
-          (fs) => fs.id === activeLimits.flowLimit.measuredAtSiteId
+          (fs) => fs.id === activeLimits.flowLimit.measuredAtSiteId,
         );
         if (!flowSite) throw new Error('Flow site not found');
       }
 
       const groundWaterZones = activeLimits.groundWaterLimits.map(
-        (gl) => gl.id
+        (gl) => gl.id,
       );
       const groundWaterZoneName = [
         // Constructing then destructuring from a Set leaves us with unique values
-        ...new Set(activeLimits.groundWaterLimits.map((gwl) => gwl.name))
+        ...new Set(activeLimits.groundWaterLimits.map((gwl) => gwl.name)),
       ].join(', ');
 
       const regionOverrides = council.regionOverrides.find(
-        (ro) => ro.sourceId === activeLimits.planRegion?.sourceId
+        (ro) => ro.sourceId === activeLimits.planRegion?.sourceId,
       );
 
       const defaultGroundWaterLimit =
@@ -52,9 +53,10 @@ export function useAppState(
         activeLimits.surfaceWaterSubUnitLimit,
         defaultSurfaceWaterLimit,
         activeLimits.planRegion?.sourceId,
-        council.unitTypes.surface
+        council.unitTypes.surface,
       );
 
+      // TODO: Comment on why we are doing this
       if (!council.hasGroundwaterCategories) {
         activeLimits.groundWaterLimits.forEach((gwl) => {
           gwl.category = 'C';
@@ -66,7 +68,7 @@ export function useAppState(
         allPlanData.surfaceWaterUnitLimits,
         allPlanData.surfaceWaterSubUnitLimits,
         defaultGroundWaterLimit,
-        council.unitTypes.ground
+        council.unitTypes.ground,
       );
 
       // TODO: Extract this!
@@ -74,22 +76,22 @@ export function useAppState(
         groundWaterLimitViews.length === 0
           ? {
               catAGroundWaterLimitsView: defaultCatAGroundWaterLimit(
-                defaultGroundWaterLimit
-              )
+                defaultGroundWaterLimit,
+              ),
             }
           : {
               catAGroundWaterLimitsView: filterGroupAndSort(
                 groundWaterLimitViews,
-                'A'
+                'A',
               ),
               catBGroundWaterLimitsView: filterGroupAndSort(
                 groundWaterLimitViews,
-                'B'
+                'B',
               ),
               catCGroundWaterLimitsView: filterGroupAndSort(
                 groundWaterLimitViews,
-                'C'
-              )
+                'C',
+              ),
             };
 
       setAppState({
@@ -98,31 +100,31 @@ export function useAppState(
         groundWaterZoneName,
         groundWaterZones,
         surfaceWaterLimitView,
-        ...gwLimitViews
+        ...gwLimitViews,
       });
     },
-    [setAppState]
+    [setAppState],
   );
 
   return [appState, setAppStateFromResult];
 }
 
 function defaultCatAGroundWaterLimit(
-  defaultLimit: string
+  defaultLimit: string,
 ): GroupedGroundwaterLimitViews {
   return {
     all: [
       {
         groundWaterLimit: {
           depth: 'All',
-          category: '-'
+          category: '-',
         } as GroundWaterLimit,
         unitLimitView: {
-          limitToDisplay: defaultLimit
+          limitToDisplay: defaultLimit,
         },
-        subUnitLimitView: {}
-      }
-    ]
+        subUnitLimitView: {},
+      },
+    ],
   };
 }
 
@@ -131,19 +133,20 @@ function buildSurfaceWaterLimitView(
   surfaceWaterSubUnitLimit: SurfaceWaterLimit | null,
   defaultSurfaceWaterLimit: string,
   planRegionId?: string,
-  unit: string
+  unit: string,
 ): SurfaceWaterLimitView {
-  const unitLimitView: LimitView = {
-    limit: surfaceWaterUnitLimit?.allocationLimit,
-    overrideText: surfaceWaterUnitLimit?.allocationLimit
-      ? undefined
-      : defaultSurfaceWaterLimit,
-    allocated: surfaceWaterUnitLimit?.allocationAmount
-  };
+  const unitLimitView: LimitView = surfaceWaterUnitLimit
+    ? {
+        limit: surfaceWaterUnitLimit.allocationLimit,
+        allocated: surfaceWaterUnitLimit.allocationAmount,
+      }
+    : {
+        overrideText: defaultSurfaceWaterLimit,
+      };
 
   const subUnitLimitView: LimitView = {
     limit: surfaceWaterSubUnitLimit?.allocationLimit,
-    allocated: surfaceWaterSubUnitLimit?.allocationAmount
+    allocated: surfaceWaterSubUnitLimit?.allocationAmount,
   };
   // Ruamahanga (Whaitua s with source_id ='493cb5ae-4086-4649-8d3a-6d41ee9fded7' in the new plan model) uses 2 levels of surface water units. So in areas
   // where there is no value at the Subunit and there is a management unit,
@@ -158,7 +161,7 @@ function buildSurfaceWaterLimitView(
 
   return {
     unitLimitView: formatLimitView(unitLimitView, unit),
-    subUnitLimitView: formatLimitView(subUnitLimitView, unit)
+    subUnitLimitView: formatLimitView(subUnitLimitView, unit),
   };
 }
 
@@ -167,34 +170,34 @@ function buildGroundWaterLimitView(
   surfaceWaterUnitLimits: SurfaceWaterLimit[],
   surfaceWaterSubUnitLimits: SurfaceWaterLimit[],
   defaultGroundWaterLimit: string,
-  unit: string
+  unit: string,
 ) {
   return groundwaterLimits.map((groundWaterLimit) => {
     const depletesFrom = mapDepletesFrom(
       groundWaterLimit,
       surfaceWaterUnitLimits,
-      surfaceWaterSubUnitLimits
+      surfaceWaterSubUnitLimits,
     );
 
     const limitsToDisplay = unitLimitsToDisplay(
       groundWaterLimit,
       defaultGroundWaterLimit,
       depletesFrom.depletesFromUnitLimit,
-      depletesFrom.depletesFromSubunitLimit
+      depletesFrom.depletesFromSubunitLimit,
     );
     limitsToDisplay.subUnitLimitView = formatLimitView(
       limitsToDisplay.subUnitLimitView,
-      unit
+      unit,
     );
     limitsToDisplay.unitLimitView = formatLimitView(
       limitsToDisplay.unitLimitView,
-      unit
+      unit,
     );
 
     return {
       groundWaterLimit,
       ...depletesFrom,
-      ...limitsToDisplay
+      ...limitsToDisplay,
     };
   });
 }
@@ -202,14 +205,16 @@ function buildGroundWaterLimitView(
 function mapDepletesFrom(
   limit: GroundWaterLimit,
   surfaceWaterUnitLimits: SurfaceWaterLimit[],
-  surfaceWaterSubUnitLimits: SurfaceWaterLimit[]
+  surfaceWaterSubUnitLimits: SurfaceWaterLimit[],
 ) {
+  // TODO: Add a verbal desc of what this is doing
   let depletesFromUnitLimit;
   let depletesFromSubunitLimit;
   if (limit.depletionLimitId) {
     depletesFromSubunitLimit = surfaceWaterSubUnitLimits.find(
-      (sw) => sw.id === limit.depletionLimitId
+      (sw) => sw.id === limit.depletionLimitId,
     );
+
     let depletesFromUnitLimitId: number | undefined;
     if (
       depletesFromSubunitLimit &&
@@ -222,13 +227,13 @@ function mapDepletesFrom(
     }
     if (depletesFromUnitLimitId) {
       depletesFromUnitLimit = surfaceWaterUnitLimits.find(
-        (sw) => sw.id === depletesFromUnitLimitId
+        (sw) => sw.id === depletesFromUnitLimitId,
       );
     }
   }
   return {
     depletesFromUnitLimit,
-    depletesFromSubunitLimit
+    depletesFromSubunitLimit,
   };
 }
 
@@ -236,64 +241,64 @@ function unitLimitsToDisplay(
   groundWaterLimit: GroundWaterLimit,
   defaultGroundWaterLimit: string,
   depletesFromUnitLimit?: SurfaceWaterLimit,
-  depletesFromSubunitLimit?: SurfaceWaterLimit
+  depletesFromSubunitLimit?: SurfaceWaterLimit,
 ): { unitLimitView: LimitView; subUnitLimitView: LimitView } {
   switch (groundWaterLimit.category) {
     case 'A':
       if (!groundWaterLimit.depletionLimitId) {
         return {
           unitLimitView: {
-            overrideText: defaultGroundWaterLimit
+            overrideText: defaultGroundWaterLimit,
           },
           subUnitLimitView: {
-            overrideText: defaultGroundWaterLimit
-          }
+            overrideText: defaultGroundWaterLimit,
+          },
         };
       }
       return {
         unitLimitView: {
           limit: depletesFromUnitLimit?.allocationLimit,
-          allocated: depletesFromUnitLimit?.allocationAmount
+          allocated: depletesFromUnitLimit?.allocationAmount,
         },
         subUnitLimitView: {
           limit: depletesFromSubunitLimit?.allocationLimit,
-          allocated: depletesFromSubunitLimit?.allocationAmount
-        }
+          allocated: depletesFromSubunitLimit?.allocationAmount,
+        },
       };
     case 'B':
       return {
         unitLimitView: {
           overrideText: 'Refer to Table 4.1 of NRP',
           limit: groundWaterLimit.allocationLimit,
-          allocated: groundWaterLimit.allocationAmount
+          allocated: groundWaterLimit.allocationAmount,
         },
-        subUnitLimitView: {}
+        subUnitLimitView: {},
       };
     case 'C':
       return {
         unitLimitView: {
           limit: groundWaterLimit.allocationLimit,
-          allocated: groundWaterLimit.allocationAmount
+          allocated: groundWaterLimit.allocationAmount,
         },
-        subUnitLimitView: {}
+        subUnitLimitView: {},
       };
     default:
       return {
         unitLimitView: {
           limit: groundWaterLimit.allocationLimit,
-          allocated: groundWaterLimit.allocationAmount
+          allocated: groundWaterLimit.allocationAmount,
         },
-        subUnitLimitView: {}
+        subUnitLimitView: {},
       };
   }
 }
 
 function filterGroupAndSort(
   limitViews: GroundwaterLimitView[],
-  category: string
+  category: string,
 ) {
   const filtered = limitViews.filter(
-    (lv) => lv.groundWaterLimit.category === category
+    (lv) => lv.groundWaterLimit.category === category,
   );
   const grouped = groupBy(filtered, (lv) => lv.groundWaterLimit.limitId);
 
@@ -324,13 +329,13 @@ function formatLimitView(limitView: LimitView, unit: string) {
   if (limitView.allocated) {
     limitView.allocatedToDisplay = formatWaterQuantity(
       Math.round(limitView.allocated),
-      unit
+      unit,
     );
   }
 
   if (limitView.limit && limitView.allocated) {
     limitView.allocatedPercent = Math.round(
-      (limitView.allocated / limitView.limit) * 100
+      (limitView.allocated / limitView.limit) * 100,
     );
   }
   return limitView;
