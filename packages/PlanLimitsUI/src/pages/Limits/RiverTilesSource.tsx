@@ -1,4 +1,4 @@
-import { Layer, Source } from 'react-map-gl';
+import { Layer, Source } from 'react-map-gl/maplibre';
 
 function determineTileServerHost(hostname: string) {
   switch (hostname) {
@@ -26,7 +26,7 @@ export default function RiverTilesSource({ zoom }: { zoom: number }) {
   }
 
   const streamOrderFilter = encodeURIComponent(
-    `stream_order >= ${minStreamOrder}`
+    `stream_order >= ${minStreamOrder}`,
   );
   const riverTilesUrl = `${tileServerHost}/public.river_tile_features/{z}/{x}/{y}.pbf?filter=${streamOrderFilter}`;
 
