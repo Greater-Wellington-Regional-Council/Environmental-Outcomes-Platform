@@ -1,6 +1,6 @@
 import { memo, cloneElement } from 'react';
 import { createPortal } from 'react-dom';
-import { useControl, type IControl } from 'react-map-gl';
+import { useControl, type IControl } from 'react-map-gl/maplibre';
 
 class OverlayControl implements IControl {
   _container: HTMLElement;
@@ -30,7 +30,7 @@ function CustomOverlay(props: { children: React.ReactElement }) {
 
       return new OverlayControl(container);
     },
-    { position: 'bottom-left' }
+    { position: 'bottom-left' },
   );
 
   return createPortal(cloneElement(props.children), ctrl.getElement());
