@@ -22,7 +22,7 @@ export const Councils: Council[] = [
     },
     footerLinks: [
       {
-        text: 'Natural Resource Plan',
+        text: 'Natural Resources Plan',
         url: 'https://pnrp.gw.govt.nz/',
       },
       {
@@ -39,6 +39,33 @@ export const Councils: Council[] = [
       surfaceWaterChildLimit: 'Surface Water Catchment Management Sub-unit',
       groundwaterLimit: 'Groundwater Catchment Management Unit',
     },
+    regionOverrides: [
+      {
+        sourceId: '0b247e41-d840-4a4e-98c3-0ff6d5c31efd',
+        swCMU: 'Override text',
+        swCMSU: 'Override text',
+        gwCMU: 'Override text',
+        flowManagementSite: 'Override text',
+        flowLimit: 'Override text',
+        limitsTableFooter: (
+          <>
+            <sup>1</sup>A change to the plan has been notified for this Whaitua
+            and Greater Wellington should be contacted for up to date advice on
+            Allocation Amounts.
+          </>
+        ),
+        surfaceWaterLimit: (
+          <>
+            <sup>1</sup>Pending change
+          </>
+        ),
+        groundwaterLimit: (
+          <>
+            <sup>1</sup>Pending change
+          </>
+        ),
+      },
+    ],
   },
   {
     id: 8,
@@ -72,6 +99,7 @@ export const Councils: Council[] = [
       surfaceWaterChildLimit: 'Surface Water Management Sub Zone',
       groundwaterLimit: 'Ground Water Management Zone',
     },
+    regionOverrides: [],
   },
 ];
 

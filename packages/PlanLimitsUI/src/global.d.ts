@@ -31,6 +31,17 @@ interface Council {
     surfaceWaterChildLimit: string;
     groundwaterLimit: string;
   };
+  regionOverrides: {
+    sourceId: string;
+    swCMU: string;
+    swCMSU: string;
+    gwCMU: string;
+    flowManagementSite: string;
+    flowLimit: string;
+    limitsTableFooter: React.Element | string;
+    groundwaterLimit: React.Element | string;
+    surfaceWaterLimit: React.Element | string;
+  }[];
 }
 
 interface Plan {

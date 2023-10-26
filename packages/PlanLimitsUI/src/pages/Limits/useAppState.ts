@@ -12,7 +12,7 @@ export function useAppState(
     surfaceWaterUnitLimit: null,
     surfaceWaterSubUnitLimit: null,
     groundWaterLimits: [],
-    groundWaterZones: [],
+    groundWaterZones: []
   });
 
   const setAppStateFromResult = useCallback(
@@ -30,14 +30,20 @@ export function useAppState(
       );
       const groundWaterZoneName = [
         // Constructing then destructuring from a Set leaves us with unique values
-        ...new Set(activeLimits.groundWaterLimits.map((gwl) => gwl.name)),
+        ...new Set(activeLimits.groundWaterLimits.map((gwl) => gwl.name))
       ].join(', ');
 
+      const regionOverrides = council.regionOverrides.find(
+        (ro) => ro.sourceId === activeLimits.planRegion?.sourceId
+      );
+
       const defaultGroundWaterLimit =
+        regionOverrides?.groundwaterLimit ??
         activeLimits.planRegion?.defaultGroundwaterLimit ??
         allPlanData.plan.defaultGroundwaterLimit;
 
       const defaultSurfaceWaterLimit =
+        regionOverrides?.surfaceWaterLimit ??
         activeLimits.planRegion?.defaultSurfaceWaterLimit ??
         allPlanData.plan.defaultSurfaceWaterLimit;
 
@@ -69,7 +75,7 @@ export function useAppState(
           ? {
               catAGroundWaterLimitsView: defaultCatAGroundWaterLimit(
                 defaultGroundWaterLimit
-              ),
+              )
             }
           : {
               catAGroundWaterLimitsView: filterGroupAndSort(
@@ -83,7 +89,7 @@ export function useAppState(
               catCGroundWaterLimitsView: filterGroupAndSort(
                 groundWaterLimitViews,
                 'C'
-              ),
+              )
             };
 
       setAppState({
@@ -92,7 +98,7 @@ export function useAppState(
         groundWaterZoneName,
         groundWaterZones,
         surfaceWaterLimitView,
-        ...gwLimitViews,
+        ...gwLimitViews
       });
     },
     [setAppState]
@@ -109,14 +115,14 @@ function defaultCatAGroundWaterLimit(
       {
         groundWaterLimit: {
           depth: 'All',
-          category: '-',
+          category: '-'
         } as GroundWaterLimit,
         unitLimitView: {
-          limitToDisplay: defaultLimit,
+          limitToDisplay: defaultLimit
         },
-        subUnitLimitView: {},
-      },
-    ],
+        subUnitLimitView: {}
+      }
+    ]
   };
 }
 
@@ -132,12 +138,12 @@ function buildSurfaceWaterLimitView(
     overrideText: surfaceWaterUnitLimit?.allocationLimit
       ? undefined
       : defaultSurfaceWaterLimit,
-    allocated: surfaceWaterUnitLimit?.allocationAmount,
+    allocated: surfaceWaterUnitLimit?.allocationAmount
   };
 
   const subUnitLimitView: LimitView = {
     limit: surfaceWaterSubUnitLimit?.allocationLimit,
-    allocated: surfaceWaterSubUnitLimit?.allocationAmount,
+    allocated: surfaceWaterSubUnitLimit?.allocationAmount
   };
   // Ruamahanga (Whaitua s with source_id ='493cb5ae-4086-4649-8d3a-6d41ee9fded7' in the new plan model) uses 2 levels of surface water units. So in areas
   // where there is no value at the Subunit and there is a management unit,
@@ -152,7 +158,7 @@ function buildSurfaceWaterLimitView(
 
   return {
     unitLimitView: formatLimitView(unitLimitView, unit),
-    subUnitLimitView: formatLimitView(subUnitLimitView, unit),
+    subUnitLimitView: formatLimitView(subUnitLimitView, unit)
   };
 }
 
@@ -188,7 +194,7 @@ function buildGroundWaterLimitView(
     return {
       groundWaterLimit,
       ...depletesFrom,
-      ...limitsToDisplay,
+      ...limitsToDisplay
     };
   });
 }
@@ -222,7 +228,7 @@ function mapDepletesFrom(
   }
   return {
     depletesFromUnitLimit,
-    depletesFromSubunitLimit,
+    depletesFromSubunitLimit
   };
 }
 
@@ -237,47 +243,47 @@ function unitLimitsToDisplay(
       if (!groundWaterLimit.depletionLimitId) {
         return {
           unitLimitView: {
-            overrideText: defaultGroundWaterLimit,
+            overrideText: defaultGroundWaterLimit
           },
           subUnitLimitView: {
-            overrideText: defaultGroundWaterLimit,
-          },
+            overrideText: defaultGroundWaterLimit
+          }
         };
       }
       return {
         unitLimitView: {
           limit: depletesFromUnitLimit?.allocationLimit,
-          allocated: depletesFromUnitLimit?.allocationAmount,
+          allocated: depletesFromUnitLimit?.allocationAmount
         },
         subUnitLimitView: {
           limit: depletesFromSubunitLimit?.allocationLimit,
-          allocated: depletesFromSubunitLimit?.allocationAmount,
-        },
+          allocated: depletesFromSubunitLimit?.allocationAmount
+        }
       };
     case 'B':
       return {
         unitLimitView: {
-          overrideText: 'Refer to Table 4.1 of PNRP',
+          overrideText: 'Refer to Table 4.1 of NRP',
           limit: groundWaterLimit.allocationLimit,
-          allocated: groundWaterLimit.allocationAmount,
+          allocated: groundWaterLimit.allocationAmount
         },
-        subUnitLimitView: {},
+        subUnitLimitView: {}
       };
     case 'C':
       return {
         unitLimitView: {
           limit: groundWaterLimit.allocationLimit,
-          allocated: groundWaterLimit.allocationAmount,
+          allocated: groundWaterLimit.allocationAmount
         },
-        subUnitLimitView: {},
+        subUnitLimitView: {}
       };
     default:
       return {
         unitLimitView: {
           limit: groundWaterLimit.allocationLimit,
-          allocated: groundWaterLimit.allocationAmount,
+          allocated: groundWaterLimit.allocationAmount
         },
-        subUnitLimitView: {},
+        subUnitLimitView: {}
       };
   }
 }
