@@ -1,5 +1,16 @@
 drop view if exists water_allocation_and_usage_by_area;
 
+-- Permissions for the materialized_views_role
+GRANT USAGE, CREATE ON SCHEMA public TO materialized_views_role;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+    GRANT SELECT ON TABLES TO materialized_views_role;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO materialized_views_role;
+
+GRANT materialized_views_role TO eop_manager_app_user;
+GRANT materialized_views_role TO eop_manager_migrations_user WITH ADMIN OPTION;
+
 create materialized view  water_allocation_and_usage_by_area as
 with all_days as (
     select distinct date(effective_on) as effective_on from effective_daily_consents
