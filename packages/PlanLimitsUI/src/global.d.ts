@@ -33,11 +33,11 @@ interface Council {
   };
   regionOverrides: {
     sourceId: string;
-    swCMU: string;
-    swCMSU: string;
-    gwCMU: string;
-    flowManagementSite: string;
-    flowLimit: string;
+    swCMU: React.Element | string;
+    swCMSU: React.Element | string;
+    gwCMU: React.Element | string;
+    flowManagementSite: React.Element | string;
+    flowLimit: React.Element | string;
     limitsTableFooter: React.Element | string;
     groundwaterLimit: React.Element | string;
     surfaceWaterLimit: React.Element | string;

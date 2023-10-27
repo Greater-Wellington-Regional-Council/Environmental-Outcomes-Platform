@@ -1,6 +1,12 @@
 import gwrcLogo from '../images/gwrc-logo-header.svg';
 import horizonsLogo from '../images/horizons-logo-header.png';
 
+const PendingElement = (
+  <>
+    <sup>1</sup>Pending change
+  </>
+);
+
 export const Councils: Council[] = [
   {
     id: 9,
@@ -42,28 +48,28 @@ export const Councils: Council[] = [
     regionOverrides: [
       {
         sourceId: '0b247e41-d840-4a4e-98c3-0ff6d5c31efd',
-        swCMU: 'Override text',
-        swCMSU: 'Override text',
-        gwCMU: 'Override text',
-        flowManagementSite: 'Override text',
-        flowLimit: 'Override text',
+        swCMU: PendingElement,
+        swCMSU: PendingElement,
+        gwCMU: PendingElement,
+        flowManagementSite: PendingElement,
+        flowLimit: PendingElement,
         limitsTableFooter: (
           <>
-            <sup>1</sup>A change to the plan has been notified for this Whaitua
-            and Greater Wellington should be contacted for up to date advice on
-            Allocation Amounts.
+            <sup>1</sup>A change to the Natural Resources Plan has been notified
+            for this Whaitua, please{' '}
+            <a
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+              href="https://www.gw.govt.nz/your-council/contact-us/contact-form/"
+            >
+              contact Greater Wellington
+            </a>{' '}
+            for up to date advice.
           </>
         ),
-        surfaceWaterLimit: (
-          <>
-            <sup>1</sup>Pending change
-          </>
-        ),
-        groundwaterLimit: (
-          <>
-            <sup>1</sup>Pending change
-          </>
-        ),
+        surfaceWaterLimit: PendingElement,
+        groundwaterLimit: PendingElement,
       },
     ],
   },
