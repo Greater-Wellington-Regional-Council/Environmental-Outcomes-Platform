@@ -7,16 +7,16 @@ const footNoteTexts = [
   {
     number: 1,
     id: 'PNRP41',
-    text: 'Refer to Table 4.1 of PNRP',
+    text: 'Refer to Table 4.1 of NRP',
     href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=133',
-    footNoteText: 'Table 4.1 of the Natural Resource Plan',
+    footNoteText: 'Table 4.1 of the Natural Resources Plan',
   },
   {
     number: 2,
-    id: 'PRNP121',
-    text: 'Refer to Policy P121 of PRNP',
+    id: 'PNRP121',
+    text: 'Refer to Policy P121 of NRP',
     href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=139',
-    footNoteText: 'Policy P121 of the Natural Resource Plan',
+    footNoteText: 'Policy P121 of the Natural Resources Plan',
   },
 ];
 
@@ -43,7 +43,7 @@ function FormattedTH(props: {
     <th
       className={twMerge(
         'border p-2 text-left text-sm font-normal bg-gray-100',
-        className
+        className,
       )}
       {...otherProps}
     >
@@ -126,12 +126,12 @@ function AllocatedAmount({ limitView }: { limitView: LimitView }) {
 
 function LimitAmount({ limitView }: { limitView: LimitView }) {
   const footNoteItem = footNoteTexts.find(
-    (item) => item.text === limitView.limitToDisplay
+    (item) => item.text === limitView.limitToDisplay,
   );
 
   if (footNoteItem) {
     return (
-      <span className="text-xs">
+      <span>
         {limitView.limitToDisplay}
         <sup>
           <a href={`#${footNoteItem.id}`}>{footNoteItem.number}</a>
@@ -166,10 +166,10 @@ export default function LimitsTable({
     return <></>;
 
   const showSurfaceWaterLimits = ['Combined', 'Surface'].includes(
-    waterTakeFilter
+    waterTakeFilter,
   );
   const showGroundWaterLimits = ['Combined', 'Ground'].includes(
-    waterTakeFilter
+    waterTakeFilter,
   );
 
   const showFootnote = true;
@@ -185,7 +185,7 @@ export default function LimitsTable({
         (gwLimitView) =>
           appState.surfaceWaterUnitLimit &&
           gwLimitView.depletesFromUnitLimit?.id ===
-            appState.surfaceWaterUnitLimit?.id
+            appState.surfaceWaterUnitLimit?.id,
       ).length + 1;
 
     surfaceAndGroundCatASubUnitRowSpan =
@@ -193,9 +193,13 @@ export default function LimitsTable({
         (gwLimitView) =>
           appState.surfaceWaterSubUnitLimit &&
           gwLimitView.depletesFromSubunitLimit?.id ===
-            appState.surfaceWaterSubUnitLimit?.id
+            appState.surfaceWaterSubUnitLimit?.id,
       ).length + 1;
   }
+
+  const regionOverrides = council.regionOverrides.find(
+    (ro) => ro.sourceId === appState.planRegion?.sourceId,
+  );
 
   return (
     <>
@@ -252,7 +256,7 @@ export default function LimitsTable({
                     index + 1 < surfaceAndGroundCatAUnitRowSpan
                   }
                 />
-              ))
+              )),
             )}
         </tbody>
         {showGroundWaterLimits &&
@@ -306,23 +310,29 @@ export default function LimitsTable({
       </table>
       {showFootnote && council.id === 9 && (
         <>
-          {footNoteTexts.map(
-            ({ number, id, text, href, footNoteText }, index) => (
-              <div key={number} className={index === 0 ? 'mt-3' : ''}>
-                <span id={id} className="underline">
-                  <sup>{number}</sup>
-                </span>
-                <a
-                  href={href}
-                  className="text-sm flex-1 underline"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {footNoteText}
-                </a>
-              </div>
-            )
+          {regionOverrides?.limitsTableFooter && (
+            <div className="mt-4 text-sm">
+              {regionOverrides?.limitsTableFooter}
+            </div>
           )}
+          {!regionOverrides?.limitsTableFooter &&
+            footNoteTexts.map(
+              ({ number, id, text, href, footNoteText }, index) => (
+                <div key={number} className={index === 0 ? 'mt-4' : ''}>
+                  <span id={id} className="underline">
+                    <sup>{number}</sup>
+                  </span>
+                  <a
+                    href={href}
+                    className="text-sm flex-1 underline"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {footNoteText}
+                  </a>
+                </div>
+              ),
+            )}
         </>
       )}
     </>
