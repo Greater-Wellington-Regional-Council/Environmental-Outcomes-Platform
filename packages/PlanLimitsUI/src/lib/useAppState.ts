@@ -34,11 +34,17 @@ export function useAppState(
         ...new Set(activeLimits.groundWaterLimits.map((gwl) => gwl.name)),
       ].join(', ');
 
+      const regionOverrides = council.regionOverrides.find(
+        (ro) => ro.sourceId === activeLimits.planRegion?.sourceId,
+      );
+
       const defaultGroundWaterLimit =
+        regionOverrides?.groundwaterLimit ??
         activeLimits.planRegion?.defaultGroundwaterLimit ??
         allPlanData.plan.defaultGroundwaterLimit;
 
       const defaultSurfaceWaterLimit =
+        regionOverrides?.surfaceWaterLimit ??
         activeLimits.planRegion?.defaultSurfaceWaterLimit ??
         allPlanData.plan.defaultSurfaceWaterLimit;
 
@@ -262,7 +268,7 @@ function unitLimitsToDisplay(
     case 'B':
       return {
         unitLimitView: {
-          overrideText: 'Refer to Table 4.1 of PNRP',
+          overrideText: 'Refer to Table 4.1 of NRP',
           limit: groundWaterLimit.allocationLimit,
           allocated: groundWaterLimit.allocationAmount,
         },
