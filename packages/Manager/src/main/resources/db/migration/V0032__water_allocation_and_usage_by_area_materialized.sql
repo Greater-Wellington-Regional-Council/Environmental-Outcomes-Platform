@@ -96,8 +96,10 @@ create unique index on water_allocation_and_usage_by_area (date, area_id);
 
 alter materialized view water_allocation_and_usage_by_area owner to materialized_views_role;
 
+set role materialized_views_role;
 -- After changing the owner, we need to ensure eop_manager_migrations_user still
 -- has rights on the table for commands in R__setup_permissions.sql to be able to
 -- to run without error
-set role materialized_views_role;
 grant all ON table water_allocation_and_usage_by_area to eop_manager_migrations_user;
+-- Ensure the app user can select over the view
+grant select ON table water_allocation_and_usage_by_area to eop_manager_app_user;
