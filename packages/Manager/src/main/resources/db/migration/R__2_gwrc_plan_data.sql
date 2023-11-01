@@ -1,12 +1,16 @@
-DELETE
-FROM council_plan_documents
-WHERE council_id = 9;
+DELETE FROM council_plan_documents
+WHERE
+  council_id = 9;
 
-INSERT INTO council_plan_documents (council_id, source_id, document)
-VALUES (9, 'PRNP_2023',
-        '{
-          "id": "PRNP",
-          "name": "Proposed Natural Resource Plan",
+INSERT INTO
+  council_plan_documents (council_id, source_id, document)
+VALUES
+  (
+    9,
+    'NRP_2023',
+    '{
+          "id": "NRP_2023",
+          "name": "Natural Resources Plan",
           "regions": [
             {
               "id": "b012dd3c-6b10-4db7-a332-e25c42667238",
@@ -1321,7 +1325,8 @@ VALUES (9, 'PRNP_2023',
               "defaultFlowManagementLimit": "Refer to Policy WC.P1"
             }
           ],
-          "defaultGroundwaterLimit": "Refer to Policy P121 of PRNP",
-          "defaultSurfaceWaterLimit": "Refer to Policy P121 of PRNP"
+          "defaultGroundwaterLimit": "Refer to Policy P121 of NRP",
+          "defaultSurfaceWaterLimit": "Refer to Policy P121 of NRP"
         }
-        ');
+        '
+  );

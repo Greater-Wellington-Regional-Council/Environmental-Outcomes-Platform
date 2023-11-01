@@ -38,6 +38,10 @@ export default function Overview({
   appState: AppState;
   waterTakeFilter: WaterTakeFilter;
 }) {
+  const regionOverrides = council.regionOverrides.find(
+    (ro) => ro.sourceId === appState.planRegion?.sourceId,
+  );
+
   return (
     <>
       <h3 className="text-lg uppercase mb-2 tracking-wider">Area</h3>
@@ -51,13 +55,21 @@ export default function Overview({
           <>
             <LimitsListItem
               title={council.labels.surfaceWaterParentLimit}
-              text={appState.surfaceWaterUnitLimit?.name ?? 'None'}
+              text={
+                regionOverrides?.swCMU ??
+                appState.surfaceWaterUnitLimit?.name ??
+                'None'
+              }
             />
             {/* <span>ID: {appState.surfaceWaterUnitLimit?.id}</span> */}
 
             <LimitsListItem
               title={council.labels.surfaceWaterChildLimit}
-              text={appState.surfaceWaterSubUnitLimit?.name ?? 'None'}
+              text={
+                regionOverrides?.swCMSU ??
+                appState.surfaceWaterSubUnitLimit?.name ??
+                'None'
+              }
             />
             {/* <span>ID: {appState.surfaceWaterSubUnitLimit?.id}</span> */}
           </>
@@ -67,21 +79,21 @@ export default function Overview({
             <LimitsListItem
               title={council.labels.groundwaterLimit}
               text={
-                appState.groundWaterZoneName
-                  ? appState.groundWaterZoneName
-                  : 'None'
+                regionOverrides?.gwCMU ?? appState.groundWaterZoneName ?? 'None'
               }
             />
-            <span>
-              {/* IDS:{' '}
-                {appState.groundWaterLimits.map((limit) => limit.id).join(', ')} */}
-            </span>
+            {/* <span>
+              IDS:{' '}
+                {appState.groundWaterLimits.map((limit) => limit.id).join(', ')}
+            </span>*/}
           </>
         )}
         <LimitsListItem
           title={'Flow Management Site'}
           text={
-            appState.flowLimit
+            regionOverrides?.flowManagementSite
+              ? regionOverrides?.flowManagementSite
+              : appState.flowLimit
               ? appState.flowSite?.name
               : appState.planRegion
               ? appState.planRegion.defaultFlowManagementLimit
@@ -91,10 +103,12 @@ export default function Overview({
         <LimitsListItem
           title={'Minimum Flow or Restriction Flow'}
           text={
-            appState.flowLimit
+            regionOverrides?.flowLimit
+              ? regionOverrides?.flowLimit
+              : appState.flowLimit
               ? formatWaterQuantity(
                   appState.flowLimit.minimumFlow,
-                  council.unitTypes.flow
+                  council.unitTypes.flow,
                 )
               : appState.planRegion
               ? appState.planRegion.defaultFlowManagementLimit
