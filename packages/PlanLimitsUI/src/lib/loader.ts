@@ -17,7 +17,7 @@ function defaultPathForCouncil(council: Council) {
 
 export function viewLocationUrlPath(
   councilSlug: string,
-  viewLocation: ViewLocation
+  viewLocation: ViewLocation,
 ) {
   return `/limits/${councilSlug}/${createLocationString(viewLocation)}`;
 }
@@ -27,6 +27,17 @@ export function pinnedLocationUrlParam(pinnedLocation: PinnedLocation) {
 }
 
 export const defaultAppPath = defaultPathForCouncil(DefaultCouncil);
+
+export const councilLoader: LoaderFunction = ({ params }) => {
+  const council = Councils.find((c) => c.slug === params.council);
+  if (!council) throw new Response('Council Not Found', { status: 404 });
+
+  councilAtom = atom(council);
+
+  return {
+    council,
+  };
+};
 
 export const loader: LoaderFunction = ({ params, request }) => {
   const council = Councils.find((c) => c.slug === params.council);

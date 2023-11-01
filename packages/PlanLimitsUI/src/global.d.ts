@@ -173,3 +173,23 @@ interface GroundwaterLimitView {
   unitLimitView: LimitView;
   subUnitLimitView: LimitView;
 }
+
+interface HeatmapDataItem {
+  usage: number;
+  allocation: number;
+  x: string;
+  y: number;
+}
+
+interface HeatmapData {
+  id: string;
+  data: HeatmapDataItem[];
+}
+
+interface WaterUseData {
+  from: Date;
+  to: Date;
+  formattedFrom: string;
+  formattedTo: string;
+  heatmapData?: SWAndGWHeatmapData;
+}

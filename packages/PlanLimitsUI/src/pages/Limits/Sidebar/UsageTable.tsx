@@ -3,9 +3,7 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
 import useWaterUseData, {
-  type HeatmapData,
   type SWAndGWHeatmapData,
-  type HeatmapDataItem,
 } from '../../../lib/useWaterUseData';
 import Button from '../../../components/Button';
 import {
@@ -30,6 +28,7 @@ export default function UsageTable({
   const [weekOffset, setWeekOffset] = useState(0);
 
   // TODO: Handle button thrashing for slow queries....
+  // TODO: Handle errors
   const handleUpdateDateOffset = (change: number) => {
     const updatedOffet = weekOffset + change;
     if (updatedOffet < MIN_OFFSET || updatedOffet > MAX_OFFSET) return;
