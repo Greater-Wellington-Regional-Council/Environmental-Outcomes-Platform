@@ -7,12 +7,90 @@ import {
   parse,
   lastDayOfWeek,
 } from 'date-fns';
-import { groupBy } from 'lodash';
+import { groupBy, compact } from 'lodash';
 
 interface ParsedUsage extends Usage {
   parsedDate: Date;
   endOfWeek: Date;
 }
+
+const AreaGroupingAndOrdering = [
+  {
+    groupName: 'Kapiti',
+    areaIds: [
+      'WaitohuSW',
+      'OtakiSW',
+      'MangaoneSW',
+      'OtakiGW',
+      'OtakiRiverGW',
+      'Te HoroGW',
+      'WaikanaeSW',
+      'WaikanaeRiverGW',
+      'WaikanaeGW',
+      'RaumatiGW',
+    ],
+  },
+  {
+    groupName: 'TWoT',
+    areaIds: [
+      'HuttSW',
+      'Upper HuttGW',
+      'Lower HuttGW',
+      'WainuiomataSW',
+      'OrongorongoSW',
+    ],
+  },
+  {
+    groupName: 'Ruamahanga 1',
+    areaIds: [
+      'RuamahangaTotalSW',
+      'Ruamahanga_UpperSW',
+      'Upper RuamahangaGW',
+      'Te Ore OreGW',
+      'KopuarangaSW',
+      'WaipouaSW',
+      'WaingawaSW',
+      'WaingawaGW',
+    ],
+  },
+  {
+    groupName: 'Ruamahanga 2',
+    areaIds: [
+      'Ruamahanga_MiddleSW',
+      'Middle RuamahangaGW',
+      'Fernhill TiffenGW',
+      'MangatarereSW',
+      'MangatarereGW',
+      'BoothsSW',
+      'ParkvaleSW',
+      'Parkvale_ConfinedGW',
+      'WaiohineSW',
+      'PapawaiSW',
+      'WaiohineGW',
+    ],
+  },
+  {
+    groupName: 'Ruamahanga 3',
+    areaIds: [
+      'LakeWairarapaSW',
+      'LakeGW',
+      'TauherenikauSW',
+      'OtukuraSW',
+      'TauherenikauGW',
+    ],
+  },
+  {
+    groupName: 'Ruamahanga 4',
+    areaIds: [
+      'Ruamahanga_LowerSW',
+      'MoikiGW',
+      'MartinboroughGW',
+      'HuangaruaSW',
+      'HuangaruaGW',
+      'OnokeGW',
+    ],
+  },
+];
 
 export default function useDetailedWaterUseData(councilId: number) {
   const to = addDays(new Date(), -1);
@@ -56,7 +134,7 @@ function transformWaterUseData(usage: Usage[]) {
 
   const usageGroupedByArea = groupBy<ParsedUsage>(parsedUsage, 'areaId');
 
-  return Object.keys(usageGroupedByArea).map((areaId) => {
+  const heatmapDataPerArea = Object.keys(usageGroupedByArea).map((areaId) => {
     const usageForArea = usageGroupedByArea[areaId];
 
     const usageForAreaGroupedByWeek = groupBy<ParsedUsage>(
@@ -83,6 +161,26 @@ function transformWaterUseData(usage: Usage[]) {
           y: medianUsage,
         };
       }),
+    };
+  });
+
+  return AreaGroupingAndOrdering.map((group) => {
+    const data = [];
+    const missingAreas = [];
+    group.areaIds.forEach((areaId) => {
+      const areaData = heatmapDataPerArea.find((hmd) => hmd.id === areaId);
+      if (areaData) {
+        data.push(areaData);
+      } else {
+        missingAreas.push(areaId);
+      }
+    });
+
+    return {
+      ...group,
+      // TODO can we make use of the usageGroupedByArea dictionary
+      data,
+      missingAreas,
     };
   });
 }
