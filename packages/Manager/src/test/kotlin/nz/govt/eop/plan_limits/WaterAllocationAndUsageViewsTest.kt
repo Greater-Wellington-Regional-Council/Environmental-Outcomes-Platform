@@ -17,8 +17,6 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
 
 data class WaterAllocationUsageRow(
@@ -173,7 +171,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     // THEN
     val result = queryAllocationsAndUsage(whereClause)
     result.size shouldBe 1
-    result[0].dailyUsage.compareTo(BigDecimal(864)) shouldBe 0
+    result[0].dailyUsage shouldBe BigDecimal(10)
 
     // GIVEN
     createTestObservation(testSiteId, 5, observationDate.plusHours(1).toInstant(ZoneOffset.UTC))
@@ -183,7 +181,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     val secondResult = queryAllocationsAndUsage(whereClause)
 
     // THEN
-    secondResult[0].dailyUsage.compareTo(BigDecimal(648)) shouldBe 0
+    secondResult[0].dailyUsage shouldBe BigDecimal(15)
   }
 
   @Test
@@ -341,7 +339,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         testAllocation.allocation + secondAllocationInSameArea.allocation,
         testAllocation.meteredAllocationDaily + secondAllocationInSameArea.meteredAllocationDaily,
         testAllocation.meteredAllocationYearly + secondAllocationInSameArea.meteredAllocationYearly,
-        BigDecimal(1728))
+        BigDecimal(20))
 
     // WHEN
     val resultsInADifferentArea =
@@ -349,7 +347,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
             "where area_id = '${allocationInDifferentArea.areaId}' and date = '$observationDate'")
 
     // THEN
-    resultsInADifferentArea[0].dailyUsage.compareTo(BigDecimal(2592)) shouldBe 0
+    resultsInADifferentArea[0].dailyUsage shouldBe BigDecimal(30)
   }
 
   fun queryAllocationsAndUsage(whereClause: String): MutableList<WaterAllocationUsageRow> =
@@ -367,12 +365,11 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
   ) {
     results.forAll {
       if (areaId != null) it.areaId shouldBe areaId
-      if (allocation != null) it.allocation.compareTo(allocation) shouldBe 0
-      if (meteredAllocationDaily != null)
-          it.allocationDaily.compareTo(meteredAllocationDaily) shouldBe 0
+      if (allocation != null) it.allocation shouldBe allocation
+      if (meteredAllocationDaily != null) it.allocationDaily shouldBe meteredAllocationDaily
       if (meteredAllocationYearly != null)
-          it.meteredAllocationYearly.compareTo(meteredAllocationYearly) shouldBe 0
-      if (dailyUsage != null) it.dailyUsage.compareTo(dailyUsage) shouldBe 0
+          it.meteredAllocationYearly shouldBe meteredAllocationYearly
+      if (dailyUsage != null) it.dailyUsage shouldBe dailyUsage
     }
   }
 
