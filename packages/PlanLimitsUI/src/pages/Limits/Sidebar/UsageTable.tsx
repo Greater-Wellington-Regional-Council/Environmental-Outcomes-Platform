@@ -80,7 +80,7 @@ export default function UsageTable({
       </div>
 
       <a
-        href="usage"
+        href={`/limits/${council.slug}/usage`}
         className="text-sm underline block mb-2"
         target="_blank"
         rel="noreferrer"
