@@ -7,16 +7,16 @@ import {
   parse,
   lastDayOfWeek,
 } from 'date-fns';
-import { groupBy, compact } from 'lodash';
+import { groupBy, flatten } from 'lodash';
 
 interface ParsedUsage extends Usage {
   parsedDate: Date;
   endOfWeek: Date;
 }
 
-const AreaGroupingAndOrdering = [
+const AreaPresentationGroups = [
   {
-    groupName: 'Kapiti',
+    name: 'Kapiti',
     areaIds: [
       'WaitohuSW',
       'OtakiSW',
@@ -31,7 +31,7 @@ const AreaGroupingAndOrdering = [
     ],
   },
   {
-    groupName: 'TWoT',
+    name: 'Te Awarua-o-Porirua Whaitua',
     areaIds: [
       'HuttSW',
       'Upper HuttGW',
@@ -41,7 +41,7 @@ const AreaGroupingAndOrdering = [
     ],
   },
   {
-    groupName: 'Ruamahanga 1',
+    name: 'Ruamahanga',
     areaIds: [
       'RuamahangaTotalSW',
       'Ruamahanga_UpperSW',
@@ -54,7 +54,8 @@ const AreaGroupingAndOrdering = [
     ],
   },
   {
-    groupName: 'Ruamahanga 2',
+    name: 'Ruamahanga 2',
+    hideGroupLabel: true,
     areaIds: [
       'Ruamahanga_MiddleSW',
       'Middle RuamahangaGW',
@@ -70,7 +71,8 @@ const AreaGroupingAndOrdering = [
     ],
   },
   {
-    groupName: 'Ruamahanga 3',
+    name: 'Ruamahanga 3',
+    hideLabel: true,
     areaIds: [
       'LakeWairarapaSW',
       'LakeGW',
@@ -80,7 +82,8 @@ const AreaGroupingAndOrdering = [
     ],
   },
   {
-    groupName: 'Ruamahanga 4',
+    name: 'Ruamahanga 4',
+    hideLabel: true,
     areaIds: [
       'Ruamahanga_LowerSW',
       'MoikiGW',
@@ -122,51 +125,15 @@ export default function useDetailedWaterUseData(councilId: number) {
 function transformWaterUseData(usage: Usage[]) {
   if (usage.length === 0) return [];
 
-  const parsedUsage: ParsedUsage[] = usage.map((usage) => {
-    const parsedDate = parse(usage.date, 'yyyy-MM-dd', new Date());
-    return {
-      ...usage,
-      parsedDate,
-      endOfWeek: lastDayOfWeek(parsedDate),
-      week: getWeek(parsedDate),
-    };
-  });
-
+  const parsedUsage = parseUsage(usage);
   const usageGroupedByArea = groupBy<ParsedUsage>(parsedUsage, 'areaId');
+  const heatmapDataPerArea = Object.keys(usageGroupedByArea).map((areaId) =>
+    transformUsageToHeatmapData(areaId, usageGroupedByArea[areaId]),
+  );
 
-  const heatmapDataPerArea = Object.keys(usageGroupedByArea).map((areaId) => {
-    const usageForArea = usageGroupedByArea[areaId];
-
-    const usageForAreaGroupedByWeek = groupBy<ParsedUsage>(
-      usageForArea,
-      (usage) => usage.endOfWeek.toJSON(),
-    );
-    const sortedWeeks = Object.keys(usageForAreaGroupedByWeek).sort();
-
-    return {
-      id: areaId,
-      data: sortedWeeks.map((week) => {
-        const usagesInWeek = usageForAreaGroupedByWeek[week];
-        const endOfWeek = usagesInWeek[0].endOfWeek;
-        const formattedWeek = format(endOfWeek, 'yyyy-MM-dd');
-
-        const mappedUsagePercentages = usagesInWeek.map((usage) =>
-          usage.dailyUsage <= 0 ? 0 : usage.dailyUsage / usage.allocation,
-        );
-
-        const medianUsage = median(mappedUsagePercentages);
-
-        return {
-          x: formattedWeek,
-          y: medianUsage,
-        };
-      }),
-    };
-  });
-
-  return AreaGroupingAndOrdering.map((group) => {
-    const data = [];
-    const missingAreas = [];
+  const groupedHeatmapDataPerArea = AreaPresentationGroups.map((group) => {
+    const data: HeatmapData[] = [];
+    const missingAreas: string[] = [];
     group.areaIds.forEach((areaId) => {
       const areaData = heatmapDataPerArea.find((hmd) => hmd.id === areaId);
       if (areaData) {
@@ -183,6 +150,52 @@ function transformWaterUseData(usage: Usage[]) {
       missingAreas,
     };
   });
+
+  return {
+    allMissingAreas: flatten(
+      groupedHeatmapDataPerArea.map((a) => a.missingAreas),
+    ),
+    groups: groupedHeatmapDataPerArea,
+  };
+}
+
+function parseUsage(usage: Usage[]) {
+  return usage.map((usage) => {
+    const parsedDate = parse(usage.date, 'yyyy-MM-dd', new Date());
+    return {
+      ...usage,
+      parsedDate,
+      endOfWeek: lastDayOfWeek(parsedDate),
+      week: getWeek(parsedDate),
+    };
+  });
+}
+
+function transformUsageToHeatmapData(areaId: string, usage: ParsedUsage[]) {
+  const usageForAreaGroupedByWeek = groupBy<ParsedUsage>(usage, (usage) =>
+    usage.endOfWeek.toJSON(),
+  );
+  const sortedWeeks = Object.keys(usageForAreaGroupedByWeek).sort();
+
+  return {
+    id: areaId,
+    data: sortedWeeks.map((week) => {
+      const usagesInWeek = usageForAreaGroupedByWeek[week];
+      const endOfWeek = usagesInWeek[0].endOfWeek;
+      const formattedWeek = format(endOfWeek, 'yyyy-MM-dd');
+
+      const mappedUsagePercentages = usagesInWeek.map((usage) =>
+        usage.dailyUsage <= 0 ? 0 : usage.dailyUsage / usage.allocation,
+      );
+
+      const medianUsage = median(mappedUsagePercentages);
+
+      return {
+        x: formattedWeek,
+        y: medianUsage,
+      };
+    }),
+  };
 }
 
 function median(values: number[]) {

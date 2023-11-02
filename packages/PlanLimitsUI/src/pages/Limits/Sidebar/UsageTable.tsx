@@ -182,7 +182,11 @@ function HeatMap({ usage }: { usage: HeatmapData[] }) {
   );
 }
 
-const CustomTooltip = ({ cell }: { cell: ComputedCell<HeatmapDataItem> }) => {
+const CustomTooltip = ({
+  cell,
+}: {
+  cell: ComputedCell<UsageHeatmapDataItem>;
+}) => {
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
       {formatNumber.format(cell.data.usage)} of{' '}

@@ -175,10 +175,13 @@ interface GroundwaterLimitView {
 }
 
 interface HeatmapDataItem {
-  usage: number;
-  allocation: number;
   x: string;
   y: number;
+}
+
+interface UsageHeatmapDataItem extends HeatmapDataItem {
+  usage: number;
+  allocation: number;
 }
 
 interface HeatmapData {
