@@ -26,22 +26,20 @@ export default function Usage() {
         </div>
       </div>
       <main className="p-4">
-        <h2 className="text-xl mb-2">Weekly Surface Water</h2>
+        <h2 className="text-xl mb-2">Weekly usage grouped by area</h2>
         {waterUseData.isLoading && (
           <LoadingIndicator>Loading...</LoadingIndicator>
         )}
-
         {!waterUseData.isLoading && waterUseData?.data && (
           <div className="mb-4 italic">
             No data for: {waterUseData.data.usage.allMissingAreas.join(', ')}
           </div>
         )}
-
         {!waterUseData.isLoading &&
           waterUseData?.data?.usage &&
           waterUseData.data.usage.groups.map((usageGroup, index) => {
             return (
-              <div key={usageGroup.groupName} className="mb-6">
+              <div key={usageGroup.name} className="mb-6">
                 {!usageGroup.hideLabel ? (
                   <h2 className="text-lg mb-2">{usageGroup.name}</h2>
                 ) : (
@@ -75,11 +73,13 @@ function HeatMap({
   const axisTop = showWeeks
     ? {
         tickSize: 0,
-        tickRotation: -45,
+        tickRotation: -50,
+        legend: 'Week ending',
+        legendOffset: -65,
       }
     : false;
 
-  const marginTop = showWeeks ? 50 : 0;
+  const marginTop = showWeeks ? 70 : 0;
   const height = (data.length * 20 + marginTop).toString();
 
   return (

@@ -16,7 +16,7 @@ interface ParsedUsage extends Usage {
 
 const AreaPresentationGroups = [
   {
-    name: 'Kapiti',
+    name: 'Kāpiti',
     areaIds: [
       'WaitohuSW',
       'OtakiSW',
@@ -55,7 +55,7 @@ const AreaPresentationGroups = [
   },
   {
     name: 'Ruamahanga 2',
-    hideGroupLabel: true,
+    hideLabel: true,
     areaIds: [
       'Ruamahanga_MiddleSW',
       'Middle RuamahangaGW',
@@ -182,7 +182,7 @@ function transformUsageToHeatmapData(areaId: string, usage: ParsedUsage[]) {
     data: sortedWeeks.map((week) => {
       const usagesInWeek = usageForAreaGroupedByWeek[week];
       const endOfWeek = usagesInWeek[0].endOfWeek;
-      const formattedWeek = format(endOfWeek, 'yyyy-MM-dd');
+      const formattedWeek = format(endOfWeek, 'MMM dd yyyy');
 
       const mappedUsagePercentages = usagesInWeek.map((usage) =>
         usage.dailyUsage <= 0 ? 0 : usage.dailyUsage / usage.allocation,
