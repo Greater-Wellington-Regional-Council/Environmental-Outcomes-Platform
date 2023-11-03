@@ -6,6 +6,7 @@ import io.kotest.matchers.date.shouldBeBefore
 import io.kotest.matchers.shouldBe
 import java.net.URI
 import java.time.Instant
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneOffset
 import nz.govt.eop.hilltop_crawler.api.parsers.*
@@ -257,6 +258,46 @@ class TaskMappersTests {
                   1,
                   HilltopMessageType.MEASUREMENT_DATA,
                   "http://some.uri?Service=Hilltop&Request=GetData&Site=some%20site%20name&Measurement=some%20datasource%20name&from=2000-06-01T00:00&to=2000-06-30T23:59:59",
+              ),
+          )
+    }
+
+    @Test
+    fun `should return list which includes one month into the future when last observation is in the current month`() {
+      // GIVEN
+      val currentDate = LocalDate.now()
+
+      val underTest =
+          createRecordForTesting(
+              listOf(
+                  HilltopDatasource(
+                      "some datasource name",
+                      "some site name",
+                      "${currentDate}T00:00:00",
+                      "${currentDate}T01:00:00",
+                      "StdSeries",
+                      listOf(
+                          HilltopMeasurement("some datasource name", "some datasource name", 1))),
+              ))
+
+      // WHEN
+      val result = underTest.buildNewTasksList()
+
+      // THEN
+      val currentYearMonth = YearMonth.from(currentDate)
+      val nextYearMonth = currentYearMonth.plusMonths(1)
+
+      result shouldBe
+          listOf(
+              DB.HilltopFetchTaskCreate(
+                  1,
+                  HilltopMessageType.MEASUREMENT_DATA,
+                  "http://some.uri?Service=Hilltop&Request=GetData&Site=some%20site%20name&Measurement=some%20datasource%20name&from=${currentYearMonth.atDay(1)}T00:00&to=${currentYearMonth.atEndOfMonth()}T23:59:59",
+              ),
+              DB.HilltopFetchTaskCreate(
+                  1,
+                  HilltopMessageType.MEASUREMENT_DATA,
+                  "http://some.uri?Service=Hilltop&Request=GetData&Site=some%20site%20name&Measurement=some%20datasource%20name&from=${nextYearMonth.atDay(1)}T00:00&to=${nextYearMonth.atEndOfMonth()}T23:59:59",
               ),
           )
     }

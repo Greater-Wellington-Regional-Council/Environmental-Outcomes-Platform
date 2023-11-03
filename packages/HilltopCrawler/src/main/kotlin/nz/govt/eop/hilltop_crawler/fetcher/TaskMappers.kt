@@ -125,7 +125,7 @@ class MeasurementsListTaskMapper(
               sourceConfig.config.measurementNames.contains(it.name) && it.vm == null
             } != null
           }
-          .flatMap {
+          .flatMap { it ->
             val fromDate =
                 LocalDate.parse(
                     it.from.subSequence(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -139,7 +139,14 @@ class MeasurementsListTaskMapper(
                     }
                     .requestAs
 
-            generateMonthSequence(fromDate, toDate).map { yearMonth ->
+            val monthSequence =
+                if (YearMonth.from(toDate).equals(YearMonth.from(LocalDate.now()))) {
+                  generateMonthSequence(fromDate, toDate.plusMonths(1))
+                } else {
+                  generateMonthSequence(fromDate, toDate)
+                }
+
+            monthSequence.map { yearMonth ->
               DB.HilltopFetchTaskCreate(
                   sourceConfig.id,
                   HilltopMessageType.MEASUREMENT_DATA,
