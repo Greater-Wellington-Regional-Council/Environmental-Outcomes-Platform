@@ -16,8 +16,11 @@ export default function Usage() {
   return (
     <>
       <div className="flex justify-between items-end border-b">
-        <div className="p-4">
-          <h1 className="text-2xl font-light mb-2 uppercase">
+        <div className="px-4 py-2">
+          <a href={`/limits/${council.slug}`} className="text-xs underline">
+            Back to limits viewer
+          </a>
+          <h1 className="text-xl font-light uppercase mt-2">
             Detailed Water Usage
           </h1>
         </div>
