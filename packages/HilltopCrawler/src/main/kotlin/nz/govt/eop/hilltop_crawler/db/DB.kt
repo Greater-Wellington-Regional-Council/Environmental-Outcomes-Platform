@@ -127,7 +127,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
         """
           UPDATE hilltop_fetch_tasks
           SET previous_data_hash = ?, 
-              previous_history = previous_history || ?::jsonb,    
+              previous_history = jsonb_path_query_array(previous_history, '$[last-49 to last]') || ?::jsonb,    
               next_fetch_at = ?
           WHERE id = ?
           """
