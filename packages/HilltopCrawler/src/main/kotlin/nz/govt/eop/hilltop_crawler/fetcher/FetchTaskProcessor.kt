@@ -12,7 +12,7 @@ import nz.govt.eop.hilltop_crawler.api.parsers.HilltopXmlParsers
 import nz.govt.eop.hilltop_crawler.db.DB
 import nz.govt.eop.hilltop_crawler.db.DB.HilltopFetchResult
 import nz.govt.eop.hilltop_crawler.db.DB.HilltopFetchStatus.*
-import nz.govt.eop.hilltop_crawler.fetcher.HilltopMessageType.*
+import nz.govt.eop.hilltop_crawler.db.HilltopFetchTaskType
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -74,22 +74,29 @@ class FetchTaskProcessor(
       val taskMapper =
           try {
             when (taskToProcess.requestType) {
-              SITES_LIST ->
+              HilltopFetchTaskType.SITES_LIST ->
                   SitesListTaskMapper(
                       source,
                       taskToProcess.fetchUri,
                       fetchedAt,
                       xmlContent,
                       parsers.parseSitesResponse(xmlContent))
-              MEASUREMENTS_LIST ->
+              HilltopFetchTaskType.MEASUREMENTS_LIST ->
                   MeasurementsListTaskMapper(
                       source,
                       taskToProcess.fetchUri,
                       fetchedAt,
                       xmlContent,
                       parsers.parseMeasurementsResponse(xmlContent))
-              MEASUREMENT_DATA ->
+              HilltopFetchTaskType.MEASUREMENT_DATA ->
                   MeasurementDataTaskMapper(
+                      source,
+                      taskToProcess.fetchUri,
+                      fetchedAt,
+                      xmlContent,
+                      parsers.parseMeasurementValuesResponse(xmlContent))
+              HilltopFetchTaskType.MEASUREMENT_DATA_LATEST ->
+                  MeasurementDataLatestTaskMapper(
                       source,
                       taskToProcess.fetchUri,
                       fetchedAt,

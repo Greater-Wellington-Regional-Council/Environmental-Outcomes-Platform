@@ -6,9 +6,15 @@ import java.sql.ResultSet
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import nz.govt.eop.hilltop_crawler.fetcher.HilltopMessageType
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
+
+enum class HilltopFetchTaskType {
+  SITES_LIST,
+  MEASUREMENTS_LIST,
+  MEASUREMENT_DATA,
+  MEASUREMENT_DATA_LATEST,
+}
 
 @Component
 class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
@@ -27,14 +33,14 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
 
   data class HilltopFetchTaskCreate(
       val sourceId: Int,
-      val requestType: HilltopMessageType,
+      val requestType: HilltopFetchTaskType,
       val baseUrl: String,
   )
 
   data class HilltopFetchTaskRow(
       val id: Int,
       val sourceId: Int,
-      val requestType: HilltopMessageType,
+      val requestType: HilltopFetchTaskType,
       val nextFetchAt: Instant,
       val fetchUri: URI,
       val previousDataHash: String?,
@@ -110,7 +116,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
                 HilltopFetchTaskRow(
                     rs.getInt("id"),
                     rs.getInt("source_id"),
-                    HilltopMessageType.valueOf(rs.getString("request_type")),
+                    HilltopFetchTaskType.valueOf(rs.getString("request_type")),
                     rs.getTimestamp("next_fetch_at").toInstant(),
                     URI(rs.getString("fetch_url")),
                     rs.getString("previous_data_hash"))
