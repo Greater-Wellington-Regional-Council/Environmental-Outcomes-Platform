@@ -8,7 +8,7 @@ plugins {
   kotlin("plugin.spring") version "1.9.10"
   kotlin("kapt") version "1.9.20"
 
-  id("com.diffplug.spotless") version "6.18.0"
+  id("com.diffplug.spotless") version "6.22.0"
   id("com.adarshr.test-logger") version "4.0.0"
 }
 
