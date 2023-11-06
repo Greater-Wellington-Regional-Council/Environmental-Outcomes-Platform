@@ -141,31 +141,29 @@ class MeasurementsListTaskMapper(
                     }
                     .requestAs
 
-            val monthSequence =
-                if (YearMonth.from(toDate).equals(YearMonth.from(LocalDate.now()))) {
-                  generateMonthSequence(fromDate, toDate.minusMonths(1))
-                } else {
-                  generateMonthSequence(fromDate, toDate)
-                }
+            val isLastObservationInCurrentMonth =
+                YearMonth.from(toDate) == YearMonth.from(LocalDate.now())
 
-            val monthlyTasks =
-                monthSequence.map { yearMonth ->
+            generateMonthSequence(
+                    fromDate,
+                    if (isLastObservationInCurrentMonth) toDate.minusMonths(1) else toDate)
+                .map { yearMonth ->
                   DB.HilltopFetchTaskCreate(
                       sourceConfig.id,
                       HilltopFetchTaskType.MEASUREMENT_DATA,
-                      buildPastMeasurementsUrl(baseUri, it.siteName, requestAs, yearMonth),
-                  )
+                      buildPastMeasurementsUrl(baseUri, it.siteName, requestAs, yearMonth))
                 }
-
-            return@flatMap if (YearMonth.from(toDate).equals(YearMonth.from(LocalDate.now()))) {
-              monthlyTasks.plus(
-                  DB.HilltopFetchTaskCreate(
-                      sourceConfig.id,
-                      HilltopFetchTaskType.MEASUREMENT_DATA_LATEST,
-                      buildLatestMeasurementsUrl(baseUri, it.siteName, requestAs)))
-            } else {
-              monthlyTasks
-            }
+                .let { tasks ->
+                  if (isLastObservationInCurrentMonth) {
+                    tasks.plus(
+                        DB.HilltopFetchTaskCreate(
+                            sourceConfig.id,
+                            HilltopFetchTaskType.MEASUREMENT_DATA_LATEST,
+                            buildLatestMeasurementsUrl(baseUri, it.siteName, requestAs)))
+                  } else {
+                    tasks
+                  }
+                }
           }
 
   override fun buildKafkaMessage(): HilltopMessage =
