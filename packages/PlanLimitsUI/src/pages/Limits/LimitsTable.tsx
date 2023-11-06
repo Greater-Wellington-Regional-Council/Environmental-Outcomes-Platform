@@ -8,14 +8,14 @@ const footNoteTexts = [
     number: 1,
     id: 'PNRP41',
     text: 'Refer to Table 4.1 of NRP',
-    href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=133',
+    href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-4.pdf#page=50',
     footNoteText: 'Table 4.1 of the Natural Resources Plan',
   },
   {
     number: 2,
     id: 'PNRP121',
     text: 'Refer to Policy P121 of NRP',
-    href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=139',
+    href: 'https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-4.pdf#page=57',
     footNoteText: 'Policy P121 of the Natural Resources Plan',
   },
 ];

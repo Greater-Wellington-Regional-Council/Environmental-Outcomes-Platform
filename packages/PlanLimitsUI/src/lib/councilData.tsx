@@ -29,11 +29,11 @@ export const Councils: Council[] = [
     footerLinks: [
       {
         text: 'Natural Resources Plan',
-        url: 'https://pnrp.gw.govt.nz/',
+        url: 'https://www.gw.govt.nz/your-region/plans-policies-and-bylaws/plans-and-reports/environmental-plans/natural-resources-plan/in-depth-on-the-natural-resources-plan/',
       },
       {
         text: 'Water allocation rules',
-        url: 'https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=276',
+        url: 'https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-5.pdf#page=121',
       },
     ],
     labels: {
