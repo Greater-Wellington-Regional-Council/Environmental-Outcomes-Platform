@@ -179,6 +179,10 @@ interface HeatmapDataItem {
   y: number;
 }
 
+interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
+  endOfWeek: Date;
+}
+
 interface UsageHeatmapDataItem extends HeatmapDataItem {
   usage: number;
   allocation: number;
@@ -187,12 +191,4 @@ interface UsageHeatmapDataItem extends HeatmapDataItem {
 interface HeatmapData {
   id: string;
   data: HeatmapDataItem[];
-}
-
-interface WaterUseData {
-  from: Date;
-  to: Date;
-  formattedFrom: string;
-  formattedTo: string;
-  heatmapData?: SWAndGWHeatmapData;
 }

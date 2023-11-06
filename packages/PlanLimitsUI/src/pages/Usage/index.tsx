@@ -1,13 +1,13 @@
 import { useAtom } from 'jotai';
+import { ResponsiveHeatMapCanvas, type ComputedCell } from '@nivo/heatmap';
+import { format } from 'date-fns';
+
 import { councilAtom } from '../../lib/loader';
-import useDetailedWaterUseData from '../../lib/useDetailedWaterUseData';
-import { LoadingIndicator } from '../../components/Indicators';
-import {
-  ResponsiveHeatMapCanvas,
-  type ComputedCell,
-  HeatMapDatum,
-} from '@nivo/heatmap';
+import useDetailedWaterUseData, {
+  type DetailedWaterUseQuery,
+} from '../../lib/useDetailedWaterUseData';
 import Header from '../../pages/Limits/Sidebar/Header';
+import { ErrorIndicator, LoadingIndicator } from '../../components/Indicators';
 
 export default function Usage() {
   const [council] = useAtom(councilAtom);
@@ -30,47 +30,50 @@ export default function Usage() {
       </div>
       <main className="p-4">
         <h2 className="text-xl mb-2">Weekly usage grouped by area</h2>
-        {waterUseData.isLoading && (
-          <LoadingIndicator>Loading...</LoadingIndicator>
-        )}
-        {!waterUseData.isLoading && waterUseData?.data && (
-          <div className="mb-4 italic">
-            No data for: {waterUseData.data.usage.allMissingAreas.join(', ')}
-          </div>
-        )}
-        {!waterUseData.isLoading &&
-          waterUseData?.data?.usage &&
-          waterUseData.data.usage.groups.map((usageGroup, index) => {
-            return (
-              <div key={usageGroup.name} className="mb-6">
-                {!usageGroup.hideLabel ? (
-                  <h2 className="text-lg mb-2">{usageGroup.name}</h2>
-                ) : (
-                  <></>
-                )}
-                <div className="mb-4">
-                  <HeatMap
-                    data={usageGroup.data}
-                    showWeeks={index === 0}
-                  ></HeatMap>
-                </div>
-
-                {/* <div className="ml-32">
-                  Areas with not data: {usage.missingAreas.join(', ')}
-                </div> */}
-              </div>
-            );
-          })}
+        <Results waterUseData={waterUseData} />
       </main>
     </>
   );
 }
 
-function HeatMap({
+function Results({ waterUseData }: { waterUseData: DetailedWaterUseQuery }) {
+  if (waterUseData.isLoading) {
+    return <LoadingIndicator>Loading data</LoadingIndicator>;
+  }
+  if (waterUseData.isError || !waterUseData.data || !waterUseData.data.usage) {
+    return <ErrorIndicator>Error loading data</ErrorIndicator>;
+  }
+  return (
+    <>
+      <div className="mb-4 italic text-sm">
+        No data for: {waterUseData.data.usage.allMissingAreas.join(', ')}
+      </div>
+      {waterUseData.data.usage.groups.map((usageGroup, index) => {
+        return (
+          <div key={usageGroup.name} className="mb-6">
+            {!usageGroup.hideLabel ? (
+              <h2 className="text-lg mb-2">{usageGroup.name}</h2>
+            ) : (
+              <></>
+            )}
+            <div className="mb-4">
+              <WeeklyUsageHeatMap
+                data={usageGroup.data}
+                showWeeks={index === 0}
+              ></WeeklyUsageHeatMap>
+            </div>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+function WeeklyUsageHeatMap({
   data,
   showWeeks,
 }: {
-  data: HeatmapData;
+  data: HeatmapData[];
   showWeeks: boolean;
 }) {
   const axisTop = showWeeks
@@ -80,7 +83,7 @@ function HeatMap({
         legend: 'Week ending',
         legendOffset: -65,
       }
-    : false;
+    : undefined;
 
   const marginTop = showWeeks ? 70 : 0;
   const height = (data.length * 20 + marginTop).toString();
@@ -114,12 +117,16 @@ function HeatMap({
   );
 }
 
-const CustomTooltip = ({ cell }: { cell: ComputedCell<HeatMapDatum> }) => {
+const CustomTooltip = ({
+  cell,
+}: {
+  cell: ComputedCell<WeeklyUsageHeatmapDataItem>;
+}) => {
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
       <span className="font-bold">{cell.serieId}</span>
       <br />
-      Week ending {cell.data.x}
+      Week ending {format(cell.data.endOfWeek, 'eee eo MMM yyyy')}
       <br />
       Median usage: <strong>{cell.formattedValue}</strong>
     </div>

@@ -27,8 +27,6 @@ export default function UsageTable({
 }: Props) {
   const [weekOffset, setWeekOffset] = useState(0);
 
-  // TODO: Handle button thrashing for slow queries....
-  // TODO: Handle errors
   const handleUpdateDateOffset = (change: number) => {
     const updatedOffet = weekOffset + change;
     if (updatedOffet < MIN_OFFSET || updatedOffet > MAX_OFFSET) return;
