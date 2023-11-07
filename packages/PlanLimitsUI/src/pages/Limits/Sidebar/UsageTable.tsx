@@ -3,9 +3,7 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
 import useWaterUseData, {
-  type HeatmapData,
   type SWAndGWHeatmapData,
-  type HeatmapDataItem,
 } from '../../../lib/useWaterUseData';
 import Button from '../../../components/Button';
 import {
@@ -29,7 +27,6 @@ export default function UsageTable({
 }: Props) {
   const [weekOffset, setWeekOffset] = useState(0);
 
-  // TODO: Handle button thrashing for slow queries....
   const handleUpdateDateOffset = (change: number) => {
     const updatedOffet = weekOffset + change;
     if (updatedOffet < MIN_OFFSET || updatedOffet > MAX_OFFSET) return;
@@ -81,7 +78,7 @@ export default function UsageTable({
       </div>
 
       <a
-        href="usage"
+        href={`/limits/${council.slug}/usage`}
         className="text-sm underline block mb-2"
         target="_blank"
         rel="noreferrer"
@@ -183,7 +180,11 @@ function HeatMap({ usage }: { usage: HeatmapData[] }) {
   );
 }
 
-const CustomTooltip = ({ cell }: { cell: ComputedCell<HeatmapDataItem> }) => {
+const CustomTooltip = ({
+  cell,
+}: {
+  cell: ComputedCell<UsageHeatmapDataItem>;
+}) => {
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
       {formatNumber.format(cell.data.usage)} of{' '}

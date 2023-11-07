@@ -30,11 +30,14 @@ const apiBasePath = determineBackendUri(window.location.hostname);
 
 async function fetchFromAPI<T>(path: string): Promise<T> {
   const result = await fetch(`${apiBasePath}${path}`, defaultRequestInit);
+  if (result.status !== 200) {
+    throw `Error fetching ${path}`;
+  }
   return await result.json();
 }
 
 function mapFeatureCollectionPropsToType<T>(
-  featureCollection: FeatureCollection
+  featureCollection: FeatureCollection,
 ) {
   featureCollection.features = featureCollection.features.map((feature) => {
     return {
@@ -51,7 +54,7 @@ function mapFeatureCollectionPropsToType<T>(
 
 async function fetchFeatures<T>(path: string, councilId: number, hash: string) {
   const features = await fetchFromAPI<FeatureCollection>(
-    `${path}?councilId=${councilId}&v=${hash}`
+    `${path}?councilId=${councilId}&v=${hash}`,
   );
   return mapFeatureCollectionPropsToType<T>(features);
 }
@@ -59,7 +62,7 @@ async function fetchFeatures<T>(path: string, councilId: number, hash: string) {
 function useFeatureQuery<T>(
   path: string,
   manifest: { [key: string]: string } | undefined,
-  councilId: number
+  councilId: number,
 ) {
   return useQuery({
     enabled: Boolean(manifest),
@@ -73,19 +76,19 @@ function useFeatureQuery<T>(
 }
 
 function splitSurfaceWaterLimits(
-  sw: FeatureCollection<Geometry, SurfaceWaterLimit>
+  sw: FeatureCollection<Geometry, SurfaceWaterLimit>,
 ) {
   return {
     surfaceWaterUnitLimits: {
       ...sw,
       features: sw.features.filter(
-        (feature) => feature.properties.parentSurfaceWaterLimitId === null
+        (feature) => feature.properties.parentSurfaceWaterLimitId === null,
       ),
     } as FeatureCollection<Geometry, SurfaceWaterLimit>,
     surfaceWaterSubUnitLimits: {
       ...sw,
       features: sw.features.filter(
-        (feature) => feature.properties.parentSurfaceWaterLimitId !== null
+        (feature) => feature.properties.parentSurfaceWaterLimitId !== null,
       ),
     } as FeatureCollection<Geometry, SurfaceWaterLimit>,
   };
@@ -99,7 +102,7 @@ export function usePlanLimitsData(councilId: number) {
     refetchOnWindowFocus: false,
     queryFn: () =>
       fetchFromAPI<{ [key: string]: string }>(
-        `${manifestURL}?councilId=${councilId}`
+        `${manifestURL}?councilId=${councilId}`,
       ),
   });
 
@@ -109,16 +112,16 @@ export function usePlanLimitsData(councilId: number) {
 
   const councils = useFeatureQueryWith<Council>('/plan-limits/councils');
   const planRegions = useFeatureQueryWith<PlanRegion>(
-    '/plan-limits/plan-regions'
+    '/plan-limits/plan-regions',
   );
   const surfaceWaterLimits = useFeatureQueryWith<SurfaceWaterLimit>(
-    '/plan-limits/surface-water-limits'
+    '/plan-limits/surface-water-limits',
   );
   const groundWaterLimits = useFeatureQueryWith<GroundWaterLimit>(
-    '/plan-limits/ground-water-limits'
+    '/plan-limits/ground-water-limits',
   );
   const flowMeasurementSites = useFeatureQueryWith<FlowMeasurementSite>(
-    '/plan-limits/flow-measurement-sites'
+    '/plan-limits/flow-measurement-sites',
   );
   const flowLimits = useFeatureQueryWith<FlowLimit>('/plan-limits/flow-limits');
 
@@ -133,7 +136,7 @@ export function usePlanLimitsData(councilId: number) {
           // We use ! here since we know manifest will be populated when this executes because of the enabled check
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           manifest!['/plan-limits/plan']
-        }`
+        }`,
       ),
   });
 
@@ -166,18 +169,18 @@ export function usePlanLimitsData(councilId: number) {
         plan: mapKeys(features.plan, (value, key) => camelCase(key)),
         planRegions: features.planRegions.features.map((f) => f.properties),
         surfaceWaterUnitLimits: features.surfaceWaterUnitLimits.features.map(
-          (f) => f.properties
+          (f) => f.properties,
         ),
         surfaceWaterSubUnitLimits:
           features.surfaceWaterSubUnitLimits.features.map((f) => f.properties),
         groundWaterLimits: features.groundWaterLimits.features.map(
-          (feature) => feature.properties
+          (feature) => feature.properties,
         ),
         flowLimits: features.flowLimits.features.map(
-          (feature) => feature.properties
+          (feature) => feature.properties,
         ),
         flowMeasurementSites: features.flowMeasurementSites.features.map(
-          (feature) => feature.properties
+          (feature) => feature.properties,
         ),
       }
     : undefined;
@@ -198,7 +201,7 @@ export function useWaterUseQuery(councilId: number, from: string, to: string) {
     staleTime: Infinity,
     queryFn: () =>
       fetchFromAPI<Usage[]>(
-        `/plan-limits/water-usage?councilId=${councilId}&from=${from}&to=${to}`
+        `/plan-limits/water-usage?councilId=${councilId}&from=${from}&to=${to}`,
       ),
   });
   return usage;

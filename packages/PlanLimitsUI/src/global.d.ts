@@ -42,6 +42,13 @@ interface Council {
     groundwaterLimit: React.Element | string;
     surfaceWaterLimit: React.Element | string;
   }[];
+  usageDisplayGroups: UsageDisplayGroup[];
+}
+
+interface UsageDisplayGroup {
+  name: string;
+  hideLabel: boolean;
+  areaIds: string[];
 }
 
 interface Usage {
@@ -172,4 +179,23 @@ interface GroundwaterLimitView {
   depletesFromSubunitLimit?: SurfaceWaterLimit;
   unitLimitView: LimitView;
   subUnitLimitView: LimitView;
+}
+
+interface HeatmapDataItem {
+  x: string;
+  y: number;
+}
+
+interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
+  endOfWeek: Date;
+}
+
+interface UsageHeatmapDataItem extends HeatmapDataItem {
+  usage: number;
+  allocation: number;
+}
+
+interface HeatmapData {
+  id: string;
+  data: HeatmapDataItem[];
 }
