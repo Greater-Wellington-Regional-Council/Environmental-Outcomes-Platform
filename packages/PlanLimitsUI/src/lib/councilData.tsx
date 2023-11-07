@@ -10,7 +10,6 @@ const PendingElement = (
 export const Councils: Council[] = [
   {
     id: 9,
-
     slug: 'gw',
     name: 'Geater Wellington',
     url: 'https://www.gw.govt.nz/',
@@ -72,6 +71,89 @@ export const Councils: Council[] = [
         groundwaterLimit: PendingElement,
       },
     ],
+    usageDisplayGroups: [
+      {
+        name: 'Kāpiti',
+        hideLabel: false,
+        areaIds: [
+          'WaitohuSW',
+          'OtakiSW',
+          'MangaoneSW',
+          'OtakiGW',
+          'OtakiRiverGW',
+          'Te HoroGW',
+          'WaikanaeSW',
+          'WaikanaeRiverGW',
+          'WaikanaeGW',
+          'RaumatiGW',
+        ],
+      },
+      {
+        name: 'Te Awarua-o-Porirua Whaitua',
+        hideLabel: false,
+        areaIds: [
+          'HuttSW',
+          'Upper HuttGW',
+          'Lower HuttGW',
+          'WainuiomataSW',
+          'OrongorongoSW',
+        ],
+      },
+      {
+        name: 'Ruamahanga',
+        hideLabel: false,
+        areaIds: [
+          'RuamahangaTotalSW',
+          'Ruamahanga_UpperSW',
+          'Upper RuamahangaGW',
+          'Te Ore OreGW',
+          'KopuarangaSW',
+          'WaipouaSW',
+          'WaingawaSW',
+          'WaingawaGW',
+        ],
+      },
+      {
+        name: 'Ruamahanga 2',
+        hideLabel: true,
+        areaIds: [
+          'Ruamahanga_MiddleSW',
+          'Middle RuamahangaGW',
+          'Fernhill TiffenGW',
+          'MangatarereSW',
+          'MangatarereGW',
+          'BoothsSW',
+          'ParkvaleSW',
+          'Parkvale_ConfinedGW',
+          'WaiohineSW',
+          'PapawaiSW',
+          'WaiohineGW',
+        ],
+      },
+      {
+        name: 'Ruamahanga 3',
+        hideLabel: true,
+        areaIds: [
+          'LakeWairarapaSW',
+          'LakeGW',
+          'TauherenikauSW',
+          'OtukuraSW',
+          'TauherenikauGW',
+        ],
+      },
+      {
+        name: 'Ruamahanga 4',
+        hideLabel: true,
+        areaIds: [
+          'Ruamahanga_LowerSW',
+          'MoikiGW',
+          'MartinboroughGW',
+          'HuangaruaSW',
+          'HuangaruaGW',
+          'OnokeGW',
+        ],
+      },
+    ],
   },
   {
     id: 8,
@@ -106,91 +188,8 @@ export const Councils: Council[] = [
       groundwaterLimit: 'Ground Water Management Zone',
     },
     regionOverrides: [],
+    usageDisplayGroups: [],
   },
 ];
 
 export const DefaultCouncil = Councils[0];
-
-export const GWUsagePresentationGroups = [
-  {
-    name: 'Kāpiti',
-    hideLabel: false,
-    areaIds: [
-      'WaitohuSW',
-      'OtakiSW',
-      'MangaoneSW',
-      'OtakiGW',
-      'OtakiRiverGW',
-      'Te HoroGW',
-      'WaikanaeSW',
-      'WaikanaeRiverGW',
-      'WaikanaeGW',
-      'RaumatiGW',
-    ],
-  },
-  {
-    name: 'Te Awarua-o-Porirua Whaitua',
-    hideLabel: false,
-    areaIds: [
-      'HuttSW',
-      'Upper HuttGW',
-      'Lower HuttGW',
-      'WainuiomataSW',
-      'OrongorongoSW',
-    ],
-  },
-  {
-    name: 'Ruamahanga',
-    hideLabel: false,
-    areaIds: [
-      'RuamahangaTotalSW',
-      'Ruamahanga_UpperSW',
-      'Upper RuamahangaGW',
-      'Te Ore OreGW',
-      'KopuarangaSW',
-      'WaipouaSW',
-      'WaingawaSW',
-      'WaingawaGW',
-    ],
-  },
-  {
-    name: 'Ruamahanga 2',
-    hideLabel: true,
-    areaIds: [
-      'Ruamahanga_MiddleSW',
-      'Middle RuamahangaGW',
-      'Fernhill TiffenGW',
-      'MangatarereSW',
-      'MangatarereGW',
-      'BoothsSW',
-      'ParkvaleSW',
-      'Parkvale_ConfinedGW',
-      'WaiohineSW',
-      'PapawaiSW',
-      'WaiohineGW',
-    ],
-  },
-  {
-    name: 'Ruamahanga 3',
-    hideLabel: true,
-    areaIds: [
-      'LakeWairarapaSW',
-      'LakeGW',
-      'TauherenikauSW',
-      'OtukuraSW',
-      'TauherenikauGW',
-    ],
-  },
-  {
-    name: 'Ruamahanga 4',
-    hideLabel: true,
-    areaIds: [
-      'Ruamahanga_LowerSW',
-      'MoikiGW',
-      'MartinboroughGW',
-      'HuangaruaSW',
-      'HuangaruaGW',
-      'OnokeGW',
-    ],
-  },
-];

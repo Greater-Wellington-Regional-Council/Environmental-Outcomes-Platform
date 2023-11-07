@@ -1,21 +1,16 @@
 import { useWaterUseQuery } from '../api';
-import {
-  format,
-  addYears,
-  addDays,
-  getWeek,
-  parse,
-  lastDayOfWeek,
-} from 'date-fns';
+import { format, addYears, addDays, parse, lastDayOfWeek } from 'date-fns';
 import { groupBy, flatten } from 'lodash';
-import { GWUsagePresentationGroups } from '../lib/councilData';
 
 interface ParsedUsage extends Usage {
   parsedDate: Date;
   endOfWeek: Date;
 }
 
-export default function useDetailedWaterUseData(councilId: number) {
+export default function useDetailedWaterUseData(
+  councilId: number,
+  displayGroups: UsageDisplayGroup[],
+) {
   const to = addDays(new Date(), -1);
   const from = addYears(to, -1);
   const formattedFrom = format(from, 'yyyy-MM-dd');
@@ -32,7 +27,7 @@ export default function useDetailedWaterUseData(councilId: number) {
     formattedFrom,
     formattedTo,
     usage: waterUseQueryResult.data
-      ? transformWaterUseData(waterUseQueryResult.data)
+      ? transformWaterUseData(waterUseQueryResult.data, displayGroups)
       : undefined,
   };
 
@@ -44,11 +39,14 @@ export default function useDetailedWaterUseData(councilId: number) {
 
 export type DetailedWaterUseQuery = ReturnType<typeof useDetailedWaterUseData>;
 
-function transformWaterUseData(usage: Usage[]) {
+function transformWaterUseData(
+  usage: Usage[],
+  displayGroups: UsageDisplayGroup[],
+) {
   const parsedUsage = parseUsage(usage);
   const areaUsage = groupBy<ParsedUsage>(parsedUsage, 'areaId');
 
-  const groupedAreaUsage = GWUsagePresentationGroups.map((group) => {
+  const groupedAreaUsage = displayGroups.map((group) => {
     const data: HeatmapData[] = [];
     const missingAreas: string[] = [];
     group.areaIds.forEach((areaId) => {

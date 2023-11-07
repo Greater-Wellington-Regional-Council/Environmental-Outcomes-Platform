@@ -11,7 +11,10 @@ import { ErrorIndicator, LoadingIndicator } from '../../components/Indicators';
 
 export default function Usage() {
   const [council] = useAtom(councilAtom);
-  const waterUseData = useDetailedWaterUseData(council.id);
+  const waterUseData = useDetailedWaterUseData(
+    council.id,
+    council.usageDisplayGroups,
+  );
 
   return (
     <>

@@ -42,6 +42,13 @@ interface Council {
     groundwaterLimit: React.Element | string;
     surfaceWaterLimit: React.Element | string;
   }[];
+  usageDisplayGroups: UsageDisplayGroup[];
+}
+
+interface UsageDisplayGroup {
+  name: string;
+  hideLabel: boolean;
+  areaIds: string[];
 }
 
 interface Usage {
