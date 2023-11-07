@@ -1,42 +1,17 @@
-import type { UseQueryResult } from '@tanstack/react-query';
 import { useWaterUseQuery } from '../api';
 import { format, addDays, addWeeks, parse } from 'date-fns';
 import { groupBy, sumBy } from 'lodash';
-
-export interface HeatmapDataItem {
-  usage: number;
-  allocation: number;
-  x: string;
-  y: number;
-}
-
-export interface HeatmapData {
-  id: string;
-  data: HeatmapDataItem[];
-}
 
 export interface SWAndGWHeatmapData {
   sw: HeatmapData[];
   gw: HeatmapData[];
 }
 
-export interface WaterUseData {
-  from: Date;
-  to: Date;
-  formattedFrom: string;
-  formattedTo: string;
-  heatmapData?: SWAndGWHeatmapData;
-}
-
-type useWaterUseData = UseQueryResult & {
-  data: WaterUseData;
-};
-
 export default function useWaterUseData(
   councilId: number,
   swAreaId: string,
   gwAreaIds: string[],
-  weekOffset: number
+  weekOffset: number,
 ) {
   const yesterday = addDays(new Date(), -1);
   const to = addWeeks(yesterday, weekOffset);
@@ -46,7 +21,7 @@ export default function useWaterUseData(
   const waterUseQueryResult = useWaterUseQuery(
     councilId,
     formattedFrom,
-    formattedTo
+    formattedTo,
   );
 
   const data = {
@@ -56,26 +31,26 @@ export default function useWaterUseData(
     formattedTo,
     usage:
       waterUseQueryResult.data &&
-      transformWaterUseData(waterUseQueryResult.data, swAreaId, gwAreaIds)
+      transformWaterUseData(waterUseQueryResult.data, swAreaId, gwAreaIds),
   };
 
   return {
     ...waterUseQueryResult,
-    data
-  } as useWaterUseData;
+    data,
+  };
 }
 
 function transformWaterUseData(
   usage: Usage[],
   swAreaId: string,
-  gwAreaIds: string[]
+  gwAreaIds: string[],
 ) {
   const swUsagePerDay = usage.filter((u) => u.areaId === swAreaId);
   const gwUsagePerDay = usage.filter((u) => gwAreaIds.includes(u.areaId));
 
   return {
     sw: transformUsageToHeatMap(swUsagePerDay),
-    gw: transformUsageToHeatMap(gwUsagePerDay)
+    gw: transformUsageToHeatMap(gwUsagePerDay),
   };
 }
 
@@ -92,7 +67,7 @@ function transformUsageToHeatMap(usage: Usage[]) {
         const usage = sumBy(usageGroupedByDay[date], 'dailyUsage');
         const allocation = sumBy(
           usageGroupedByDay[date],
-          'meteredDailyAllocation'
+          'meteredDailyAllocation',
         );
 
         return {
@@ -100,9 +75,9 @@ function transformUsageToHeatMap(usage: Usage[]) {
           allocation,
           date,
           x: format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d'),
-          y: usage <= 0 ? 0 : usage / allocation
+          y: usage <= 0 ? 0 : usage / allocation,
         };
-      })
-    }
+      }),
+    },
   ];
 }
