@@ -18,16 +18,16 @@ Overall, this is built around the Hilltop API which exposes three levels of GET 
 * SITES_LIST — List of Sites, includes names and locations
 * MEASUREMENTS_LIST — Per site, list of measurements available for that site, including details about the first and last
   observation date
-* MEASUREMENT_DATA — Per site, per measurement, the timeseries observed data
+* MEASUREMENT_DATA / MEASUREMENT_DATA_LATEST — Per site, per measurement, the timeseries observed data either historical or most recent
 
 The app crawls these by reading each level to decide what to read from the next level. i.e., The SITES_LIST tells the
-app which sites call MEASUREMENTS_LIST for which in turn tells which measurements to call MEASUREMENT_DATA for. Requests
+app which sites call MEASUREMENTS_LIST which in turn tells the app which measurements to call MEASUREMENT_DATA for. Requests
 for MEASUREMENT_DATA are also split into monthly chunks to avoid issues with too much data being returned in one
-request.
+request. If a site appears to be reporting data frequently then a MEASUREMENT_DATA_LATEST will be queued up to get data for the most recent 35 days.
 
 The app keeps a list of API requests that it will keep up to date by calling that API on a schedule. This list is stored
 in the `hilltop_fetch_tasks` table and works like a task queue. Each time a request is made, the result is used to try
-and determine when next to schedule the task. The simple example is for MEASUREMENT_DATA if the last observation was
+and determine when next to schedule the task. An example is for MEASUREMENT_DATA_LATEST if the last observation was
 recent, then a refresh should be attempted soon, if it was a long way in the past, it should be refreshed less often.
 
 The next schedule time has been implemented as a random time in an interval, to provide some jitter when between task
@@ -47,7 +47,8 @@ This process is built around three main components:
     * Fetch data from hilltop for that task
     * If a valid result which is not the same as the previous version
         * Queue any new tasks from the result
-        * Send the result to Kafka `hilltop_raw` topic
+        * Send the result to Kafka `hilltop_raw` topic (note the Kafka topic does not distinguish between
+          MEASUREMENT_DATA / MEASUREMENT_DATA_LATEST it just calls them both MEASUREMENT_DATA)
     * Requeue the task for sometime in the future, based on the type of request
 
 * Kafka streams component
@@ -73,8 +74,8 @@ at the same time without getting the same task.
 See this [reference](https://www.2ndquadrant.com/en/blog/what-is-select-skip-locked-for-in-postgresql-9-5/) for
 discussion about the `SKIP LOCKED` query.
 
-The queue implementation is fairly simple for this specific use. If it becomes more of a generic work queue then a 
-standard implemention such as Quartz might be worthwhile moving to.
+The queue implementation is fairly simple for this specific use. If it becomes more of a generic work queue then a
+standard implementation such as Quartz might be worthwhile moving to.
 
 ## Example Configuration
 
@@ -98,11 +99,10 @@ VALUES (9, 'https://hilltop.gw.govt.nz/merged.hts', '{ "measurementNames": ["Rai
 
 ### TODO / Improvement
 
-* The `previous_history` on tasks will grow unbounded. This needs to be capped
 * The algorithm for determining the next time to schedule an API refresh could be improved, something could be built
   from the previous history based on how often data is unchanged.
 * To avoid hammering Hilltop there is rate limiting using a "token bucket" library, currently this uses one bucket for
   all requests. It could be split to use one bucket per server
-* Because of the chunking by month, every time new data arrives we end up storing the whole month up to that new data
+* Each time the latest measurement API is called we will receive data that has already been seen and processed previously and store it
   again in the `hilltop_raw` topic. This seems wasteful and there are options for cleaning up when a record just
-  supersedes the previous. But cleaning up would mean losing some knowledge about when a observation was first seen.     
+  supersedes the previous. But cleaning up could mean losing some knowledge about when a observation was first seen.     

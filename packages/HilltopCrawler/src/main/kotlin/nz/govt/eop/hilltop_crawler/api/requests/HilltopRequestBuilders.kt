@@ -37,3 +37,18 @@ fun buildPastMeasurementsUrl(
         .queryParam("to", month.plusMonths(1).atDay(1).atStartOfDay().minusSeconds(1))
         .build()
         .toASCIIString()
+
+fun buildLatestMeasurementsUrl(
+    hilltopUrl: String,
+    siteId: String,
+    measurementName: String,
+): String =
+    DefaultUriBuilderFactory()
+        .uriString(hilltopUrl)
+        .queryParam("Service", "Hilltop")
+        .queryParam("Request", "GetData")
+        .queryParam("Site", siteId)
+        .queryParam("Measurement", measurementName)
+        .queryParam("TimeInterval", "P35D/now")
+        .build()
+        .toASCIIString()
