@@ -126,7 +126,7 @@ const CustomTooltip = ({
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
       <span className="font-bold">{cell.serieId}</span>
       <br />
-      Week ending {format(cell.data.endOfWeek, 'eee eo MMM yyyy')}
+      Week ending {format(cell.data.endOfWeek, 'EEEE do MMMM yyyy')}
       <br />
       Median usage: <strong>{cell.formattedValue}</strong>
     </div>
