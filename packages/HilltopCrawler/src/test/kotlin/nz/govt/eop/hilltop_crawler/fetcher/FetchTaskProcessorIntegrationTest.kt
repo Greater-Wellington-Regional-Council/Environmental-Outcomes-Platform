@@ -10,6 +10,7 @@ import java.net.URI
 import java.time.Instant
 import nz.govt.eop.hilltop_crawler.HilltopCrawlerTestConfiguration
 import nz.govt.eop.hilltop_crawler.db.DB
+import nz.govt.eop.hilltop_crawler.db.HilltopFetchTaskType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.*
@@ -279,7 +280,7 @@ class FetchTaskProcessorIntegrationTest(
     // Has updated the row we just fetched
     tasks.forOne {
       it.fetchUri shouldBe URI("http://example.com")
-      it.requestType shouldBe HilltopMessageType.SITES_LIST
+      it.requestType shouldBe HilltopFetchTaskType.SITES_LIST
       it.previousDataHash shouldBe
           "0fcafcc9533e521e53cad82226d44c832eca280e75dda23ffe5575b6563995c0"
       it.nextFetchAt shouldBeAfter Instant.now()
@@ -320,7 +321,7 @@ class FetchTaskProcessorIntegrationTest(
     // Has updated the row we just fetched
     tasks.forOne {
       it.fetchUri shouldBe URI("http://example.com")
-      it.requestType shouldBe HilltopMessageType.SITES_LIST
+      it.requestType shouldBe HilltopFetchTaskType.SITES_LIST
       it.previousDataHash shouldBe
           "0fcafcc9533e521e53cad82226d44c832eca280e75dda23ffe5575b6563995c0"
       it.nextFetchAt shouldBeAfter Instant.now()
@@ -328,7 +329,7 @@ class FetchTaskProcessorIntegrationTest(
 
     // Has created rows for the new sites
     tasks.forExactly(2) {
-      it.requestType shouldBe HilltopMessageType.MEASUREMENTS_LIST
+      it.requestType shouldBe HilltopFetchTaskType.MEASUREMENTS_LIST
       it.nextFetchAt shouldBeBefore Instant.now()
     }
 
@@ -376,7 +377,7 @@ class FetchTaskProcessorIntegrationTest(
     // Has updated the row we just fetched
     tasks.forOne {
       it.fetchUri shouldBe URI("http://example.com")
-      it.requestType shouldBe HilltopMessageType.MEASUREMENTS_LIST
+      it.requestType shouldBe HilltopFetchTaskType.MEASUREMENTS_LIST
       it.previousDataHash shouldBe
           "e58323f66a24dfdc774756f608efba792b55deba4f8c1135c3aefee38f71f404"
       it.nextFetchAt shouldBeAfter Instant.now()
@@ -384,7 +385,7 @@ class FetchTaskProcessorIntegrationTest(
 
     // Has created rows for the new sites
     tasks.forOne {
-      it.requestType shouldBe HilltopMessageType.MEASUREMENT_DATA
+      it.requestType shouldBe HilltopFetchTaskType.MEASUREMENT_DATA
       it.nextFetchAt shouldBeBefore Instant.now()
       it.fetchUri shouldBe
           URI(
@@ -436,7 +437,7 @@ class FetchTaskProcessorIntegrationTest(
     // Has updated the row we just fetched
     tasks.forOne {
       it.fetchUri shouldBe URI("http://example.com")
-      it.requestType shouldBe HilltopMessageType.MEASUREMENT_DATA
+      it.requestType shouldBe HilltopFetchTaskType.MEASUREMENT_DATA
       it.previousDataHash shouldBe
           "c1b8652916a235b608818d3ce3efa0dc29517ba115b1de1b6221a487b4e696bc"
       it.nextFetchAt shouldBeAfter Instant.now()
@@ -492,13 +493,63 @@ class FetchTaskProcessorIntegrationTest(
     // Has updated the row we just fetched
     tasks.forOne {
       it.fetchUri shouldBe URI("http://example.com")
-      it.requestType shouldBe HilltopMessageType.MEASUREMENT_DATA
+      it.requestType shouldBe HilltopFetchTaskType.MEASUREMENT_DATA
       it.previousDataHash shouldBe
           "1ddfbd7f9a3d44bca5a6ae05d56f2016eb4d6e4292625fa550102dea10861ce6"
       it.nextFetchAt shouldBeAfter Instant.now()
     }
 
     verifyNoInteractions(mockKafka)
+  }
+
+  @Test
+  fun `should correctly process a measurement values latest message`() {
+    // GIVEN
+    val sourceId = createDefaultSource(jdbcTemplate)
+
+    createFetchTask(
+        jdbcTemplate,
+        sourceId,
+        "MEASUREMENT_DATA_LATEST",
+        "http://example.com",
+        "2021-01-01 00:00:00",
+    )
+
+    val input =
+        this.javaClass.getResource("/hilltop-xml/MeasurementValuesResponse.xml")!!.readText()
+
+    mockServer
+        .expect(requestTo("http://example.com"))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withSuccess(input, null))
+
+    // WHEN
+    val result = underTest.runNextTask()
+
+    // THEN
+    mockServer.verify()
+
+    result shouldBe true
+
+    val tasks = listTasksToProcess(jdbcTemplate)
+    tasks shouldHaveSize 1
+
+    // Has updated the row we just fetched
+    tasks.forOne {
+      it.fetchUri shouldBe URI("http://example.com")
+      it.requestType shouldBe HilltopFetchTaskType.MEASUREMENT_DATA_LATEST
+      it.previousDataHash shouldBe
+          "c1b8652916a235b608818d3ce3efa0dc29517ba115b1de1b6221a487b4e696bc"
+      it.nextFetchAt shouldBeAfter Instant.now()
+    }
+
+    argumentCaptor<HilltopMeasurementsMessage>().apply {
+      verify(mockKafka).send(capture())
+
+      firstValue.councilId shouldBe 1
+      firstValue.type shouldBe HilltopMessageType.MEASUREMENT_DATA
+      firstValue.hilltopBaseUrl shouldBe "http://example.com"
+    }
   }
 
   @Test
@@ -539,7 +590,7 @@ class FetchTaskProcessorIntegrationTest(
     // Has updated the row we just fetched
     tasks.forOne {
       it.fetchUri shouldBe URI("http://example.com")
-      it.requestType shouldBe HilltopMessageType.SITES_LIST
+      it.requestType shouldBe HilltopFetchTaskType.SITES_LIST
       it.previousDataHash shouldBe null
       it.nextFetchAt shouldBeAfter Instant.now()
     }
@@ -557,7 +608,7 @@ fun listTasksToProcess(template: JdbcTemplate): List<DB.HilltopFetchTaskRow> =
           DB.HilltopFetchTaskRow(
               rs.getInt("id"),
               rs.getInt("source_id"),
-              HilltopMessageType.valueOf(rs.getString("request_type")),
+              HilltopFetchTaskType.valueOf(rs.getString("request_type")),
               rs.getTimestamp("next_fetch_at").toInstant(),
               URI(rs.getString("fetch_url")),
               rs.getString("previous_data_hash"))

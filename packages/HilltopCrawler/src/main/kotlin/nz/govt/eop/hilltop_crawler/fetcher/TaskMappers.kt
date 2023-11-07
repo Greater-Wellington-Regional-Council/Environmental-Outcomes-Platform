@@ -10,9 +10,11 @@ import kotlin.random.Random
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopMeasurementValues
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopMeasurements
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopSites
+import nz.govt.eop.hilltop_crawler.api.requests.buildLatestMeasurementsUrl
 import nz.govt.eop.hilltop_crawler.api.requests.buildMeasurementListUrl
 import nz.govt.eop.hilltop_crawler.api.requests.buildPastMeasurementsUrl
 import nz.govt.eop.hilltop_crawler.db.DB
+import nz.govt.eop.hilltop_crawler.db.HilltopFetchTaskType
 
 /**
  * This is an abstract class that represents a mapper for processing a specific type of task. When
@@ -26,7 +28,7 @@ import nz.govt.eop.hilltop_crawler.db.DB
  * do the above per task type.
  */
 abstract class TaskMapper<T>(
-    val type: HilltopMessageType,
+    val type: HilltopFetchTaskType,
     val sourceConfig: DB.HilltopSourcesRow,
     val fetchedUri: URI,
     val fetchedAt: Instant,
@@ -60,7 +62,7 @@ class SitesListTaskMapper(
     parsedContent: HilltopSites
 ) :
     TaskMapper<HilltopSites>(
-        HilltopMessageType.SITES_LIST,
+        HilltopFetchTaskType.SITES_LIST,
         sourceConfig,
         fetchedUri,
         fetchedAt,
@@ -73,7 +75,7 @@ class SitesListTaskMapper(
           .map {
             DB.HilltopFetchTaskCreate(
                 sourceConfig.id,
-                HilltopMessageType.MEASUREMENTS_LIST,
+                HilltopFetchTaskType.MEASUREMENTS_LIST,
                 buildMeasurementListUrl(baseUri, it.name),
             )
           }
@@ -88,7 +90,7 @@ class SitesListTaskMapper(
       )
 
   override fun determineNextFetchAt(): Instant =
-      randomTimeBetween(fetchedAt, fetchedAt.plus(30, ChronoUnit.DAYS))
+      randomTimeBetween(fetchedAt.plus(20, ChronoUnit.DAYS), fetchedAt.plus(30, ChronoUnit.DAYS))
 }
 
 class MeasurementsListTaskMapper(
@@ -99,7 +101,7 @@ class MeasurementsListTaskMapper(
     parsedContent: HilltopMeasurements
 ) :
     TaskMapper<HilltopMeasurements>(
-        HilltopMessageType.MEASUREMENTS_LIST,
+        HilltopFetchTaskType.MEASUREMENTS_LIST,
         sourceConfig,
         fetchedUri,
         fetchedAt,
@@ -125,7 +127,7 @@ class MeasurementsListTaskMapper(
               sourceConfig.config.measurementNames.contains(it.name) && it.vm == null
             } != null
           }
-          .flatMap {
+          .flatMap { it ->
             val fromDate =
                 LocalDate.parse(
                     it.from.subSequence(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -139,13 +141,29 @@ class MeasurementsListTaskMapper(
                     }
                     .requestAs
 
-            generateMonthSequence(fromDate, toDate).map { yearMonth ->
-              DB.HilltopFetchTaskCreate(
-                  sourceConfig.id,
-                  HilltopMessageType.MEASUREMENT_DATA,
-                  buildPastMeasurementsUrl(baseUri, it.siteName, requestAs, yearMonth),
-              )
-            }
+            val isLastObservationInCurrentMonth =
+                YearMonth.from(toDate) == YearMonth.from(LocalDate.now())
+
+            generateMonthSequence(
+                    fromDate,
+                    if (isLastObservationInCurrentMonth) toDate.minusMonths(1) else toDate)
+                .map { yearMonth ->
+                  DB.HilltopFetchTaskCreate(
+                      sourceConfig.id,
+                      HilltopFetchTaskType.MEASUREMENT_DATA,
+                      buildPastMeasurementsUrl(baseUri, it.siteName, requestAs, yearMonth))
+                }
+                .let { tasks ->
+                  if (isLastObservationInCurrentMonth) {
+                    tasks.plus(
+                        DB.HilltopFetchTaskCreate(
+                            sourceConfig.id,
+                            HilltopFetchTaskType.MEASUREMENT_DATA_LATEST,
+                            buildLatestMeasurementsUrl(baseUri, it.siteName, requestAs)))
+                  } else {
+                    tasks
+                  }
+                }
           }
 
   override fun buildKafkaMessage(): HilltopMessage =
@@ -159,7 +177,7 @@ class MeasurementsListTaskMapper(
       )
 
   override fun determineNextFetchAt(): Instant =
-      randomTimeBetween(fetchedAt.plus(1, ChronoUnit.DAYS), fetchedAt.plus(30, ChronoUnit.DAYS))
+      randomTimeBetween(fetchedAt.plus(10, ChronoUnit.DAYS), fetchedAt.plus(20, ChronoUnit.DAYS))
 }
 
 class MeasurementDataTaskMapper(
@@ -170,7 +188,43 @@ class MeasurementDataTaskMapper(
     parsedContent: HilltopMeasurementValues
 ) :
     TaskMapper<HilltopMeasurementValues>(
-        HilltopMessageType.MEASUREMENT_DATA,
+        HilltopFetchTaskType.MEASUREMENT_DATA,
+        sourceConfig,
+        fetchedUri,
+        fetchedAt,
+        content,
+        parsedContent) {
+  override fun buildNewTasksList(): List<DB.HilltopFetchTaskCreate> = emptyList()
+
+  override fun buildKafkaMessage(): HilltopMessage? =
+      if (parsedContent.measurement != null) {
+        HilltopMeasurementsMessage(
+            sourceConfig.councilId,
+            baseUri,
+            fetchedAt,
+            parsedContent.measurement.siteName,
+            parsedContent.measurement.dataSource.measurementName,
+            parsedContent.measurement.data.values.first().timestamp.let { YearMonth.from(it) },
+            fetchedUri.toASCIIString(),
+            content,
+        )
+      } else {
+        null
+      }
+
+  override fun determineNextFetchAt(): Instant =
+      randomTimeBetween(fetchedAt.plus(20, ChronoUnit.DAYS), fetchedAt.plus(30, ChronoUnit.DAYS))
+}
+
+class MeasurementDataLatestTaskMapper(
+    sourceConfig: DB.HilltopSourcesRow,
+    fetchedUri: URI,
+    fetchedAt: Instant,
+    content: String,
+    parsedContent: HilltopMeasurementValues
+) :
+    TaskMapper<HilltopMeasurementValues>(
+        HilltopFetchTaskType.MEASUREMENT_DATA_LATEST,
         sourceConfig,
         fetchedUri,
         fetchedAt,
@@ -206,7 +260,9 @@ class MeasurementDataTaskMapper(
    * be called when getting historical data as well)
    */
   override fun determineNextFetchAt(): Instant {
+
     val lastValueAt = parsedContent.measurement?.data?.values?.lastOrNull()?.timestamp?.toInstant()
+
     return if (lastValueAt != null && lastValueAt > fetchedAt.minus(1, ChronoUnit.HOURS)) {
       randomTimeBetween(
           maxOf(lastValueAt.plus(15, ChronoUnit.MINUTES), fetchedAt),
@@ -215,9 +271,6 @@ class MeasurementDataTaskMapper(
       randomTimeBetween(fetchedAt, fetchedAt.plus(1, ChronoUnit.HOURS))
     } else if (lastValueAt != null && lastValueAt > fetchedAt.minus(7, ChronoUnit.DAYS)) {
       randomTimeBetween(fetchedAt, fetchedAt.plus(1, ChronoUnit.DAYS))
-      // Just approx to a month
-    } else if (lastValueAt != null && lastValueAt > fetchedAt.minus(28, ChronoUnit.DAYS)) {
-      randomTimeBetween(fetchedAt, fetchedAt.plus(7, ChronoUnit.DAYS))
     } else { // Any older or historical data, will rarely change, so we can fetch it less often.
       randomTimeBetween(fetchedAt, fetchedAt.plus(30, ChronoUnit.DAYS))
     }
