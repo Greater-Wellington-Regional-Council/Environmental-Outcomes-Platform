@@ -15,7 +15,7 @@ VALUES
             {
               "id": "b012dd3c-6b10-4db7-a332-e25c42667238",
               "name": "Kāpiti Whaitua",
-              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=395",
+              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-10.pdf",
               "boundaryId": "87e15f4f1b8284a0d6f77316e45108fb1761897012ee87229ebb74f384cb65a0",
               "groundwaterLimits": [
                 {
@@ -260,7 +260,7 @@ VALUES
             {
               "id": "0b247e41-d840-4a4e-98c3-0ff6d5c31efd",
               "name": "Te Awarua-o-Porirua Whaitua",
-              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=393",
+              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-9.pdf",
               "boundaryId": "8069b11b5844a90828c91fcf55deffe9665f1ac1464c54cfd1d80e389adea380",
               "defaultFlowManagementSite": "Refer to Policy P.P1",
               "defaultFlowManagementLimit": "Refer to Policy P.P1"
@@ -268,7 +268,7 @@ VALUES
             {
               "id": "02df17ed-041e-4bef-854d-7def4f7524d4",
               "name": "Te Whanganui-a-Tara Whaitua",
-              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=384",
+              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-8.pdf",
               "boundaryId": "a8280a23d2820c34344a402e008e6a48114d315c461e07b4f5ba815dc59861b9",
               "groundwaterLimits": [
                 {
@@ -441,7 +441,7 @@ VALUES
             {
               "id": "493cb5ae-4086-4649-8d3a-6d41ee9fded7",
               "name": "Ruamahanga Whaitua",
-              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=364",
+              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-7.pdf",
               "boundaryId": "5f4835dd489ae103689e742430de37f92067f64fe3e8dddb5ba77e39659b9808",
               "groundwaterLimits": [
                 {
@@ -1319,7 +1319,7 @@ VALUES
             {
               "id": "ab941729-fc03-4359-a226-2a6ce8c4ab45",
               "name": "Wairarapa Coast Whaitua",
-              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Natural-Resources-Plan-Appeals-Version.pdf#page=403",
+              "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-11.pdf",
               "boundaryId": "4cb6c6190e686a5c3d64d062b9ce854d540a0774b4aba8542a9152b05f344727",
               "defaultFlowManagementSite": "Refer to Policy WC.P1",
               "defaultFlowManagementLimit": "Refer to Policy WC.P1"

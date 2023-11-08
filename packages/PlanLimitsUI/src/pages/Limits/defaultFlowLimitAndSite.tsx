@@ -4,33 +4,33 @@ const defaultFlowLimitsAndSites = [
   {
     whaituaId: 1,
     text: 'Refer to Policy K.P1',
-    link: 'https://pnrp.gw.govt.nz/assets/Uploads/Chapter-10-Kapiti-Coast-Whaitua-Appeal-version-2023.pdf',
+    link: 'https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-10.pdf',
   },
   {
     whaituaId: 2,
     text: 'Refer to Policy P.P1',
-    link: 'https://pnrp.gw.govt.nz/assets/Uploads/Chapter-9-Te-Awarua-o-Porirua-Whaitua-Appeal-version-2023.pdf',
+    link: 'https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-9.pdf',
   },
   {
     whaituaId: 3,
     text: 'Refer to Policy TW.P1',
-    link: 'https://pnrp.gw.govt.nz/assets/Uploads/Chapter-8-Wellington-Harbour-and-Hutt-Valley-Whaitua-Appeal-version-2023.pdf',
+    link: 'https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-8.pdf',
   },
   {
     whaituaId: 4,
     text: 'Refer to Policy R.P1',
-    link: 'https://pnrp.gw.govt.nz/assets/Uploads/Chapter-7-Ruamahanga-Whaitua-Appeal-version-2023.pdf',
+    link: 'https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-7.pdf',
   },
   {
     whaituaId: 5,
     text: 'Refer to Policy WC.P1',
-    link: 'https://pnrp.gw.govt.nz/assets/Uploads/Chapter-11-Wairarapa-Coast-Whaitua-Appeal-version-2023.pdf',
+    link: 'https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-11.pdf',
   },
 ];
 
 export default function defaultFlowLimit(whaituaId: number) {
   const limit = defaultFlowLimitsAndSites.find(
-    (l) => l.whaituaId === whaituaId
+    (l) => l.whaituaId === whaituaId,
   );
 
   if (!limit) return <>None</>;
