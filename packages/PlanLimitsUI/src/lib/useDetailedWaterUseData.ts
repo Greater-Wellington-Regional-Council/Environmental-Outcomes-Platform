@@ -36,7 +36,6 @@ export default function useDetailedWaterUseData(
     data,
   };
 }
-
 export type DetailedWaterUseQuery = ReturnType<typeof useDetailedWaterUseData>;
 
 function transformWaterUseData(
@@ -47,11 +46,11 @@ function transformWaterUseData(
   const areaUsage = groupBy<ParsedUsage>(parsedUsage, 'areaId');
 
   const groupedAreaUsage = displayGroups.map((group) => {
-    const data: HeatmapData[] = [];
+    const weeklyData: HeatmapData[] = [];
     const missingAreas: string[] = [];
     group.areaIds.forEach((areaId) => {
       if (areaUsage[areaId]) {
-        data.push(transformUsageToHeatmapData(areaId, areaUsage[areaId]));
+        weeklyData.push(transformUsageToHeatmapData(areaId, areaUsage[areaId]));
       } else {
         missingAreas.push(areaId);
       }
@@ -59,7 +58,7 @@ function transformWaterUseData(
 
     return {
       ...group,
-      data,
+      weeklyData,
       missingAreas,
     };
   });
@@ -69,6 +68,7 @@ function transformWaterUseData(
     groups: groupedAreaUsage,
   };
 }
+export type GroupedWaterUseData = ReturnType<typeof transformWaterUseData>;
 
 function parseUsage(usage: Usage[]) {
   return usage.map((usage) => {
