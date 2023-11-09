@@ -95,7 +95,9 @@ function transformUsageToHeatmapData(areaId: string, usage: ParsedUsage[]) {
       const formattedEndOfWeek = format(endOfWeek, 'MMM dd yyyy');
 
       const usageInWeekAsPercentages = usageInWeek.map((usage) =>
-        usage.dailyUsage <= 0 ? 0 : usage.dailyUsage / usage.allocation,
+        usage.dailyUsage <= 0 || usage.meteredDailyAllocation <= 0
+          ? 0
+          : usage.dailyUsage / usage.meteredDailyAllocation,
       );
 
       const medianUsage = median(usageInWeekAsPercentages);
