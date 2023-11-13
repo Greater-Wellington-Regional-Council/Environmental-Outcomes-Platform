@@ -1,10 +1,11 @@
 import { useWaterUseQuery } from '../api';
 import { format, addYears, addDays, parse, lastDayOfWeek } from 'date-fns';
-import { groupBy, flatten } from 'lodash';
+import { groupBy, flatten, sortBy } from 'lodash';
 
 interface ParsedUsage extends Usage {
   parsedDate: Date;
   endOfWeek: Date;
+  usagePercent: number;
 }
 
 export default function useDetailedWaterUseData(
@@ -47,10 +48,16 @@ function transformWaterUseData(
 
   const groupedAreaUsage = displayGroups.map((group) => {
     const weeklyData: HeatmapData[] = [];
+    const dailyData = [];
     const missingAreas: string[] = [];
     group.areaIds.forEach((areaId) => {
       if (areaUsage[areaId]) {
-        weeklyData.push(transformUsageToHeatmapData(areaId, areaUsage[areaId]));
+        weeklyData.push(
+          transformUsageToWeeklyHeatmapData(areaId, areaUsage[areaId]),
+        );
+        dailyData.push(
+          transformUsageToDailyHeatmapData(areaId, areaUsage[areaId]),
+        );
       } else {
         missingAreas.push(areaId);
       }
@@ -59,6 +66,7 @@ function transformWaterUseData(
     return {
       ...group,
       weeklyData,
+      dailyData,
       missingAreas,
     };
   });
@@ -77,11 +85,18 @@ function parseUsage(usage: Usage[]) {
       ...usage,
       parsedDate,
       endOfWeek: lastDayOfWeek(parsedDate, { weekStartsOn: 6 }),
+      usagePercent:
+        usage.dailyUsage <= 0 || usage.meteredDailyAllocation <= 0
+          ? 0
+          : usage.dailyUsage / usage.meteredDailyAllocation,
     };
   });
 }
 
-function transformUsageToHeatmapData(areaId: string, usage: ParsedUsage[]) {
+function transformUsageToWeeklyHeatmapData(
+  areaId: string,
+  usage: ParsedUsage[],
+) {
   const usageForAreaGroupedByWeek = groupBy<ParsedUsage>(usage, (usage) =>
     usage.endOfWeek.toJSON(),
   );
@@ -94,10 +109,8 @@ function transformUsageToHeatmapData(areaId: string, usage: ParsedUsage[]) {
       const endOfWeek = usageInWeek[0].endOfWeek;
       const formattedEndOfWeek = format(endOfWeek, 'MMM dd yyyy');
 
-      const usageInWeekAsPercentages = usageInWeek.map((usage) =>
-        usage.dailyUsage <= 0 || usage.meteredDailyAllocation <= 0
-          ? 0
-          : usage.dailyUsage / usage.meteredDailyAllocation,
+      const usageInWeekAsPercentages = usageInWeek.map(
+        (usage) => usage.usagePercent,
       );
 
       const medianUsage = median(usageInWeekAsPercentages);
@@ -108,6 +121,28 @@ function transformUsageToHeatmapData(areaId: string, usage: ParsedUsage[]) {
         y: medianUsage,
       };
     }),
+  };
+}
+
+function transformUsageToDailyHeatmapData(
+  areaId: string,
+  usage: ParsedUsage[],
+) {
+  const data = sortBy(
+    usage.map((usage) => {
+      return {
+        day: usage.date,
+        value: usage.usagePercent,
+        usage: usage.dailyUsage,
+        allocation: usage.meteredDailyAllocation,
+      };
+    }),
+    'day',
+  );
+
+  return {
+    areaId,
+    data,
   };
 }
 

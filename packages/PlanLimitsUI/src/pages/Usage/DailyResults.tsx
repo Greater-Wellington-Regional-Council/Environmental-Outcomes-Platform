@@ -1,24 +1,71 @@
-import { ResponsiveHeatMapCanvas, type ComputedCell } from '@nivo/heatmap';
+import { ResponsiveTimeRange } from '@nivo/calendar';
 import { format } from 'date-fns';
 import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
 
-export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
+interface Props {
+  data: GroupedWaterUseData;
+  from: string;
+  to: string;
+}
+
+export default function WeeklyResults({ data, from, to }: Props) {
   return (
     <>
       <h2 className="text-xl mb-2">Daily usage grouped by area</h2>
       {data.groups.map((usageGroup) => {
         return (
-          <div key={usageGroup.name} className="mb-6">
+          <div key={usageGroup.name} className="my-6 border-b">
             {!usageGroup.hideLabel ? (
-              <h2 className="text-lg mb-2">{usageGroup.name}</h2>
+              <h2 className="text-lg mb-2 uppercase">{usageGroup.name}</h2>
             ) : (
               <></>
             )}
-            <div className="mb-4">
-              {usageGroup.areaIds.map((areaId) => {
+            <div>
+              {usageGroup.dailyData.map((dailyData) => {
                 return (
-                  <div key={areaId} className="mb-6">
-                    <h3>{areaId}</h3>
+                  <div key={dailyData.areaId} className="mb-4">
+                    <div className="flex items-baseline justify-between mb-2">
+                      <div>
+                        <h3 id={`daily-usage-${dailyData.areaId}`}>
+                          Daily usage for {dailyData.areaId}
+                        </h3>
+                      </div>
+                      <a
+                        className="underline text-sm mr-16"
+                        href={`#weekly-usage-${usageGroup.name}`}
+                      >
+                        Back to top
+                      </a>
+                    </div>
+
+                    <div className="h-36">
+                      <ResponsiveTimeRange
+                        data={dailyData.data}
+                        from={from}
+                        to={to}
+                        tooltip={(data) => (
+                          <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
+                            <strong>
+                              {format(data.date, 'EEEE do MMMM yyyy')}
+                            </strong>
+                            <br />
+                            <strong>{data.value}%</strong>
+                            <br />
+                            {data.usage} of {data.allocation} m<sup>3</sup>/day
+                          </div>
+                        )}
+                        margin={{ top: 20, right: 60, bottom: 0, left: 60 }}
+                        weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
+                        dayBorderWidth={1}
+                        dayBorderColor={'#ddd'}
+                        // colors={[
+                        //   'rgb(254, 231, 208)',
+                        //   'rgb(252, 146, 68)',
+                        //   'rgb(240, 107, 24)',
+                        //   'rgb(206, 71, 3)',
+                        // ]}
+                      />
+                    </div>
                   </div>
                 );
               })}

@@ -52,7 +52,11 @@ function Results({ waterUseData }: { waterUseData: DetailedWaterUseQuery }) {
       </div>
 
       <WeeklyResults data={waterUseData.data.usage} />
-      <DailyResults data={waterUseData.data.usage} />
+      <DailyResults
+        data={waterUseData.data.usage}
+        from={waterUseData.data.formattedFrom}
+        to={waterUseData.data.formattedTo}
+      />
     </>
   );
 }

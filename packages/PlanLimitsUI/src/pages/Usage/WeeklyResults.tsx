@@ -8,7 +8,11 @@ export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
       <h2 className="text-xl mb-2">Weekly usage grouped by area</h2>
       {data.groups.map((usageGroup, index) => {
         return (
-          <div key={usageGroup.name} className="mb-6">
+          <div
+            id={`weekly-usage-${usageGroup.name}`}
+            key={usageGroup.name}
+            className="mb-6"
+          >
             {!usageGroup.hideLabel ? (
               <h2 className="text-lg mb-2">{usageGroup.name}</h2>
             ) : (
@@ -50,7 +54,7 @@ function WeeklyUsageHeatMap({
     <div className="w-full" style={{ height: `${height}px` }}>
       <ResponsiveHeatMapCanvas
         onClick={(cell) => {
-          window.location.href = `#daily-${cell.serieId}`;
+          window.location.href = `#daily-usage-${cell.serieId}`;
         }}
         tooltip={CustomTooltip}
         data={data}
