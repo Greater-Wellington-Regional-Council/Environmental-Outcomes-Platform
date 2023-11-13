@@ -132,7 +132,7 @@ function transformUsageToDailyHeatmapData(
     usage.map((usage) => {
       return {
         day: usage.date,
-        value: usage.usagePercent,
+        value: usage.usagePercent * 100,
         usage: usage.dailyUsage,
         allocation: usage.meteredDailyAllocation,
       };

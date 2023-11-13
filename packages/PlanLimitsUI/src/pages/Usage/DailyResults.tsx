@@ -40,19 +40,32 @@ export default function WeeklyResults({ data, from, to }: Props) {
                       </a>
                     </div>
 
-                    <div className="h-36">
+                    <div className="h-40">
                       <ResponsiveTimeRange
                         data={dailyData.data}
                         from={from}
                         to={to}
                         tooltip={CustomTooltip}
-                        margin={{ top: 20, right: 60, bottom: 0, left: 60 }}
+                        margin={{ top: 20, right: 60, bottom: 20, left: 60 }}
                         weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
                         dayBorderWidth={1}
                         dayBorderColor={'#ddd'}
                         minValue={0}
-                        maxValue={1}
+                        maxValue={100}
                         colors={last(schemeOranges)}
+                        legends={[
+                          {
+                            anchor: 'bottom',
+                            itemWidth: 28,
+                            itemHeight: 36,
+                            itemsSpacing: 14,
+                            symbolSize: 10,
+                            itemCount: 10,
+                            justify: true,
+                            direction: 'row',
+                            translateY: -10,
+                          },
+                        ]}
                       />
                     </div>
                   </div>
