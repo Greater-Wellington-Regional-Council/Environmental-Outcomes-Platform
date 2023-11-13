@@ -1,8 +1,8 @@
-import { ResponsiveTimeRange } from '@nivo/calendar';
+import { ResponsiveTimeRange, type CalendarTooltipProps } from '@nivo/calendar';
 import { format } from 'date-fns';
 import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
 import { schemeOranges } from 'd3-scale-chromatic';
-import { last } from 'lodash';
+import { last, round } from 'lodash';
 
 interface Props {
   data: GroupedWaterUseData;
@@ -45,17 +45,7 @@ export default function WeeklyResults({ data, from, to }: Props) {
                         data={dailyData.data}
                         from={from}
                         to={to}
-                        tooltip={(data) => (
-                          <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-                            <strong>
-                              {format(data.date, 'EEEE do MMMM yyyy')}
-                            </strong>
-                            <br />
-                            <strong>{data.value}%</strong>
-                            <br />
-                            {data.usage} of {data.allocation} m<sup>3</sup>/day
-                          </div>
-                        )}
+                        tooltip={CustomTooltip}
                         margin={{ top: 20, right: 60, bottom: 0, left: 60 }}
                         weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
                         dayBorderWidth={1}
@@ -73,5 +63,17 @@ export default function WeeklyResults({ data, from, to }: Props) {
         );
       })}
     </>
+  );
+}
+
+function CustomTooltip(data: CalendarTooltipProps) {
+  return (
+    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
+      <strong>{format(data.date, 'EEEE do MMMM yyyy')}</strong>
+      <br />
+      <strong>{round(data.value, 1)}%</strong>
+      <br />
+      {data.usage} of {data.allocation} m<sup>3</sup>/day
+    </div>
   );
 }

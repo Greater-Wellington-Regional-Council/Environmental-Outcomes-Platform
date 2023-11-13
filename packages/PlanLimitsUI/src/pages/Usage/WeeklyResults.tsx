@@ -1,6 +1,7 @@
 import { ResponsiveHeatMapCanvas, type ComputedCell } from '@nivo/heatmap';
 import { format } from 'date-fns';
 import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
+import { round } from 'lodash';
 
 export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
   return (
@@ -79,18 +80,18 @@ function WeeklyUsageHeatMap({
   );
 }
 
-const CustomTooltip = ({
+function CustomTooltip({
   cell,
 }: {
   cell: ComputedCell<WeeklyUsageHeatmapDataItem>;
-}) => {
+}) {
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
       <span className="font-bold">{cell.serieId}</span>
       <br />
       Week ending {format(cell.data.endOfWeek, 'EEEE do MMMM yyyy')}
       <br />
-      Median usage: <strong>{cell.formattedValue}</strong>
+      Median usage: <strong>{round(cell.value, 1)}%</strong>
     </div>
   );
-};
+}
