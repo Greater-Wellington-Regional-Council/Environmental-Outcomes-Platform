@@ -1,6 +1,8 @@
 import { ResponsiveTimeRange } from '@nivo/calendar';
 import { format } from 'date-fns';
 import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
+import { schemeOranges } from 'd3-scale-chromatic';
+import { last } from 'lodash';
 
 interface Props {
   data: GroupedWaterUseData;
@@ -58,12 +60,9 @@ export default function WeeklyResults({ data, from, to }: Props) {
                         weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
                         dayBorderWidth={1}
                         dayBorderColor={'#ddd'}
-                        // colors={[
-                        //   'rgb(254, 231, 208)',
-                        //   'rgb(252, 146, 68)',
-                        //   'rgb(240, 107, 24)',
-                        //   'rgb(206, 71, 3)',
-                        // ]}
+                        minValue={0}
+                        maxValue={1}
+                        colors={last(schemeOranges)}
                       />
                     </div>
                   </div>
