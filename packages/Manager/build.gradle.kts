@@ -58,7 +58,7 @@ dependencies {
   implementation("org.flywaydb:flyway-core")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("net.javacrumbs.shedlock:shedlock-spring:5.2.0")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:5.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.9.0")
   implementation("net.postgis:postgis-jdbc:2021.1.0")
 
