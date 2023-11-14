@@ -12,17 +12,18 @@ export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
           <div
             id={`weekly-usage-${usageGroup.name}`}
             key={usageGroup.name}
-            className="mb-6"
+            className="mb-4"
           >
             {!usageGroup.hideLabel ? (
-              <h2 className="text-lg mb-2">{usageGroup.name}</h2>
+              <h2 className="text-lg">{usageGroup.name}</h2>
             ) : (
               <></>
             )}
-            <div className="mb-4">
+            <div>
               <WeeklyUsageHeatMap
                 data={usageGroup.weeklyData}
                 showWeeks={index === 0}
+                showLegend={usageGroup.showLegend}
               ></WeeklyUsageHeatMap>
             </div>
           </div>
@@ -35,21 +36,24 @@ export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
 function WeeklyUsageHeatMap({
   data,
   showWeeks,
+  showLegend,
 }: {
   data: HeatmapData[];
   showWeeks: boolean;
+  showLegend: boolean;
 }) {
   const axisTop = showWeeks
     ? {
         tickSize: 0,
         tickRotation: -50,
         legend: 'Week ending',
-        legendOffset: -65,
+        legendOffset: -70,
       }
     : undefined;
 
-  const marginTop = showWeeks ? 70 : 0;
-  const height = (data.length * 20 + marginTop).toString();
+  const marginTop = showWeeks ? 75 : 0;
+  const marginBottom = showLegend ? 50 : 0;
+  const height = (data.length * 16 + marginTop + marginBottom).toString();
 
   return (
     <div className="w-full" style={{ height: `${height}px` }}>
@@ -60,7 +64,7 @@ function WeeklyUsageHeatMap({
         tooltip={CustomTooltip}
         data={data}
         valueFormat={'=-0.0~%'}
-        margin={{ top: marginTop, right: 50, bottom: 0, left: 130 }}
+        margin={{ top: marginTop, right: 50, bottom: marginBottom, left: 130 }}
         colors={{
           type: 'sequential',
           scheme: 'oranges',
@@ -75,6 +79,19 @@ function WeeklyUsageHeatMap({
           tickSize: 0,
         }}
         animate={false}
+        legends={[
+          {
+            anchor: 'bottom',
+            direction: 'row',
+            translateY: 35,
+            title: 'Median usage (%) →',
+            length: 300,
+            titleOffset: 5,
+            titleAlign: 'middle',
+            thickness: 10,
+            tickFormat: '=-0.0~%',
+          },
+        ]}
       />
     </div>
   );

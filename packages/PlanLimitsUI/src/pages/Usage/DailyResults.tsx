@@ -33,10 +33,10 @@ export default function WeeklyResults({ data, from, to }: Props) {
                         </h3>
                       </div>
                       <a
-                        className="underline text-sm mr-16"
+                        className="underline text-xs mr-16"
                         href={`#weekly-usage-${usageGroup.name}`}
                       >
-                        Back to top
+                        ↑ Back to top
                       </a>
                     </div>
 
@@ -58,12 +58,12 @@ export default function WeeklyResults({ data, from, to }: Props) {
                             anchor: 'bottom',
                             itemWidth: 28,
                             itemHeight: 36,
-                            itemsSpacing: 14,
+                            itemsSpacing: 12,
                             symbolSize: 10,
                             itemCount: 10,
                             justify: true,
                             direction: 'row',
-                            translateY: -10,
+                            translateY: -15,
                           },
                         ]}
                       />

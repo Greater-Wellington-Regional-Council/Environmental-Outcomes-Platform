@@ -48,6 +48,7 @@ interface Council {
 interface UsageDisplayGroup {
   name: string;
   hideLabel: boolean;
+  showLegend: boolean;
   areaIds: string[];
 }
 
