@@ -90,7 +90,7 @@ export const Councils: Council[] = [
         ],
       },
       {
-        name: 'Te Awarua-o-Porirua Whaitua',
+        name: 'Te Whanganui a Tara',
         hideLabel: false,
         showLegend: true,
         areaIds: [

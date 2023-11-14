@@ -20,7 +20,7 @@ export default function Usage() {
       <div className="flex justify-between items-end border-b">
         <div className="px-4 py-2">
           <a href={`/limits/${council.slug}`} className="text-xs underline">
-            Back to limits viewer
+            Back to allocations viewer
           </a>
           <h1 className="text-xl font-light uppercase mt-2">
             Detailed Water Usage
@@ -31,6 +31,11 @@ export default function Usage() {
         </div>
       </div>
       <main className="p-4">
+        <p className="mb-2">
+          The data below <strong>is not all Water Use data</strong> supplied to
+          Greater Wellington. It only includes data provided using timely
+          automated telemetered systems.
+        </p>
         <Results waterUseData={waterUseData} />
       </main>
     </>
