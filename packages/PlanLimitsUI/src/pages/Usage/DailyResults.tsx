@@ -69,7 +69,6 @@ function HeatmapResult({ dailyData }: { dailyData: DailyHeatmapData }) {
       <ResponsiveHeatMapCanvas
         data={dailyData.data}
         enableLabels={false}
-        renderCell={renderRect}
         tooltip={CustomTooltip}
         forceSquare={true}
         margin={{
@@ -143,51 +142,3 @@ function CustomTooltip({
     </div>
   );
 }
-
-// Copied from https://github.com/plouc/nivo/blob/6dc6636cb64135104264547f05a3f44c787c6508/packages/heatmap/src/canvas.tsx
-// so we can customise as needed
-export const renderRect = <Datum extends HeatMapDatum>(
-  ctx: CanvasRenderingContext2D,
-  {
-    cell: {
-      x,
-      y,
-      width,
-      height,
-      color,
-      borderColor,
-      opacity,
-      labelTextColor,
-      label,
-    },
-    borderWidth,
-    enableLabels,
-    theme,
-  }: CellCanvasRendererProps<Datum>,
-) => {
-  ctx.save();
-  ctx.globalAlpha = opacity;
-
-  ctx.fillStyle = color;
-  if (borderWidth > 0) {
-    ctx.strokeStyle = borderColor;
-    ctx.lineWidth = borderWidth;
-  }
-
-  ctx.fillRect(x - width / 2, y - height / 2, width, height);
-  if (borderWidth > 0) {
-    ctx.strokeRect(x - width / 2, y - height / 2, width, height);
-  }
-
-  if (enableLabels) {
-    ctx.fillStyle = labelTextColor;
-    ctx.font = `${
-      theme.labels.text.fontWeight ? `${theme.labels.text.fontWeight} ` : ''
-    }${theme.labels.text.fontSize}px ${theme.labels.text.fontFamily}`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(label, x, y);
-  }
-
-  ctx.restore();
-};
