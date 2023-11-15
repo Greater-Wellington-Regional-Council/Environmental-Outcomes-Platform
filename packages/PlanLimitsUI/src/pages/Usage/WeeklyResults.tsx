@@ -47,7 +47,7 @@ function WeeklyUsageHeatMap({
         legend: 'Week ending',
         legendOffset: -70,
       }
-    : undefined;
+    : null;
 
   const marginTop = showWeeks ? 75 : 0;
   const marginBottom = showLegend ? 50 : 0;
