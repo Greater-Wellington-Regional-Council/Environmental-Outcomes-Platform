@@ -1,4 +1,4 @@
-import { last, round } from 'lodash';
+import { round } from 'lodash';
 import { format, getWeekOfMonth } from 'date-fns';
 import {
   ResponsiveHeatMapCanvas,
@@ -6,9 +6,10 @@ import {
   type CellCanvasRendererProps,
   type HeatMapDatum,
 } from '@nivo/heatmap';
-import { ResponsiveTimeRange, type CalendarTooltipProps } from '@nivo/calendar';
-import { schemeOranges } from 'd3-scale-chromatic';
-import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
+import type {
+  GroupedWaterUseData,
+  DailyHeatmapData,
+} from '../../lib/useDetailedWaterUseData';
 
 interface Props {
   data: GroupedWaterUseData;
@@ -17,7 +18,8 @@ interface Props {
 }
 const formatNumber = Intl.NumberFormat();
 
-export default function WeeklyResults({ data, from, to }: Props) {
+export default function DailyResults({ data }: Props) {
+  console.log(data);
   return (
     <>
       <h2 className="text-xl mb-2">Daily usage grouped by area</h2>
@@ -30,7 +32,7 @@ export default function WeeklyResults({ data, from, to }: Props) {
               <></>
             )}
             <div>
-              {usageGroup.dailyData.map((dailyData, index) => {
+              {usageGroup.dailyData.map((dailyData) => {
                 return (
                   <div key={dailyData.areaId} className="mb-6">
                     <div className="flex items-baseline justify-between">
@@ -49,13 +51,7 @@ export default function WeeklyResults({ data, from, to }: Props) {
                         ↑ Back to top
                       </a>
                     </div>
-                    <TimeRangeResult
-                      dailyData={dailyData}
-                      from={from}
-                      to={to}
-                    />
-                    <p className="italic text-sm">Alternate graph type</p>
-                    <HeatmapResult dailyData={usageGroup.dailyDataAlt[index]} />
+                    <HeatmapResult dailyData={dailyData} />
                   </div>
                 );
               })}
@@ -67,56 +63,14 @@ export default function WeeklyResults({ data, from, to }: Props) {
   );
 }
 
-function TimeRangeResult({
-  dailyData,
-  from,
-  to,
-}: {
-  dailyData: any;
-  from: string;
-  to: string;
-}) {
-  return (
-    <div className="h-40">
-      <ResponsiveTimeRange
-        data={dailyData.data}
-        from={from}
-        to={to}
-        tooltip={CustomTooltip}
-        margin={{ top: 20, right: 60, bottom: 20, left: 60 }}
-        weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
-        dayBorderWidth={1}
-        dayBorderColor={'#ddd'}
-        square={true}
-        minValue={0}
-        maxValue={100}
-        colors={last(schemeOranges)}
-        legends={[
-          {
-            anchor: 'bottom',
-            itemWidth: 28,
-            itemHeight: 36,
-            itemsSpacing: 12,
-            symbolSize: 10,
-            itemCount: 10,
-            justify: true,
-            direction: 'row',
-            translateY: -15,
-          },
-        ]}
-      />
-    </div>
-  );
-}
-
-function HeatmapResult({ dailyData }: { dailyData: any }) {
+function HeatmapResult({ dailyData }: { dailyData: DailyHeatmapData }) {
   return (
     <div className="h-48">
       <ResponsiveHeatMapCanvas
         data={dailyData.data}
         enableLabels={false}
         renderCell={renderRect}
-        tooltip={CustomTooltipAlt}
+        tooltip={CustomTooltip}
         forceSquare={true}
         margin={{
           top: 0,
@@ -162,35 +116,16 @@ function HeatmapResult({ dailyData }: { dailyData: any }) {
   );
 }
 
-function CustomTooltip(data: DailyUsageTimeRangeDataItem) {
-  return (
-    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      <>
-        <div className="font-semibold">
-          {format(data.date, 'EEEE do MMMM yyyy')}
-        </div>
-        <div>
-          Usage:{' '}
-          <span className="font-semibold">
-            {round(data.value, 1)}% ({formatNumber.format(data.usage)} of{' '}
-            {formatNumber.format(data.allocation)} m<sup>3</sup>/day)
-          </span>
-        </div>
-      </>
-    </div>
-  );
-}
-
-function CustomTooltipAlt({
+function CustomTooltip({
   cell,
 }: {
   cell: ComputedCell<DailyUsageHeatmapDataItem>;
 }) {
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      {!cell.data.date && <strong>No data</strong>}
+      {cell.data.y === null && <strong>No data</strong>}
 
-      {cell.data.date && (
+      {cell.data.y !== null && (
         <>
           <div className="font-semibold">
             {format(cell.data.date, 'EEEE do MMMM yyyy')}

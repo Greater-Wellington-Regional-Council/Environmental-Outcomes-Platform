@@ -182,27 +182,14 @@ interface GroundwaterLimitView {
   subUnitLimitView: LimitView;
 }
 
+interface HeatmapData {
+  id: string;
+  data: HeatmapDataItem[];
+}
+
 interface HeatmapDataItem {
   x: string;
   y: number;
-}
-
-interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
-  endOfWeek: Date;
-}
-
-interface DailyUsageTimeRangeDataItem extends CalendarTooltipProps {
-  date: Date;
-  value: number;
-  usage: number;
-  allocation: number;
-}
-
-interface DailyUsageHeatmapDataItem extends HeatmapDataItem {
-  date: Date;
-  value: number;
-  usage: number;
-  allocation: number;
 }
 
 interface UsageHeatmapDataItem extends HeatmapDataItem {
@@ -210,7 +197,21 @@ interface UsageHeatmapDataItem extends HeatmapDataItem {
   allocation: number;
 }
 
-interface HeatmapData {
-  id: string;
-  data: HeatmapDataItem[];
+interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
+  endOfWeek: Date;
 }
+
+interface PopulatedDailyUsageHeatmapDataItem extends HeatmapDataItem {
+  date: Date;
+  usage: number;
+  allocation: number;
+}
+
+interface EmptyDailyUsageHeatmapDataItem {
+  x: string;
+  y: null;
+}
+
+type DailyUsageHeatmapDataItem =
+  | PopulatedDailyUsageHeatmapDataItem
+  | EmptyDailyUsageHeatmapDataItem;
