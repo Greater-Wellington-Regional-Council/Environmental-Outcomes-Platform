@@ -75,6 +75,7 @@ function WeeklyUsageHeatMap({
         axisTop={axisTop}
         borderWidth={1}
         borderColor={'#ddd'}
+        emptyColor={'#fff'}
         axisLeft={{
           tickSize: 0,
         }}

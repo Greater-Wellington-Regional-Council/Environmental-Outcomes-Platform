@@ -1,11 +1,21 @@
 import { useWaterUseQuery } from '../api';
-import { format, addYears, addDays, parse, lastDayOfWeek } from 'date-fns';
-import { groupBy, flatten, sortBy } from 'lodash';
+import {
+  format,
+  addYears,
+  addDays,
+  parse,
+  lastDayOfWeek,
+  getDay,
+} from 'date-fns';
+import { groupBy, flatten, sortBy, uniq } from 'lodash';
 
 interface ParsedUsage extends Usage {
   parsedDate: Date;
+  parsedDateJSON: string;
   endOfWeek: Date;
+  endOfWeekJSON: string;
   usagePercent: number;
+  dayOfWeek: number;
 }
 
 export default function useDetailedWaterUseData(
@@ -49,14 +59,16 @@ function transformWaterUseData(
   const groupedAreaUsage = displayGroups.map((group) => {
     const weeklyData: HeatmapData[] = [];
     const dailyData = [];
+    const dailyDataAlt = [];
     const missingAreas: string[] = [];
     group.areaIds.forEach((areaId) => {
       if (areaUsage[areaId]) {
         weeklyData.push(
           transformUsageToWeeklyHeatmapData(areaId, areaUsage[areaId]),
         );
-        dailyData.push(
-          transformUsageToDailyHeatmapData(areaId, areaUsage[areaId]),
+        dailyData.push(transformUsageToDailyData(areaId, areaUsage[areaId]));
+        dailyDataAlt.push(
+          transformUsageToDailyDataAlt(areaId, areaUsage[areaId]),
         );
       } else {
         missingAreas.push(areaId);
@@ -67,6 +79,7 @@ function transformWaterUseData(
       ...group,
       weeklyData,
       dailyData,
+      dailyDataAlt,
       missingAreas,
     };
   });
@@ -81,10 +94,14 @@ export type GroupedWaterUseData = ReturnType<typeof transformWaterUseData>;
 function parseUsage(usage: Usage[]) {
   return usage.map((usage) => {
     const parsedDate = parse(usage.date, 'yyyy-MM-dd', new Date());
+    const endOfWeek = lastDayOfWeek(parsedDate, { weekStartsOn: 0 });
     return {
       ...usage,
       parsedDate,
-      endOfWeek: lastDayOfWeek(parsedDate, { weekStartsOn: 6 }),
+      parsedDateJSON: parsedDate.toJSON(),
+      endOfWeek,
+      endOfWeekJSON: endOfWeek.toJSON(),
+      dayOfWeek: getDay(parsedDate),
       usagePercent:
         usage.dailyUsage <= 0 || usage.meteredDailyAllocation <= 0
           ? 0
@@ -124,10 +141,7 @@ function transformUsageToWeeklyHeatmapData(
   };
 }
 
-function transformUsageToDailyHeatmapData(
-  areaId: string,
-  usage: ParsedUsage[],
-) {
+function transformUsageToDailyData(areaId: string, usage: ParsedUsage[]) {
   const data = sortBy(
     usage.map((usage) => {
       return {
@@ -143,6 +157,41 @@ function transformUsageToDailyHeatmapData(
   return {
     areaId,
     data,
+  };
+}
+
+const DayNames = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
+function transformUsageToDailyDataAlt(areaId: string, usage: ParsedUsage[]) {
+  const allWeeks = uniq(usage.map((u) => u.endOfWeekJSON)).sort();
+
+  return {
+    areaId,
+    data: DayNames.map((dayOfWeekName, dayOfWeekIndex) => {
+      return {
+        id: dayOfWeekName,
+        data: allWeeks.map((week) => {
+          const usageForDay = usage.find(
+            (u) => u.endOfWeekJSON === week && u.dayOfWeek === dayOfWeekIndex,
+          );
+          return {
+            date: usageForDay?.parsedDate,
+            usage: usageForDay?.dailyUsage,
+            allocation: usageForDay?.meteredDailyAllocation,
+            x: week,
+            y: usageForDay?.usagePercent,
+          };
+        }),
+      };
+    }),
   };
 }
 
