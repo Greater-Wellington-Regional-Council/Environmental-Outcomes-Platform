@@ -8,7 +8,7 @@ WITH filtered_obs AS (SELECT osm.id,
                       FROM observations o
                                LEFT JOIN observation_sites_measurements osm ON o.observation_measurement_id = osm.id
                       WHERE osm.measurement_name IN ('Water Meter Reading', 'Water Meter Volume')
-                        AND o.observed_at > '2023-01-01 00:00:00+13')
+                        )
 SELECT filtered_obs.site_id,
        filtered_obs.day_observed_at,
        filtered_obs.measurement_name,
