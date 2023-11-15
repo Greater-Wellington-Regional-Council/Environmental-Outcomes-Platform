@@ -5,7 +5,7 @@ import {
   type HeatMapDatum,
 } from '@nivo/heatmap';
 import { ResponsiveTimeRange, type CalendarTooltipProps } from '@nivo/calendar';
-import { format } from 'date-fns';
+import { format, getWeekOfMonth } from 'date-fns';
 import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
 import { schemeOranges } from 'd3-scale-chromatic';
 import { last, round } from 'lodash';
@@ -84,7 +84,7 @@ function TimeRangeResult({
         weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
         dayBorderWidth={1}
         dayBorderColor={'#ddd'}
-        square={false}
+        square={true}
         minValue={0}
         maxValue={100}
         colors={last(schemeOranges)}
@@ -115,7 +115,7 @@ function HeatmapResult({ dailyData }: { dailyData: any }) {
           margin={{
             top: 0,
             right: 50,
-            bottom: 0,
+            bottom: 20,
             left: 130,
           }}
           forceSquare={true}
@@ -127,13 +127,20 @@ function HeatmapResult({ dailyData }: { dailyData: any }) {
           }}
           enableLabels={false}
           tooltip={CustomTooltipAlt}
-          axisTop={false}
           borderWidth={1}
           borderColor={'#ddd'}
           emptyColor={'#fff'}
           renderCell={renderRect}
           axisLeft={{
             tickSize: 0,
+          }}
+          axisTop={{
+            tickSize: 0,
+            format: (endOfWeekAsJSONDate: string) => {
+              const date = new Date(endOfWeekAsJSONDate);
+              const weekOfMonth = getWeekOfMonth(date);
+              return weekOfMonth === 1 ? format(date, 'MMM') : '';
+            },
           }}
           animate={false}
           legends={[
