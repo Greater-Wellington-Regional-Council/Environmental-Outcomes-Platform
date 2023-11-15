@@ -1,3 +1,5 @@
+import { last, round } from 'lodash';
+import { format, getWeekOfMonth } from 'date-fns';
 import {
   ResponsiveHeatMapCanvas,
   type ComputedCell,
@@ -5,10 +7,8 @@ import {
   type HeatMapDatum,
 } from '@nivo/heatmap';
 import { ResponsiveTimeRange, type CalendarTooltipProps } from '@nivo/calendar';
-import { format, getWeekOfMonth } from 'date-fns';
-import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
 import { schemeOranges } from 'd3-scale-chromatic';
-import { last, round } from 'lodash';
+import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
 
 interface Props {
   data: GroupedWaterUseData;
@@ -25,17 +25,20 @@ export default function WeeklyResults({ data, from, to }: Props) {
         return (
           <div key={usageGroup.name} className="my-6 border-b">
             {!usageGroup.hideLabel ? (
-              <h2 className="text-lg mb-2 uppercase">{usageGroup.name}</h2>
+              <h2 className="text-lg mb-2">{usageGroup.name}</h2>
             ) : (
               <></>
             )}
             <div>
               {usageGroup.dailyData.map((dailyData, index) => {
                 return (
-                  <div key={dailyData.areaId} className="mb-4">
+                  <div key={dailyData.areaId} className="mb-6">
                     <div className="flex items-baseline justify-between">
                       <div>
-                        <h3 id={`daily-usage-${dailyData.areaId}`}>
+                        <h3
+                          id={`daily-usage-${dailyData.areaId}`}
+                          className="mb-2"
+                        >
                           Daily usage for {dailyData.areaId}
                         </h3>
                       </div>
@@ -51,7 +54,7 @@ export default function WeeklyResults({ data, from, to }: Props) {
                       from={from}
                       to={to}
                     />
-                    <h4 className="font-semibold">Alternate graph type</h4>
+                    <p className="italic text-sm">Alternate graph type</p>
                     <HeatmapResult dailyData={usageGroup.dailyDataAlt[index]} />
                   </div>
                 );
@@ -74,7 +77,7 @@ function TimeRangeResult({
   to: string;
 }) {
   return (
-    <div className="h-40 w-full">
+    <div className="h-40">
       <ResponsiveTimeRange
         data={dailyData.data}
         from={from}
@@ -98,7 +101,7 @@ function TimeRangeResult({
             itemCount: 10,
             justify: true,
             direction: 'row',
-            translateY: -10,
+            translateY: -15,
           },
         ]}
       />
@@ -108,69 +111,72 @@ function TimeRangeResult({
 
 function HeatmapResult({ dailyData }: { dailyData: any }) {
   return (
-    <div key={`daily-alt-${dailyData.areaId}`} className="mb-6">
-      <div className="w-full" style={{ height: `200px` }}>
-        <ResponsiveHeatMapCanvas
-          data={dailyData.data}
-          margin={{
-            top: 0,
-            right: 50,
-            bottom: 20,
-            left: 130,
-          }}
-          forceSquare={true}
-          colors={{
-            type: 'sequential',
-            scheme: 'oranges',
-            minValue: 0,
-            maxValue: 1,
-          }}
-          enableLabels={false}
-          tooltip={CustomTooltipAlt}
-          borderWidth={1}
-          borderColor={'#ddd'}
-          emptyColor={'#fff'}
-          renderCell={renderRect}
-          axisLeft={{
-            tickSize: 0,
-          }}
-          axisTop={{
-            tickSize: 0,
-            format: (endOfWeekAsJSONDate: string) => {
-              const date = new Date(endOfWeekAsJSONDate);
-              const weekOfMonth = getWeekOfMonth(date);
-              return weekOfMonth === 1 ? format(date, 'MMM') : '';
-            },
-          }}
-          animate={false}
-          legends={[
-            {
-              anchor: 'bottom',
-              direction: 'row',
-              translateY: 35,
-              title: 'Daily usage (%) →',
-              length: 300,
-              titleOffset: 5,
-              titleAlign: 'middle',
-              thickness: 10,
-              tickFormat: '=-0.0~%',
-            },
-          ]}
-        />
-      </div>
+    <div className="h-48">
+      <ResponsiveHeatMapCanvas
+        data={dailyData.data}
+        enableLabels={false}
+        renderCell={renderRect}
+        tooltip={CustomTooltipAlt}
+        forceSquare={true}
+        margin={{
+          top: 0,
+          right: 50,
+          bottom: 25,
+          left: 130,
+        }}
+        colors={{
+          type: 'sequential',
+          scheme: 'oranges',
+          minValue: 0,
+          maxValue: 1,
+        }}
+        borderWidth={1}
+        borderColor={'#ddd'}
+        emptyColor={'#fff'}
+        axisLeft={{
+          tickSize: 0,
+        }}
+        axisTop={{
+          tickSize: 0,
+          format: (endOfWeekAsJSONDate: string) => {
+            const date = new Date(endOfWeekAsJSONDate);
+            const weekOfMonth = getWeekOfMonth(date);
+            return weekOfMonth === 1 ? format(date, 'MMM') : '';
+          },
+        }}
+        legends={[
+          {
+            anchor: 'bottom',
+            direction: 'row',
+            translateY: 35,
+            title: 'Daily usage (%) →',
+            length: 300,
+            titleOffset: 5,
+            titleAlign: 'middle',
+            thickness: 10,
+            tickFormat: '=-0~%',
+          },
+        ]}
+      />
     </div>
   );
 }
 
-function CustomTooltip(data: CalendarTooltipProps) {
+function CustomTooltip(data: DailyUsageTimeRangeDataItem) {
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      <strong>{format(data.date, 'EEEE do MMMM yyyy')}</strong>
-      <br />
-      <strong>{round(data.value, 1)}%</strong>
-      <br />
-      {formatNumber.format(data.usage)} of{' '}
-      {formatNumber.format(data.allocation)} m<sup>3</sup>/day
+      <>
+        <div className="font-semibold">
+          {format(data.date, 'EEEE do MMMM yyyy')}
+        </div>
+        <div>
+          Usage:{' '}
+          <span className="font-semibold">
+            {round(data.value, 1)}% ({formatNumber.format(data.usage)} of{' '}
+            {formatNumber.format(data.allocation)} m<sup>3</sup>/day)
+          </span>
+        </div>
+      </>
     </div>
   );
 }
@@ -178,26 +184,33 @@ function CustomTooltip(data: CalendarTooltipProps) {
 function CustomTooltipAlt({
   cell,
 }: {
-  cell: ComputedCell<WeeklyUsageHeatmapDataItem>;
+  cell: ComputedCell<DailyUsageHeatmapDataItem>;
 }) {
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
+      {!cell.data.date && <strong>No data</strong>}
+
       {cell.data.date && (
         <>
-          <strong>{format(cell.data.date, 'EEEE do MMMM yyyy')}</strong>
-          <br />
-          <strong>{round(cell.data.y * 100, 1)}%</strong>
-          <br />
-          {formatNumber.format(cell.data.usage)} of{' '}
-          {formatNumber.format(cell.data.allocation)} m<sup>3</sup>/day
-          <br />
+          <div className="font-semibold">
+            {format(cell.data.date, 'EEEE do MMMM yyyy')}
+          </div>
+          <div>
+            Usage:{' '}
+            <span className="font-semibold">
+              {round(cell.data.y * 100, 1)}% (
+              {formatNumber.format(cell.data.usage)} of{' '}
+              {formatNumber.format(cell.data.allocation)} m<sup>3</sup>/day)
+            </span>
+          </div>
         </>
       )}
-      {!cell.data.date && <strong>No data</strong>}
     </div>
   );
 }
 
+// Copied from https://github.com/plouc/nivo/blob/6dc6636cb64135104264547f05a3f44c787c6508/packages/heatmap/src/canvas.tsx
+// so we can customise as needed
 export const renderRect = <Datum extends HeatMapDatum>(
   ctx: CanvasRenderingContext2D,
   {

@@ -1,7 +1,7 @@
 import { ResponsiveHeatMapCanvas, type ComputedCell } from '@nivo/heatmap';
 import { format } from 'date-fns';
-import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
 import { round } from 'lodash';
+import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
 
 export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
   return (
@@ -14,10 +14,8 @@ export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
             key={usageGroup.name}
             className="mb-4"
           >
-            {!usageGroup.hideLabel ? (
-              <h2 className="text-lg">{usageGroup.name}</h2>
-            ) : (
-              <></>
+            {!usageGroup.hideLabel && (
+              <h2 className="text-lg mb-2">{usageGroup.name}</h2>
             )}
             <div>
               <WeeklyUsageHeatMap
@@ -58,12 +56,13 @@ function WeeklyUsageHeatMap({
   return (
     <div className="w-full" style={{ height: `${height}px` }}>
       <ResponsiveHeatMapCanvas
+        data={data}
+        enableLabels={false}
         onClick={(cell) => {
           window.location.href = `#daily-usage-${cell.serieId}`;
         }}
         tooltip={CustomTooltip}
-        data={data}
-        valueFormat={'=-0.0~%'}
+        forceSquare={true}
         margin={{ top: marginTop, right: 50, bottom: marginBottom, left: 130 }}
         colors={{
           type: 'sequential',
@@ -71,15 +70,13 @@ function WeeklyUsageHeatMap({
           minValue: 0,
           maxValue: 1,
         }}
-        enableLabels={false}
-        axisTop={axisTop}
         borderWidth={1}
         borderColor={'#ddd'}
         emptyColor={'#fff'}
+        axisTop={axisTop}
         axisLeft={{
           tickSize: 0,
         }}
-        animate={false}
         legends={[
           {
             anchor: 'bottom',
@@ -90,7 +87,7 @@ function WeeklyUsageHeatMap({
             titleOffset: 5,
             titleAlign: 'middle',
             thickness: 10,
-            tickFormat: '=-0.0~%',
+            tickFormat: '=-0~%',
           },
         ]}
       />
@@ -105,11 +102,17 @@ function CustomTooltip({
 }) {
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      <span className="font-bold">{cell.serieId}</span>
-      <br />
-      Week ending {format(cell.data.endOfWeek, 'EEEE do MMMM yyyy')}
-      <br />
-      Median usage: <strong>{round(cell.value * 100, 1)}%</strong>
+      <div className="font-semibold">{cell.serieId}</div>
+      <div>
+        Week ending{' '}
+        <span className="font-semibold">
+          {format(cell.data.endOfWeek, 'EEEE do MMMM yyyy')}
+        </span>
+      </div>
+      <div>
+        Median usage:{' '}
+        <span className="font-semibold">{round(cell.value * 100, 1)}%</span>
+      </div>
     </div>
   );
 }

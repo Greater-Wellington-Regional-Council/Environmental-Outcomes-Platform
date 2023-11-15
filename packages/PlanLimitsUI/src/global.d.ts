@@ -191,6 +191,20 @@ interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
   endOfWeek: Date;
 }
 
+interface DailyUsageTimeRangeDataItem extends CalendarTooltipProps {
+  date: Date;
+  value: number;
+  usage: number;
+  allocation: number;
+}
+
+interface DailyUsageHeatmapDataItem extends HeatmapDataItem {
+  date: Date;
+  value: number;
+  usage: number;
+  allocation: number;
+}
+
 interface UsageHeatmapDataItem extends HeatmapDataItem {
   usage: number;
   allocation: number;
