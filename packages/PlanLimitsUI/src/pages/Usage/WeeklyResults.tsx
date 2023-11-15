@@ -108,7 +108,7 @@ function CustomTooltip({
       <br />
       Week ending {format(cell.data.endOfWeek, 'EEEE do MMMM yyyy')}
       <br />
-      Median usage: <strong>{round(cell.value, 1)}%</strong>
+      Median usage: <strong>{round(cell.value * 100, 1)}%</strong>
     </div>
   );
 }
