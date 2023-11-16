@@ -102,7 +102,7 @@ export const Councils: Council[] = [
         ],
       },
       {
-        name: 'Ruamahanga',
+        name: 'Ruamāhanga',
         hideLabel: false,
         showLegend: false,
         areaIds: [

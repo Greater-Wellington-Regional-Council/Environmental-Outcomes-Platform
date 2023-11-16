@@ -43,7 +43,12 @@ export default function UsageTable({
 
   return (
     <>
-      <h3 className="text-lg uppercase mb-2 tracking-wider">Usage</h3>
+      <h3 className="text-lg uppercase mb-2 tracking-wider">Water Use</h3>
+      <p className="mb-2">
+        The data below <strong>is not all Water Use data</strong> supplied to
+        Greater Wellington. It only includes data provided using timely
+        automated telemetered systems.
+      </p>
       <div className="flex justify-between mb-4">
         <div className="text-sm">
           For week ending {format(waterUseData.data.to, 'do LLLL y')}
@@ -105,7 +110,7 @@ function Table({
         <tr>
           <th className="w-12"></th>
           <th className="border p-2 text-sm font-normal bg-gray-100">
-            Water Use
+            % of Consented Water Used
           </th>
         </tr>
       </thead>
