@@ -440,7 +440,7 @@ VALUES
             },
             {
               "id": "493cb5ae-4086-4649-8d3a-6d41ee9fded7",
-              "name": "Ruamahanga Whaitua",
+              "name": "Ruamāhanga Whaitua",
               "referenceUrl": "https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-7.pdf",
               "boundaryId": "5f4835dd489ae103689e742430de37f92067f64fe3e8dddb5ba77e39659b9808",
               "groundwaterLimits": [
