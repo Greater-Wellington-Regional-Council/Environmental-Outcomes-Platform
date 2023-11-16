@@ -75,6 +75,7 @@ export const Councils: Council[] = [
       {
         name: 'Kāpiti',
         hideLabel: false,
+        showLegend: true,
         areaIds: [
           'WaitohuSW',
           'OtakiSW',
@@ -89,8 +90,9 @@ export const Councils: Council[] = [
         ],
       },
       {
-        name: 'Te Awarua-o-Porirua Whaitua',
+        name: 'Te Whanganui a Tara',
         hideLabel: false,
+        showLegend: true,
         areaIds: [
           'HuttSW',
           'Upper HuttGW',
@@ -100,8 +102,9 @@ export const Councils: Council[] = [
         ],
       },
       {
-        name: 'Ruamahanga',
+        name: 'Ruamāhanga',
         hideLabel: false,
+        showLegend: false,
         areaIds: [
           'RuamahangaTotalSW',
           'Ruamahanga_UpperSW',
@@ -116,6 +119,7 @@ export const Councils: Council[] = [
       {
         name: 'Ruamahanga 2',
         hideLabel: true,
+        showLegend: false,
         areaIds: [
           'Ruamahanga_MiddleSW',
           'Middle RuamahangaGW',
@@ -133,6 +137,7 @@ export const Councils: Council[] = [
       {
         name: 'Ruamahanga 3',
         hideLabel: true,
+        showLegend: false,
         areaIds: [
           'LakeWairarapaSW',
           'LakeGW',
@@ -144,6 +149,7 @@ export const Councils: Council[] = [
       {
         name: 'Ruamahanga 4',
         hideLabel: true,
+        showLegend: true,
         areaIds: [
           'Ruamahanga_LowerSW',
           'MoikiGW',
