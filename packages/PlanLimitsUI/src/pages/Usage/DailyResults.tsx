@@ -14,7 +14,6 @@ interface Props {
 const formatNumber = Intl.NumberFormat();
 
 export default function DailyResults({ data }: Props) {
-  console.log(data);
   return (
     <>
       <h2 className="text-xl mb-2">Daily usage grouped by area</h2>
