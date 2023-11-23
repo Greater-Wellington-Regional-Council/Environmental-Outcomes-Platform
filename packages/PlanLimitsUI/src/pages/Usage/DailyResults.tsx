@@ -72,9 +72,9 @@ function HeatmapResult({ dailyData }: { dailyData: DailyHeatmapData }) {
         tooltip={CustomTooltip}
         forceSquare={true}
         margin={{
-          top: 0,
+          top: 15,
           right: 50,
-          bottom: 25,
+          bottom: 50,
           left: 130,
         }}
         colors={{
@@ -126,9 +126,9 @@ function CustomTooltip({
         <div>
           {cell.data.y !== null && (
             <>
-              Usage: {round(cell.data.y * 100, 1)}% (
+              Usage: {round(cell.data.y * 100, 1)}% <br />
               {formatNumber.format(cell.data.usage)} of{' '}
-              {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day)
+              {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
             </>
           )}
           {cell.data.y === null && (
