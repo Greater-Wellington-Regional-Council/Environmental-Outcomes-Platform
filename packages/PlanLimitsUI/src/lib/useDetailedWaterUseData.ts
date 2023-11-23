@@ -1,4 +1,4 @@
-import { groupBy, flatten, uniq } from 'lodash';
+import { groupBy, flatten, uniq, sortBy } from 'lodash';
 import {
   format,
   addYears,
@@ -116,9 +116,7 @@ function transformUsageToWeeklyHeatmapData(
   areaId: string,
   usage: ParsedUsage[],
 ) {
-  const usageForAreaGroupedByWeek = groupBy<ParsedUsage>(usage, (usage) =>
-    usage.endOfWeek.toJSON(),
-  );
+  const usageForAreaGroupedByWeek = groupBy(usage, 'endOfWeekJSON');
   const sortedWeeks = Object.keys(usageForAreaGroupedByWeek).sort();
 
   return {
@@ -128,14 +126,20 @@ function transformUsageToWeeklyHeatmapData(
       const endOfWeek = usageInWeek[0].endOfWeek;
       const formattedEndOfWeek = format(endOfWeek, 'MMM dd yyyy');
 
-      const usageInWeekAsPercentages = usageInWeek.map(
-        (usage) => usage.usagePercent,
-      );
+      const usageInWeekAsPercentages = usageInWeek
+        .map((usage) => usage.usagePercent)
+        .filter((p) => p !== null);
 
-      const medianUsage = median(usageInWeekAsPercentages);
+      const medianUsage =
+        usageInWeekAsPercentages.length > 0
+          ? median(usageInWeekAsPercentages)
+          : null;
+
+      const dailyData = sortBy(usageInWeek, 'parsedDateJSON');
 
       return {
         endOfWeek,
+        dailyData,
         x: formattedEndOfWeek,
         y: medianUsage,
       };

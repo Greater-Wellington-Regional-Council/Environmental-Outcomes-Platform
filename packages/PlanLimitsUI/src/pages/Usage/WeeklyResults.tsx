@@ -71,7 +71,6 @@ function WeeklyUsageHeatMap({
           maxValue: 1,
         }}
         borderWidth={1}
-        borderColor={'#ddd'}
         emptyColor={'#fff'}
         axisTop={axisTop}
         axisLeft={{
@@ -101,18 +100,40 @@ function CustomTooltip({
   cell: ComputedCell<WeeklyUsageHeatmapDataItem>;
 }) {
   return (
-    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      <div className="font-semibold">{cell.serieId}</div>
-      <div>
-        Week ending{' '}
-        <span className="font-semibold">
-          {format(cell.data.endOfWeek, 'EEEE do MMMM yyyy')}
-        </span>
-      </div>
-      <div>
-        Median usage:{' '}
-        <span className="font-semibold">{round(cell.value * 100, 1)}%</span>
-      </div>
+    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow text-center">
+      <div>{cell.serieId}</div>
+      <div>Week ending {format(cell.data.endOfWeek, 'EEEE do MMMM yyyy')}</div>
+      {cell.data.y !== null && (
+        <div>Median usage: {round(cell.data.y * 100, 1)}%</div>
+      )}
+      {cell.data.y === null && <div>No data</div>}
+
+      <table className="border-collapse border m-auto w-full">
+        <thead>
+          <tr>
+            <th className="border">Day</th>
+            <th className="border">Usage</th>
+            <th className="border">Allocation</th>
+            <th className="border">Usage %</th>
+          </tr>
+        </thead>
+        <tbody>
+          {cell.data.dailyData.map((u) => (
+            <tr key={u.parsedDateJSON}>
+              <td className="border">{format(u.parsedDate, 'eeeeee dd')}</td>
+              <td className="border">{u.dailyUsage ?? 'No data'}</td>
+              <td className="border">
+                {u.meteredDailyAllocation ?? 'No data'}
+              </td>
+              <td className="border">
+                {u.usagePercent !== null
+                  ? round(u.usagePercent * 100, 1)
+                  : 'No data'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

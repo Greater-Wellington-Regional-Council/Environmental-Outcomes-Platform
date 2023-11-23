@@ -194,6 +194,7 @@ interface HeatmapDataItem {
 
 interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
   endOfWeek: Date;
+  dailyData: ParsedUsage[];
 }
 
 interface PopulatedDailyUsageHeatmapDataItem extends HeatmapDataItem {
