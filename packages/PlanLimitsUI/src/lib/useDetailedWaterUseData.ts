@@ -4,8 +4,10 @@ import {
   addYears,
   addDays,
   parse,
+  parseJSON,
   lastDayOfWeek,
   getDay,
+  setDay,
 } from 'date-fns';
 
 import { useWaterUseQuery } from '../api';
@@ -15,7 +17,7 @@ interface ParsedUsage extends Usage {
   parsedDateJSON: string;
   endOfWeek: Date;
   endOfWeekJSON: string;
-  usagePercent: number;
+  usagePercent: number | null;
   dayOfWeek: number;
 }
 
@@ -101,9 +103,11 @@ function parseUsage(usage: Usage[]) {
       endOfWeekJSON: endOfWeek.toJSON(),
       dayOfWeek: getDay(parsedDate),
       usagePercent:
-        usage.dailyUsage <= 0 || usage.meteredDailyAllocation <= 0
-          ? 0
-          : usage.dailyUsage / usage.meteredDailyAllocation,
+        typeof usage.dailyUsage === 'number' &&
+        typeof usage.meteredDailyAllocation === 'number' &&
+        usage.meteredDailyAllocation > 0
+          ? usage.dailyUsage / usage.meteredDailyAllocation
+          : null,
     };
   });
 }
@@ -160,19 +164,25 @@ function transformUsageToDailyHeatmapData(
       return {
         id: dayOfWeekName,
         data: allWeeks.map((week) => {
+          const parsedEndOfWeekWeek = parseJSON(week);
+          const date = setDay(parsedEndOfWeekWeek, dayOfWeekIndex);
+
           const usageForDay = usage.find(
             (u) => u.endOfWeekJSON === week && u.dayOfWeek === dayOfWeekIndex,
           );
+
           return usageForDay
             ? {
-                x: week,
-                y: usageForDay.usagePercent,
-                date: usageForDay.parsedDate,
+                date,
                 usage: usageForDay.dailyUsage,
                 allocation: usageForDay.meteredDailyAllocation,
-                dayOfWeek: usageForDay.dayOfWeek,
+                x: week,
+                y: usageForDay.usagePercent,
               }
             : {
+                date,
+                usage: null,
+                allocation: null,
                 x: week,
                 y: null,
               };
