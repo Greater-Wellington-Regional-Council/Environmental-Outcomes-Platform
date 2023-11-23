@@ -3,6 +3,8 @@ import { format } from 'date-fns';
 import { round } from 'lodash';
 import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
 
+const formatNumber = Intl.NumberFormat();
+
 export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
   return (
     <>
@@ -112,18 +114,30 @@ function CustomTooltip({
         <thead>
           <tr>
             <th className="border">Day</th>
-            <th className="border">Usage</th>
-            <th className="border">Allocation</th>
-            <th className="border">Usage %</th>
+            <th className="border">
+              Usage <br />m<sup>3</sup>/day
+            </th>
+            <th className="border">
+              Allocation <br />m<sup>3</sup>/day
+            </th>
+            <th className="border">
+              Usage <br />%
+            </th>
           </tr>
         </thead>
         <tbody>
           {cell.data.dailyData.map((u) => (
             <tr key={u.parsedDateJSON}>
               <td className="border">{format(u.parsedDate, 'eeeeee dd')}</td>
-              <td className="border">{u.dailyUsage ?? 'No data'}</td>
               <td className="border">
-                {u.meteredDailyAllocation ?? 'No data'}
+                {u.dailyUsage !== null
+                  ? formatNumber.format(u.dailyUsage)
+                  : 'No data'}
+              </td>
+              <td className="border">
+                {u.meteredDailyAllocation !== null
+                  ? formatNumber.format(u.meteredDailyAllocation)
+                  : 'No data'}
               </td>
               <td className="border">
                 {u.usagePercent !== null

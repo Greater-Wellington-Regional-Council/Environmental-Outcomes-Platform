@@ -1,11 +1,6 @@
 import { round } from 'lodash';
 import { format, getWeekOfMonth } from 'date-fns';
-import {
-  ResponsiveHeatMapCanvas,
-  type ComputedCell,
-  type CellCanvasRendererProps,
-  type HeatMapDatum,
-} from '@nivo/heatmap';
+import { ResponsiveHeatMapCanvas, type ComputedCell } from '@nivo/heatmap';
 import type {
   GroupedWaterUseData,
   DailyHeatmapData,
