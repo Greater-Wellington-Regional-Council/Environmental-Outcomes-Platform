@@ -117,16 +117,19 @@ function CustomTooltip({
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow text-center">
       <>
         <div>{format(cell.data.date, 'EEEE do MMMM yyyy')}</div>
-        <div>
-          {cell.data.y !== null && (
-            <>
-              Usage: {round(cell.data.y * 100, 1)}% <br />
+
+        {cell.data.y !== null && (
+          <>
+            <div>Usage: {round(cell.data.y * 100, 1)}% </div>
+            <div>
               {formatNumber.format(cell.data.usage)} of{' '}
               {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
-            </>
-          )}
-          {cell.data.y === null && (
-            <>
+            </div>
+          </>
+        )}
+        {cell.data.y === null && (
+          <>
+            <div>
               Usage:{' '}
               {cell.data.usage ? (
                 <>
@@ -135,7 +138,8 @@ function CustomTooltip({
               ) : (
                 'No data'
               )}
-              <br />
+            </div>
+            <div>
               Allocation:{' '}
               {cell.data.allocation ? (
                 <>
@@ -144,9 +148,9 @@ function CustomTooltip({
               ) : (
                 'No data'
               )}
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </>
     </div>
   );

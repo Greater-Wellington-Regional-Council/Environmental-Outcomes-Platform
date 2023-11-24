@@ -121,7 +121,7 @@ function CustomTooltip({
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow text-center">
       <div>{cell.serieId}</div>
-      <div>Week ending {format(cell.data.endOfWeek, 'EEEE do MMMM yyyy')}</div>
+      <div>Week ending {format(cell.data.endOfWeek, 'EE dd MMM yyyy')}</div>
       {cell.data.y !== null && (
         <div>Median usage: {round(cell.data.y * 100, 1)}%</div>
       )}
@@ -146,7 +146,9 @@ function CustomTooltip({
           <tbody>
             {cell.data.dailyData.map((u) => (
               <tr key={u.parsedDateJSON}>
-                <td className="border">{format(u.parsedDate, 'eeeeee dd')}</td>
+                <td className="border text-left">
+                  {format(u.parsedDate, 'EE dd')}
+                </td>
                 <td className="border">
                   {u.dailyUsage !== null
                     ? formatNumber.format(u.dailyUsage)

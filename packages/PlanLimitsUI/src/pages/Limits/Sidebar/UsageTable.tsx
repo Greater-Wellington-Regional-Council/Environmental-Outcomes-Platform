@@ -201,23 +201,26 @@ const CustomTooltip = ({
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow text-center">
       <>
-        Usage:{' '}
-        {cell.data.usage ? (
-          <>
-            {formatNumber.format(cell.data.usage)}m<sup>3</sup>/day
-          </>
-        ) : (
-          'No data'
-        )}
-        <br />
-        Allocation:{' '}
-        {cell.data.allocation ? (
-          <>
-            {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
-          </>
-        ) : (
-          'No data'
-        )}
+        <div>
+          Usage:{' '}
+          {cell.data.usage ? (
+            <>
+              {formatNumber.format(cell.data.usage)}m<sup>3</sup>/day
+            </>
+          ) : (
+            'No data'
+          )}
+        </div>
+        <div>
+          Allocation:{' '}
+          {cell.data.allocation ? (
+            <>
+              {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
+            </>
+          ) : (
+            'No data'
+          )}
+        </div>
       </>
     </div>
   );
