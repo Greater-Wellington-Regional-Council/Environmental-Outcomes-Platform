@@ -1,27 +1,11 @@
-import { atom, useAtom } from 'jotai';
 import { ResponsiveHeatMapCanvas, type ComputedCell } from '@nivo/heatmap';
 import { format } from 'date-fns';
 import { round } from 'lodash';
 import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
-import { useEventListener } from 'usehooks-ts';
 
 const formatNumber = Intl.NumberFormat();
 
-const showDebugAtom = atom(false);
-
 export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
-  const [, setShowDebug] = useAtom(showDebugAtom);
-
-  const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'd') setShowDebug(true);
-  };
-  const onKeyUp = (event: KeyboardEvent) => {
-    if (event.key === 'd') setShowDebug(false);
-  };
-
-  useEventListener('keydown', onKeyDown);
-  useEventListener('keyup', onKeyUp);
-
   return (
     <>
       <h2 className="text-xl mb-2">Weekly usage grouped by area</h2>
@@ -117,7 +101,6 @@ function CustomTooltip({
 }: {
   cell: ComputedCell<WeeklyUsageHeatmapDataItem>;
 }) {
-  const [showDebug] = useAtom(showDebugAtom);
   return (
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow text-center">
       <div>{cell.serieId}</div>
@@ -128,48 +111,46 @@ function CustomTooltip({
         <div>No data</div>
       )}
 
-      {showDebug && (
-        <table className="border-collapse border m-auto w-full">
-          <thead>
-            <tr>
-              <th className="border">Day</th>
-              <th className="border">
-                Usage <br />m<sup>3</sup>/day
-              </th>
-              <th className="border">
-                Allocation <br />m<sup>3</sup>/day
-              </th>
-              <th className="border">
-                Usage <br />%
-              </th>
+      <table className="border-collapse border m-auto w-full">
+        <thead>
+          <tr>
+            <th className="border">Day</th>
+            <th className="border">
+              Usage <br />m<sup>3</sup>/day
+            </th>
+            <th className="border">
+              Allocation <br />m<sup>3</sup>/day
+            </th>
+            <th className="border">
+              Usage <br />%
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {cell.data.dailyData.map((u) => (
+            <tr key={u.parsedDateJSON}>
+              <td className="border text-left">
+                {format(u.parsedDate, 'EE dd')}
+              </td>
+              <td className="border">
+                {u.dailyUsage !== null
+                  ? formatNumber.format(u.dailyUsage)
+                  : 'No data'}
+              </td>
+              <td className="border">
+                {u.meteredDailyAllocation !== null
+                  ? formatNumber.format(u.meteredDailyAllocation)
+                  : 'No data'}
+              </td>
+              <td className="border">
+                {u.usagePercent !== null
+                  ? round(u.usagePercent * 100, 1)
+                  : 'No data'}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {cell.data.dailyData.map((u) => (
-              <tr key={u.parsedDateJSON}>
-                <td className="border text-left">
-                  {format(u.parsedDate, 'EE dd')}
-                </td>
-                <td className="border">
-                  {u.dailyUsage !== null
-                    ? formatNumber.format(u.dailyUsage)
-                    : 'No data'}
-                </td>
-                <td className="border">
-                  {u.meteredDailyAllocation !== null
-                    ? formatNumber.format(u.meteredDailyAllocation)
-                    : 'No data'}
-                </td>
-                <td className="border">
-                  {u.usagePercent !== null
-                    ? round(u.usagePercent * 100, 1)
-                    : 'No data'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
