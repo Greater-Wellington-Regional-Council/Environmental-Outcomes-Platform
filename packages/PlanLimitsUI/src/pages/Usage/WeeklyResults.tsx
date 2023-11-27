@@ -122,10 +122,11 @@ function CustomTooltip({
     <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow text-center">
       <div>{cell.serieId}</div>
       <div>Week ending {format(cell.data.endOfWeek, 'EE dd MMM yyyy')}</div>
-      {cell.data.y !== null && (
+      {cell.data.y !== null ? (
         <div>Median usage: {round(cell.data.y * 100, 1)}%</div>
+      ) : (
+        <div>No data</div>
       )}
-      {cell.data.y === null && <div>No data</div>}
 
       {showDebug && (
         <table className="border-collapse border m-auto w-full">

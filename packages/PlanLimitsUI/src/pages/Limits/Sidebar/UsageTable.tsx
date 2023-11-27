@@ -203,7 +203,7 @@ const CustomTooltip = ({
       <>
         <div>
           Usage:{' '}
-          {cell.data.usage ? (
+          {cell.data.usage !== null ? (
             <>
               {formatNumber.format(cell.data.usage)}m<sup>3</sup>/day
             </>
@@ -213,7 +213,7 @@ const CustomTooltip = ({
         </div>
         <div>
           Allocation:{' '}
-          {cell.data.allocation ? (
+          {cell.data.allocation !== null ? (
             <>
               {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
             </>
