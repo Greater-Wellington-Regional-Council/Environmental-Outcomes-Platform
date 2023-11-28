@@ -18,9 +18,9 @@ with all_days as (
      all_areas as (
          select distinct
              area_id,
-             null::numeric as allocation,
-             null::numeric as metered_allocation_daily,
-             null::numeric as metered_allocation_yearly,
+             0 as allocation,
+             0 as metered_allocation_daily,
+             0 as metered_allocation_yearly,
              false as is_metered,
              '{}'::varchar[] as meters,
              'inactive' as status
@@ -80,7 +80,7 @@ with all_days as (
              allocation,
              allocation_daily,
              metered_allocation_yearly,
-             daily_usage,
+             coalesce(daily_usage, 0) as daily_usage
          from total_daily_allocation_by_area
                   left join total_daily_use_by_area using (area_id, date)
      )
