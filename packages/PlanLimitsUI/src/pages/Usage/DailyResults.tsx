@@ -1,11 +1,6 @@
 import { round } from 'lodash';
 import { format, getWeekOfMonth } from 'date-fns';
-import {
-  ResponsiveHeatMapCanvas,
-  type ComputedCell,
-  type CellCanvasRendererProps,
-  type HeatMapDatum,
-} from '@nivo/heatmap';
+import { ResponsiveHeatMapCanvas, type ComputedCell } from '@nivo/heatmap';
 import type {
   GroupedWaterUseData,
   DailyHeatmapData,
@@ -19,7 +14,6 @@ interface Props {
 const formatNumber = Intl.NumberFormat();
 
 export default function DailyResults({ data }: Props) {
-  console.log(data);
   return (
     <>
       <h2 className="text-xl mb-2">Daily usage grouped by area</h2>
@@ -72,9 +66,9 @@ function HeatmapResult({ dailyData }: { dailyData: DailyHeatmapData }) {
         tooltip={CustomTooltip}
         forceSquare={true}
         margin={{
-          top: 0,
+          top: 15,
           right: 50,
-          bottom: 25,
+          bottom: 50,
           left: 130,
         }}
         colors={{
@@ -84,7 +78,6 @@ function HeatmapResult({ dailyData }: { dailyData: DailyHeatmapData }) {
           maxValue: 1,
         }}
         borderWidth={1}
-        borderColor={'#ddd'}
         emptyColor={'#fff'}
         axisLeft={{
           tickSize: 0,
@@ -121,24 +114,44 @@ function CustomTooltip({
   cell: ComputedCell<DailyUsageHeatmapDataItem>;
 }) {
   return (
-    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      {cell.data.y === null && <strong>No data</strong>}
+    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow text-center">
+      <>
+        <div>{format(cell.data.date, 'EEEE do MMMM yyyy')}</div>
 
-      {cell.data.y !== null && (
-        <>
-          <div className="font-semibold">
-            {format(cell.data.date, 'EEEE do MMMM yyyy')}
-          </div>
-          <div>
-            Usage:{' '}
-            <span className="font-semibold">
-              {round(cell.data.y * 100, 1)}% (
+        {cell.data.y !== null && (
+          <>
+            <div>Usage: {round(cell.data.y * 100, 1)}% </div>
+            <div>
               {formatNumber.format(cell.data.usage)} of{' '}
-              {formatNumber.format(cell.data.allocation)} m<sup>3</sup>/day)
-            </span>
-          </div>
-        </>
-      )}
+              {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
+            </div>
+          </>
+        )}
+        {cell.data.y === null && (
+          <>
+            <div>
+              Usage:{' '}
+              {cell.data.usage !== null ? (
+                <>
+                  {formatNumber.format(cell.data.usage)}m<sup>3</sup>/day
+                </>
+              ) : (
+                'No data'
+              )}
+            </div>
+            <div>
+              Allocation:{' '}
+              {cell.data.allocation !== null ? (
+                <>
+                  {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
+                </>
+              ) : (
+                'No data'
+              )}
+            </div>
+          </>
+        )}
+      </>
     </div>
   );
 }
