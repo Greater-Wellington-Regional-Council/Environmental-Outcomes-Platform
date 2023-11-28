@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
-import { ResponsiveHeatMapCanvas, ComputedCell } from '@nivo/heatmap';
+import {
+  ResponsiveHeatMapCanvas,
+  ComputedCell,
+  type CellCanvasRendererProps,
+  type HeatMapDatum,
+} from '@nivo/heatmap';
 import useWaterUseData, {
   type SWAndGWHeatmapData,
 } from '../../../lib/useWaterUseData';
@@ -34,9 +39,13 @@ export default function UsageTable({
     setWeekOffset(updatedOffet);
   };
 
+  const swAreaId = appState.surfaceWaterSubUnitLimit
+    ? appState.surfaceWaterSubUnitLimit.sourceId
+    : appState.surfaceWaterUnitLimit?.sourceId || '';
+
   const waterUseData = useWaterUseData(
     council.id,
-    appState.surfaceWaterSubUnitLimit?.sourceId || '',
+    swAreaId,
     appState.groundWaterLimits.map((gwl) => gwl.sourceId),
     weekOffset,
   );
@@ -172,6 +181,7 @@ function HeatMap({ usage }: { usage: HeatmapData[] }) {
       <ResponsiveHeatMapCanvas
         tooltip={CustomTooltip}
         data={usage}
+        renderCell={renderRect}
         valueFormat={'=-0.0~%'}
         margin={{ top: 30, bottom: 0, left: 0 }}
         colors={{
@@ -180,6 +190,8 @@ function HeatMap({ usage }: { usage: HeatmapData[] }) {
           minValue: 0,
           maxValue: 1,
         }}
+        borderWidth={1}
+        emptyColor={'#fff'}
       />
     </div>
   );
@@ -188,12 +200,81 @@ function HeatMap({ usage }: { usage: HeatmapData[] }) {
 const CustomTooltip = ({
   cell,
 }: {
-  cell: ComputedCell<UsageHeatmapDataItem>;
+  cell: ComputedCell<DailyUsageHeatmapDataItem>;
 }) => {
   return (
-    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      {formatNumber.format(cell.data.usage)} of{' '}
-      {formatNumber.format(cell.data.allocation)} m<sup>3</sup>/day
+    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow text-center">
+      <>
+        <div>
+          Usage:{' '}
+          {cell.data.usage !== null ? (
+            <>
+              {formatNumber.format(cell.data.usage)}m<sup>3</sup>/day
+            </>
+          ) : (
+            'No data'
+          )}
+        </div>
+        <div>
+          Allocation:{' '}
+          {cell.data.allocation !== null ? (
+            <>
+              {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
+            </>
+          ) : (
+            'No data'
+          )}
+        </div>
+      </>
     </div>
   );
+};
+
+// Copied from https://github.com/plouc/nivo/blob/6dc6636cb64135104264547f05a3f44c787c6508/packages/heatmap/src/canvas.tsx
+// so we can customise as needed
+export const renderRect = <Datum extends HeatMapDatum>(
+  ctx: CanvasRenderingContext2D,
+  {
+    cell: {
+      x,
+      y,
+      data,
+      width,
+      height,
+      color,
+      borderColor,
+      opacity,
+      labelTextColor,
+      label,
+    },
+    borderWidth,
+    enableLabels,
+    theme,
+  }: CellCanvasRendererProps<Datum>,
+) => {
+  ctx.save();
+  ctx.globalAlpha = opacity;
+
+  ctx.fillStyle = color;
+  if (borderWidth > 0) {
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = borderWidth;
+  }
+
+  ctx.fillRect(x - width / 2, y - height / 2, width, height);
+  if (borderWidth > 0) {
+    ctx.strokeRect(x - width / 2, y - height / 2, width, height);
+  }
+
+  if (enableLabels) {
+    ctx.fillStyle = labelTextColor;
+    ctx.font = `${
+      theme.labels.text.fontWeight ? `${theme.labels.text.fontWeight} ` : ''
+    }${theme.labels.text.fontSize}px ${theme.labels.text.fontFamily}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(data.y !== null ? label : 'No data', x, y);
+  }
+
+  ctx.restore();
 };
