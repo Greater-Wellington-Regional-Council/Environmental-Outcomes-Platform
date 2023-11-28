@@ -22,10 +22,10 @@ import org.springframework.transaction.annotation.Transactional
 data class WaterAllocationUsageRow(
     val areaId: String,
     val date: LocalDate,
-    val allocation: BigDecimal,
-    val allocationDaily: BigDecimal,
-    val meteredAllocationYearly: BigDecimal,
-    val dailyUsage: BigDecimal,
+    val allocation: BigDecimal?,
+    val meteredAllocationDaily: BigDecimal?,
+    val meteredAllocationDailyUsed: BigDecimal?,
+    val dailyUsage: BigDecimal?,
 )
 
 data class AllocationRow(
@@ -48,9 +48,9 @@ data class AllocationRow(
 @Transactional
 class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate) {
 
-  val testSiteId = 1
-  val testAreaId = "test-area-id"
-  val testEffectiveFrom: LocalDateTime = LocalDate.now().atStartOfDay().minusDays(100)
+  final val testSiteId = 1
+  final val testAreaId = "test-area-id"
+  final val testEffectiveFrom: LocalDateTime = LocalDate.now().atStartOfDay().minusDays(100)
   val testAllocation =
       AllocationRow(
           "source-id",
@@ -97,6 +97,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     val max = LocalDate.parse(result["max_date"].toString())
     min.plusYears(1).plusDays(-1) shouldBe max
   }
+
   @Test
   fun `should use default allocation data before the effective date`() {
     // GIVEN
@@ -110,7 +111,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
             "where area_id = '${testAllocation.areaId}' and date < '$dateFilter'")
 
     // THEN
-    checkResults(results, testAreaId, BigDecimal(0), BigDecimal(0), BigDecimal(0))
+    checkResults(results, testAreaId, null, null, null, null)
   }
 
   @Test
@@ -131,8 +132,10 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         testAllocation.areaId,
         testAllocation.allocation,
         testAllocation.meteredAllocationDaily,
-        testAllocation.meteredAllocationYearly)
+        null,
+        null)
   }
+
   @Test
   fun `should handle an allocation being effective before the earliest time period`() {
     // GIVEN
@@ -152,7 +155,8 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         oldAllocation.areaId,
         oldAllocation.allocation,
         oldAllocation.meteredAllocationDaily,
-        oldAllocation.meteredAllocationYearly)
+        null,
+        null)
   }
 
   @Test
@@ -211,8 +215,8 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         initialAllocation.areaId,
         initialAllocation.allocation,
         initialAllocation.meteredAllocationDaily,
-        initialAllocation.meteredAllocationYearly,
-        BigDecimal(0))
+        null,
+        null)
 
     // WHEN
     val resultAfterUpdate =
@@ -225,8 +229,8 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         updateAllocation.areaId,
         updateAllocation.allocation,
         updateAllocation.meteredAllocationDaily,
-        updateAllocation.meteredAllocationYearly,
-        BigDecimal(0))
+        null,
+        null)
   }
 
   @Test
@@ -253,20 +257,24 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
             "where area_id = '${testAllocation.areaId}' and date = '${secondAllocationUpdatedAt}'")
 
     // THEN
-    checkResults(results, testAreaId, allocation = BigDecimal(30))
+    checkResults(results, testAreaId, BigDecimal(30), BigDecimal(10), null, null)
   }
+
   @Test
   fun `should not include allocation data when a consent status is not active`() {
     // GIVEN
     val allocationUpdatedAt = LocalDate.now().atStartOfDay().minusDays(10)
+
     val initialAllocation =
         testAllocation.copy(effectiveTo = allocationUpdatedAt.toInstant(ZoneOffset.UTC))
     createTestAllocation(initialAllocation)
+
     val updatedAllocation =
         testAllocation.copy(
             effectiveFrom = allocationUpdatedAt.toInstant(ZoneOffset.UTC),
             status = ConsentStatus.inactive)
     createTestAllocation(updatedAllocation)
+
     materializeView()
 
     // WHEN
@@ -275,7 +283,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
             "where area_id = '${updatedAllocation.areaId}' and date >= '${allocationUpdatedAt}'")
 
     // THEN
-    checkResults(results, updatedAllocation.areaId, BigDecimal(0), BigDecimal(0), BigDecimal(0))
+    checkResults(results, updatedAllocation.areaId, null, null, null)
   }
 
   @Test
@@ -293,7 +301,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
             "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'")
 
     // THEN
-    result[0].dailyUsage.compareTo(BigDecimal(0)) shouldBe 0
+    result[0].dailyUsage shouldBe null
   }
 
   @Test
@@ -301,7 +309,10 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     // GIVEN
     createTestAllocation(testAllocation)
     val secondAllocationInSameArea =
-        testAllocation.copy(sourceId = "another-source-same-area", meters = listOf("2", "3"))
+        testAllocation.copy(
+            consentId = "consent-id-2",
+            sourceId = "another-source-same-area",
+            meters = listOf("2", "3"))
     createTestAllocation(secondAllocationInSameArea)
 
     val allocationInDifferentArea =
@@ -335,8 +346,59 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         testAllocation.areaId,
         testAllocation.allocation + secondAllocationInSameArea.allocation,
         testAllocation.meteredAllocationDaily + secondAllocationInSameArea.meteredAllocationDaily,
-        testAllocation.meteredAllocationYearly + secondAllocationInSameArea.meteredAllocationYearly,
+        testAllocation.meteredAllocationDaily + secondAllocationInSameArea.meteredAllocationDaily,
         BigDecimal(20))
+
+    // WHEN
+    val resultsInADifferentArea =
+        queryAllocationsAndUsage(
+            "where area_id = '${allocationInDifferentArea.areaId}' and date = '$observationDate'")
+
+    // THEN
+    resultsInADifferentArea[0].dailyUsage shouldBe BigDecimal(30)
+  }
+
+  @Test
+  fun `should not include allocation amount if there is no usage`() {
+    // GIVEN
+    createTestAllocation(testAllocation)
+
+    val secondAllocationInSameArea =
+        testAllocation.copy(
+            consentId = "consent-id-2",
+            sourceId = "another-source-same-area",
+            meters = listOf("2", "3"))
+    createTestAllocation(secondAllocationInSameArea)
+
+    val allocationInDifferentArea =
+        testAllocation.copy(
+            areaId = "different-area-id",
+            sourceId = "another-source-different-area",
+            meters = listOf("4"))
+    createTestAllocation(allocationInDifferentArea)
+
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(10)
+    createTestObservation(testSiteId, 10, observationDate.toInstant(ZoneOffset.UTC))
+    createTestObservation(
+        allocationInDifferentArea.meters.first().toInt(),
+        30,
+        observationDate.toInstant(ZoneOffset.UTC))
+    materializeView()
+
+    // WHEN
+    val results =
+        queryAllocationsAndUsage(
+            "where area_id = '${testAllocation.areaId}' and date = '$observationDate'")
+
+    // THEN
+    results.size shouldBe 1
+    checkResults(
+        results,
+        testAllocation.areaId,
+        testAllocation.allocation + secondAllocationInSameArea.allocation,
+        testAllocation.meteredAllocationDaily + secondAllocationInSameArea.meteredAllocationDaily,
+        testAllocation.meteredAllocationDaily,
+        BigDecimal(10))
 
     // WHEN
     val resultsInADifferentArea =
@@ -357,16 +419,15 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
       areaId: String? = null,
       allocation: BigDecimal? = null,
       meteredAllocationDaily: BigDecimal? = null,
-      meteredAllocationYearly: BigDecimal? = null,
+      meteredAllocationDailyUsed: BigDecimal? = null,
       dailyUsage: BigDecimal? = null
   ) {
     results.forAll {
       if (areaId != null) it.areaId shouldBe areaId
-      if (allocation != null) it.allocation shouldBe allocation
-      if (meteredAllocationDaily != null) it.allocationDaily shouldBe meteredAllocationDaily
-      if (meteredAllocationYearly != null)
-          it.meteredAllocationYearly shouldBe meteredAllocationYearly
-      if (dailyUsage != null) it.dailyUsage shouldBe dailyUsage
+      it.allocation shouldBe allocation
+      it.meteredAllocationDaily shouldBe meteredAllocationDaily
+      it.meteredAllocationDailyUsed shouldBe meteredAllocationDailyUsed
+      it.dailyUsage shouldBe dailyUsage
     }
   }
 
