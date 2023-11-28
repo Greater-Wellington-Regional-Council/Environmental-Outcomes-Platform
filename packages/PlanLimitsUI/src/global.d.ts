@@ -56,8 +56,8 @@ interface Usage {
   date: string;
   areaId: string;
   allocation: number | null;
-  meteredDailyAllocation: number | null;
-  meteredYearlyAllocation: number | null;
+  meteredAllocationDaily: number | null;
+  meteredAllocationDailyUsed: number | null;
   dailyUsage: number | null;
 }
 
