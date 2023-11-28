@@ -67,7 +67,7 @@ function transformUsageToHeatMap(usage: Usage[]) {
         const usage = sumBy(usageGroupedByDay[date], 'dailyUsage');
         const allocation = sumBy(
           usageGroupedByDay[date],
-          'meteredDailyAllocation',
+          'meteredAllocationDailyUsed',
         );
 
         let usagePercent = null;
