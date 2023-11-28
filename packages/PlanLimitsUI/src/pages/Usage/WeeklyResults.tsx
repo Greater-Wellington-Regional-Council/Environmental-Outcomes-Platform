@@ -138,8 +138,8 @@ function CustomTooltip({
                   : 'No data'}
               </td>
               <td className="border">
-                {u.meteredDailyAllocation !== null
-                  ? formatNumber.format(u.meteredDailyAllocation)
+                {u.meteredAllocationDailyUsed !== null
+                  ? formatNumber.format(u.meteredAllocationDailyUsed)
                   : 'No data'}
               </td>
               <td className="border">
