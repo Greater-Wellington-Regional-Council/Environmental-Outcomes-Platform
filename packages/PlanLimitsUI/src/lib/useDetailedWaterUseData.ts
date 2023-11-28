@@ -1,11 +1,13 @@
-import { groupBy, flatten, uniq } from 'lodash';
+import { groupBy, flatten, uniq, sortBy } from 'lodash';
 import {
   format,
   addYears,
   addDays,
   parse,
+  parseJSON,
   lastDayOfWeek,
   getDay,
+  setDay,
 } from 'date-fns';
 
 import { useWaterUseQuery } from '../api';
@@ -15,7 +17,7 @@ interface ParsedUsage extends Usage {
   parsedDateJSON: string;
   endOfWeek: Date;
   endOfWeekJSON: string;
-  usagePercent: number;
+  usagePercent: number | null;
   dayOfWeek: number;
 }
 
@@ -101,9 +103,11 @@ function parseUsage(usage: Usage[]) {
       endOfWeekJSON: endOfWeek.toJSON(),
       dayOfWeek: getDay(parsedDate),
       usagePercent:
-        usage.dailyUsage <= 0 || usage.meteredDailyAllocation <= 0
-          ? 0
-          : usage.dailyUsage / usage.meteredDailyAllocation,
+        typeof usage.dailyUsage === 'number' &&
+        typeof usage.meteredDailyAllocation === 'number' &&
+        usage.meteredDailyAllocation > 0
+          ? usage.dailyUsage / usage.meteredDailyAllocation
+          : null,
     };
   });
 }
@@ -112,9 +116,7 @@ function transformUsageToWeeklyHeatmapData(
   areaId: string,
   usage: ParsedUsage[],
 ) {
-  const usageForAreaGroupedByWeek = groupBy<ParsedUsage>(usage, (usage) =>
-    usage.endOfWeek.toJSON(),
-  );
+  const usageForAreaGroupedByWeek = groupBy(usage, 'endOfWeekJSON');
   const sortedWeeks = Object.keys(usageForAreaGroupedByWeek).sort();
 
   return {
@@ -124,14 +126,20 @@ function transformUsageToWeeklyHeatmapData(
       const endOfWeek = usageInWeek[0].endOfWeek;
       const formattedEndOfWeek = format(endOfWeek, 'MMM dd yyyy');
 
-      const usageInWeekAsPercentages = usageInWeek.map(
-        (usage) => usage.usagePercent,
-      );
+      const usageInWeekAsPercentages = usageInWeek
+        .map((usage) => usage.usagePercent)
+        .filter((p) => p !== null);
 
-      const medianUsage = median(usageInWeekAsPercentages);
+      const medianUsage =
+        usageInWeekAsPercentages.length > 0
+          ? median(usageInWeekAsPercentages)
+          : null;
+
+      const dailyData = sortBy(usageInWeek, 'parsedDateJSON');
 
       return {
         endOfWeek,
+        dailyData,
         x: formattedEndOfWeek,
         y: medianUsage,
       };
@@ -160,19 +168,25 @@ function transformUsageToDailyHeatmapData(
       return {
         id: dayOfWeekName,
         data: allWeeks.map((week) => {
+          const parsedEndOfWeekWeek = parseJSON(week);
+          const date = setDay(parsedEndOfWeekWeek, dayOfWeekIndex);
+
           const usageForDay = usage.find(
             (u) => u.endOfWeekJSON === week && u.dayOfWeek === dayOfWeekIndex,
           );
+
           return usageForDay
             ? {
-                x: week,
-                y: usageForDay.usagePercent,
-                date: usageForDay.parsedDate,
+                date,
                 usage: usageForDay.dailyUsage,
                 allocation: usageForDay.meteredDailyAllocation,
-                dayOfWeek: usageForDay.dayOfWeek,
+                x: week,
+                y: usageForDay.usagePercent,
               }
             : {
+                date,
+                usage: null,
+                allocation: null,
                 x: week,
                 y: null,
               };

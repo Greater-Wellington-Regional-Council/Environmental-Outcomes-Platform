@@ -70,12 +70,21 @@ function transformUsageToHeatMap(usage: Usage[]) {
           'meteredDailyAllocation',
         );
 
+        let usagePercent = null;
+        if (
+          typeof usage === 'number' &&
+          typeof allocation === 'number' &&
+          allocation > 0
+        ) {
+          usagePercent = usage / allocation;
+        }
+
         return {
+          date,
           usage,
           allocation,
-          date,
           x: format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d'),
-          y: usage <= 0 ? 0 : usage / allocation,
+          y: usagePercent,
         };
       }),
     },

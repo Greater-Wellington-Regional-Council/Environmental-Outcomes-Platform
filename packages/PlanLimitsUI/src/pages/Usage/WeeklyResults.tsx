@@ -3,6 +3,8 @@ import { format } from 'date-fns';
 import { round } from 'lodash';
 import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
 
+const formatNumber = Intl.NumberFormat();
+
 export default function WeeklyResults({ data }: { data: GroupedWaterUseData }) {
   return (
     <>
@@ -71,7 +73,6 @@ function WeeklyUsageHeatMap({
           maxValue: 1,
         }}
         borderWidth={1}
-        borderColor={'#ddd'}
         emptyColor={'#fff'}
         axisTop={axisTop}
         axisLeft={{
@@ -101,18 +102,55 @@ function CustomTooltip({
   cell: ComputedCell<WeeklyUsageHeatmapDataItem>;
 }) {
   return (
-    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow">
-      <div className="font-semibold">{cell.serieId}</div>
-      <div>
-        Week ending{' '}
-        <span className="font-semibold">
-          {format(cell.data.endOfWeek, 'EEEE do MMMM yyyy')}
-        </span>
-      </div>
-      <div>
-        Median usage:{' '}
-        <span className="font-semibold">{round(cell.value * 100, 1)}%</span>
-      </div>
+    <div className="bg-gray-500 text-white opacity-90 text-xs p-2 rounded shadow text-center">
+      <div>{cell.serieId}</div>
+      <div>Week ending {format(cell.data.endOfWeek, 'EE dd MMM yyyy')}</div>
+      {cell.data.y !== null ? (
+        <div>Median usage: {round(cell.data.y * 100, 1)}%</div>
+      ) : (
+        <div>No data</div>
+      )}
+
+      <table className="border-collapse border m-auto w-full">
+        <thead>
+          <tr>
+            <th className="border">Day</th>
+            <th className="border">
+              Usage <br />m<sup>3</sup>/day
+            </th>
+            <th className="border">
+              Allocation <br />m<sup>3</sup>/day
+            </th>
+            <th className="border">
+              Usage <br />%
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {cell.data.dailyData.map((u) => (
+            <tr key={u.parsedDateJSON}>
+              <td className="border text-left">
+                {format(u.parsedDate, 'EE dd')}
+              </td>
+              <td className="border">
+                {u.dailyUsage !== null
+                  ? formatNumber.format(u.dailyUsage)
+                  : 'No data'}
+              </td>
+              <td className="border">
+                {u.meteredDailyAllocation !== null
+                  ? formatNumber.format(u.meteredDailyAllocation)
+                  : 'No data'}
+              </td>
+              <td className="border">
+                {u.usagePercent !== null
+                  ? round(u.usagePercent * 100, 1)
+                  : 'No data'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

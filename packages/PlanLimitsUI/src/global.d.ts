@@ -55,10 +55,10 @@ interface UsageDisplayGroup {
 interface Usage {
   date: string;
   areaId: string;
-  allocation: number;
-  meteredDailyAllocation: number;
-  meteredYearlyAllocation: number;
-  dailyUsage: number;
+  allocation: number | null;
+  meteredDailyAllocation: number | null;
+  meteredYearlyAllocation: number | null;
+  dailyUsage: number | null;
 }
 
 interface Plan {
@@ -192,13 +192,9 @@ interface HeatmapDataItem {
   y: number;
 }
 
-interface UsageHeatmapDataItem extends HeatmapDataItem {
-  usage: number;
-  allocation: number;
-}
-
 interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
   endOfWeek: Date;
+  dailyData: ParsedUsage[];
 }
 
 interface PopulatedDailyUsageHeatmapDataItem extends HeatmapDataItem {
@@ -207,9 +203,12 @@ interface PopulatedDailyUsageHeatmapDataItem extends HeatmapDataItem {
   allocation: number;
 }
 
-interface EmptyDailyUsageHeatmapDataItem {
+interface MissingDailyUsageHeatmapDataItem {
+  date: Date;
+  usage: number | null;
+  allocation: number | null;
   x: string;
-  y: null;
+  y: number | null;
 }
 
 type DailyUsageHeatmapDataItem =
