@@ -39,9 +39,13 @@ export default function UsageTable({
     setWeekOffset(updatedOffet);
   };
 
+  const swAreaId = appState.surfaceWaterSubUnitLimit
+    ? appState.surfaceWaterSubUnitLimit.sourceId
+    : appState.surfaceWaterUnitLimit?.sourceId || '';
+
   const waterUseData = useWaterUseData(
     council.id,
-    appState.surfaceWaterSubUnitLimit?.sourceId || '',
+    swAreaId,
     appState.groundWaterLimits.map((gwl) => gwl.sourceId),
     weekOffset,
   );
