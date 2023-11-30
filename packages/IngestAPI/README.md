@@ -1,5 +1,9 @@
 # EOP IngestAPI
 
+The EOP IngestAPI accepts envrionmental data from various councils and posts it onto Kafka topics for subsequent processing by other EOP services. It exposes API endpoints authenticated using HTTP Basic Authentication. These accept JSON data, which is passed onto a Kafka consumer.
+
+It's made up of a simple Spring Boot application written in Kotlin, and packaged up for deployment to ECS as a Docker container.
+
 ## Getting Started
 
 ### Prerequisites
