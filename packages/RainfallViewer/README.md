@@ -2,9 +2,9 @@
 
 InterRain is a prototype developed to illustratate the value in aggregating rainfall observations across council boundaries and presenting it in a user-friendly map-based UI.
 
-It's built using [Next.js](https://nextjs.org/) and bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+It's built using [Next.js](https://nextjs.org/) and bootstrapped with [create-next-app](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-The app displays a map using react-map-gl showing a base layer from LINZ. It fetches rainfall observation data from the [EOP Manager API](../Manager/) via SWR, and renders this using icons. It also allows the user to navigate to different areas and time periods, customise the display, and share the current view via the URL.
+The app displays a map using [react-map-gl](https://visgl.github.io/react-map-gl) showing a base layer from LINZ. It fetches rainfall observation data from the [EOP Manager API](../Manager/) via [SWR](https://swr.vercel.app), and renders this using icons. It also allows the user to navigate to different areas and time periods, customise the display, and share the current view via the URL.
 
 ![Screenshot the InterRain](./rainfall-viewer-screenshot.png)
 
@@ -28,9 +28,8 @@ Local development depends on the EOP Manager and supporting services. The rest o
 - Run `npm run lint`
 
 ### Deployment
-Deployment is to AWS Amplify which is connected to certain git branches.
+Deployment is to AWS Amplify which is connected to specific git branches.
 
-Pushing to the branch `deploy/interrain-ui/dev` will deploy to the development envrionment, [https://interrain.gw-eop-dev.tech](https://interrain.gw-eop-dev.tech).
-
-Pushing to the branch `deploy/interrain-ui/stage` will deploy to the staging envrionment, [https://interrain.gw-eop-stage.tech](https://interrain.gw-eop-stage.tech).
+- Pushing to the branch `deploy/interrain-ui/dev` will deploy to the development envrionment, [https://interrain.gw-eop-dev.tech](https://interrain.gw-eop-dev.tech).
+- Pushing to the branch `deploy/interrain-ui/stage` will deploy to the staging envrionment, [https://interrain.gw-eop-stage.tech](https://interrain.gw-eop-stage.tech).
 
