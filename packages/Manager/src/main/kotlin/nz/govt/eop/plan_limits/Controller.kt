@@ -22,7 +22,7 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
 
   @RequestMapping("/plan-limits/councils", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun getlCouncils(): ResponseEntity<String> {
+  fun getCouncils(): ResponseEntity<String> {
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
         .body(queries.councils())

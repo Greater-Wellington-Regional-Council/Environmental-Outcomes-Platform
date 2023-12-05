@@ -3,7 +3,7 @@ package nz.govt.eop.plan_limits
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.time.Instant
-import org.springframework.beans.factory.annotation.Autowired
+import org.jooq.DSLContext
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
@@ -11,11 +11,17 @@ import org.springframework.stereotype.Component
 const val MANIFEST_CACHE_KEY = "QUERY_MANIFEST"
 
 @Component
-class Manifest(@Autowired val queries: Queries) {
+class Manifest(val queries: Queries, val context: DSLContext) {
 
   @Cacheable(cacheNames = [MANIFEST_CACHE_KEY])
   fun get(councilId: Int): Map<String, String> {
     return generate(councilId)
+  }
+
+  fun updateAll() {
+    //  Hard coded to just Wellington until we have more data since empty results
+    //  for individual queries cause errors
+    update(9)
   }
 
   @CachePut(cacheNames = [MANIFEST_CACHE_KEY])
