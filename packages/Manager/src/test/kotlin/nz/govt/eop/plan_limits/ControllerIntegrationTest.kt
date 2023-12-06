@@ -33,7 +33,7 @@ class ControllerIntegrationTest(@Autowired val mvc: MockMvc) {
   }
 
   @Test
-  fun `can load plann regions`() {
+  fun `can load plan regions`() {
     mvc.perform(
             get("/plan-limits/plan-regions?councilId=9").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk)

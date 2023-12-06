@@ -12,11 +12,14 @@ import org.springframework.stereotype.Component
 class PlanLimitsManifestUpdater(val context: DSLContext, val manifest: Manifest) {
 
   private val logger = KotlinLogging.logger {}
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+
+  @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
   @SchedulerLock(name = "planLimitsManifestUpdater")
   fun updateManifest() {
-    logger.debug { startTaskMessage("planLimitsManifestUpdater") }
-    manifest.updateAll()
-    logger.debug { endTaskMessage("planLimitsManifestUpdater") }
+    logger.info { startTaskMessage("planLimitsManifestUpdater") }
+    //  Hard coded to just Wellington until we have more data since empty results
+    //  for individual queries cause errors
+    manifest.update(9)
+    logger.info { endTaskMessage("planLimitsManifestUpdater") }
   }
 }
