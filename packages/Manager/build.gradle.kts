@@ -25,7 +25,7 @@ ext["jooq.version"] = jooq.version.get()
 dependencies {
   jooqGenerator("org.postgresql:postgresql")
   // @see https://github.com/etiennestuder/gradle-jooq-plugin/issues/209#issuecomment-1056578392
-  jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
+  jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
 
   runtimeOnly("org.postgresql:postgresql")
   runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.3")
