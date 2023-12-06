@@ -6,7 +6,7 @@ plugins {
   kotlin("jvm") version "1.8.10"
   kotlin("plugin.spring") version "1.8.10"
   id("com.diffplug.spotless") version "6.18.0"
-  id("org.flywaydb.flyway") version "9.1.6"
+  id("org.flywaydb.flyway") version "10.1.0"
 }
 
 group = "nz.govt.eop"
