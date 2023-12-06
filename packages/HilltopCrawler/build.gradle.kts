@@ -33,7 +33,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.flywaydb:flyway-core")
-  implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+  implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
