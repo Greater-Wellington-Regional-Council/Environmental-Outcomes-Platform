@@ -4,10 +4,15 @@ plugins {
   id("org.springframework.boot") version "3.2.0"
   id("io.spring.dependency-management") version "1.1.4"
   id("com.diffplug.spotless") version "6.23.3"
-  id("org.flywaydb.flyway") version "9.1.6"
+  id("org.flywaydb.flyway") version "10.1.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "1.8.10"
   kotlin("plugin.spring") version "1.8.10"
+}
+
+buildscript {
+  repositories { mavenCentral() }
+  dependencies { classpath("org.flywaydb:flyway-database-postgresql:10.1.0") }
 }
 
 group = "nz.govt.eop"
@@ -33,7 +38,8 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.kafka:spring-kafka")
-  implementation("org.flywaydb:flyway-core")
+  implementation("org.flywaydb:flyway-core:10.1.0")
+  implementation("org.flywaydb:flyway-database-postgresql:10.1.0")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
