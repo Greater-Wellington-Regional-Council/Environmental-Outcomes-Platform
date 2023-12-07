@@ -46,3 +46,4 @@ logging:
   level:
     root: INFO
     nz.govt.eop: DEBUG
+    org.apache.kafka.streams.processor.internals.assignment.RackAwareTaskAssignor: OFF # Because it logs an error at startup even though it isn't used.

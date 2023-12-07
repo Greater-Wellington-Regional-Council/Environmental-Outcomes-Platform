@@ -24,4 +24,4 @@ ingest:
 logging:
   level:
     root: INFO
-    nz.govt.eop: INFO
+    nz.govt.eop: DEBUG
