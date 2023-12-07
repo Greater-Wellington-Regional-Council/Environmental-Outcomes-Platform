@@ -8,8 +8,8 @@ plugins {
   id("org.flywaydb.flyway") version "10.1.0"
   id("nu.studer.jooq") version "8.0"
   id("com.adarshr.test-logger") version "4.0.0"
-  kotlin("jvm") version "1.7.22"
-  kotlin("plugin.spring") version "1.7.22"
+  kotlin("jvm") version "1.9.21"
+  kotlin("plugin.spring") version "1.9.21"
 }
 
 buildscript {

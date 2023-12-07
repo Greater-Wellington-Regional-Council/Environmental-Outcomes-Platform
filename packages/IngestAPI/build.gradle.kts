@@ -5,9 +5,9 @@ plugins {
   id("io.spring.dependency-management") version "1.1.4"
   id("com.diffplug.spotless") version "6.23.3"
   id("com.adarshr.test-logger") version "4.0.0"
-  kotlin("jvm") version "1.7.22"
-  kotlin("plugin.spring") version "1.7.22"
-  kotlin("kapt") version "1.7.22"
+  kotlin("jvm") version "1.9.21"
+  kotlin("plugin.spring") version "1.9.21"
+  kotlin("kapt") version "1.9.21"
 }
 
 group = "nz.govt.eop"
