@@ -37,15 +37,13 @@ class MinimumFlowLimitBoundariesGenerator(@Autowired val context: DSLContext) {
         context
             .select(max(WATERSHEDS.CREATED_AT))
             .from(WATERSHEDS)
-            .fetchOne(max(WATERSHEDS.CREATED_AT))
-            ?: return false
+            .fetchOne(max(WATERSHEDS.CREATED_AT)) ?: return false
 
     val lastCreatedMinimumFlowLimit =
         context
             .select(max(MINIMUM_FLOW_LIMITS.CREATED_AT))
             .from(MINIMUM_FLOW_LIMITS)
-            .fetchOne(max(MINIMUM_FLOW_LIMITS.CREATED_AT))
-            ?: return false
+            .fetchOne(max(MINIMUM_FLOW_LIMITS.CREATED_AT)) ?: return false
 
     val lastUpdatedDependency =
         Collections.max(listOf(lastCreatedRiver, lastCreatedWatershed, lastCreatedMinimumFlowLimit))

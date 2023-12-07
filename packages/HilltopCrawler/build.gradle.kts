@@ -1,12 +1,18 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("org.springframework.boot") version "3.0.5"
-  id("io.spring.dependency-management") version "1.1.0"
+  id("org.springframework.boot") version "3.2.0"
+  id("io.spring.dependency-management") version "1.1.4"
+  id("com.diffplug.spotless") version "6.23.3"
+  id("org.flywaydb.flyway") version "10.1.0"
+  id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "1.8.10"
   kotlin("plugin.spring") version "1.8.10"
-  id("com.diffplug.spotless") version "6.18.0"
-  id("org.flywaydb.flyway") version "9.1.6"
+}
+
+buildscript {
+  repositories { mavenCentral() }
+  dependencies { classpath("org.flywaydb:flyway-database-postgresql:10.1.0") }
 }
 
 group = "nz.govt.eop"
@@ -21,7 +27,7 @@ dependencies {
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   runtimeOnly("org.postgresql:postgresql")
-  runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.3")
+  runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.4")
 
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-web")
@@ -32,8 +38,9 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.kafka:spring-kafka")
-  implementation("org.flywaydb:flyway-core")
-  implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+  implementation("org.flywaydb:flyway-core:10.1.0")
+  implementation("org.flywaydb:flyway-database-postgresql:10.1.0")
+  implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
@@ -50,7 +57,10 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-tasks.withType<Test> { useJUnitPlatform() }
+tasks.withType<Test> {
+  useJUnitPlatform()
+  this.testLogging { this.showStandardStreams = true }
+}
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   kotlin {
@@ -73,4 +83,11 @@ flyway {
   password = dbConfig["password"]
   schemas = arrayOf("hilltop_crawler")
   locations = arrayOf("filesystem:./src/main/resources/db/migration")
+}
+
+testlogger {
+  showStandardStreams = true
+  showPassedStandardStreams = false
+  showSkippedStandardStreams = false
+  showFailedStandardStreams = true
 }

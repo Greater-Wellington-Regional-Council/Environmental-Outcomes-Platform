@@ -20,6 +20,7 @@ class ControllerIntegrationTest(@Autowired val mvc: MockMvc) {
     mvc.perform(get("/plan-limits/councils").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk)
   }
+
   @Test
   fun `can load manifest`() {
     mvc.perform(get("/plan-limits/manifest?councilId=9").contentType(MediaType.APPLICATION_JSON))
