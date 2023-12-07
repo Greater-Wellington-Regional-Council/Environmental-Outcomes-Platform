@@ -38,15 +38,13 @@ class SurfaceWaterManagementBoundariesGenerator(@Autowired val context: DSLConte
         context
             .select(max(WATERSHEDS.CREATED_AT))
             .from(WATERSHEDS)
-            .fetchOne(max(WATERSHEDS.CREATED_AT))
-            ?: return false
+            .fetchOne(max(WATERSHEDS.CREATED_AT)) ?: return false
 
     val lastCreatedAllocationAmount =
         context
             .select(max(ALLOCATION_AMOUNTS.CREATED_AT))
             .from(ALLOCATION_AMOUNTS)
-            .fetchOne(max(ALLOCATION_AMOUNTS.CREATED_AT))
-            ?: return false
+            .fetchOne(max(ALLOCATION_AMOUNTS.CREATED_AT)) ?: return false
 
     val lastUpdatedDependency =
         Collections.max(listOf(lastCreatedRiver, lastCreatedWatershed, lastCreatedAllocationAmount))
