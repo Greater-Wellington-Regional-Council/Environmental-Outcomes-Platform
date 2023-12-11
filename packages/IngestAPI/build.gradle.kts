@@ -37,7 +37,7 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("io.kotest:kotest-assertions-core:5.5.5")
+  testImplementation("io.kotest:kotest-assertions-core:5.8.0")
 
   kapt("org.springframework.boot:spring-boot-configuration-processor")
 }
