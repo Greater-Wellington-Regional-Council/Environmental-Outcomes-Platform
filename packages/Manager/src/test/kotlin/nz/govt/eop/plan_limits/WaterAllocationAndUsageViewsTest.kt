@@ -22,9 +22,9 @@ import org.springframework.transaction.annotation.Transactional
 data class WaterAllocationUsageRow(
     val areaId: String,
     val date: LocalDate,
-    val allocation: BigDecimal?,
-    val meteredAllocationDaily: BigDecimal?,
-    val meteredAllocationDailyUsed: BigDecimal?,
+    val allocationPlan: BigDecimal?,
+    val allocationDaily: BigDecimal?,
+    val allocationDailyUsed: BigDecimal?,
     val dailyUsage: BigDecimal?,
 )
 
@@ -424,9 +424,9 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
   ) {
     results.forAll {
       if (areaId != null) it.areaId shouldBe areaId
-      it.allocation shouldBe allocation
-      it.meteredAllocationDaily shouldBe meteredAllocationDaily
-      it.meteredAllocationDailyUsed shouldBe meteredAllocationDailyUsed
+      it.allocationPlan shouldBe allocation
+      it.allocationDaily shouldBe meteredAllocationDaily
+      it.allocationDailyUsed shouldBe meteredAllocationDailyUsed
       it.dailyUsage shouldBe dailyUsage
     }
   }
@@ -437,7 +437,7 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
 
     jdbcTemplate.update(
         """
-      INSERT INTO water_allocations (area_id, allocation, ingest_id, source_id, consent_id, status, is_metered, metered_allocation_daily, metered_allocation_yearly, meters, effective_from, effective_to, created_at, updated_at)
+      INSERT INTO water_allocations (area_id, allocation_plan, ingest_id, source_id, consent_id, status, is_metered, allocation_daily, allocation_yearly, meters, effective_from, effective_to, created_at, updated_at)
       VALUES (
           '${allocation.areaId}',
           '${allocation.allocation}',

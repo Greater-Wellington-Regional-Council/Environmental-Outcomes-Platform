@@ -167,11 +167,10 @@ class Queries(@Autowired val context: DSLContext) {
         select(
                 WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID.`as`("areaId"),
                 WATER_ALLOCATION_AND_USAGE_BY_AREA.DATE,
-                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION).`as`("allocation"),
-                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.METERED_ALLOCATION_DAILY)
-                    .`as`("meteredAllocationDaily"),
-                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.METERED_ALLOCATION_DAILY_USED)
-                    .`as`("meteredAllocationDailyUsed"),
+                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION_PLAN).`as`("allocationPlan"),
+                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION_DAILY).`as`("allocationDaily"),
+                sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.ALLOCATION_DAILY_USED)
+                    .`as`("allocationDailyUsed"),
                 sum(WATER_ALLOCATION_AND_USAGE_BY_AREA.DAILY_USAGE).`as`("dailyUsage"))
             .from(WATER_ALLOCATION_AND_USAGE_BY_AREA)
             .where(whereCondition)
