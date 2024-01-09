@@ -40,7 +40,7 @@ spring:
 
     streams:
       properties:
-        num.stream.threads: 4
+        num.stream.threads: 2
         max.poll.records: 10
         default:
           key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
