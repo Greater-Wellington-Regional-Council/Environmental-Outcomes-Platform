@@ -539,8 +539,8 @@ class TaskMappersTests {
       val result = underTest.determineNextFetchAt()
 
       // THEN
-      result shouldBeAfter Instant.parse("2000-01-20T00:20:00Z")
-      result shouldBeBefore Instant.parse("2000-01-30T00:20:00Z")
+      result shouldBeAfter Instant.parse("2000-01-21T00:20:00Z")
+      result shouldBeBefore Instant.parse("2000-01-31T00:20:00Z")
     }
 
     @Test
