@@ -46,7 +46,7 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
     INSERT INTO observations (observation_measurement_id, observed_at, amount) 
     VALUES (?, ?, ?) 
     ON CONFLICT (observation_measurement_id, observed_at) 
-    DO UPDATE SET amount = EXCLUDED.amount, updated_at = NOW()
+    DO UPDATE SET updated_at = NOW(), amount = EXCLUDED.amount WHERE EXCLUDED.amount != observations.amount
         """
 
   @Transactional

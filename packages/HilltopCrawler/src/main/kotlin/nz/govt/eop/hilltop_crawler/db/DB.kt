@@ -53,6 +53,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
     UNCHANGED,
     FETCH_ERROR,
     HILLTOP_ERROR,
+    RESPONSE_TOO_LARGE,
     PARSE_ERROR,
     UNKNOWN_ERROR
   }

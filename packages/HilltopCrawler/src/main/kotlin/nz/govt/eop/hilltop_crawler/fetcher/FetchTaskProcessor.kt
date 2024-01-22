@@ -7,6 +7,7 @@ import java.time.Instant
 import java.time.temporal.TemporalAmount
 import kotlin.random.Random
 import mu.KotlinLogging
+import nz.govt.eop.hilltop_crawler.MAX_RESPONSE_SIZE
 import nz.govt.eop.hilltop_crawler.api.HilltopFetcher
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopXmlParsers
 import nz.govt.eop.hilltop_crawler.db.DB
@@ -54,6 +55,12 @@ class FetchTaskProcessor(
       if (xmlContent == null) {
         handleTaskErrorRequeue(
             taskToProcess, fetchedAt, FETCH_ERROR, Duration.ofMinutes(5), Duration.ofHours(1))
+        return
+      }
+
+      if (xmlContent.length > MAX_RESPONSE_SIZE) {
+        handleTaskErrorRequeue(
+            taskToProcess, fetchedAt, RESPONSE_TOO_LARGE, Duration.ofDays(1), Duration.ofDays(30))
         return
       }
 
