@@ -8,6 +8,7 @@ import io.kotest.matchers.date.shouldBeBefore
 import io.kotest.matchers.shouldBe
 import java.net.URI
 import java.time.Instant
+import kotlin.random.Random
 import nz.govt.eop.hilltop_crawler.HilltopCrawlerTestConfiguration
 import nz.govt.eop.hilltop_crawler.db.DB
 import nz.govt.eop.hilltop_crawler.db.HilltopFetchTaskType
@@ -144,6 +145,40 @@ class FetchTaskProcessorIntegrationTest(
         jdbcTemplate, sourceId, "SITES_LIST", "http://example.com", "2021-01-01 00:00:00")
 
     val input = this.javaClass.getResource("/hilltop-xml/ErrorResponse.xml")!!.readText()
+
+    mockServer
+        .expect(requestTo("http://example.com"))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withSuccess(input, null))
+
+    // WHEN
+    val result = underTest.runNextTask()
+
+    // THEN
+    mockServer.verify()
+
+    result shouldBe true
+
+    val tasks = listTasksToProcess(jdbcTemplate)
+    tasks shouldHaveSize 1
+
+    // Has updated the row we just fetched
+    tasks.forOne {
+      it.fetchUri shouldBe URI("http://example.com")
+      it.previousDataHash shouldBe null
+      it.nextFetchAt shouldBeAfter Instant.now()
+    }
+  }
+
+  @Test
+  fun `should requeue a too large response for later`() {
+    // GIVEN
+    val sourceId = createDefaultSource(jdbcTemplate)
+
+    createFetchTask(
+        jdbcTemplate, sourceId, "SITES_LIST", "http://example.com", "2021-01-01 00:00:00")
+
+    val input = Random.nextBytes(20_000_001)
 
     mockServer
         .expect(requestTo("http://example.com"))

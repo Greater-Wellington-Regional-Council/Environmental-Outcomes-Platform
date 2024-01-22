@@ -138,7 +138,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
   }
 
   @Nested
-  inner class ObservationDataMessageHandling {
+  open inner class ObservationDataMessageHandling {
 
     @Test
     fun `should not throw error when site doesn't exist`() {
@@ -202,6 +202,9 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
                       OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
       inputTopic.pipeInput(firstObservationMessage.toKey(), firstObservationMessage)
 
+      val measurementRecord =
+          jdbcTemplate.queryForMap("SELECT * FROM observation_sites_measurements")
+
       val secondObservationMessage =
           ObservationDataMessage(
               1,
@@ -218,13 +221,17 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       val observationsResult =
           jdbcTemplate.queryForMap(
               "SELECT * FROM observations WHERE observed_at > '2020-01-01T00:00:00Z'")
+      observationsResult["observation_measurement_id"] shouldBe measurementRecord["id"]
       observationsResult["observed_at"] shouldBe
           Timestamp.from(OffsetDateTime.parse("2021-01-01T00:00:00Z").toInstant())
       observationsResult["amount"] shouldBe BigDecimal.valueOf(2.0)
     }
 
     @Test
-    fun `should update observation data when data already exists`() {
+    // Required so updated_at correctly changes, otherwise NOW() returns the same value in the
+    // single transaction
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    open fun `should update observation data when data already exists`() {
       // GIVEN
       val siteMessage = SiteDetailsMessage(1, "SITE", null)
       inputTopic.pipeInput(siteMessage.toKey(), siteMessage)
@@ -238,6 +245,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
                   Observation(
                       OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
       inputTopic.pipeInput(firstObservationMessage.toKey(), firstObservationMessage)
+      val firstObservationsResult = jdbcTemplate.queryForMap("SELECT * FROM observations")
 
       val secondObservationMessage =
           ObservationDataMessage(
@@ -256,6 +264,48 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       observationsResult["observed_at"] shouldBe
           Timestamp.from(OffsetDateTime.parse("2020-01-01T00:00:00Z").toInstant())
       observationsResult["amount"] shouldBe BigDecimal.valueOf(2.0)
+      observationsResult["updated_at"] shouldNotBe firstObservationsResult["updated_at"]
+    }
+
+    @Test
+    // Required so updated_at correctly changes, otherwise NOW() returns the same value in the
+    // single transaction
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    open fun `should not update observation data when data already exists and is the same`() {
+      // GIVEN
+      val siteMessage = SiteDetailsMessage(1, "SITE", null)
+      inputTopic.pipeInput(siteMessage.toKey(), siteMessage)
+
+      val firstObservationMessage =
+          ObservationDataMessage(
+              1,
+              "SITE",
+              "RAIN",
+              listOf(
+                  Observation(
+                      OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
+      inputTopic.pipeInput(firstObservationMessage.toKey(), firstObservationMessage)
+
+      val firstObservationsResult = jdbcTemplate.queryForMap("SELECT * FROM observations")
+
+      val secondObservationMessage =
+          ObservationDataMessage(
+              1,
+              "SITE",
+              "RAIN",
+              listOf(
+                  Observation(
+                      OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
+
+      // WHEN
+      inputTopic.pipeInput(secondObservationMessage.toKey(), secondObservationMessage)
+
+      // THEN
+      val observationsResult = jdbcTemplate.queryForMap("SELECT * FROM observations")
+      observationsResult["observed_at"] shouldBe
+          Timestamp.from(OffsetDateTime.parse("2020-01-01T00:00:00Z").toInstant())
+      observationsResult["amount"] shouldBe BigDecimal.valueOf(1.0)
+      observationsResult["updated_at"] shouldBe firstObservationsResult["updated_at"]
     }
   }
 }
