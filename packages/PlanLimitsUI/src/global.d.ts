@@ -189,7 +189,7 @@ interface HeatmapData {
 
 interface HeatmapDataItem {
   x: string;
-  y: number;
+  y: number | null;
 }
 
 interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {

@@ -128,7 +128,7 @@ function transformUsageToWeeklyHeatmapData(
 
       const usageInWeekAsPercentages = usageInWeek
         .map((usage) => usage.usagePercent)
-        .filter((p) => p !== null);
+        .filter((p): p is number => p !== null);
 
       const medianUsage =
         usageInWeekAsPercentages.length > 0
@@ -178,15 +178,17 @@ function transformUsageToDailyHeatmapData(
           return usageForDay
             ? {
                 date,
-                usage: usageForDay.dailyUsage,
-                allocation: usageForDay.allocationDailyUsed,
+                dailyUsage: usageForDay.dailyUsage,
+                allocationDailyUsed: usageForDay.allocationDailyUsed,
+                allocationDaily: usageForDay.allocationDaily,
                 x: week,
                 y: usageForDay.usagePercent,
               }
             : {
                 date,
-                usage: null,
-                allocation: null,
+                dailyUsage: null,
+                allocationDailyUsed: null,
+                allocationDaily: null,
                 x: week,
                 y: null,
               };

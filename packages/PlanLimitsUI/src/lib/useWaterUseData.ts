@@ -64,25 +64,26 @@ function transformUsageToHeatMap(usage: Usage[]) {
     {
       id: 'Usage',
       data: sortedDates.map((date) => {
-        const usage = sumBy(usageGroupedByDay[date], 'dailyUsage');
-        const allocation = sumBy(
+        const dailyUsage = sumBy(usageGroupedByDay[date], 'dailyUsage');
+        const allocationDailyUsed = sumBy(
           usageGroupedByDay[date],
           'allocationDailyUsed',
         );
+        const allocationDaily = sumBy(
+          usageGroupedByDay[date],
+          'allocationDaily',
+        );
 
         let usagePercent = null;
-        if (
-          typeof usage === 'number' &&
-          typeof allocation === 'number' &&
-          allocation > 0
-        ) {
-          usagePercent = usage / allocation;
+        if (allocationDailyUsed > 0) {
+          usagePercent = dailyUsage / allocationDailyUsed;
         }
 
         return {
           date,
-          usage,
-          allocation,
+          dailyUsage,
+          allocationDailyUsed,
+          allocationDaily,
           x: format(parse(date, 'yyyy-MM-dd', new Date()), 'EEE d'),
           y: usagePercent,
         };

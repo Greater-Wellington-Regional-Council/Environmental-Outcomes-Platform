@@ -122,8 +122,11 @@ function CustomTooltip({
           <>
             <div>Usage: {round(cell.data.y * 100, 1)}% </div>
             <div>
-              {formatNumber.format(cell.data.usage)} of{' '}
-              {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
+              {formatNumber.format(cell.data.dailyUsage)} of measured{' '}
+              {formatNumber.format(cell.data.allocationDailyUsed)}m<sup>3</sup>
+              /day <br />
+              from a total allocation of{' '}
+              {formatNumber.format(cell.data.allocationDaily)}m<sup>3</sup>/day
             </div>
           </>
         )}

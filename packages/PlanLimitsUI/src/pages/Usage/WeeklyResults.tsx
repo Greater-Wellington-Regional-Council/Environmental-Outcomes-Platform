@@ -119,7 +119,7 @@ function CustomTooltip({
               Usage <br />m<sup>3</sup>/day
             </th>
             <th className="border">
-              Allocation <br />m<sup>3</sup>/day
+              Measured Allocation <br />m<sup>3</sup>/day
             </th>
             <th className="border">
               Usage <br />%
