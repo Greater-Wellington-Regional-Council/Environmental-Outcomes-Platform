@@ -8,7 +8,7 @@ plugins {
   id("org.springframework.boot") version "3.2.0"
   id("io.spring.dependency-management") version "1.1.4"
   id("com.diffplug.spotless") version "6.23.3"
-  id("org.flywaydb.flyway") version "10.1.0"
+  id("org.flywaydb.flyway") version "10.6.0"
   id("nu.studer.jooq") version "8.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "1.9.21"
@@ -40,7 +40,7 @@ dependencies {
   jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 
   runtimeOnly("org.postgresql:postgresql")
-  runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.3")
+  runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.4")
 
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -53,8 +53,8 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:10.1.0")
-  implementation("org.flywaydb:flyway-database-postgresql:10.1.0")
+  implementation("org.flywaydb:flyway-core:10.6.0")
+  implementation("org.flywaydb:flyway-database-postgresql:10.6.0")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.10.0")
@@ -62,7 +62,7 @@ dependencies {
   implementation("net.postgis:postgis-jdbc:2021.1.0")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("io.kotest:kotest-assertions-core:5.5.5")
+  testImplementation("io.kotest:kotest-assertions-core:5.8.0")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
 }
