@@ -54,7 +54,7 @@ dependencies {
   implementation("net.postgis:postgis-jdbc:2021.1.0")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
-  testImplementation("io.kotest:kotest-assertions-core:5.5.5")
+  testImplementation("io.kotest:kotest-assertions-core:5.8.0")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
 }

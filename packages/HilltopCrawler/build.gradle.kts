@@ -44,7 +44,7 @@ dependencies {
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
-  testImplementation("io.kotest:kotest-assertions-core:5.4.2")
+  testImplementation("io.kotest:kotest-assertions-core:5.8.0")
 }
 
 // Don't repackage build in a "-plain" Jar
