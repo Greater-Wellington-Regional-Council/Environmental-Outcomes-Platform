@@ -12,7 +12,7 @@ plugins {
 
 buildscript {
   repositories { mavenCentral() }
-  dependencies { classpath("org.flywaydb:flyway-database-postgresql:10.1.0") }
+  dependencies { classpath("org.flywaydb:flyway-database-postgresql:10.6.0") }
 }
 
 group = "nz.govt.eop"
