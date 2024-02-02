@@ -49,12 +49,11 @@ With above in place, clone the repo to your machine and do the following in the 
 3. Create a new shell session in the same folder
 4. `./gradew bootRun`
 5. In a new shell, go to `packages/PlanLimitUI`
-2. `./gradlew bootRun`
-3. npm install
-4. `cp .env.local.template .env.local`
-5. Go to (LINZ Basemaps)[https://basemaps.linz.govt.nz/@-41.8899962,174.0492437,z5) and get a 90 day API key
-6. Edit .env.local, adding your basemaps API key from the last step.  It should be be obvious where to insert it and should be a double-quoted string.
+6. npm install
+7. `cp .env.local.template .env.local`
+8. Go to (LINZ Basemaps)[https://basemaps.linz.govt.nz/@-41.8899962,174.0492437,z5) and get a 90 day API key
+9. Edit .env.local, adding your basemaps API key from the last step.  It should be be obvious where to insert it and should be a double-quoted string.
     eg, `VITE_LINZ_API_KEY="c01hnehzqpjbep1x6kgf8ey8wxw"`
-7. Ensure there are no instances of postgres running on your system
-8. `npm run dev`
-9. Visit http://localhost:5173/
+10. Ensure there are no instances of postgres running on your system
+11. `npm run dev`
+12. Visit http://localhost:5173/
