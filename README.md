@@ -48,7 +48,7 @@ With above in place, clone the repo to your machine and do the following in the 
 2. `./batect runSupportServices`
 3. Create a new shell session in the same folder
 4. `./gradew bootRun`
-5. `cd packages/PlanLimitUI`
+5. In a new shell, go to `packages/PlanLimitUI`
 2. `./gradlew bootRun`
 3. npm install
 4. `cp .env.local.template .env.local`
