@@ -33,3 +33,28 @@ Include diagrams in the site:
 * Update the relevant markdown file to incorporate diagrams into the site.
 * 
 * `git commit` changes
+
+### Run the application locally
+
+Running this application is fairly manual at the moment and requires some technical expertise.  In summary, you can run the application on your own computer by downloading it to your computer, setting up a few dependencies and executing a number of shell commands to start desired components. You will need on your machine:-
+* [postgres](https://www.postgresql.org/download/) installed on the target machine
+* [Docker](https://docs.docker.com/get-docker/)
+* [Node](https://nodejs.org/en/download/) to a GUI/front end application such as Plan Limits (which is a React application)
+* Java and [Gradle](https://gradle.org/install/)
+* And of course **git** to clone the repo to your machine
+
+With above in place, clone the repo to your machine and do the following in the root of your local repo to run the Plan Limits application:-
+1. `cd packages/Manager`
+2. `./batect runSupportServices`
+3. Create a new shell session in the same folder
+4. `./gradew bootRun`
+5. `cd packages/PlanLimitUI`
+2. `./gradlew bootRun`
+3. npm install
+4. `cp .env.local.template .env.local`
+5. Go to (LINZ Basemaps)[https://basemaps.linz.govt.nz/@-41.8899962,174.0492437,z5) and get a 90 day API key
+6. Edit .env.local, adding your basemaps API key from the last step.  It should be be obvious where to insert it and should be a double-quoted string.
+    eg, `VITE_LINZ_API_KEY="c01hnehzqpjbep1x6kgf8ey8wxw"`
+7. Ensure there are no instances of postgres running on your system
+8. `npm run dev`
+9. Visit http://localhost:5173/
