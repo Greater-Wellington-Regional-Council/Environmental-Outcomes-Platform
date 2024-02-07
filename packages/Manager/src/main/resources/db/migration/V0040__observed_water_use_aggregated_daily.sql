@@ -99,5 +99,6 @@ FilledMeasurements AS (
 SELECT
 *
 FROM
-    FilledMeasurements ORDER BY site_name, day_observed_at
+    FilledMeasurements 
     WHERE measurement_name != filled_measurement
+    ORDER BY site_name, day_observed_at
