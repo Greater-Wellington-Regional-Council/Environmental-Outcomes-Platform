@@ -1,9 +1,3 @@
-SET ROLE materialized_views_role;
-
-DROP MATERIALIZED VIEW water_allocation_and_usage_by_area;
-
-RESET ROLE;
-
 CREATE MATERIALIZED VIEW water_allocation_and_usage_by_area AS
 WITH
   all_days AS (
