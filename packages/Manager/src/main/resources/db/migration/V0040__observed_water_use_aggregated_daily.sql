@@ -1,3 +1,5 @@
+DROP VIEW IF EXISTS observed_water_use_aggregated_daily;
+
 CREATE OR REPLACE VIEW observed_water_use_aggregated_daily AS
 
 WITH filtered_obs AS (SELECT osm.id,
