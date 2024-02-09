@@ -100,10 +100,12 @@ FilledMeasurements AS (
         NonDuplicateMeasurements
 )
 SELECT
-*
+    site_name,
+    day_observed_at,
+    daily_usage
 FROM
     FilledMeasurements 
-    WHERE measurement_name != filled_measurement
+    WHERE measurement_name = filled_measurement
     ORDER BY site_name, day_observed_at;
 
 SET ROLE materialized_views_role;
