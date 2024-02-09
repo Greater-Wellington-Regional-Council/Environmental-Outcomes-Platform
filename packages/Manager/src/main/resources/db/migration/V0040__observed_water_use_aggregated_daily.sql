@@ -84,6 +84,7 @@ FilledMeasurements AS (
         site_name,
         day_observed_at,
         measurement_name,
+        daily_usage,
         duplication_status,
         COALESCE(non_duplicate_measurement,
                  FIRST_VALUE(non_duplicate_measurement) OVER (
