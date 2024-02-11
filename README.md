@@ -43,8 +43,10 @@ This is currently a slightly manual process.  In general, you will need at least
 With above in place, clone the repo to your machine and do the following from the command line in the root of your local repo to run the Plan Limits application:-
 1. `cd packages/Manager`
 2. `./batect runSupportServices`
-_From a new shell session in the same folder_
-3`./gradew bootRun`
+
+_And from a new shell session in the same folder_
+
+3. `./gradew bootRun`
 
 You have now started the shared infrastructure, and will find specific run instructions for each application package in its own README.md file.
 
