@@ -31,29 +31,21 @@ Include diagrams in the site:
 * Export diagrams via http://localhost:8090
 * Save exported diagrams to the relevant folder in `src/markdown-pages`
 * Update the relevant markdown file to incorporate diagrams into the site.
-* 
 * `git commit` changes
 
-### Run the application locally
+### How to Run the application locally
 
-Running this application is fairly manual at the moment and requires some technical expertise.  In summary, you can run the application on your own computer by downloading it to your computer, setting up a few dependencies and executing a number of shell commands to start desired components. You will need on your machine:-
-* [postgres](https://www.postgresql.org/download/) installed on the target machine
-* [Docker](https://docs.docker.com/get-docker/)
-* [Node](https://nodejs.org/en/download/) to a GUI/front end application such as Plan Limits (which is a React application)
-* Java and [Gradle](https://gradle.org/install/)
-* And of course **git** to clone the repo to your machine
+This is currently a slightly manual process.  In general, you will need at least the following installed on your machine:-
+* A [JVM](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc) installed on the target machine.
+* [Docker](https://docs.docker.com/get-docker/) in order to run the [Batect](https://batect.dev/) tool.
+* And of course a **git** tool of some sort to clone the repo to your machine
 
-With above in place, clone the repo to your machine and do the following in the root of your local repo to run the Plan Limits application:-
+With above in place, clone the repo to your machine and do the following from the command line in the root of your local repo to run the Plan Limits application:-
 1. `cd packages/Manager`
 2. `./batect runSupportServices`
-3. Create a new shell session in the same folder
-4. `./gradew bootRun`
-5. In a new shell, go to `packages/PlanLimitUI`
-6. npm install
-7. `cp .env.local.template .env.local`
-8. Go to (LINZ Basemaps)[https://basemaps.linz.govt.nz/@-41.8899962,174.0492437,z5) and get a 90 day API key
-9. Edit .env.local, adding your basemaps API key from the last step.  It should be be obvious where to insert it and should be a double-quoted string.
-    eg, `VITE_LINZ_API_KEY="c01hnehzqpjbep1x6kgf8ey8wxw"`
-10. Ensure there are no instances of postgres running on your system
-11. `npm run dev`
-12. Visit http://localhost:5173/
+_From a new shell session in the same folder_
+3`./gradew bootRun`
+
+You have now started the shared infrastructure, and will find specific run instructions for each application package in its own README.md file.
+
+For example, [here are the run instructions for the Plan Limits UI](packages/PlanLimitsUI/README.md).
