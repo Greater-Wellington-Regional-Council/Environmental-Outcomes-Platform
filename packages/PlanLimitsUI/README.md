@@ -5,10 +5,16 @@ The Plan Limits UI is a front end application that allows users to view and mana
 
 In a command line shell in the `packages/PlanLimitUI` folder:-
 1. Run `npm install`
+
+_The following steps (2 to 4) are only required once, or if your LINZ Basemaps key has expired._
+
 2. Run `cp .env.local.template .env.local`
 3. Go to (LINZ Basemaps)[https://basemaps.linz.govt.nz/@-41.8899962,174.0492437,z5) and get a 90 day API key
-4. if you haven't done so already, or your existing key is no longer valid, edit .env.local, adding your basemaps API key from the last step.  It should be be obvious where to insert it and should be a double-quoted string.
+4. Edit .env.local, adding your basemaps API key from the last step.  It should be be obvious where to insert it and should be a double-quoted string.
    eg, `VITE_LINZ_API_KEY="c01ehzsqpjbep1x6akgf8ey8wxw"`
+
+_And start the server_
+
 5. Run `npm run dev`
 
 You can now visit http://localhost:5173/ to see the Plan Limits UI.

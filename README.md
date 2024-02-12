@@ -35,18 +35,25 @@ Include diagrams in the site:
 
 ### How to Run the application locally
 
-This is currently a slightly manual process.  In general, you will need at least the following installed on your machine:-
-* A [JVM](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc) installed on the target machine.
-* [Docker](https://docs.docker.com/get-docker/) in order to run the [Batect](https://batect.dev/) tool.
+To run Ha Kākano locally, you will need to start the shared infrastructure services and then start the individual applications. 
+
+At least the following installed on your machine before you start:-
+* A [JVM](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc) installed on the target machine in order to run the [Batect](https://batect.dev/) tool.
+* [Docker](https://docs.docker.com/get-docker/)
 * And of course a **git** tool of some sort to clone the repo to your machine
 
-With above in place, clone the repo to your machine and do the following from the command line in the root of your local repo to run the Plan Limits application:-
+Also, shared services will expose the following ports that will therefore also need to be available before you start:-
+* 5432 for Postgres
+* 8080 for the Manager API
+* 9092 for Kafka
+
+With above in place, clone the repo to your machine and do the following from a command line shell to start the shared services:-
 1. `cd packages/Manager`
 2. `./batect runSupportServices`
 
 _And from a new shell session in the same folder_
 
-3. `./gradew bootRun`
+3. `./gradlew bootRun`
 
 You have now started the shared infrastructure, and will find specific run instructions for each application package in its own README.md file.
 
