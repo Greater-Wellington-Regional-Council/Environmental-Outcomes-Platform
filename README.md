@@ -37,12 +37,14 @@ Include diagrams in the site:
 
 To run Ha Kākano locally, you will need to start the shared infrastructure services and then start the individual applications. 
 
-At least the following installed on your machine before you start:-
+#### Shared Infrastructure
+
+You will need at least the following installed on your machine before you start:-
 * A [JVM](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc) installed on the target machine in order to run the [Batect](https://batect.dev/) tool.
 * [Docker](https://docs.docker.com/get-docker/)
 * And of course a **git** tool of some sort to clone the repo to your machine
 
-Also, shared services will expose the following ports that will therefore also need to be available before you start:-
+Shared services will expose the following ports that will need to be available before you start:-
 * 5432 for Postgres
 * 8080 for the Manager API
 * 9092 for Kafka
@@ -55,6 +57,6 @@ _And from a new shell session in the same folder_
 
 3. `./gradlew bootRun`
 
-You have now started the shared infrastructure, and will find specific run instructions for each application package in its own README.md file.
+#### Application Packages
 
-For example, [here are the run instructions for the Plan Limits UI](packages/PlanLimitsUI/README.md).
+Having started the shared infrastructure, you will find specific run instructions for each application package in its own README.md file.  For example, [here are the run instructions for the Plan Limits UI](packages/PlanLimitsUI/README.md).
