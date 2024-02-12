@@ -1,7 +1,7 @@
 
 ## Plan Limits UI
 
-The Plan Limits UI is a front end application that allows users to view and manage water use limits. It is built using React and relies on the Ha Kākano shared data services to be running in the background. Therefore, to run this application locally, you will need to first start the supporting services which you can do by following the [instructions in the main readme](../../README.md).  Then do the following to serve this application to your browser:-
+The Plan Limits UI is a front end application that allows users to view water use limits. It is built using React and relies on the Ha Kākano shared data services to be running in the background. Therefore, to run this application locally, you will need to first start the supporting services which you can do by following the [instructions in the main readme](../../README.md).  Then do the following to serve this application to your browser:-
 
 In a command line shell in the `packages/PlanLimitUI` folder:-
 1. Run `npm install`
