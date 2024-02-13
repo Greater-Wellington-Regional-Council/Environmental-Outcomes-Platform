@@ -1,3 +1,7 @@
+SET ROLE materialized_views_role;
+DROP MATERIALIZED VIEW IF EXISTS water_allocation_and_usage_by_area;
+RESET ROLE;
+
 DROP VIEW IF EXISTS observed_water_use_aggregated_daily CASCADE;
 
 CREATE OR REPLACE VIEW observed_water_use_aggregated_daily AS
@@ -107,10 +111,6 @@ FROM
     filled_measurements 
     WHERE measurement_name = filled_measurement
     ORDER BY site_name, day_observed_at;
-
-SET ROLE materialized_views_role;
-
-RESET ROLE;
 
 CREATE MATERIALIZED VIEW water_allocation_and_usage_by_area AS
 WITH
