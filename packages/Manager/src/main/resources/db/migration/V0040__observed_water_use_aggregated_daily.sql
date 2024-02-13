@@ -49,7 +49,7 @@ duplication_dates AS (
         COUNT(DISTINCT measurement_name) > 1
 ),
 
-PreviousMeasurement AS (
+previous_measurement AS (
     SELECT
         dc.site_name,
         dc.day_observed_at,
@@ -65,7 +65,7 @@ PreviousMeasurement AS (
         duplication_dates d ON dc.site_name = d.site_name AND dc.day_observed_at = d.day_observed_at
  
 ),
-NonDuplicateMeasurements AS (
+non_duplicate_measurements AS (
     SELECT
         site_name,
         day_observed_at,
@@ -77,9 +77,9 @@ NonDuplicateMeasurements AS (
             ELSE NULL
         END AS non_duplicate_measurement
     FROM
-        PreviousMeasurement
+        previous_measurement
 ),
-FilledMeasurements AS (
+filled_measurements AS (
     SELECT
         site_name,
         day_observed_at,
@@ -97,14 +97,14 @@ FilledMeasurements AS (
             )
                  ) AS filled_measurement
     FROM
-        NonDuplicateMeasurements
+        non_duplicate_measurements
 )
 SELECT
     site_name,
     day_observed_at,
     daily_usage
 FROM
-    FilledMeasurements 
+    filled_measurements 
     WHERE measurement_name = filled_measurement
     ORDER BY site_name, day_observed_at;
 
