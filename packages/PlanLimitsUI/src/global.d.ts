@@ -55,9 +55,9 @@ interface UsageDisplayGroup {
 interface Usage {
   date: string;
   areaId: string;
-  allocation: number | null;
-  meteredAllocationDaily: number | null;
-  meteredAllocationDailyUsed: number | null;
+  allocationPlan: number | null;
+  allocationDaily: number | null;
+  allocationDailyUsed: number | null;
   dailyUsage: number | null;
 }
 
@@ -189,7 +189,7 @@ interface HeatmapData {
 
 interface HeatmapDataItem {
   x: string;
-  y: number;
+  y: number | null;
 }
 
 interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {

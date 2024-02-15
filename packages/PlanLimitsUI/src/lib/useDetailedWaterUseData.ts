@@ -104,9 +104,9 @@ function parseUsage(usage: Usage[]) {
       dayOfWeek: getDay(parsedDate),
       usagePercent:
         typeof usage.dailyUsage === 'number' &&
-        typeof usage.meteredAllocationDailyUsed === 'number' &&
-        usage.meteredAllocationDailyUsed > 0
-          ? usage.dailyUsage / usage.meteredAllocationDailyUsed
+        typeof usage.allocationDailyUsed === 'number' &&
+        usage.allocationDailyUsed > 0
+          ? usage.dailyUsage / usage.allocationDailyUsed
           : null,
     };
   });
@@ -128,7 +128,7 @@ function transformUsageToWeeklyHeatmapData(
 
       const usageInWeekAsPercentages = usageInWeek
         .map((usage) => usage.usagePercent)
-        .filter((p) => p !== null);
+        .filter((p): p is number => p !== null);
 
       const medianUsage =
         usageInWeekAsPercentages.length > 0
@@ -178,15 +178,17 @@ function transformUsageToDailyHeatmapData(
           return usageForDay
             ? {
                 date,
-                usage: usageForDay.dailyUsage,
-                allocation: usageForDay.meteredAllocationDailyUsed,
+                dailyUsage: usageForDay.dailyUsage,
+                allocationDailyUsed: usageForDay.allocationDailyUsed,
+                allocationDaily: usageForDay.allocationDaily,
                 x: week,
                 y: usageForDay.usagePercent,
               }
             : {
                 date,
-                usage: null,
-                allocation: null,
+                dailyUsage: null,
+                allocationDailyUsed: null,
+                allocationDaily: null,
                 x: week,
                 y: null,
               };

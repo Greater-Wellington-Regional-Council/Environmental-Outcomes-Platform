@@ -17,10 +17,10 @@ data class WaterAllocation(
     val consentId: String,
     val status: ConsentStatus,
     val areaId: String,
-    val allocation: BigDecimal,
+    val allocationPlan: BigDecimal,
+    val allocationDaily: BigDecimal,
+    val allocationYearly: BigDecimal,
     val isMetered: Boolean,
-    val meteredAllocationDaily: BigDecimal?,
-    val meteredAllocationYearly: BigDecimal?,
     val meters: List<String>,
 )
 

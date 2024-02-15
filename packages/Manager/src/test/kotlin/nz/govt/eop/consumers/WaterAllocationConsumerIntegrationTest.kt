@@ -64,7 +64,7 @@ class WaterAllocationConsumerIntegrationTest(
 
       val record = records.first()
       record.ingestId.shouldBe(record.ingestId)
-      record.allocation.shouldBe(record.allocation)
+      record.allocationPlan.shouldBe(record.allocationPlan)
       record.effectiveFrom
           ?.toInstant()
           ?.truncatedTo(ChronoUnit.MILLIS)

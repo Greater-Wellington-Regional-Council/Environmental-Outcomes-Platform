@@ -19,7 +19,8 @@ const determineBackendUri = (hostname: string) => {
     return 'https://data.gw-eop-dev.tech';
   }
 
-  return 'http://localhost:8080';
+  return 'https://data.gw-eop-dev.tech';
+  // return 'http://localhost:8080';
 };
 
 const defaultRequestInit: RequestInit = {

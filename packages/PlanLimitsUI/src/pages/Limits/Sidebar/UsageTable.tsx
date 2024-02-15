@@ -209,17 +209,28 @@ const CustomTooltip = ({
           Usage:{' '}
           {cell.data.usage !== null ? (
             <>
-              {formatNumber.format(cell.data.usage)}m<sup>3</sup>/day
+              {formatNumber.format(cell.data.dailyUsage)}m<sup>3</sup>/day
             </>
           ) : (
             'No data'
           )}
         </div>
         <div>
-          Allocation:{' '}
+          Measured Allocation:{' '}
           {cell.data.allocation !== null ? (
             <>
-              {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
+              {formatNumber.format(cell.data.allocationDailyUsed)}m<sup>3</sup>
+              /day
+            </>
+          ) : (
+            'No data'
+          )}
+        </div>
+        <div>
+          Allocation Total:{' '}
+          {cell.data.allocation !== null ? (
+            <>
+              {formatNumber.format(cell.data.allocationDaily)}m<sup>3</sup>/day
             </>
           ) : (
             'No data'
