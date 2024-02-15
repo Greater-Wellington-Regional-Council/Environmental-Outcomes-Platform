@@ -119,10 +119,13 @@ function CustomTooltip({
               Usage <br />m<sup>3</sup>/day
             </th>
             <th className="border">
-              Allocation <br />m<sup>3</sup>/day
+              Measured Allocation <br />m<sup>3</sup>/day
             </th>
             <th className="border">
               Usage <br />%
+            </th>
+            <th className="border">
+              Allocation Total <br />m<sup>3</sup>/day
             </th>
           </tr>
         </thead>
@@ -138,13 +141,18 @@ function CustomTooltip({
                   : 'No data'}
               </td>
               <td className="border">
-                {u.meteredAllocationDailyUsed !== null
-                  ? formatNumber.format(u.meteredAllocationDailyUsed)
+                {u.allocationDailyUsed !== null
+                  ? formatNumber.format(u.allocationDailyUsed)
                   : 'No data'}
               </td>
               <td className="border">
                 {u.usagePercent !== null
                   ? round(u.usagePercent * 100, 1)
+                  : 'No data'}
+              </td>
+              <td className="border">
+                {u.allocationDaily !== null
+                  ? formatNumber.format(u.allocationDaily)
                   : 'No data'}
               </td>
             </tr>

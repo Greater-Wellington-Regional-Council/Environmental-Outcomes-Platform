@@ -45,7 +45,7 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
     val records = fetchWaterAllocations(message.sourceId)
     records.size.shouldBe(1)
     val record = records.first()
-    record.allocation.shouldBe(message.allocation)
+    record.allocationPlan.shouldBe(message.allocationPlan)
     record.ingestId.shouldBe(message.ingestId)
   }
 
@@ -55,7 +55,7 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
     val firstMessage = createWaterAllocationMessage()
     val secondMessage =
         firstMessage.copy(
-            allocation = BigDecimal("200.11"),
+            allocationPlan = BigDecimal("200.11"),
             ingestId = "secondIngestId",
             receivedAt = firstMessage.receivedAt.plusSeconds(3600))
 
@@ -71,14 +71,14 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
     val secondRecordReceivedAtTruncated = secondMessage.receivedAt.truncatedTo(ChronoUnit.MILLIS)
 
     val firstRecord = records.first()
-    firstRecord.allocation.shouldBe(firstRecord.allocation)
+    firstRecord.allocationPlan.shouldBe(firstRecord.allocationPlan)
     firstRecord.ingestId.shouldBe(firstRecord.ingestId)
     firstRecord.effectiveFrom!!.truncateToMillis().shouldBe(firstRecordReceivedAtTruncated)
     firstRecord.effectiveTo!!.truncateToMillis().shouldBe(secondRecordReceivedAtTruncated)
 
     val secondRecord = records[1]
     secondRecord.ingestId.shouldBe(secondRecord.ingestId)
-    secondRecord.allocation.shouldBe(secondRecord.allocation)
+    secondRecord.allocationPlan.shouldBe(secondRecord.allocationPlan)
     secondRecord.effectiveFrom!!.truncateToMillis().shouldBe(secondRecordReceivedAtTruncated)
     secondRecord.effectiveTo.shouldBeNull()
   }
