@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 @AutoConfigureMockMvc
 class ControllerIntegrationTest(@Autowired val mvc: MockMvc) {
 
-  @Test
+    @Test
   fun `can load councils`() {
     mvc.perform(get("/plan-limits/councils").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk)

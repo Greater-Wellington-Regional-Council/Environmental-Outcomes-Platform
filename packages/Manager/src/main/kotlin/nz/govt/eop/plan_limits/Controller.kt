@@ -1,7 +1,7 @@
 package nz.govt.eop.plan_limits
 
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit.DAYS
+import java.time.temporal.ChronoUnit.YEARS
 import java.util.concurrent.TimeUnit
 import org.jooq.*
 import org.springframework.http.CacheControl
@@ -96,8 +96,7 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
       throw ResponseStatusException(
           HttpStatus.BAD_REQUEST, "The parameter \"to\" must be after \"from\"")
     }
-    val difference = DAYS.between(from, to)
-    if (difference < 1 || difference >= 366) {
+    if (YEARS.between(from, to) > 0) {
       throw ResponseStatusException(
           HttpStatus.BAD_REQUEST,
           "The duration between \"from\" and \"to\" should be more than one day and at most one year")
