@@ -1,0 +1,21 @@
+eop:
+  outputs:
+    dev:
+      type: postgres
+      host: host.docker.internal
+      port: 5432
+      dbname: eop_dev
+      user: postgres
+      pass: password
+      schema: public
+      threads: 1
+    test:
+      type: postgres
+      host: test-database
+      port: 5432
+      dbname: eop_test
+      pass: password
+      user: postgres
+      schema: public
+      threads: 1
+  target: dev
