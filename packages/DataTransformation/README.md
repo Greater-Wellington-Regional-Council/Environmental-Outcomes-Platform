@@ -5,6 +5,7 @@ TODO - this is super quick doc so it can be shared while work is sitll going on
 ## Running
 
 * Start the Manager as per its [README](../Manager/README.md)
+* run `./batect deps` - this will install the dependencies for dbt
 * run `./batect run` - this will run DBT against the DB the manager is using
 * You should now have a rivers_2 table in the DB
 
