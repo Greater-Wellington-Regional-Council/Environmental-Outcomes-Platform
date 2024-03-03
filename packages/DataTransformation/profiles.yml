@@ -8,7 +8,7 @@ eop:
       user: postgres
       pass: password
       schema: public
-      threads: 1
+      threads: 4
     test:
       type: postgres
       host: test-database
@@ -17,5 +17,14 @@ eop:
       pass: password
       user: postgres
       schema: public
-      threads: 1
+      threads: 4
+    prod:
+      type: postgres
+      host: "{{ env_var('CONFIG_DATABASE_HOST') }}"
+      port: 5432
+      dbname: "{{ env_var('CONFIG_DATABASE_NAME') }}"
+      user: "{{ env_var('CONFIG_DATABASE_USERNAME') }}"
+      pass: "{{ env_var('CONFIG_DATABASE_PASSWORD') }}"
+      schema: public
+      threads: 4
   target: dev
