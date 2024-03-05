@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test" type="Multirun" separateTabs="false" reuseTabsWithFailures="true" startOneByOne="true" markFailedProcess="true" hideSuccessProcess="true" delayTime="0.0">
+    <runConfiguration name="All Tests" type="Vitest" />
+    <runConfiguration name="All Tests" type="Playwright" />
+    <method v="2" />
+  </configuration>
+</component>
