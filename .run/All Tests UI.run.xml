@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All Tests UI" type="JavaScriptTestRunnerPlaywright">
+    <node-interpreter value="project" />
+    <playwright-package value="$PROJECT_DIR$/packages/cccv/node_modules/@playwright/test" />
+    <working-dir value="$PROJECT_DIR$/packages/cccv" />
+    <cli-options value="--ui" />
+    <envs />
+    <scope-kind value="ALL" />
+    <method v="2" />
+  </configuration>
+</component>
