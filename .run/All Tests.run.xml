@@ -1,18 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="All Tests" type="JavaScriptTestRunnerPlaywright" nameIsGenerated="true">
-    <node-interpreter value="project" />
-    <playwright-package value="$PROJECT_DIR$/packages/cccv/node_modules/@playwright/test" />
-    <working-dir value="$MODULE_WORKING_DIR$" />
-    <envs>
-      <env name="PACKAGE_DIR" value="$PROJECT_DIR$/packages" />
-    </envs>
-    <scope-kind value="ALL" />
-    <method v="2" />
-  </configuration>
   <configuration default="false" name="All Tests" type="JavaScriptTestRunnerVitest" nameIsGenerated="true">
     <node-interpreter value="project" />
-    <vitest-package value="$MODULE_WORKING_DIR$ /node_modules/vitest" />
-    <working-dir value="." />
+    <vitest-package value="$PROJECT_DIR$/packages/cccv/node_modules/vitest" />
+    <working-dir value="$PROJECT_DIR$/packages/cccv" />
     <envs />
     <scope-kind value="ALL" />
     <method v="2" />
