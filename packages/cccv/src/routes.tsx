@@ -6,7 +6,7 @@ import loadLocation from '@loaders/location'
 
 const defaultAppPath = 'map/@-41,175.35,8z'
 
-const routes = [
+const routes  = [
   {
     element: <Layout />,
     children: [

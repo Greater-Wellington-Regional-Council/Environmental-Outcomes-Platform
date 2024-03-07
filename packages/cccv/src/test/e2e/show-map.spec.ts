@@ -5,5 +5,5 @@ test('home page should have the correct title and welcome message', async ({
 }) => {
   await page.goto('http://localhost:5174/map/@-41,175.35,8z')
 
-  await expect(page.getByRole('application')).toBeVisible()
+  await expect(page.getByTestId('InteractiveMap')).toBeVisible()
 })
