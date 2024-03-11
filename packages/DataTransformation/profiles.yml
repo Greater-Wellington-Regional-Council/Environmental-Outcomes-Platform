@@ -1,0 +1,30 @@
+eop:
+  outputs:
+    dev:
+      type: postgres
+      host: host.docker.internal
+      port: 5432
+      dbname: eop_dev
+      user: postgres
+      pass: password
+      schema: public
+      threads: 4
+    test:
+      type: postgres
+      host: test-database
+      port: 5432
+      dbname: eop_test
+      pass: password
+      user: postgres
+      schema: public
+      threads: 4
+    prod:
+      type: postgres
+      host: "{{ env_var('CONFIG_DATABASE_HOST') }}"
+      port: 5432
+      dbname: "{{ env_var('CONFIG_DATABASE_NAME') }}"
+      user: "{{ env_var('CONFIG_DATABASE_USERNAME') }}"
+      pass: "{{ env_var('CONFIG_DATABASE_PASSWORD') }}"
+      schema: public
+      threads: 4
+  target: dev

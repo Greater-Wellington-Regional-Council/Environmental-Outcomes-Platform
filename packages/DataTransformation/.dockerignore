@@ -1,0 +1,13 @@
+.dockerignore
+Dockerfile
+
+.git/
+
+.batect/
+batect*
+
+.sqlfluff
+.sqlfluffignore
+
+Dockerfile
+README.md
