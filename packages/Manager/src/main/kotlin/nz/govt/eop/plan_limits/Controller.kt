@@ -5,14 +5,12 @@ import java.time.temporal.ChronoUnit.YEARS
 import java.util.concurrent.TimeUnit
 import org.jooq.*
 import org.springframework.http.CacheControl
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
-import org.springframework.web.server.ResponseStatusException
 
 @Controller
 class Controller(val context: DSLContext, val queries: Queries, val manifest: Manifest) {
@@ -93,12 +91,11 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
       @RequestParam("areaId") areaId: String?
   ): ResponseEntity<String> {
     if (from >= to) {
-      throw ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "The parameter \"to\" must be after \"from\"")
+      return ResponseEntity.badRequest().body(
+         "The parameter \"to\" must be after \"from\"")
     }
     if (YEARS.between(from, to) > 0) {
-      throw ResponseStatusException(
-          HttpStatus.BAD_REQUEST,
+      return ResponseEntity.badRequest().body(
           "The duration between \"from\" and \"to\" should be more than one day and at most one year")
     }
 
