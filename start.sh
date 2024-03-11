@@ -14,10 +14,13 @@ cd packages/Manager || exit 1
 
 if [ "$1" == "Manager" ]
   then
+    # Start manager in foreground
     ./start.sh "$2 $3 $4 $5 $6 $7 $8 $9"
     exit 0
 fi
 
+# We are in manager folder.  Start in background if moving on
+# to start something else as well.
 ./start.sh "$2 $3 $4 $5 $6 $7 $8 $9" > app.log 2>&1 &
 
 echo "Waiting for the front-end application to start..."

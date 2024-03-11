@@ -18,6 +18,10 @@ container-health () {
 stop_containers () {
   echo Stopping containers..
   docker ps --filter "status=running" --format "{{.Names}}" | grep 'manager-' | xargs -r docker stop
+  docker ps --filter "status=running" --format "{{.Names}}" | grep 'manager-database' | xargs -r docker stop
+  docker ps --filter "status=running" --format "{{.Names}}" | grep 'confluentinc' | xargs -r docker stop
+  docker ps --filter "status=running" --format "{{.Names}}" | grep 'provectuslabs' | xargs -r docker stop
+  docker ps --filter "status=running" --format "{{.Names}}" | grep 'pramsey' | xargs -r docker stop
 }
 
 stop_and_delete_containers () {
