@@ -59,7 +59,7 @@ _And from a new shell session in the same folder_
 
 #### Application Packages
 
-Having started the shared infrastructure, you will find specific run instructions for each application package in its own README.md file.  For example, [here are the run instructions for the Plan Limits UI](packages/PlanLimitsUI/README.md).
+Having started the shared infrastructure, you will find specific run instructions for each application package in its own README.md file.  For example, [here are the run instructions for the Plan Limits UI](./packages/PlanLimitsUI/README.md).
 
 ## `start.sh` convenience script
 
