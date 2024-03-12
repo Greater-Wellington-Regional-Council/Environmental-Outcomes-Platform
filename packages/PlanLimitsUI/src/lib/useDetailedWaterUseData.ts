@@ -1,13 +1,13 @@
 import { groupBy, flatten, uniq, sortBy } from 'lodash';
 import {
   format,
-  addYears,
   addDays,
   parse,
   parseJSON,
   lastDayOfWeek,
   getDay,
   setDay,
+  addYears,
 } from 'date-fns';
 
 import { useWaterUseQuery } from '../api';
@@ -25,10 +25,12 @@ export default function useDetailedWaterUseData(
   councilId: number,
   displayGroups: UsageDisplayGroup[],
 ) {
-  const to = addDays(new Date(), -1);
-  const from = addYears(to, -1);
+  const from = addYears(Date.now(), -1);
+  const to = addDays(Date.now(), -1);
+
   const formattedFrom = format(from, 'yyyy-MM-dd');
   const formattedTo = format(to, 'yyyy-MM-dd');
+
   const waterUseQueryResult = useWaterUseQuery(
     councilId,
     formattedFrom,
