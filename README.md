@@ -35,7 +35,7 @@ Include diagrams in the site:
 
 ### How to Run the application locally
 
-To run Ha Kākano locally, you will need to start the shared infrastructure services and then start the individual applications. 
+To run He Kākano locally, you will need to start the shared infrastructure services and then start the individual applications. 
 
 #### Shared Infrastructure
 
