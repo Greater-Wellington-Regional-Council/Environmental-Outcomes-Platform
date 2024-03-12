@@ -1,5 +1,6 @@
 package nz.govt.eop.plan_limits
 
+import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,8 +34,9 @@ class DetailedWaterUsageTest(@Autowired val mvc: MockMvc) {
     fun `fails for 366 days over a non-leap year`() {
         `when`(queries.waterUsage(9, LocalDate.of( 2022, 1,1), LocalDate.of( 2023, 1,1), null)).thenReturn("[]")
         mvc.perform(get("/plan-limits/water-usage?councilId=9&from=2022-01-01&to=2023-01-01").contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest)
+        .andExpect(status().isBadRequest).andExpect(content().string(containsString("The duration between")))
     }
+
 
     @Test
     fun `succeeds for 366 on leap year`() {
