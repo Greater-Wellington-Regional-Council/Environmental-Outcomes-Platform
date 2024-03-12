@@ -27,3 +27,18 @@ tasks:
       command: ./gradlew bootJar
       environment:
         CONFIG_DATABASE_HOST: test-database
+
+  run:
+    description: Run services on current system
+    dependencies:
+      - database
+      - tileserver
+      - kafka-ui
+    run:
+      container: java-build-env
+      command: ./gradlew bootRun
+      environment:
+        CONFIG_DATABASE_HOST: database
+      ports:
+        - local: 8080
+          container: 8080
