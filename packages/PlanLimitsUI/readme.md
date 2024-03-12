@@ -1,45 +1,20 @@
-# Water Allocations Viewer
 
-The Water Allocations Viewer is a web app allowing water allocation and usage relating to the Natural Resources Plan areas to be viewed.
+## Plan Limits UI
 
-It's built using React and [React Router](https://reactrouter.com/en/main) and bundled using [Vite](https://vitejs.dev).
+The Plan Limits UI is a front end application that allows users to view water use limits. It is built using React and relies on the Ha Kākano shared data services to be running in the background. Therefore, to run this application locally, you will need to first start the supporting services which you can do by following the [instructions in the main readme](../../README.md).  Then do the following to serve this application to your browser:-
 
-The app displays a map using [react-map-gl](https://visgl.github.io/react-map-gl) showing a base layer from LINZ. It fetches water allocation and usage data the [EOP Manager API](../Manager/) via [React Query](https://tanstack.com/query/latest) to display on this map, and alongside it.
+In a command line shell in the `packages/PlanLimitUI` folder:-
+1. Run `npm install`
 
-It makes use of [Nivo](https://nivo.rocks) for more advanced visualisation of the data.
+_The following steps (2 to 4) are only required once, or if your LINZ Basemaps key has expired._
 
-![Screenshot the App](./plan-limits-ui-screenshot.png)
+2. Run `cp .env.local.template .env.local`
+3. Go to (LINZ Basemaps)[https://basemaps.linz.govt.nz/@-41.8899962,174.0492437,z5) and get a 90 day API key
+4. Edit .env.local, adding your basemaps API key from the last step.  It should be be obvious where to insert it and should be a double-quoted string.
+   eg, `VITE_LINZ_API_KEY="c01ehzsqpjbep1x6akgf8ey8wxw"`
 
-## Getting Started
+_And start the server_
 
-### Prerequisites
+5. Run `npm run dev`
 
-* Node
-* The [EOP Manager API](../Manager/) and supporting services
-
-### Setup
-- Run `npm install`
-- Copy `.env.local.template` to `.env.local`, and populate with a valid [LINZ Basemap Api Key](https://basemaps.linz.govt.nz).
-
-### Running
-```bash
-npm run dev
-```
-
-### Running tests
-```bash
-npm run test
-```
-
-### Code Linting and Formatting
-```bash
-npm run check
-```
-
-### Deployment
-Deployment is to AWS Amplify which is connected to specific git branches.
-
-- Pushing to the branch `deploy/plan-limits-ui/dev` will deploy to the development envrionment, [https://plan-limits.gw-eop-dev.tech](https://plan-limits.gw-eop-dev.tech).
-- Pushing to the branch `deploy/plan-limits-ui/stage` will deploy to the staging envrionment, [https://plan-limits.gw-eop-stage.tech](https://plan-limits.gw-eop-stage.tech).
-- Pushing to the branch `deploy/plan-limits-ui/prod` will deploy to the staging envrionment, [https://plan-limits.eop.gw.govt.nz](https://plan-limits.eop.gw.govt.nz).
-- Pushing to a branch prefixed with `deploy/plan-limits-ui/review/` will create a new Amplify review envrionment linked to the dev Manager API. This is accessible from a URL with the format `https://deploy-plan-limits-ui-{branch-suffix}.d2qauh5z55065f.amplifyapp.com/limits/gw/usage`
+You can now visit http://localhost:5173/ to see the Plan Limits UI.
