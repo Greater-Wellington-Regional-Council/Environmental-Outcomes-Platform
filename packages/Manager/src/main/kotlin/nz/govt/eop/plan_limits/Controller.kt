@@ -14,93 +14,97 @@ import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
 class Controller(val context: DSLContext, val queries: Queries, val manifest: Manifest) {
-  @RequestMapping("/plan-limits/manifest", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @ResponseBody
-  fun getManifest(
-      @RequestParam(name = "councilId") councilId: Int
-  ): ResponseEntity<Map<String, String>> {
-    return ResponseEntity.ok().body(manifest.get(councilId))
-  }
-
-  @RequestMapping("/plan-limits/councils", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @ResponseBody
-  fun getCouncils(): ResponseEntity<String> {
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.councils())
-  }
-
-  @RequestMapping("/plan-limits/plan", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @ResponseBody
-  fun getPlan(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.plan(councilId))
-  }
-
-  @RequestMapping("/plan-limits/plan-regions", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @ResponseBody
-  fun getCouncilRegions(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.planRegions(councilId))
-  }
-
-  @RequestMapping(
-      "/plan-limits/surface-water-limits", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @ResponseBody
-  fun surfaceWaterLimits(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.surfaceWaterLimits(councilId))
-  }
-
-  @RequestMapping("/plan-limits/ground-water-limits", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @ResponseBody
-  fun groundWaterLimits(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.groundwaterWaterLimits(councilId))
-  }
-
-  @RequestMapping(
-      "/plan-limits/flow-measurement-sites", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @ResponseBody
-  fun flowMeasurementSites(
-      @RequestParam(name = "councilId") councilId: Int
-  ): ResponseEntity<String> {
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.flowMeasurementSites(councilId))
-  }
-
-  @RequestMapping("/plan-limits/flow-limits", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @ResponseBody
-  fun flowLimits(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.flowLimits(councilId))
-  }
-
-  @RequestMapping("/plan-limits/water-usage", produces = [MediaType.APPLICATION_JSON_VALUE])
-  @ResponseBody
-  fun waterUsage(
-      @RequestParam(name = "councilId") councilId: Int,
-      @RequestParam("from") from: LocalDate,
-      @RequestParam("to") to: LocalDate,
-      @RequestParam("areaId") areaId: String?
-  ): ResponseEntity<String> {
-    if (from >= to) {
-      return ResponseEntity.badRequest().body(
-         "The parameter \"to\" must be after \"from\"")
-    }
-    if (YEARS.between(from, to) > 0) {
-      return ResponseEntity.badRequest().body(
-          "The duration between \"from\" and \"to\" should be more than one day and at most one year")
+    @RequestMapping("/plan-limits/manifest", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun getManifest(
+        @RequestParam(name = "councilId") councilId: Int
+    ): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok().body(manifest.get(councilId))
     }
 
-    return ResponseEntity.ok()
-        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-        .body(queries.waterUsage(councilId, from, to, areaId))
-  }
+    @RequestMapping("/plan-limits/councils", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun getCouncils(): ResponseEntity<String> {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(queries.councils())
+    }
+
+    @RequestMapping("/plan-limits/plan", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun getPlan(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(queries.plan(councilId))
+    }
+
+    @RequestMapping("/plan-limits/plan-regions", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun getCouncilRegions(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(queries.planRegions(councilId))
+    }
+
+    @RequestMapping(
+        "/plan-limits/surface-water-limits", produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun surfaceWaterLimits(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(queries.surfaceWaterLimits(councilId))
+    }
+
+    @RequestMapping("/plan-limits/ground-water-limits", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun groundWaterLimits(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(queries.groundwaterWaterLimits(councilId))
+    }
+
+    @RequestMapping(
+        "/plan-limits/flow-measurement-sites", produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    @ResponseBody
+    fun flowMeasurementSites(
+        @RequestParam(name = "councilId") councilId: Int
+    ): ResponseEntity<String> {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(queries.flowMeasurementSites(councilId))
+    }
+
+    @RequestMapping("/plan-limits/flow-limits", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun flowLimits(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(queries.flowLimits(councilId))
+    }
+
+    @RequestMapping("/plan-limits/water-usage", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun waterUsage(
+        @RequestParam(name = "councilId") councilId: Int,
+        @RequestParam("from") from: LocalDate,
+        @RequestParam("to") to: LocalDate,
+        @RequestParam("areaId") areaId: String?
+    ): ResponseEntity<String> {
+        if (from >= to) {
+            return ResponseEntity.badRequest().body(
+                "The parameter \"to\" must be after \"from\""
+            )
+        }
+        if (YEARS.between(from, to) > 0) {
+            return ResponseEntity.badRequest().body(
+                "The duration between \"from\" and \"to\" should be more than one day and at most one year"
+            )
+        }
+
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(queries.waterUsage(councilId, from, to, areaId))
+    }
 }
