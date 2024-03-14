@@ -20,13 +20,13 @@ WITH filtered_obs AS (
       AND o.observed_at > '2022-11-01 00:00:00+12'
 ),
      first_values AS (
-         SELECT site_name, day_observed_at, measurement_name,
+         SELECT DISTINCT site_name, day_observed_at, measurement_name,
                 FIRST_VALUE(amount) OVER (PARTITION BY site_name, day_observed_at, measurement_name ORDER BY site_name, day_observed_at, measurement_name) as first_value
          FROM filtered_obs
          WHERE amount != 0
      ),
      last_values AS (
-         SELECT site_name, day_observed_at, measurement_name,
+         SELECT DISTINCT site_name, day_observed_at, measurement_name,
                 LAST_VALUE(amount) OVER (PARTITION BY site_name, day_observed_at, measurement_name ORDER BY site_name, day_observed_at, measurement_name ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) as last_value
          FROM filtered_obs
          WHERE amount != 0
