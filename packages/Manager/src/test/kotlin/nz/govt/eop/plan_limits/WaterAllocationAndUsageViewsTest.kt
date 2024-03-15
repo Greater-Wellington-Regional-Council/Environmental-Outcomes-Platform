@@ -19,6 +19,11 @@ import org.springframework.jdbc.support.KeyHolder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 
+public enum class MeasurementNameTestValue(val displayName: String) {
+  WaterMeterReading("Water Meter Reading"),
+  WaterMeterVolume("Water Meter Volume")
+}
+
 data class WaterAllocationUsageRow(
     val areaId: String,
     val date: LocalDate,
@@ -184,6 +189,25 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
 
     // THEN
     secondResult[0].dailyUsage shouldBe BigDecimal(15)
+  }
+
+  @Test
+  fun `should get first and last of series of readings`() {
+    // GIVEN
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(999)
+    createTestAllocation(testAllocation)
+    createTestObservation(testSiteId, 0, observationDate.toInstant(ZoneOffset.UTC), MeasurementNameTestValue.WaterMeterReading)
+    createTestObservation(testSiteId, 1111, observationDate.plusHours(1).toInstant(ZoneOffset.UTC), MeasurementNameTestValue.WaterMeterReading)
+    createTestObservation(testSiteId, 3333, observationDate.plusHours(2).toInstant(ZoneOffset.UTC), MeasurementNameTestValue.WaterMeterReading)
+    createTestObservation(testSiteId, 0, observationDate.plusHours(3).toInstant(ZoneOffset.UTC), MeasurementNameTestValue.WaterMeterReading)
+    materializeView();
+    // WHEN
+    val whereClause = "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'"
+
+    // THEN
+    val result = queryAllocationsAndUsage(whereClause)
+    result.size shouldBe 1
+    result[0].dailyUsage shouldBe BigDecimal(2222)
   }
 
   @Test
@@ -457,9 +481,9 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
       """)
   }
 
-  fun createTestObservation(siteId: Int, amount: Int, timestamp: Instant) {
+  fun createTestObservation(siteId: Int, amount: Int, timestamp: Instant, measurementName: MeasurementNameTestValue = MeasurementNameTestValue.WaterMeterVolume) {
 
-    val measurementId = createOrRetrieveSiteAndMeasurement(siteId)
+    val measurementId = createOrRetrieveSiteAndMeasurement(siteId, measurementName)
     jdbcTemplate.update(
         """
         INSERT INTO observations (observation_measurement_id, amount, observed_at)
@@ -467,9 +491,8 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         """)
   }
 
-  fun createOrRetrieveSiteAndMeasurement(siteId: Int): Int {
+  fun createOrRetrieveSiteAndMeasurement(siteId: Int, measurementName: MeasurementNameTestValue = MeasurementNameTestValue.WaterMeterVolume): Int {
     val councilId = 9
-    val measurementName = "Water Meter Volume"
     val keyHolder: KeyHolder = GeneratedKeyHolder()
 
     jdbcTemplate.update(

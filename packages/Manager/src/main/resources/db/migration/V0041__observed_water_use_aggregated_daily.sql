@@ -38,8 +38,8 @@ SELECT filtered_obs.site_name,
        CASE
            WHEN filtered_obs.measurement_name = 'Water Meter Volume' THEN SUM(filtered_obs.amount)
            WHEN count(*) = 1 AND LAG(max(filtered_obs.day_observed_at)) OVER (PARTITION BY id, filtered_obs.measurement_name ORDER BY id, filtered_obs.day_observed_at, filtered_obs.measurement_name) != filtered_obs.day_observed_at - interval '1 day' THEN NULL
-           WHEN count(*) = 1 THEN first_values.first_value - last_values.last_value
-           WHEN filtered_obs.measurement_name = 'Water Meter Reading' THEN first_values.first_value - last_values.last_value
+           WHEN count(*) = 1 THEN max(filtered_obs.amount) - LAG(max(filtered_obs.amount)) OVER (PARTITION BY id, measurement_name ORDER BY id, filtered_obs.day_observed_at, filtered_obs.measurement_name)
+           WHEN filtered_obs.measurement_name = 'Water Meter Reading' THEN last_values.last_value - first_values.first_value
            END AS daily_usage
 FROM filtered_obs
          JOIN first_values ON filtered_obs.site_name = first_values.site_name AND filtered_obs.day_observed_at = first_values.day_observed_at AND filtered_obs.measurement_name = first_values.measurement_name
