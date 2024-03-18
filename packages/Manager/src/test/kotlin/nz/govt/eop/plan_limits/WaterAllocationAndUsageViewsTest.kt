@@ -187,6 +187,97 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
   }
 
   @Test
+  fun `should calc range of readings from last and first non-zero`() {
+    // GIVEN
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(11)
+    createTestAllocation(testAllocation)
+    createWaterReadings(observationDate, listOf(1, 2, 3, 4, 5, 6, 13))
+
+    // WHEN
+    val whereClause = "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'"
+
+    // THEN
+    val result = queryAllocationsAndUsage(whereClause)
+    result.size shouldBe 1
+    result[0].dailyUsage shouldBe BigDecimal(12)
+  }
+
+  @Test
+  fun `should calc range of readings from last and first with zero readings at start`() {
+    // GIVEN
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(12)
+    createTestAllocation(testAllocation)
+    createWaterReadings(observationDate, listOf(0, 2, 3, 4, 5, 6, 13))
+
+    // WHEN
+    val whereClause = "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'"
+    showObservations(whereClause)
+
+    // THEN
+    val result = queryAllocationsAndUsage(whereClause)
+    result.size shouldBe 1
+    result[0].dailyUsage shouldBe BigDecimal(13)
+  }
+
+  @Test
+  fun `should produce daily usage of null if all readings for date are zero`() {
+    // GIVEN
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(12)
+    createTestAllocation(testAllocation)
+    createWaterReadings(observationDate, listOf(0, 0))
+
+    // WHEN
+    val whereClause = "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'"
+
+    // THEN
+    val result = queryAllocationsAndUsage(whereClause)
+    result.size shouldBe 1
+    result[0].dailyUsage shouldBe null
+  }
+
+  @Test
+  fun `should materialize no records if no observations for date`() {
+    // GIVEN
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(1000)
+    createTestAllocation(testAllocation)
+    materializeView()
+
+    // WHEN
+    val whereClause = "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'"
+
+    // THEN
+    val result = queryAllocationsAndUsage(whereClause)
+    result.size shouldBe 0
+  }
+
+  @Test
+  fun `should calc range of readings from last and first with zero readings at end`() {
+    // GIVEN
+    val observationDate = LocalDate.now().atStartOfDay().minusDays(13)
+    createTestAllocation(testAllocation)
+    createWaterReadings(observationDate, listOf(0, 2, 3, 4, 5, 6, 13, 0))
+
+    // WHEN
+    val whereClause = "where area_id = '${testAllocation.areaId}' and date = '${observationDate}'"
+
+    // THEN
+    val result = queryAllocationsAndUsage(whereClause)
+    result.size shouldBe 1
+    result[0].dailyUsage shouldBe BigDecimal(13)
+  }
+
+  private fun createWaterReadings(observationDate: LocalDateTime, values: List<Int>) {
+    var h: Long = 0
+
+    values.forEach() {
+      createWaterMeterReading(
+          testSiteId, it, observationDate.plusHours(++h).toInstant(ZoneOffset.UTC))
+    }
+
+    materializeView()
+  }
+
+  @Test
   fun `should handle changes to allocation data`() {
     // GIVEN
     val allocationUpdatedAt = LocalDate.now().atStartOfDay().minusDays(10)
@@ -467,9 +558,22 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         """)
   }
 
-  fun createOrRetrieveSiteAndMeasurement(siteId: Int): Int {
+  fun createWaterMeterReading(siteId: Int, amount: Int, timestamp: Instant) {
+
+    val measurementId =
+        createOrRetrieveSiteAndMeasurement(siteId, measurementName = "Water Meter Reading")
+    jdbcTemplate.update(
+        """
+        INSERT INTO observations (observation_measurement_id, amount, observed_at)
+        VALUES ($measurementId, $amount, '$timestamp')
+        """)
+  }
+
+  fun createOrRetrieveSiteAndMeasurement(
+      siteId: Int,
+      measurementName: String = "Water Meter Volume"
+  ): Int {
     val councilId = 9
-    val measurementName = "Water Meter Volume"
     val keyHolder: KeyHolder = GeneratedKeyHolder()
 
     jdbcTemplate.update(
@@ -496,5 +600,67 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
 
   fun materializeView() {
     jdbcTemplate.execute("REFRESH MATERIALIZED VIEW water_allocation_and_usage_by_area;")
+  }
+
+  fun printRecords(q: String, max: Int = 10) {
+    val results = jdbcTemplate.queryForList(q)
+    results.take(max).forEach { println(it) }
+  }
+
+  fun showObservations(whereClause: String) {
+
+    printRecords(
+        "WITH filtered_obs AS (\n" +
+            "    SELECT osm.id,\n" +
+            "           osm.site_id,\n" +
+            "           os.name as site_name,\n" +
+            "           date(o.observed_at AT TIME ZONE 'NZST') AS day_observed_at,\n" +
+            "           osm.measurement_name,\n" +
+            "           o.amount\n" +
+            "    FROM observations o\n" +
+            "             LEFT JOIN observation_sites_measurements osm ON o.observation_measurement_id = osm.id\n" +
+            "             LEFT JOIN observation_sites os ON os.id = osm.site_id\n" +
+            "    WHERE osm.measurement_name IN ('Water Meter Reading', 'Water Meter Volume')\n" +
+            "      AND o.observed_at > '2022-11-01 00:00:00+12'\n" +
+            ") SELECT * FROM filtered_obs;\n")
+
+    printRecords(
+        "WITH filtered_obs AS (\n" +
+            "SELECT osm.id,\n" +
+            "osm.site_id,\n" +
+            "os.name as site_name,\n" +
+            "date(o.observed_at AT TIME ZONE 'NZST') AS day_observed_at,\n" +
+            "osm.measurement_name,\n" +
+            "o.amount\n" +
+            "FROM observations o\n" +
+            "LEFT JOIN observation_sites_measurements osm ON o.observation_measurement_id = osm.id\n" +
+            "LEFT JOIN observation_sites os ON os.id = osm.site_id\n" +
+            "WHERE osm.measurement_name IN ('Water Meter Reading', 'Water Meter Volume')\n" +
+            "AND o.observed_at > '2022-11-01 00:00:00+12'\n" +
+            "),\n" +
+            "daily_calculation AS (\n" +
+            "SELECT\n" +
+            "filtered_obs.site_name,\n" +
+            "filtered_obs.day_observed_at,\n" +
+            "filtered_obs.measurement_name,\n" +
+            "CASE\n" +
+            "WHEN filtered_obs.measurement_name = 'Water Meter Volume' THEN SUM(filtered_obs.amount)\n" +
+            "WHEN count(*) = 1 AND LAG(max(filtered_obs.day_observed_at)) OVER (PARTITION BY id, filtered_obs.measurement_name ORDER BY id, filtered_obs.day_observed_at, filtered_obs.measurement_name) != filtered_obs.day_observed_at - interval '1 day' THEN NULL\n" +
+            "WHEN count(*) = 1 THEN max(filtered_obs.amount) - LAG(max(filtered_obs.amount)) OVER (PARTITION BY id, filtered_obs.measurement_name ORDER BY id, filtered_obs.day_observed_at, filtered_obs.measurement_name)\n" +
+            "WHEN filtered_obs.measurement_name = 'Water Meter Reading' THEN\n" +
+            "LAST_VALUE(filtered_obs.amount) OVER (PARTITION BY filtered_obs.site_name, filtered_obs.day_observed_at, filtered_obs.measurement_name ORDER BY filtered_obs.site_name, filtered_obs.day_observed_at, filtered_obs.measurement_name ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) -\n" +
+            "FIRST_VALUE(filtered_obs.amount) OVER (PARTITION BY filtered_obs.site_name, filtered_obs.day_observed_at, filtered_obs.measurement_name ORDER BY filtered_obs.site_name, filtered_obs.day_observed_at, filtered_obs.measurement_name)\n" +
+            "END AS daily_usage\n" +
+            "FROM filtered_obs\n" +
+            "GROUP BY\n" +
+            "filtered_obs.id,\n" +
+            "filtered_obs.site_name,\n" +
+            "filtered_obs.day_observed_at,\n" +
+            "filtered_obs.measurement_name,\n" +
+            "filtered_obs.amount\n" +
+            ") \n" +
+            "SELECT * from daily_calculation;")
+
+    printRecords("""select * from water_allocation_and_usage_by_area $whereClause""")
   }
 }

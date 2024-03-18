@@ -10,23 +10,22 @@ if [ -z "$1" ]
     exit 1
 fi
 
+module_to_run=$1
+# Shift args along by 1
+Shift 1
+
 cd packages/Manager || exit 1
 
-if [ "$1" == "Manager" ]
+if [ "$module_to_run" == "Manager" ]
   then
-    # Start manager in foreground
-    ./start.sh "$2 $3 $4 $5 $6 $7 $8 $9"
+    #  Manager in foreground
+    ./start.sh "$@"
     exit 0
 fi
 
-# We are in manager folder.  Start in background if moving on
-# to start something else as well.
-./start.sh "$2 $3 $4 $5 $6 $7 $8 $9" > app.log 2>&1 &
-
-echo "Waiting for the front-end application to start..."
-# Could probably choose a better way to do this, or a better string to check for.
-tail -f app.log | tee /dev/tty | grep -q "Start Task refresh updateCouncilPlanRecBoundaries"
+# Start Manager in background remembering process id
+./start.sh "$@" &
 
 echo "Front-end application started. Starting the package..."
-cd "../$1" || exit 1
+cd "../$module_to_run" || exit 1
 ./start.sh
