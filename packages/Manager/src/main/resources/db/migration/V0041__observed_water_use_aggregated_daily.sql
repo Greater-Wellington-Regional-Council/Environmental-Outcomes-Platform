@@ -23,7 +23,6 @@ WITH filtered_obs AS (
          SELECT DISTINCT site_name, day_observed_at, measurement_name,
                 FIRST_VALUE(amount) OVER (PARTITION BY site_name, day_observed_at, measurement_name ORDER BY site_name, day_observed_at, measurement_name) as first_value
          FROM filtered_obs
-         WHERE amount != 0
      ),
      last_values AS (
          SELECT DISTINCT site_name, day_observed_at, measurement_name,
@@ -32,24 +31,24 @@ WITH filtered_obs AS (
          WHERE amount != 0
      ),
      daily_calculation AS (
-SELECT filtered_obs.site_name,
-       filtered_obs.day_observed_at,
-       filtered_obs.measurement_name,
-       CASE
-           WHEN filtered_obs.measurement_name = 'Water Meter Volume' THEN SUM(filtered_obs.amount)
-           WHEN count(*) = 1 AND LAG(max(filtered_obs.day_observed_at)) OVER (PARTITION BY id, filtered_obs.measurement_name ORDER BY id, filtered_obs.day_observed_at, filtered_obs.measurement_name) != filtered_obs.day_observed_at - interval '1 day' THEN NULL
-           WHEN count(*) = 1 THEN max(filtered_obs.amount) - LAG(max(filtered_obs.amount)) OVER (PARTITION BY id, measurement_name ORDER BY id, filtered_obs.day_observed_at, filtered_obs.measurement_name)
-           WHEN filtered_obs.measurement_name = 'Water Meter Reading' THEN last_values.last_value - first_values.first_value
-           END AS daily_usage
-FROM filtered_obs
-         JOIN first_values ON filtered_obs.site_name = first_values.site_name AND filtered_obs.day_observed_at = first_values.day_observed_at AND filtered_obs.measurement_name = first_values.measurement_name
-         JOIN last_values ON filtered_obs.site_name = last_values.site_name AND filtered_obs.day_observed_at = last_values.day_observed_at AND filtered_obs.measurement_name = last_values.measurement_name
-GROUP BY filtered_obs.id,
-         filtered_obs.site_name,
-         filtered_obs.day_observed_at,
-         filtered_obs.measurement_name,
-         first_values.first_value,
-         last_values.last_value),
+         SELECT filtered_obs.site_name,
+               filtered_obs.day_observed_at,
+               filtered_obs.measurement_name,
+               CASE
+                   WHEN filtered_obs.measurement_name = 'Water Meter Volume' THEN SUM(filtered_obs.amount)
+                   WHEN count(*) = 1 AND LAG(max(filtered_obs.day_observed_at)) OVER (PARTITION BY id, filtered_obs.measurement_name ORDER BY id, filtered_obs.day_observed_at, filtered_obs.measurement_name) != filtered_obs.day_observed_at - interval '1 day' THEN NULL
+                   WHEN count(*) = 1 THEN max(filtered_obs.amount) - LAG(max(filtered_obs.amount)) OVER (PARTITION BY id, filtered_obs.measurement_name ORDER BY id, filtered_obs.day_observed_at, filtered_obs.measurement_name)
+                   WHEN filtered_obs.measurement_name = 'Water Meter Reading' THEN last_values.last_value - first_values.first_value
+                   END AS daily_usage
+         FROM filtered_obs
+                 JOIN first_values ON filtered_obs.site_name = first_values.site_name AND filtered_obs.day_observed_at = first_values.day_observed_at AND filtered_obs.measurement_name = first_values.measurement_name
+                 JOIN last_values ON filtered_obs.site_name = last_values.site_name AND filtered_obs.day_observed_at = last_values.day_observed_at AND filtered_obs.measurement_name = last_values.measurement_name
+         GROUP BY filtered_obs.id,
+                 filtered_obs.site_name,
+                 filtered_obs.day_observed_at,
+                 filtered_obs.measurement_name,
+                 first_values.first_value,
+                 last_values.last_value),
 
      duplication_dates AS (
          SELECT
@@ -63,7 +62,6 @@ GROUP BY filtered_obs.id,
          HAVING
              COUNT(DISTINCT measurement_name) > 1
      ),
-
      previous_measurement AS (
          SELECT
              dc.site_name,
