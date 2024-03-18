@@ -1,7 +1,6 @@
 package nz.govt.eop.plan_limits
 
 import io.kotest.inspectors.forAll
-import io.kotest.matchers.collections.shouldBeOneOf
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import java.math.BigDecimal
@@ -137,7 +136,6 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
         null)
   }
 
-
   @Test
   fun `should handle an allocation being effective before the earliest time period`() {
     // GIVEN
@@ -268,11 +266,12 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
     result[0].dailyUsage shouldBe BigDecimal(13)
   }
 
-  private fun createWaterReadings(observationDate: LocalDateTime, values: List<Int> ) {
+  private fun createWaterReadings(observationDate: LocalDateTime, values: List<Int>) {
     var h: Long = 0
 
     values.forEach() {
-      createWaterMeterReading(testSiteId, it, observationDate.plusHours(++h).toInstant(ZoneOffset.UTC))
+      createWaterMeterReading(
+          testSiteId, it, observationDate.plusHours(++h).toInstant(ZoneOffset.UTC))
     }
 
     materializeView()
@@ -561,15 +560,19 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
 
   fun createWaterMeterReading(siteId: Int, amount: Int, timestamp: Instant) {
 
-    val measurementId = createOrRetrieveSiteAndMeasurement(siteId, measurementName="Water Meter Reading")
+    val measurementId =
+        createOrRetrieveSiteAndMeasurement(siteId, measurementName = "Water Meter Reading")
     jdbcTemplate.update(
-      """
+        """
         INSERT INTO observations (observation_measurement_id, amount, observed_at)
         VALUES ($measurementId, $amount, '$timestamp')
         """)
   }
 
-  fun createOrRetrieveSiteAndMeasurement(siteId: Int, measurementName: String = "Water Meter Volume"): Int {
+  fun createOrRetrieveSiteAndMeasurement(
+      siteId: Int,
+      measurementName: String = "Water Meter Volume"
+  ): Int {
     val councilId = 9
     val keyHolder: KeyHolder = GeneratedKeyHolder()
 
@@ -606,7 +609,8 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
 
   fun showObservations(whereClause: String) {
 
-    printRecords("WITH filtered_obs AS (\n" +
+    printRecords(
+        "WITH filtered_obs AS (\n" +
             "    SELECT osm.id,\n" +
             "           osm.site_id,\n" +
             "           os.name as site_name,\n" +
@@ -620,7 +624,8 @@ class WaterAllocationAndUsageViewsTest(@Autowired val jdbcTemplate: JdbcTemplate
             "      AND o.observed_at > '2022-11-01 00:00:00+12'\n" +
             ") SELECT * FROM filtered_obs;\n")
 
-    printRecords("WITH filtered_obs AS (\n" +
+    printRecords(
+        "WITH filtered_obs AS (\n" +
             "SELECT osm.id,\n" +
             "osm.site_id,\n" +
             "os.name as site_name,\n" +
