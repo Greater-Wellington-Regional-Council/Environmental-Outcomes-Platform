@@ -1,14 +1,13 @@
 #!/bin/bash
 
 show_usage () {
-  echo "Start all supporting services and the Manager application."
+  echo "Start supporting services and the Manager application."
   echo ""
-  echo "Usage: $0 [-c] [-x] [-r]"
+  echo "Usage: $0 [-i] [-x] [-r]"
   echo "(No options): just start up where we left off last time"
   echo "-x: stop and delete everything, but don't restart"
   echo "-r: stop and delete everything and restart"
-  echo "-c: just stop containers"
-  echo "-i: inspect"
+  echo "-i: check container health"
 }
 
 container-health () {
@@ -31,14 +30,6 @@ stop_and_delete_containers () {
   docker images --format '{{.Repository}}:{{.Tag}} {{.ID}}' | grep 'manager-' | awk '{print $2}' | xargs -r -I {} docker rmi {}
 }
 
-wait_for_database () {
-  echo "Waiting for database to start..."
-  while [[ $(container-health manager-database) != healthy ]]; do
-    sleep 1
-  done
-  echo "Database started."
-}
-
 delete_database () {
   echo Deleting database..
   rm -rf ../LocalInfrastructure/.volumes
@@ -49,39 +40,20 @@ reset_all () {
   delete_database
 }
 
-run_tests () {
-   reset_all
-   ict_all
-   start_all
-   inspect_all
-}
-
 inspect_all () {
   docker ps -a --filter "name=manager-" --format '{{.Names}} {{.Image}} {{.Status}}' | sort
 }
 
 start_all () {
-  ./batect --output=all runSupportServices &
-
-  wait_for_database
-
-  ./gradlew bootRun &
+  ./batect --output=all run
 }
 
 # Do the stuff
 main () {
-  while getopts ":cxirhts" opt; do
+  while getopts ":xirh" opt; do
     case $opt in
-      t)
-        result=$(run_tests)
-        exit $result
-        ;;
       h)
         show_usage
-        exit 0
-        ;;
-      c)
-        stop_containers
         exit 0
         ;;
       x|r)
@@ -95,9 +67,6 @@ main () {
         inspect_all
         exit 0
         ;;
-      s)
-        ./batect --output=all runSupportServices
-        ;;
       \?)
         echo "Invalid option: -$OPTARG" >&2
         exit 1
@@ -106,8 +75,6 @@ main () {
   done
 
   shift $((OPTIND -1))
-
-  start_all "$@"
 }
 
 main "$@"
