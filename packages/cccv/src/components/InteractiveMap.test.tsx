@@ -2,6 +2,18 @@ import { render, screen } from '@testing-library/react'
 import InteractiveMap from "@components/InteractiveMap.tsx";
 import {expect} from "vitest";
 
+beforeAll(() => {
+    vi.mock('mapbox-gl', () => ({
+        Map: vi.fn(() => ({
+            on: vi.fn(),
+            remove: vi.fn()
+        }))
+    }))
+})
+
+afterAll(() => {
+    vi.restoreAllMocks()
+})
 
 describe('InteractiveMap component', () => {
     it('it exists', () => {

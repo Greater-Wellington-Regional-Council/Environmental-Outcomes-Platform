@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import ErrorPage from "@pages/ErrorPage.tsx";
+import ErrorPage from "@pages/ErrorPage";
 import { describe, it, expect } from 'vitest'
 
 describe('Error page', () => {
