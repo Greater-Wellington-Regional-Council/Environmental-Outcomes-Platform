@@ -2,12 +2,21 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './InteractiveMap.scss';
 import {useEffect, useState} from "react";
 import * as mapboxgl from "mapbox-gl";
+import ReactDOMServer from 'react-dom/server';
 
 const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
+//TODO: Move this to a component
+export const PopupContent = ({ latitude, longitude }: { latitude: number, longitude: number }) => (
+    <div>
+        <p>{latitude}, {longitude}</p>
+    </div>
+)
+
 export default function InteractiveMap({ startLocation }: { startLocation: ViewLocation }) {
     const [location] = useState(startLocation)
+    const [dblClick, setDblClick] = useState(false)
 
     useEffect(() => {
         const map = new mapboxgl.Map({
@@ -18,14 +27,23 @@ export default function InteractiveMap({ startLocation }: { startLocation: ViewL
             accessToken: MAPBOX_TOKEN
         });
 
-        map.on('click', (event) => {
-            console.log(`You clicked at ${event.lngLat.lng}, ${event.lngLat.lat}`);
-            // Add your logic here to handle clicks on the map
+        map.on('dblclick', () => {
+            console.log('dblclick');
+            setDblClick(true);
+        })
 
-        });
+        map.on('click', (e) => {
+            if (!dblClick) {
+                const popup = new mapboxgl.Popup()
+                const htmlString = ReactDOMServer.renderToString(<PopupContent latitude={e.lngLat.lat} longitude={e.lngLat.lng} />);
+                popup.setLngLat([e.lngLat.lng, e.lngLat.lat]) // Set the popup's location to the click's location
+                popup.setHTML(htmlString) // Set the content of the popup
+                popup.addTo(map); // Add the popup to the map
+            }
+        })
 
         return () => map.remove();
-    }, [location]);
+    }, [location, dblClick]);
 
     return (
         <div id="map" className="InteractiveMap" role="application" data-testid="InteractiveMap"  style={{ width: '100%', height: '800px' }} />
