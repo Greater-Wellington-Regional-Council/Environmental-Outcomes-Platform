@@ -20,4 +20,3 @@ sources:
             data_type: timestamp without time zone
           - name: data
             data_type: jsonb
-
