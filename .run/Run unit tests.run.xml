@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="All Tests" type="JavaScriptTestRunnerVitest" nameIsGenerated="true">
+  <configuration default="false" name="Run unit tests" type="JavaScriptTestRunnerVitest">
     <node-interpreter value="project" />
     <vitest-package value="$PROJECT_DIR$/packages/cccv/node_modules/vitest" />
     <working-dir value="$PROJECT_DIR$/packages/cccv" />
