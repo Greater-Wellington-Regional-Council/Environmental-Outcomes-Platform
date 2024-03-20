@@ -42,6 +42,23 @@ interface Council {
     groundwaterLimit: React.Element | string;
     surfaceWaterLimit: React.Element | string;
   }[];
+  usageDisplayGroups: UsageDisplayGroup[];
+}
+
+interface UsageDisplayGroup {
+  name: string;
+  hideLabel: boolean;
+  showLegend: boolean;
+  areaIds: string[];
+}
+
+interface Usage {
+  date: string;
+  areaId: string;
+  allocationPlan: number | null;
+  allocationDaily: number | null;
+  allocationDailyUsed: number | null;
+  dailyUsage: number | null;
 }
 
 interface Plan {
@@ -67,6 +84,7 @@ interface PlanRegion {
 
 interface SurfaceWaterLimit {
   id: number;
+  sourceId: string;
   name: string;
   planRegionId: number;
   parentSurfaceWaterLimitId: number;
@@ -77,6 +95,7 @@ interface SurfaceWaterLimit {
 interface GroundWaterLimit {
   id: number;
   limitId: number;
+  sourceId: string;
   name: string;
   planRegionId: number;
   allocationLimit: number;
@@ -129,8 +148,6 @@ interface ActiveLimits {
   groundWaterLimits: GroundWaterLimit[];
 }
 
-type GroupedGroundwaterLimitViews = Dictionary<GroundwaterLimitView[]>;
-
 interface AppState extends ActiveLimits {
   flowSite: FlowMeasurementSite | null;
   groundWaterZones: Array<number>;
@@ -140,6 +157,8 @@ interface AppState extends ActiveLimits {
   catBGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
   catCGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
 }
+
+type GroupedGroundwaterLimitViews = Dictionary<GroundwaterLimitView[]>;
 
 interface LimitView {
   limit?: number;
@@ -153,10 +172,6 @@ interface LimitView {
 interface SurfaceWaterLimitView {
   unitLimitView: LimitView;
   subUnitLimitView: LimitView;
-  // unitLimitToDisplay?: string;
-  // subUnitLimitToDisplay?: string;
-  // unitAllocatedToDisplay?: string;
-  // subUnitAllocatedToDisplay?: string;
 }
 
 interface GroundwaterLimitView {
@@ -165,8 +180,37 @@ interface GroundwaterLimitView {
   depletesFromSubunitLimit?: SurfaceWaterLimit;
   unitLimitView: LimitView;
   subUnitLimitView: LimitView;
-  // unitLimitToDisplay?: string;
-  // subUnitLimitToDisplay?: string;
-  // unitAllocatedToDisplay?: string;
-  // subUnitAllocatedToDisplay?: string;
 }
+
+interface HeatmapData {
+  id: string;
+  data: HeatmapDataItem[];
+}
+
+interface HeatmapDataItem {
+  x: string;
+  y: number | null;
+}
+
+interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
+  endOfWeek: Date;
+  dailyData: ParsedUsage[];
+}
+
+interface PopulatedDailyUsageHeatmapDataItem extends HeatmapDataItem {
+  date: Date;
+  usage: number;
+  allocation: number;
+}
+
+interface MissingDailyUsageHeatmapDataItem {
+  date: Date;
+  usage: number | null;
+  allocation: number | null;
+  x: string;
+  y: number | null;
+}
+
+type DailyUsageHeatmapDataItem =
+  | PopulatedDailyUsageHeatmapDataItem
+  | EmptyDailyUsageHeatmapDataItem;
