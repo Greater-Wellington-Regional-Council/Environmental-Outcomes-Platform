@@ -36,11 +36,10 @@ CREATE TABLE farm_management_units (gid serial,
                                             "macro_obj" varchar(50),
                                             "mci_base" varchar(50),
                                             "mci_obj" varchar(50),
-                                            "ecoli_obj" varchar(50));
+                                            "ecoli_obj" varchar(50),
+                                            "geom" geometry(MULTIPOLYGON,2193));
 
 ALTER TABLE farm_management_units ADD PRIMARY KEY (gid);
-
-SELECT AddGeometryColumn('public', 'farm_management_units','geom','2193','MULTIPOLYGON',2);
 
 CREATE INDEX ON farm_management_units USING GIST ("geom");
 
