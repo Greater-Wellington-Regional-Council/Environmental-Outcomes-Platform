@@ -54,3 +54,4 @@ out/
 ### Misc ###
 .DS_Store
 .volumes/
+/.fastRequest/config/fastRequestCurrentProjectConfig.json

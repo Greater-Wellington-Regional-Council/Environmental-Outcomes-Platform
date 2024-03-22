@@ -1,1 +1,2 @@
 .postgres
+/src/main/resources/db/source-data/
