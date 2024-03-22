@@ -10,7 +10,7 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 //TODO: Move this to a component
 export const PopupContent = ({ latitude, longitude }: { latitude: number, longitude: number }) => (
     <div>
-        <p>{latitude}, {longitude}</p>
+        <p>{longitude}, {latitude}</p>
     </div>
 )
 

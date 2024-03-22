@@ -12,7 +12,7 @@ plugins {
   id("nu.studer.jooq") version "8.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "1.9.21"
-  kotlin("plugin.spring") version "1.9.21"
+  kotlin("plugin.spring") version "1.9.23"
 }
 
 buildscript {
@@ -59,12 +59,14 @@ dependencies {
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.10.0")
-  implementation("net.postgis:postgis-jdbc:2021.1.0")
+  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2021.1.0")
+  implementation("org.locationtech.jts:jts-core:1.18.1")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-assertions-core:5.8.0")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
+  testImplementation("io.mockk:mockk:1.12.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }
