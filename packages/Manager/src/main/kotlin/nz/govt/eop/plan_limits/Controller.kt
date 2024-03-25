@@ -1,5 +1,7 @@
 package nz.govt.eop.plan_limits
 
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit.YEARS
 import java.util.concurrent.TimeUnit
 import org.jooq.*
 import org.springframework.http.CacheControl
@@ -78,5 +80,27 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
     return ResponseEntity.ok()
         .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
         .body(queries.flowLimits(councilId))
+  }
+
+  @RequestMapping("/plan-limits/water-usage", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @ResponseBody
+  fun waterUsage(
+      @RequestParam(name = "councilId") councilId: Int,
+      @RequestParam("from") from: LocalDate,
+      @RequestParam("to") to: LocalDate,
+      @RequestParam("areaId") areaId: String?
+  ): ResponseEntity<String> {
+    if (from >= to) {
+      return ResponseEntity.badRequest().body("The parameter \"to\" must be after \"from\"")
+    }
+    if (YEARS.between(from, to) > 0) {
+      return ResponseEntity.badRequest()
+          .body(
+              "The duration between \"from\" and \"to\" should be more than one day and at most one year")
+    }
+
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+        .body(queries.waterUsage(councilId, from, to, areaId))
   }
 }

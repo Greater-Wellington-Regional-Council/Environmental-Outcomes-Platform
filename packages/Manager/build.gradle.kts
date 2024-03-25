@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
+import org.springframework.core.io.FileSystemResource
+import org.springframework.jdbc.datasource.SingleConnectionDataSource
+import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
   id("org.springframework.boot") version "3.2.0"
@@ -14,7 +17,11 @@ plugins {
 
 buildscript {
   repositories { mavenCentral() }
-  dependencies { classpath("org.flywaydb:flyway-database-postgresql:10.1.0") }
+  dependencies {
+    classpath("org.flywaydb:flyway-database-postgresql:10.1.0")
+    classpath("org.springframework:spring-jdbc:6.0.12")
+    classpath("org.postgresql:postgresql:42.6.0")
+  }
 }
 
 group = "nz.govt.eop"
@@ -40,6 +47,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.kafka:spring-kafka")
+  implementation("org.apache.kafka:kafka-streams")
   implementation("io.micrometer:micrometer-tracing-bridge-brave")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -86,13 +94,15 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 
 val dbConfig =
     mapOf(
-        "url" to
+        "devUrl" to
+            "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?: "localhost"}:5432/eop_dev",
+        "testUrl" to
             "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?: "localhost"}:5432/eop_test",
         "user" to "postgres",
         "password" to "password")
 
 flyway {
-  url = dbConfig["url"]
+  url = dbConfig["testUrl"]
   user = dbConfig["user"]
   password = dbConfig["password"]
   schemas = arrayOf("public")
@@ -106,7 +116,7 @@ jooq {
         logging = org.jooq.meta.jaxb.Logging.WARN
         jdbc.apply {
           driver = "org.postgresql.Driver"
-          url = dbConfig["url"]
+          url = dbConfig["testUrl"]
           user = dbConfig["user"]
           password = dbConfig["password"]
         }
@@ -173,4 +183,35 @@ testlogger {
   showPassedStandardStreams = false
   showSkippedStandardStreams = false
   showFailedStandardStreams = true
+}
+
+tasks.register("loadSampleData") {
+  dependsOn("flywayMigrate")
+  doLast {
+    println("Loading Sample Data")
+    SingleConnectionDataSource(
+            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+        .let {
+          it.connection.use { connection ->
+            executeSqlScript(connection, FileSystemResource("./sample-data/allocation_data.sql"))
+            executeSqlScript(connection, FileSystemResource("./sample-data/observation_data.sql"))
+          }
+        }
+  }
+}
+
+tasks.register("refreshSampleData") {
+  dependsOn("flywayMigrate")
+  doLast {
+    println("Refresh Sample Data Dates")
+
+    SingleConnectionDataSource(
+            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+        .let {
+          it.connection.use { connection ->
+            executeSqlScript(
+                connection, FileSystemResource("./sample-data/update_observation_dates.sql"))
+          }
+        }
+  }
 }

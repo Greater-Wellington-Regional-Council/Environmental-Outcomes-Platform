@@ -1,5 +1,9 @@
 # EOP IngestAPI
 
+The EOP IngestAPI accepts envrionmental data and stores this as Kafka messages for subsequent processing by other EOP services. It accepts this data via HTTP API endpoints authenticated using Basic Authentication. These accept JSON data, which is passed onto a Kafka consumer.
+
+It's made up of a simple Spring Boot application written in Kotlin, and packaged up for deployment to ECS as a Docker container.
+
 ## Getting Started
 
 ### Prerequisites
@@ -48,7 +52,7 @@ When the application boots, it will automatically create any topics needed.
 
 The support services started by Batect include a Management UI for Kafka, which you can access at http://localhost:8081.
 
-[Kaf](https://github.com/birdayz/kaf) is also a useful CLI for Kafka, which can be run via 
+[Kaf](https://github.com/birdayz/kaf) is also a useful CLI for Kafka, which can be run via sshuttle.
 
 ## SSL
 

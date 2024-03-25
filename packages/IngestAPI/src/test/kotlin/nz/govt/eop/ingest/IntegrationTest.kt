@@ -44,20 +44,87 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
             post("/water-allocations")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
                 .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"notIngestId": "1", "allocations": []}"""))
+        .andExpect(status().isBadRequest)
+  }
+
+  @Test
+  fun `Should reject null allocationPlan`() {
+    mvc.perform(
+            post("/water-allocations")
+                .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                    """{"notIngestId": "1", "allocations": [{"areaId":  "1", "amount": 1.0}]}"""))
+                    """
+                {
+                  "ingestId": "1",
+                  "allocations":
+                    [
+                        { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": null, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": [] },
+                    ]
+                }
+              """))
+        .andExpect(status().isBadRequest)
+  }
+
+  @Test
+  fun `Should reject null allocationDaily`() {
+    mvc.perform(
+            post("/water-allocations")
+                .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                {
+                  "ingestId": "1",
+                  "allocations":
+                    [
+                        { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 0.0, "isMetered": true, "allocationDaily": null, "allocationYearly": 0.0, "meters": [] },
+                    ]
+                }
+              """))
+        .andExpect(status().isBadRequest)
+  }
+
+  @Test
+  fun `Should reject null allocationYearly`() {
+    mvc.perform(
+            post("/water-allocations")
+                .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                {
+                  "ingestId": "1",
+                  "allocations":
+                    [
+                        { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 0.0, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": null, "meters": [] },
+                    ]
+                }
+              """))
         .andExpect(status().isBadRequest)
   }
 
   @Test
   fun `Should post records to Kafka Topic`() {
     val consumer = createKafkaConsumer(broker)
+    val testData =
+        """
+            {
+              "ingestId": "1",
+              "allocations":
+                [
+                    { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 87.0, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": [] },
+                    { "sourceId": "Wairarapa-20544", "consentId":  "20544", "status":  "active", "areaId":  "Wairarapa CoastSW", "allocationPlan": 2.1, "isMetered": false, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": ["S25/5314"] },
+                    { "sourceId": "OtakiSW-20548", "consentId":  "20548", "status":  "inactive", "areaId":  "OtakiSW", "allocationPlan": 1.13, "isMetered": true, "allocationDaily": 6912.0, "allocationYearly": 1036800.0, "meters": ["BP34/0044", "BP34/0064", "T26/0871"] }
+                ]
+            }
+        """
     mvc.perform(
             post("/water-allocations")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{"ingestId": "1", "allocations": [{"areaId":  "1", "amount": 1.0}, {"areaId":  "2", "amount": 2.0}, {"areaId":  "3", "amount": 3.0}]}"""))
+                .content(testData))
         .andExpect(status().isOk)
 
     val records = KafkaTestUtils.getRecords(consumer)

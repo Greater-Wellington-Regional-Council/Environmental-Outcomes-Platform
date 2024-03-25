@@ -1,5 +1,5 @@
 import type { FeatureCollection, Geometry } from 'geojson';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { camelCase, mapKeys } from 'lodash';
 
 const REVIEW_HOST_REGEX = /.*\.amplifyapp\.com$/;
@@ -19,7 +19,8 @@ const determineBackendUri = (hostname: string) => {
     return 'https://data.gw-eop-dev.tech';
   }
 
-  return 'http://localhost:8080';
+  return 'https://data.gw-eop-dev.tech';
+  // return 'http://localhost:8080';
 };
 
 const defaultRequestInit: RequestInit = {
@@ -30,11 +31,14 @@ const apiBasePath = determineBackendUri(window.location.hostname);
 
 async function fetchFromAPI<T>(path: string): Promise<T> {
   const result = await fetch(`${apiBasePath}${path}`, defaultRequestInit);
+  if (result.status !== 200) {
+    throw `Error fetching ${path}`;
+  }
   return await result.json();
 }
 
 function mapFeatureCollectionPropsToType<T>(
-  featureCollection: FeatureCollection
+  featureCollection: FeatureCollection,
 ) {
   featureCollection.features = featureCollection.features.map((feature) => {
     return {
@@ -51,7 +55,7 @@ function mapFeatureCollectionPropsToType<T>(
 
 async function fetchFeatures<T>(path: string, councilId: number, hash: string) {
   const features = await fetchFromAPI<FeatureCollection>(
-    `${path}?councilId=${councilId}&v=${hash}`
+    `${path}?councilId=${councilId}&v=${hash}`,
   );
   return mapFeatureCollectionPropsToType<T>(features);
 }
@@ -59,7 +63,7 @@ async function fetchFeatures<T>(path: string, councilId: number, hash: string) {
 function useFeatureQuery<T>(
   path: string,
   manifest: { [key: string]: string } | undefined,
-  councilId: number
+  councilId: number,
 ) {
   return useQuery({
     enabled: Boolean(manifest),
@@ -73,19 +77,19 @@ function useFeatureQuery<T>(
 }
 
 function splitSurfaceWaterLimits(
-  sw: FeatureCollection<Geometry, SurfaceWaterLimit>
+  sw: FeatureCollection<Geometry, SurfaceWaterLimit>,
 ) {
   return {
     surfaceWaterUnitLimits: {
       ...sw,
       features: sw.features.filter(
-        (feature) => feature.properties.parentSurfaceWaterLimitId === null
+        (feature) => feature.properties.parentSurfaceWaterLimitId === null,
       ),
     } as FeatureCollection<Geometry, SurfaceWaterLimit>,
     surfaceWaterSubUnitLimits: {
       ...sw,
       features: sw.features.filter(
-        (feature) => feature.properties.parentSurfaceWaterLimitId !== null
+        (feature) => feature.properties.parentSurfaceWaterLimitId !== null,
       ),
     } as FeatureCollection<Geometry, SurfaceWaterLimit>,
   };
@@ -99,7 +103,7 @@ export function usePlanLimitsData(councilId: number) {
     refetchOnWindowFocus: false,
     queryFn: () =>
       fetchFromAPI<{ [key: string]: string }>(
-        `${manifestURL}?councilId=${councilId}`
+        `${manifestURL}?councilId=${councilId}`,
       ),
   });
 
@@ -109,19 +113,20 @@ export function usePlanLimitsData(councilId: number) {
 
   const councils = useFeatureQueryWith<Council>('/plan-limits/councils');
   const planRegions = useFeatureQueryWith<PlanRegion>(
-    '/plan-limits/plan-regions'
+    '/plan-limits/plan-regions',
   );
   const surfaceWaterLimits = useFeatureQueryWith<SurfaceWaterLimit>(
-    '/plan-limits/surface-water-limits'
+    '/plan-limits/surface-water-limits',
   );
   const groundWaterLimits = useFeatureQueryWith<GroundWaterLimit>(
-    '/plan-limits/ground-water-limits'
+    '/plan-limits/ground-water-limits',
   );
   const flowMeasurementSites = useFeatureQueryWith<FlowMeasurementSite>(
-    '/plan-limits/flow-measurement-sites'
+    '/plan-limits/flow-measurement-sites',
   );
   const flowLimits = useFeatureQueryWith<FlowLimit>('/plan-limits/flow-limits');
 
+  // TODO: can we re-use useFeatureQueryWith here?
   const plan = useQuery({
     enabled: Boolean(manifest),
     queryKey: ['/plan-limits/plan', councilId, manifest],
@@ -132,10 +137,12 @@ export function usePlanLimitsData(councilId: number) {
           // We use ! here since we know manifest will be populated when this executes because of the enabled check
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           manifest!['/plan-limits/plan']
-        }`
+        }`,
       ),
   });
 
+  // Simplify the data transformation here, and potentially combine with
+  // mapFeatureCollectionPropsToType
   const isLoaded =
     councils.isSuccess &&
     planRegions.isSuccess &&
@@ -163,18 +170,18 @@ export function usePlanLimitsData(councilId: number) {
         plan: mapKeys(features.plan, (value, key) => camelCase(key)),
         planRegions: features.planRegions.features.map((f) => f.properties),
         surfaceWaterUnitLimits: features.surfaceWaterUnitLimits.features.map(
-          (f) => f.properties
+          (f) => f.properties,
         ),
         surfaceWaterSubUnitLimits:
           features.surfaceWaterSubUnitLimits.features.map((f) => f.properties),
         groundWaterLimits: features.groundWaterLimits.features.map(
-          (feature) => feature.properties
+          (feature) => feature.properties,
         ),
         flowLimits: features.flowLimits.features.map(
-          (feature) => feature.properties
+          (feature) => feature.properties,
         ),
         flowMeasurementSites: features.flowMeasurementSites.features.map(
-          (feature) => feature.properties
+          (feature) => feature.properties,
         ),
       }
     : undefined;
@@ -186,39 +193,19 @@ export function usePlanLimitsData(councilId: number) {
   };
 }
 
-const key = 'manifest';
-
-function useGeoJsonQueries() {
-  const { data: manifest } = useQuery({
-    queryKey: [key],
+export function useWaterUseQuery(councilId: number, from: string, to: string) {
+  const usage = useQuery({
+    queryKey: ['/plan-limits/water-usage', councilId, from, to],
+    // These settings prevent a refetch within in the same browser session
     refetchOnWindowFocus: false,
-    queryFn: () => fetchFromAPI<{ [key: string]: string }>('/manifest'),
+    refetchOnMount: false,
+    staleTime: Infinity,
+    queryFn: () =>
+      fetchFromAPI<Usage[]>(
+        `/plan-limits/water-usage?councilId=${councilId}&from=${from}&to=${to}`,
+      ),
   });
-
-  const queries = [
-    '/layers/councils',
-    '/layers/whaitua',
-    '/layers/surface-water-management-units',
-    '/layers/surface-water-management-sub-units',
-    '/layers/flow-management-sites',
-    '/layers/flow-limits',
-    '/layers/groundwater-zones',
-  ].map((path) => {
-    return {
-      // This defers execution until the manifest query has loaded
-      enabled: Boolean(manifest),
-      // eslint-disable-next-line @tanstack/query/exhaustive-deps
-      queryKey: [path],
-      refetchOnWindowFocus: false,
-      queryFn: () =>
-        // We use ! here since we know manifest will be populated when this executes
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        fetchFromAPI<FeatureCollection>(`${path}?v=${manifest![path]}`),
-    };
-  });
-
-  return useQueries({ queries });
+  return usage;
 }
 
-export type GeoJsonQueries = ReturnType<typeof useGeoJsonQueries>;
 export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;

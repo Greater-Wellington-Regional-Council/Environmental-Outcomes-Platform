@@ -1,100 +1,146 @@
 package nz.govt.eop.hilltop_crawler.db
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import java.net.URI
+import java.sql.ResultSet
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 
+enum class HilltopFetchTaskType {
+  SITES_LIST,
+  MEASUREMENTS_LIST,
+  MEASUREMENT_DATA,
+  MEASUREMENT_DATA_LATEST,
+}
+
 @Component
-class DB(val template: JdbcTemplate) {
+class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
 
-  enum class HilltopFetchTaskState {
-    PENDING,
-  }
+  data class HilltopSourcesRow(
+      val id: Int,
+      val councilId: Int,
+      val htsUrl: String,
+      val config: HilltopSourceConfig
+  )
 
-  enum class HilltopFetchTaskRequestType {
-    SITES_LIST,
-    MEASUREMENTS_LIST,
-    MEASUREMENT_DATA
-  }
-
-  data class HilltopSourcesRow(val councilId: Int, val htsUrl: String)
+  data class HilltopSourceConfig(
+      val measurementNames: List<String>,
+      val excludedSitesNames: List<String> = listOf()
+  )
 
   data class HilltopFetchTaskCreate(
-      val councilId: Int,
-      val requestType: HilltopFetchTaskRequestType,
+      val sourceId: Int,
+      val requestType: HilltopFetchTaskType,
       val baseUrl: String,
-      val queryParams: String,
-      val state: HilltopFetchTaskState
   )
 
   data class HilltopFetchTaskRow(
       val id: Int,
-      val councilId: Int,
-      val requestType: HilltopFetchTaskRequestType,
-      val baseUrl: String,
-      val queryParams: String,
-      val state: HilltopFetchTaskState,
-      val previousDataHash: String?
+      val sourceId: Int,
+      val requestType: HilltopFetchTaskType,
+      val nextFetchAt: Instant,
+      val fetchUri: URI,
+      val previousDataHash: String?,
   )
 
-  fun listSources(): List<HilltopSourcesRow> =
-      template.query(
+  data class HilltopFetchResult(val at: Instant, val result: HilltopFetchStatus, val hash: String?)
+
+  enum class HilltopFetchStatus {
+    SUCCESS,
+    UNCHANGED,
+    FETCH_ERROR,
+    HILLTOP_ERROR,
+    RESPONSE_TOO_LARGE,
+    PARSE_ERROR,
+    UNKNOWN_ERROR
+  }
+
+  val hilltopSourcesRowMapper: (rs: ResultSet, rowNum: Int) -> HilltopSourcesRow = { rs, _ ->
+    HilltopSourcesRow(
+        rs.getInt("id"),
+        rs.getInt("council_id"),
+        rs.getString("hts_url"),
+        objectMapper.readValue(rs.getString("configuration"), HilltopSourceConfig::class.java))
+  }
+
+  fun getSource(id: Int): HilltopSourcesRow =
+      template.queryForObject(
           """
-        SELECT council_id, hts_url
+        SELECT id, council_id, hts_url, configuration
         FROM hilltop_sources
+        WHERE id = ?
         """
-              .trimIndent()) { rs, _ ->
-            HilltopSourcesRow(rs.getInt("council_id"), rs.getString("hts_url"))
-          }
+              .trimIndent(),
+          hilltopSourcesRowMapper,
+          id,
+      )!!
+
+  fun listSources(): List<HilltopSourcesRow> {
+
+    return template.query(
+        """
+          SELECT id, council_id, hts_url, configuration
+          FROM hilltop_sources
+          ORDER BY id
+          """
+            .trimIndent(),
+        hilltopSourcesRowMapper)
+  }
 
   fun createFetchTask(request: HilltopFetchTaskCreate) {
     template.update(
         """
-        INSERT INTO hilltop_fetch_tasks (council_id, request_type, base_url, query_params, state) VALUES (?,?,?,?,?)
-        ON CONFLICT DO NOTHING 
+        INSERT INTO hilltop_fetch_tasks (source_id, request_type, fetch_url) VALUES (?,?,?)
+        ON CONFLICT(source_id, request_type, fetch_url) DO NOTHING 
         """
             .trimIndent(),
-        request.councilId,
+        request.sourceId,
         request.requestType.toString(),
-        request.baseUrl,
-        request.queryParams,
-        request.state.toString())
+        request.baseUrl)
   }
 
   fun getNextTaskToProcess(): HilltopFetchTaskRow? =
       template
           .query(
               """
-        SELECT id, council_id, request_type, base_url, query_params, state, previous_data_hash
+        SELECT id, source_id, request_type, next_fetch_at, fetch_url, previous_data_hash
         FROM hilltop_fetch_tasks
-        WHERE state = 'PENDING' AND next_fetch_at < NOW()
-        ORDER BY next_fetch_at 
+        WHERE next_fetch_at < NOW()
+        ORDER BY next_fetch_at, id
         LIMIT 1
+        FOR UPDATE SKIP LOCKED
         """
                   .trimIndent()) { rs, _ ->
                 HilltopFetchTaskRow(
                     rs.getInt("id"),
-                    rs.getInt("council_id"),
-                    HilltopFetchTaskRequestType.valueOf(rs.getString("request_type")),
-                    rs.getString("base_url"),
-                    rs.getString("query_params"),
-                    HilltopFetchTaskState.valueOf(rs.getString("state")),
-                    rs.getString("previous_data_hash"),
-                )
+                    rs.getInt("source_id"),
+                    HilltopFetchTaskType.valueOf(rs.getString("request_type")),
+                    rs.getTimestamp("next_fetch_at").toInstant(),
+                    URI(rs.getString("fetch_url")),
+                    rs.getString("previous_data_hash"))
               }
           .firstOrNull()
 
-  fun requeueTask(id: Int, currentContentHash: String, nextFetchAt: Instant) {
+  fun requeueTask(
+      id: Int,
+      currentContentHash: String?,
+      currentResult: HilltopFetchResult,
+      nextFetchAt: Instant
+  ) {
     template.update(
         """
           UPDATE hilltop_fetch_tasks
-          SET state = 'PENDING', previous_data_hash = ?, next_fetch_at = ?
+          SET previous_data_hash = ?, 
+              previous_history = jsonb_path_query_array(previous_history, '$[last-49 to last]') || ?::jsonb,    
+              next_fetch_at = ?
           WHERE id = ?
           """
             .trimIndent(),
         currentContentHash,
+        objectMapper.writeValueAsString(currentResult),
         OffsetDateTime.ofInstant(nextFetchAt, ZoneOffset.UTC),
         id)
   }

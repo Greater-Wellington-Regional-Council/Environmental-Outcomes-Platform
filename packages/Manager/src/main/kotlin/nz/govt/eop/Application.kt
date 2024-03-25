@@ -1,5 +1,6 @@
 package nz.govt.eop
 
+import com.fasterxml.jackson.core.StreamReadConstraints
 import java.nio.file.Files
 import java.util.Base64
 import kotlin.io.path.pathString
@@ -15,7 +16,7 @@ import org.springframework.web.client.RestTemplate
 @EnableKafka
 @EnableCaching
 @SpringBootApplication
-class Application() {
+class Application {
   @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
 }
 
@@ -26,6 +27,10 @@ fun main(args: Array<String>) {
   if (System.getenv(ENV_CONFIG_KEYSTORE_CONTENT) != null) {
     storeKeystoreFromEnvironment()
   }
+
+  StreamReadConstraints.overrideDefaultStreamReadConstraints(
+      StreamReadConstraints.builder().maxStringLength(50_000_000).build())
+
   runApplication<Application>(*args)
 }
 

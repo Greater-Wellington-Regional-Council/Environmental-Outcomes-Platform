@@ -35,7 +35,7 @@ Include diagrams in the site:
 
 ### How to Run the application locally
 
-To run Ha Kākano locally, you will need to start the shared infrastructure services and then start the individual applications. 
+To run He Kākano locally, you will need to start the shared infrastructure services and then start the individual applications. 
 
 #### Shared Infrastructure
 
@@ -59,4 +59,10 @@ _And from a new shell session in the same folder_
 
 #### Application Packages
 
-Having started the shared infrastructure, you will find specific run instructions for each application package in its own README.md file.  For example, [here are the run instructions for the Plan Limits UI](packages/PlanLimitsUI/README.md).
+Having started the shared infrastructure, you will find specific run instructions for each application package in its own README.md file.  For example, [here are the run instructions for the Plan Limits UI](./packages/PlanLimitsUI/README.md).
+
+## `start.sh` convenience script
+
+To simplify running EOP locally, a `start.sh` script has been provided in the root of the repository.  This script will start the shared infrastructure services and then another application component that you name as an argument.
+
+For example, to start the PlanUnitsUI application, you would run `./start.sh PlanUnitsUI`.  

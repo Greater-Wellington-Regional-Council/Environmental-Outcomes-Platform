@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 
+const val RAINFALL_MEASUREMENT_NAME = "Rainfall"
+
 @Component
 class RainfallQueries(
     @Autowired val context: DSLContext,
@@ -53,6 +55,7 @@ class RainfallQueries(
                     field(
                         "totals.OBSERVATION_MEASUREMENT_ID",
                         OBSERVATION_SITES_MEASUREMENTS.ID.dataType)))
+            .where(OBSERVATION_SITES_MEASUREMENTS.MEASUREMENT_NAME.eq(RAINFALL_MEASUREMENT_NAME))
             .orderBy(field("amount", OBSERVATIONS.AMOUNT.dataType).desc())
 
     return buildFeatureCollection(context, innerQuery)
@@ -112,6 +115,7 @@ class RainfallQueries(
                 INNER JOIN councils ON observation_sites.council_id = councils.id
                 INNER JOIN observation_sites_measurements ON observation_sites.id = observation_sites_measurements.site_id
                 INNER JOIN hourly_data ON observation_measurement_id = observation_sites_measurements.id
+                WHERE observation_sites_measurements.measurement_name = ?
         )
     SELECT JSONB_BUILD_OBJECT(
         'type', 'FeatureCollection',
@@ -134,7 +138,8 @@ class RainfallQueries(
         Timestamp.from(from),
         Timestamp.from(to),
         Timestamp.from(from),
-        Timestamp.from(to))
+        Timestamp.from(to),
+        RAINFALL_MEASUREMENT_NAME)
   }
 
   private fun <R : Record> buildFeatureCollection(

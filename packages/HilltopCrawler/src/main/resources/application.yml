@@ -1,17 +1,25 @@
 spring:
+  application:
+    name: hilltop-crawler
   main:
     banner-mode: off
   kafka:
     bootstrap-servers: localhost:29092
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        max.request.size: 134217728
-        buffer.memory: 134217728
-        spring:
-          json.add.type.headers: false
+        max.request.size: 10485760
+        buffer.memory: 10485760
       compression-type: gzip
+
+    streams:
+      properties:
+        num.stream.threads: 2
+        producer.max.request.size: 10485760
+        producer.compression.type: gzip
+        default:
+          key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+          value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+      application-id: nz.govt.eop.consumers.hilltop-crawler
 
   datasource:
     url: jdbc:postgresql://${CONFIG_DATABASE_HOST:localhost}:${CONFIG_DATABASE_PORT:5432}/${CONFIG_DATABASE_NAME:eop_dev}
@@ -26,11 +34,16 @@ spring:
     user: ${CONFIG_DATABASE_MIGRATIONS_USERNAME:eop_hilltop_crawler_migrations_user}
     password: ${CONFIG_DATABASE_MIGRATIONS_PASSWORD:password}
 
+  task:
+    scheduling:
+      pool:
+        size: 10
+
 crawler:
   topicReplicas: 1
 
 logging:
   level:
     root: INFO
-    nz.govt.eop: INFO
-    nz.govt.eop.hilltop_crawler.TaskProcessor: DEBUG
+    nz.govt.eop: DEBUG
+    org.apache.kafka.streams.processor.internals.assignment.RackAwareTaskAssignor: OFF # Because it logs an error at startup even though it isn't used.
