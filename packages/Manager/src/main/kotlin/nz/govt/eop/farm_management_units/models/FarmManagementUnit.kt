@@ -1,50 +1,84 @@
 package nz.govt.eop.farm_management_units.models
 
-import net.postgis.jdbc.geometry.Geometry
-import nz.govt.eop.si.jooq.PostgisGeometryBinding
-import nz.govt.eop.si.jooq.tables.records.CouncilsRecord
-import org.jooq.TableField
-import org.jooq.impl.DSL
-import org.jooq.impl.SQLDataType
-import org.jooq.impl.TableImpl
+import jakarta.persistence.*
 
-
-const val DEFAULT_SRID = 2193
-
+@Entity
+@Table(name = "farm_management_units")
 data class FarmManagementUnit(
-  val id: Int = 0,
-  val gid: Int,
-  val objectId: Double,
-  val fmuNo: Int,
-  val location: String,
-  val fmuName1: String,
-  val fmuGroup: String,
-  val shapeLeng: Double,
-  val shapeArea: Double,
-  val byWhen: String,
-  val fmuIssue: String,
-  val topFmuGrp: String,
-  val ecoliBase: String,
-  val periBase: String,
-  val periObj: String,
-  val aToxBase: String,
-  val aToxObj: String,
-  val nToxBase: String,
-  val nToxObj: String,
-  val phytoBase: String,
-  val phytoObj: String,
-  val tnBase: String,
-  val tnObj: String,
-  val tpBase: String,
-  val tpObj: String,
-  val tliBase: String,
-  val tliObj: String,
-  val tssBase: String,
-  val tssObj: String,
-  val macroBase: String,
-  val macroObj: String,
-  val mciBase: String,
-  val mciObj: String,
-  val ecoliObj: String,
-  val geom: Any
-)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int?,
+    @Column(name = "gid") val gid: Int? = 0,
+    @Column(name = "objectid") val objectId: Double = 0.0,
+    @Column(name = "fmu_no") val fmuNo: Int = 0,
+    @Column(name = "location") val location: String? = "",
+    @Column(name = "fmu_name1") val fmuName1: String? = "",
+    @Column(name = "fmu_group") val fmuGroup: String? = "",
+    @Column(name = "shape_leng") val shapeLeng: Double? = 0.0,
+    @Column(name = "shape_area") val shapeArea: Double? = 0.0,
+    @Column(name = "by_when") val byWhen: String? = "",
+    @Column(name = "fmu_issue") val fmuIssue: String? = "",
+    @Column(name = "top_fmugrp") val topFmuGrp: String? = "",
+    @Column(name = "ecoli_base") var ecoliBase: String? = null,
+    @Column(name = "peri_base") var periBase: String? = null,
+    @Column(name = "peri_obj") var periObj: String? = null,
+    @Column(name = "a_tox_base") var aToxBase: String? = null,
+    @Column(name = "a_tox_obj") var aToxObj: String? = null,
+    @Column(name = "n_tox_base") var nToxBase: String? = null,
+    @Column(name = "n_tox_obj") var nToxObj: String? = null,
+    @Column(name = "phyto_base") var phytoBase: String? = null,
+    @Column(name = "phyto_obj") var phytoObj: String? = null,
+    @Column(name = "tn_base") var tnBase: String? = null,
+    @Column(name = "tn_obj") var tnObj: String? = null,
+    @Column(name = "tp_base") var tpBase: String? = null,
+    @Column(name = "tp_obj") var tpObj: String? = null,
+    @Column(name = "tli_base") var tliBase: String? = null,
+    @Column(name = "tli_obj") var tliObj: String? = null,
+    @Column(name = "tss_base") var tssBase: String? = null,
+    @Column(name = "tss_obj") var tssObj: String? = null,
+    @Column(name = "macro_base") var macroBase: String? = null,
+    @Column(name = "macro_obj") var macroObj: String? = null,
+    @Column(name = "mci_base") var mciBase: String? = null,
+    @Column(name = "mci_obj") var mciObj: String? = null,
+    @Column(name = "ecoli_obj") var ecoliObj: String? = null,
+) {
+
+  companion object {
+    const val DEFAULT_SRID = 2193
+  }
+
+  constructor() :
+      this(
+          id = null,
+          gid = 0,
+          objectId = 0.0,
+          fmuNo = 0,
+          location = "",
+          fmuName1 = "",
+          fmuGroup = "",
+          shapeLeng = 0.0,
+          shapeArea = 0.0,
+          byWhen = "",
+          fmuIssue = "",
+          topFmuGrp = "",
+          ecoliBase = "",
+          periBase = "",
+          periObj = "",
+          aToxBase = "",
+          aToxObj = "",
+          nToxBase = "",
+          nToxObj = "",
+          phytoBase = "",
+          phytoObj = "",
+          tnBase = "",
+          tnObj = "",
+          tpBase = "",
+          tpObj = "",
+          tliBase = "",
+          tliObj = "",
+          tssBase = "",
+          tssObj = "",
+          macroBase = "",
+          macroObj = "",
+          mciBase = "",
+          mciObj = "",
+          ecoliObj = "")
+}

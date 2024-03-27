@@ -1,4 +1,4 @@
-import {parseLocationString} from "@utils/locationString.ts";
+import {parseLocationString} from "@src/lib/locationString.ts";
 
 const loadLocation = async ({ params }: Request) => {
     return parseLocationString(params.location)
