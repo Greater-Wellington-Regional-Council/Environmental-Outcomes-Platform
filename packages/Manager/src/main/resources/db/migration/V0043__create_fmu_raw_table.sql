@@ -4,7 +4,7 @@ SET STANDARD_CONFORMING_STRINGS TO ON;
 
 CREATE TABLE farm_management_units_raw
 (
-    gid          SERIAL,
+    gid          NUMERIC,
     "objectid"   FLOAT8,
     "fmu_no"     INT4,
     "location"   VARCHAR,
@@ -40,8 +40,7 @@ CREATE TABLE farm_management_units_raw
     "geom"       GEOMETRY
 );
 
-ALTER TABLE farm_management_units_raw
-    ADD PRIMARY KEY (gid);
+CREATE INDEX ON farm_management_units_raw ("gid");
 
 CREATE INDEX ON farm_management_units_raw USING GIST ("geom");
 
