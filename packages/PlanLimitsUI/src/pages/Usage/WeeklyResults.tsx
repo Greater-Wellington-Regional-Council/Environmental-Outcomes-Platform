@@ -51,8 +51,8 @@ function WeeklyUsageHeatMap({
       }
     : null;
 
-  const marginTop = showWeeks ? 75 : 0;
-  const marginBottom = showLegend ? 50 : 0;
+  const marginTop = showWeeks ? 75 : 10;
+  const marginBottom = showLegend ? 60 : 10;
   const height = (data.length * 16 + marginTop + marginBottom).toString();
 
   return (

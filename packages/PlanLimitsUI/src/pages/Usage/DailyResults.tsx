@@ -1,4 +1,4 @@
-import { round } from 'lodash';
+import { isNumber, round } from 'lodash';
 import { format, getWeekOfMonth } from 'date-fns';
 import { ResponsiveHeatMapCanvas, type ComputedCell } from '@nivo/heatmap';
 import type {
@@ -17,18 +17,18 @@ export default function DailyResults({ data }: Props) {
   return (
     <>
       <h2 className="text-xl mb-2">Daily usage grouped by area</h2>
-      {data.groups.map((usageGroup) => {
-        return (
-          <div key={usageGroup.name} className="my-6 border-b">
-            {!usageGroup.hideLabel ? (
-              <h2 className="text-lg mb-2">{usageGroup.name}</h2>
-            ) : (
-              <></>
-            )}
-            <div>
+      <div className="space-y-10 divide-y">
+        {data.groups.map((usageGroup) => {
+          return (
+            <div key={usageGroup.name} className="space-y-6">
+              {!usageGroup.hideLabel ? (
+                <h2 className="text-lg mb-2 mt-6">{usageGroup.name}</h2>
+              ) : (
+                <></>
+              )}
               {usageGroup.dailyData.map((dailyData) => {
                 return (
-                  <div key={dailyData.areaId} className="mb-6">
+                  <div key={dailyData.areaId}>
                     <div className="flex items-baseline justify-between">
                       <div>
                         <h3
@@ -50,9 +50,9 @@ export default function DailyResults({ data }: Props) {
                 );
               })}
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </>
   );
 }
@@ -66,10 +66,10 @@ function HeatmapResult({ dailyData }: { dailyData: DailyHeatmapData }) {
         tooltip={CustomTooltip}
         forceSquare={true}
         margin={{
-          top: 15,
-          right: 50,
-          bottom: 50,
-          left: 130,
+          top: 30,
+          right: 0,
+          bottom: 60,
+          left: 80,
         }}
         colors={{
           type: 'sequential',
@@ -134,7 +134,7 @@ function CustomTooltip({
           <>
             <div>
               Usage:{' '}
-              {cell.data.usage !== null ? (
+              {isNumber(cell.data.usage) ? (
                 <>
                   {formatNumber.format(cell.data.usage)}m<sup>3</sup>/day
                 </>
@@ -144,7 +144,7 @@ function CustomTooltip({
             </div>
             <div>
               Allocation:{' '}
-              {cell.data.allocation !== null ? (
+              {isNumber(cell.data.allocation) ? (
                 <>
                   {formatNumber.format(cell.data.allocation)}m<sup>3</sup>/day
                 </>
