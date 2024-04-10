@@ -1,4 +1,9 @@
-// Server data types
+import _ from 'lodash';
+
+declare global {
+  const _: typeof _;
+}
+
 interface Dictionary<T> {
   [index: string]: T;
 }

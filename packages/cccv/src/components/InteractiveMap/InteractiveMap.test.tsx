@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import InteractiveMap from "@components/InteractiveMap.tsx";
+import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx";
 import {expect} from "vitest";
 
 beforeAll(() => {
@@ -9,6 +9,13 @@ beforeAll(() => {
             remove: vi.fn()
         }))
     }))
+
+  vi.mock('@tanstack/react-query', () => {
+    return {
+      __esModule: true,
+      useQueryClient: vi.fn(() => null),
+    };
+  });
 })
 
 afterAll(() => {
@@ -23,6 +30,6 @@ describe('InteractiveMap component', () => {
     it('should render', () => {
         render(<InteractiveMap startLocation={{ longitude: 174.7, latitude: -41.3, zoom: 10 }}/>)
 
-        expect(screen.getByTestId('InteractiveMap')).toBeInTheDocument()
+        expect(screen.getByTestId('map')).toBeInTheDocument()
     })
 })

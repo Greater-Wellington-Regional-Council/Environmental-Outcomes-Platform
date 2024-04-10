@@ -30,7 +30,10 @@
       "@images/*": ["src/images/*"],
       "@src/*": ["src/*"],
       "@loaders/*": ["src/loaders/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@shared/*": ["../sharedLib/*"],
+      "@models/*": ["src/models/*"],
+      "@services/*": ["src/services/*"],
     }
   },
   "include": [

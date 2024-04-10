@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import {createBrowserRouter, RouteObject, RouterProvider} from 'react-router-dom'
 import routes from '@src/routes.tsx'
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {ErrorProvider} from "@components/ErrorContext/ErrorProvider.tsx";
 
 const queryClient = new QueryClient()
 
@@ -19,7 +20,9 @@ export function App() {
 createRoot(rootElement).render(
       <QueryClientProvider client={queryClient}>
         <StrictMode>
-          <App />
+            <ErrorProvider>
+              <App />
+            </ErrorProvider>
         </StrictMode>
       </QueryClientProvider>
 )
