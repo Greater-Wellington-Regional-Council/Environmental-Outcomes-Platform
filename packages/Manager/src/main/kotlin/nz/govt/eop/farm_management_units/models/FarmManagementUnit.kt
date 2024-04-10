@@ -1,17 +1,13 @@
 package nz.govt.eop.farm_management_units.models
 
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jakarta.persistence.*
 import org.hibernate.annotations.Formula
+import java.io.IOException
 
 class GeoJsonSerializer : JsonSerializer<String>() {
   private val objectMapper = ObjectMapper()
@@ -22,13 +18,19 @@ class GeoJsonSerializer : JsonSerializer<String>() {
   }
 }
 
-class GeoJsonDeserializer : JsonDeserializer<Any>() {
+internal class GeoJsonDeserializer : JsonDeserializer<JsonNode>() {
   private val mapper = ObjectMapper()
 
-  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Any {
-    return mapper.readTree(jp)
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): JsonNode {
+    try {
+      return mapper.readTree(jp)
+    } catch (e: IOException) {
+      println("Error deserializing GeoJSON: " + e.message)
+      throw RuntimeException("Failed to deserialize GeoJSON", e)
+    }
   }
 }
+
 
 @Entity
 @Table(name = "farm_management_units")
@@ -75,7 +77,7 @@ data class FarmManagementUnit(
 ) {
 
   companion object {
-    const val DEFAULT_SRID = 4326 // EPSG:4326 WGS 84 projection used by MapBoxGL
+    const val DEFAULT_SRID = 4326
   }
 
   constructor() :

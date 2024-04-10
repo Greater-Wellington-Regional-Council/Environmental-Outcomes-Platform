@@ -1,9 +1,8 @@
 package nz.govt.eop.farm_management_units
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.shouldBe
 import io.kotest.matchers.ints.shouldBeGreaterThan
-import kafka.utils.Json
+import io.kotest.matchers.shouldBe
 import nz.govt.eop.farm_management_units.models.FarmManagementUnit
 import nz.govt.eop.farm_management_units.repositories.FarmManagementUnitRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,8 +44,8 @@ var TEMPLATE_FMU = FarmManagementUnit(
   mciBase = "-",
   mciObj = "Fair",
   ecoliObj = "C",
-  geom = "{\"crs\": { \"type\": \"name\", \"properties\": { \"name\": \"EPSG:4326\" } }, " +
-          "\"type\": \"MultiPolygon\", \"coordinates\": [[[[175.425931, -41.071014], [175.427715, -41.070976]]]]}"
+  geom = "{\"crs\": {\"type\": \"name\", \"properties\": {\"name\": \"EPSG:4326\"}}, \"type\": " +
+          "\"Point\", \"coordinates\": [175.5391000006, -41.152800006]}"
 )
 
 @SpringBootTest
