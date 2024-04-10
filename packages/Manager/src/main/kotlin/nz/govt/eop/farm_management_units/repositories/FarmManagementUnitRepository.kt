@@ -7,10 +7,11 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface FarmManagementUnitRepository : JpaRepository<FarmManagementUnit, Int> {
-  @Query(
-    value = """
+    @Query(
+        value =
+            """
         SELECT 
-            99999 as id, 
+            fmu_no as id, 
             gid, 
             objectid, 
             fmu_no, 
@@ -48,11 +49,11 @@ interface FarmManagementUnitRepository : JpaRepository<FarmManagementUnit, Int> 
         FROM farm_management_units 
         WHERE ST_Intersects(geom, ST_Transform(ST_SetSRID(ST_Point(:lng, :lat), :srid), 2193))
     """,
-    nativeQuery = true,
-  )
-  fun findAllByLngLat(
-    lng: Double,
-    lat: Double,
-    srid: Int = FarmManagementUnit.DEFAULT_SRID
-  ): List<FarmManagementUnit>
+        nativeQuery = true,
+    )
+    fun findAllByLngLat(
+        lng: Double,
+        lat: Double,
+        srid: Int = FarmManagementUnit.DEFAULT_SRID,
+    ): List<FarmManagementUnit>
 }

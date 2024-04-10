@@ -93,7 +93,8 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     // We specify the target directly here to avoid having the plugin depend on
     // generated sources, which was forcing Flyway to run before the SQL had been
     // formatted, which then confused flyway the next time it ran.
-    target("src/main/kotlin/**/*.kt", "src/test/kotlin/**/*.kt")
+    target("/src/main/kotlin/**/*.kt", "/src/test/kotlin/**/*.kt")
+    targetExclude("**/jooq/**")
     ktfmt()
   }
   kotlinGradle { ktfmt() }
@@ -106,7 +107,8 @@ val dbConfig =
         "testUrl" to
             "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?: "localhost"}:5432/eop_test",
         "user" to "postgres",
-        "password" to "password")
+        "password" to "password",
+    )
 
 flyway {
   url = dbConfig["testUrl"]
@@ -149,7 +151,8 @@ jooq {
                       userType = "nz.govt.eop.si.jooq.ManagementUnitType"
                       isEnumConverter = true
                       includeExpression = ".*management_unit_type"
-                    })
+                    },
+                )
             excludes =
                 "st_.*|spatial_ref_sys|geography_columns|geometry_columns|flyway_schema_history"
           }
@@ -197,7 +200,11 @@ tasks.register("loadSampleData") {
   doLast {
     println("Loading Sample Data")
     SingleConnectionDataSource(
-            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+            dbConfig["devUrl"]!!,
+            dbConfig["user"]!!,
+            dbConfig["password"]!!,
+            true,
+        )
         .let {
           it.connection.use { connection ->
             executeSqlScript(connection, FileSystemResource("./sample-data/allocation_data.sql"))
@@ -213,11 +220,17 @@ tasks.register("refreshSampleData") {
     println("Refresh Sample Data Dates")
 
     SingleConnectionDataSource(
-            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+            dbConfig["devUrl"]!!,
+            dbConfig["user"]!!,
+            dbConfig["password"]!!,
+            true,
+        )
         .let {
           it.connection.use { connection ->
             executeSqlScript(
-                connection, FileSystemResource("./sample-data/update_observation_dates.sql"))
+                connection,
+                FileSystemResource("./sample-data/update_observation_dates.sql"),
+            )
           }
         }
   }

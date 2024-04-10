@@ -28,8 +28,8 @@ describe('InteractiveMap component', () => {
     });
 
     it('should render', () => {
-        render(<InteractiveMap startLocation={{ longitude: 174.7, latitude: -41.3, zoom: 10 }}/>)
+        render(<InteractiveMap location={{ longitude: 174.7, latitude: -41.3, zoom: 10 }} pinLocation={() => {}} />)
 
-        expect(screen.getByTestId('map')).toBeInTheDocument()
+        expect(screen.getByTestId('InteractiveMap')).toBeInTheDocument()
     })
 })
