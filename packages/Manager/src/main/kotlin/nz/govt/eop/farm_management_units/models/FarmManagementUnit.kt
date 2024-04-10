@@ -2,32 +2,40 @@ package nz.govt.eop.farm_management_units.models
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jakarta.persistence.*
 import org.hibernate.annotations.Formula
+import java.io.IOException
 
 class GeoJsonSerializer : JsonSerializer<String>() {
-  private val objectMapper = ObjectMapper()
+    private val objectMapper = ObjectMapper()
 
-  override fun serialize(value: String?, gen: JsonGenerator, serializers: SerializerProvider) {
-    val geoJson: JsonNode = objectMapper.readTree(value)
-    gen.writeObject(geoJson)
-  }
+    override fun serialize(
+        value: String?,
+        gen: JsonGenerator,
+        serializers: SerializerProvider,
+    ) {
+        val geoJson: JsonNode = objectMapper.readTree(value)
+        gen.writeObject(geoJson)
+    }
 }
 
-class GeoJsonDeserializer : JsonDeserializer<Any>() {
-  private val mapper = ObjectMapper()
+internal class GeoJsonDeserializer : JsonDeserializer<JsonNode>() {
+    private val mapper = ObjectMapper()
 
-  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Any {
-    return mapper.readTree(jp)
-  }
+    override fun deserialize(
+        jp: JsonParser,
+        ctxt: DeserializationContext,
+    ): JsonNode {
+        try {
+            return mapper.readTree(jp)
+        } catch (e: IOException) {
+            println("Error deserializing GeoJSON: " + e.message)
+            throw RuntimeException("Failed to deserialize GeoJSON", e)
+        }
+    }
 }
 
 @Entity
@@ -70,47 +78,47 @@ data class FarmManagementUnit(
     @JsonSerialize(using = GeoJsonSerializer::class)
     @JsonDeserialize(using = GeoJsonDeserializer::class)
     @Formula("CAST(ST_AsGeoJSON(ST_Transform(geom, ${DEFAULT_SRID}), 6 ,2) AS jsonb)")
-    var geom: String? = null
+    var geom: String? = null,
 ) {
+    companion object {
+        const val DEFAULT_SRID = 4326
+    }
 
-  companion object {
-    const val DEFAULT_SRID = 4326 // EPSG:4326 WGS 84 projection used by MapBoxGL
-  }
-
-  constructor() :
-      this(
-          id = null,
-          gid = 0,
-          objectId = 0.0,
-          fmuNo = 0,
-          location = "",
-          fmuName1 = "",
-          fmuGroup = "",
-          shapeLeng = 0.0,
-          shapeArea = 0.0,
-          byWhen = "",
-          fmuIssue = "",
-          topFmuGrp = "",
-          ecoliBase = "",
-          periBase = "",
-          periObj = "",
-          aToxBase = "",
-          aToxObj = "",
-          nToxBase = "",
-          nToxObj = "",
-          phytoBase = "",
-          phytoObj = "",
-          tnBase = "",
-          tnObj = "",
-          tpBase = "",
-          tpObj = "",
-          tliBase = "",
-          tliObj = "",
-          tssBase = "",
-          tssObj = "",
-          macroBase = "",
-          macroObj = "",
-          mciBase = "",
-          mciObj = "",
-          ecoliObj = "")
+    constructor() :
+        this(
+            id = null,
+            gid = 0,
+            objectId = 0.0,
+            fmuNo = 0,
+            location = "",
+            fmuName1 = "",
+            fmuGroup = "",
+            shapeLeng = 0.0,
+            shapeArea = 0.0,
+            byWhen = "",
+            fmuIssue = "",
+            topFmuGrp = "",
+            ecoliBase = "",
+            periBase = "",
+            periObj = "",
+            aToxBase = "",
+            aToxObj = "",
+            nToxBase = "",
+            nToxObj = "",
+            phytoBase = "",
+            phytoObj = "",
+            tnBase = "",
+            tnObj = "",
+            tpBase = "",
+            tpObj = "",
+            tliBase = "",
+            tliObj = "",
+            tssBase = "",
+            tssObj = "",
+            macroBase = "",
+            macroObj = "",
+            mciBase = "",
+            mciObj = "",
+            ecoliObj = "",
+        )
 }
