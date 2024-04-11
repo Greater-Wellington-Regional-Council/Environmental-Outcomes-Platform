@@ -1,4 +1,4 @@
-import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx";
+import InteractiveMap from "@components/InteractiveMap/InteractiveMap";
 import {useLoaderData} from "react-router-dom";
 import './MapPage.scss';
 import {ViewLocation} from "@src/global";
@@ -37,7 +37,7 @@ export default function MapPage() {
       };
 
       fetchFmu().then()
-    }, [pinnedLocation, setSelectedFmu, setError]);
+    }, [setSelectedFmu, setError]);
   }
 
   useFetchFmu(setSelectedFmu, setError);

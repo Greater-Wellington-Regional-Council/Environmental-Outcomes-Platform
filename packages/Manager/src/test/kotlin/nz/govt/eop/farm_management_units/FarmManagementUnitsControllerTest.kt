@@ -24,21 +24,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class FarmManagementUnitsControllerTest(
     @Autowired val mvc: MockMvc,
 ) : FunSpec() {
-    @MockBean
-    private lateinit var fmuService: FarmManagementUnitService
+    @MockBean private lateinit var fmuService: FarmManagementUnitService
 
     @Test
     fun `Get farm-management-units-lng-lat`() {
         `when`(fmuService.findFarmManagementUnitByLatAndLng(anyDouble(), anyDouble(), anyInt()))
             .thenReturn(FarmManagementUnit(id = 1, fmuGroup = "Western hill rivers"))
 
-        val result =
-            mvc.perform(
-                get("/farm-management-units?lng=175.34&lat=-41")
-                    .contentType(MediaType.APPLICATION_JSON),
-            )
-                .andExpect(status().isOk)
-                .andReturn()
+        mvc.perform(
+            get("/farm-management-units?lng=175.34&lat=-41")
+                .contentType(MediaType.APPLICATION_JSON),
+        )
+            .andExpect(status().isOk)
+            .andReturn()
     }
 
     @Test
@@ -51,19 +49,17 @@ class FarmManagementUnitsControllerTest(
                 ),
             )
 
-        val result =
-            mvc.perform(
-                get("/farm-management-units/as-features")
-                    .contentType(MediaType.APPLICATION_JSON),
-            )
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$.features.length()").value(2))
-                .andExpect(jsonPath("$.features[0].id").value(1))
-                .andExpect(jsonPath("$.features[0].properties").isEmpty)
-                .andExpect(jsonPath("$.features[1].id").value(2))
-//      .andExpect(jsonPath("$.features[1].geometry").value(TEMPLATE_FMU.geom))
-                .andExpect(jsonPath("$.features[1].properties").isEmpty)
-                .andReturn()
+        mvc.perform(
+            get("/farm-management-units/as-features").contentType(MediaType.APPLICATION_JSON),
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$.features.length()").value(2))
+            .andExpect(jsonPath("$.features[0].id").value(1))
+            .andExpect(jsonPath("$.features[0].properties").isEmpty)
+            .andExpect(jsonPath("$.features[1].id").value(2))
+            //      .andExpect(jsonPath("$.features[1].geometry").value(TEMPLATE_FMU.geom))
+            .andExpect(jsonPath("$.features[1].properties").isEmpty)
+            .andReturn()
     }
 }
