@@ -68,7 +68,7 @@ export default function InteractiveMap({
     setViewState(evt.viewState);
   }, 10);
 
-  const handleMouseUp = (e: MapMouseEvent) => {
+  const handleClick = (e: MapMouseEvent) => {
     if (!moving) {
       pinLocation({
         longitude: e.lngLat.lng,
@@ -79,14 +79,18 @@ export default function InteractiveMap({
     setMoving(false);
   }
 
+  const handleMouseUp = () => {
+    setMoving(false);
+  }
+
   return (
-    <div className="map-container" data-testid={"InteractiveMap"}>
+    <div className={`map-container ${moving ? 'moving' : 'pointing'}`} data-testid={"InteractiveMap"}>
       <MapStyleSelector value={mapStyle} onStyleChange={handleStyleChange} apiKey={LINZ_API_KEY}/>
       <Map
         ref={mapRef as LegacyRef<MapRef>}
         data-Testid="map"
         mapStyle={mapStyle}
-        style={{width: '100%', height: '100vh'}}
+        style={{width: '100%', height: '100vh', cursor: moving ? 'move' : 'pointer'}}
         viewState={{...viewState, width: 100, height: 100}}
         mapboxAccessToken={MAPBOX_TOKEN}
         accessToken={LINZ_API_KEY}
@@ -95,8 +99,9 @@ export default function InteractiveMap({
         zoom-={11}
         minZoom={5}
         interactive={true}
-        onMouseUp={handleMouseUp}
+        onClick={handleClick}
         onMove={handleMove}
+        onMouseUp={handleMouseUp}
         trackResize={true}>
         {children}
         <Source
