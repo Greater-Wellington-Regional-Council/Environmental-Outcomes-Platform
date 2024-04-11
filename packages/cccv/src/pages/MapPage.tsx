@@ -27,9 +27,7 @@ export default function MapPage() {
         if (!pinnedLocation) return;
         const fmu = await farmManagementService.getByLngAndLat(pinnedLocation.longitude, pinnedLocation.latitude);
         setSelectedFmu(fmu);
-        console.log(selectedFmu)
         if (fmu) {
-          console.log("show panel")
           setShowPanel(true);
         } else {
           setShowPanel(false);
@@ -37,7 +35,7 @@ export default function MapPage() {
       };
 
       fetchFmu().then()
-    }, [setSelectedFmu, setError]);
+    }, [pinnedLocation, setSelectedFmu, setError]);
   }
 
   useFetchFmu(setSelectedFmu, setError);
@@ -53,7 +51,7 @@ export default function MapPage() {
         <h2 className={"text-2xl dark:text-white"}>Catchment, context, challenges and values (CCCV)</h2>
       </header>
 
-      <main className="mappage flex m-0 rounded shadow inset-4" role="application">
+      <main className="mappage flex m-0 rounded shadow inset-4 cursor-pointer" role="application">
         <div className={`flex-grow flex-2 m-4 rounded`}>
           <InteractiveMap location={location} pinLocation={setPinnedLocation}  />
         </div>

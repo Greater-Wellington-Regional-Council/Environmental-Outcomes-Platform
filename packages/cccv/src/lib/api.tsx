@@ -29,7 +29,6 @@ export const get = async (url: string) => {
   clearTimeout(timeoutId);
 
   if (!res.ok) {
-    console.log(res)
     return null
   }
 
