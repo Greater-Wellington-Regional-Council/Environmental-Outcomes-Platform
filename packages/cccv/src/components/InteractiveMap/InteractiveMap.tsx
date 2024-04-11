@@ -80,7 +80,7 @@ export default function InteractiveMap({
   }
 
   return (
-    <div className="map-container">
+    <div className="map-container" data-testid={"InteractiveMap"}>
       <MapStyleSelector value={mapStyle} onStyleChange={handleStyleChange} apiKey={LINZ_API_KEY}/>
       <Map
         ref={mapRef as LegacyRef<MapRef>}

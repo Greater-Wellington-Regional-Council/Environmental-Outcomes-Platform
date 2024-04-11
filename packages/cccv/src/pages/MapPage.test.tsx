@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import MapPage from '@pages/MapPage.tsx';
 
-vi.mock('@components/InteractiveMap', () => ({
+vi.mock('@components/InteractiveMap/InteractiveMap', () => ({
   default: () => {
     vi.fn();
     return <div>Mock Map</div>;
