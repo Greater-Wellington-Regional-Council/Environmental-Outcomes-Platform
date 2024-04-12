@@ -5,6 +5,7 @@ function useEscapeKey(onEscape: () => void) {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onEscape();
+        (document?.activeElement as HTMLElement)?.blur();
       }
     };
 
