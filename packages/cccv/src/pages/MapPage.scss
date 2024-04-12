@@ -1,0 +1,60 @@
+@keyframes slideInRight {
+  0% {
+    right: -100%; /* Start from the right, outside of the view */
+  }
+  100% {
+    right: 0; /* End at the right edge of the container */
+  }
+}
+
+.info-panel {
+  position: fixed;
+  width: 33.333%;  // Example width, adjust as needed
+  height: 100%;
+  right: -100%;  // Initially off-screen
+  transition: right 0.5s ease-in-out;
+}
+
+.animate-slide-in-right {
+  right: 0;  // Final position after animation
+}
+
+.map-page {
+  max-height: 600px;
+}
+
+.map-container {
+  border: none;
+  border-radius: 10px !important;
+}
+
+.mapboxgl-map {
+  border-radius: 10px;
+}
+
+.farmManagementUnit {
+  border-radius: 0 10px 10px 0;
+}
+
+@keyframes pulsate {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+    background-color: #ffffff;
+  }
+  50% {
+    transform: translateX(0.1em);
+    opacity: 0.8;
+    background-color: #f0f0f1;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+    background-color: #ffffff;
+  }
+}
+
+
+.pulsate {
+  animation: pulsate 0.5s ease-in-out;
+}
