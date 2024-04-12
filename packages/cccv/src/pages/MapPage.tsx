@@ -20,18 +20,16 @@ export default function MapPage() {
   const [selectedFmu, setSelectedFmu] = useState<FarmManagementUnitProps | null>(null);
 
   const [showPanel, setShowPanel] = useState(false);
+  const [fmuChanged, setFmuChanged] = useState(false);
 
   function useFetchFmu(setSelectedFmu: (fmu: FarmManagementUnitProps | null) => void, setError: (error: Error | null) => void) {
     useEffect(() => {
       const fetchFmu = async () => {
         if (!pinnedLocation) return;
         const fmu = await farmManagementService.getByLngAndLat(pinnedLocation.longitude, pinnedLocation.latitude);
-        setSelectedFmu(fmu);
-        if (fmu) {
-          setShowPanel(true);
-        } else {
-          setShowPanel(false);
-        }
+        setFmuChanged(selectedFmu != null && fmu != null  && (fmu != selectedFmu));
+        setShowPanel(fmu != null)
+        setSelectedFmu(fmu)
       };
 
       fetchFmu().then()
@@ -42,23 +40,27 @@ export default function MapPage() {
 
   useEscapeKey(() => setShowPanel(false))
 
+  const revealOrHideInfoPanel = showPanel ? 'animate-slide-in-right' : 'right-[-100%]';
+  const signalUpdatedInfoPanel = fmuChanged ? 'pulsate' : '';
+
   return (
-    <div className="mappage flex flex-col bg-gray-50">
-      <header className={"headers flex-2 font-medium m-4 mt-4 my-0 rounded-xl p-4 pt-0 bg-cyan-800 text-blue-50 font-sans"}>
+    <div className="map-page bg-white h-">
+      <header className={"headers flex-2 font-medium m-4 mt-4 my-0 rounded-xl p-4 pt-1 bg-cyan-800 text-blue-50 font-sans"}>
         <h1
           className={"mb-4 text-4xl text-bo leading-none tracking-tight md:text-5xl lg:text-6xl mx-auto my-4"}>Farm
           management</h1>
         <h2 className={"text-2xl dark:text-white"}>Catchment, context, challenges and values (CCCV)</h2>
       </header>
 
-      <main className="mappage flex m-0 rounded shadow inset-4 cursor-pointer" role="application">
-        <div className={`flex-grow flex-2 m-4 rounded`}>
-          <InteractiveMap location={location} pinLocation={setPinnedLocation}  />
+      <main className="map-page flex hscreen" role="application">
+        <div className={`map-panel flex-1 h-full m-4 rounded`}>
+          <InteractiveMap location={location} pinLocation={setPinnedLocation}/>
         </div>
-        {showPanel && <div
-          className="info-panel bg-gray-700 text-white font-mono flex-grow flex-1 shadow-black rounded m-4 ml-0 transition ease-in-out delay-150">
+        <div
+          className={`info-panel border-l-white border-l-8 text-white font-mono shadow-black m-4 absolute w-1/3 h-full ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition-transform`}
+          key={`${fmuChanged ? selectedFmu?.fmuNo : ''}`}>
           <FarmManagementUnit {...selectedFmu!} />
-        </div>}
+        </div>
       </main>
     </div>
   )
