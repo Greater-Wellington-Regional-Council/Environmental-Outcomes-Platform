@@ -102,7 +102,10 @@ export default function InteractiveMap({
         onClick={handleClick}
         onMove={handleMove}
         onMouseUp={handleMouseUp}
-        trackResize={true}>
+        trackResize={true}
+        onError={(event: { error: Error; }) => {
+          console.error('Map error:', event.error);
+        }}>
         {children}
         <Source
           id="farm-management-units"
@@ -110,9 +113,6 @@ export default function InteractiveMap({
           data={`${determineBackendUri(window.location.hostname)}/farm-management-units/as-features`}>
           <BoundaryLinesLayer mapRef={mapRef.current!} sourceId="farm-management-units"/>
         </Source>
-        onError={(event: { error: Error; }) => {
-        console.error('Map error:', event.error);
-      }}
       </Map>
     </div>)
 }
