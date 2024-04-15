@@ -1,5 +1,6 @@
 import gwrcLogo from '@images/gwrc-logo-header.svg';
 import horizonsLogo from '@images/horizons-logo-header.png';
+import {Council} from "@src/global";
 
 const Councils: Council[] = [
   {
@@ -24,7 +25,23 @@ const Councils: Council[] = [
         url: 'https://www.gw.govt.nz/assets/Documents/2023/07/Chapter-5.pdf#page=121',
       },
     ],
-    labels: {},
+    labels: {
+      headingText: '',
+      surfaceWaterParent: '',
+      surfaceWaterChild: '',
+      region: '',
+      surfaceWaterParentLimit: '',
+      surfaceWaterChildLimit: '',
+      groundwaterLimit: ''
+    },
+    hasGroundwaterCategories: false,
+    unitTypes: {
+      flow: '',
+      surface: '',
+      ground: ''
+    },
+    regionOverrides: [],
+    usageDisplayGroups: []
   },
   {
     id: 8,
@@ -43,7 +60,23 @@ const Councils: Council[] = [
         url: 'https://www.horizons.govt.nz/CMSPages/GetFile.aspx?guid=ad4efdf3-9447-45a3-93ca-951136c7f3b3',
       },
     ],
-    labels: {},
+    labels: {
+      headingText: '',
+      surfaceWaterParent: '',
+      surfaceWaterChild: '',
+      region: '',
+      surfaceWaterParentLimit: '',
+      surfaceWaterChildLimit: '',
+      groundwaterLimit: ''
+    },
+    hasGroundwaterCategories: false,
+    unitTypes: {
+      flow: '',
+      surface: '',
+      ground: ''
+    },
+    regionOverrides: [],
+    usageDisplayGroups: []
   },
 ];
 
