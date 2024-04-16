@@ -47,7 +47,6 @@ spring:
           value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       application-id: nz.govt.eop.consumers.manager
 
-
 management:
   endpoints:
     enabled-by-default: true

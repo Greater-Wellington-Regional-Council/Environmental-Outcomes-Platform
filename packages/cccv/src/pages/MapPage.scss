@@ -8,15 +8,15 @@
 }
 
 .info-panel {
-  position: fixed;
-  width: 33.333%;  // Example width, adjust as needed
+  position: absolute;
+  width: 33.333%;
   height: 100%;
   right: -100%;  // Initially off-screen
   transition: right 0.5s ease-in-out;
 }
 
 .animate-slide-in-right {
-  right: 0;  // Final position after animation
+  right: 0;
 }
 
 .map-page {
