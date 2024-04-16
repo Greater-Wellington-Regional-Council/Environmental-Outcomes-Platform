@@ -3,10 +3,7 @@ package nz.govt.eop.tasks
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
-import net.postgis.jdbc.geometry.Geometry
-import nz.govt.eop.si.jooq.tables.*
 import org.jooq.DSLContext
-import org.jooq.impl.DSL
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component

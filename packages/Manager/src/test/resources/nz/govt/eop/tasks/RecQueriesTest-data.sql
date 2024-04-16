@@ -1,4 +1,3 @@
-TRUNCATE TABLE surface_water_management_boundaries;
 TRUNCATE TABLE watersheds;
 TRUNCATE TABLE rivers;
 
