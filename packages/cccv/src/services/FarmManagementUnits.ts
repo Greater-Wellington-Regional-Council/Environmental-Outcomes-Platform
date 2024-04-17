@@ -5,6 +5,8 @@ const service = {
   getByLngAndLat: async (lng: number, lat: number): Promise<FarmManagementUnit> => {
     const response = await get(`${determineBackendUri(window.location.hostname)}/farm-management-units?lng=${lng}&lat=${lat}&srid=4326`);
     return response as FarmManagementUnit;
-  }}
+  },
+  urlToGetFmuBoundaries: (): string => `${determineBackendUri(window.location.hostname)}/farm-management-units/as-features`
+}
 
 export default service;

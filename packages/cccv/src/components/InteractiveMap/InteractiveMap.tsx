@@ -6,7 +6,7 @@ import {Map} from 'react-map-gl';
 import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx";
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts";
 import {ViewLocation} from "@src/global";
-import {determineBackendUri} from "@lib/api.tsx";
+import farmManagementUnitService from "@services/FarmManagementUnits.ts";
 import { debounce } from 'lodash';
 
 const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
@@ -110,7 +110,7 @@ export default function InteractiveMap({
         <Source
           id="farm-management-units"
           type="geojson"
-          data={`${determineBackendUri(window.location.hostname)}/farm-management-units/as-features`}>
+          data={farmManagementUnitService.urlToGetFmuBoundaries()}>
           <BoundaryLinesLayer mapRef={mapRef.current!} sourceId="farm-management-units"/>
         </Source>
       </Map>
