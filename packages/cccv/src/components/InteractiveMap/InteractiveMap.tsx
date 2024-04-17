@@ -17,7 +17,7 @@ interface BoundaryLinesLayerProps {
   mapRef: MapRef
 }
 
-function BoundaryLinesLayer({ mapRef, sourceId }: BoundaryLinesLayerProps) {
+function BoundaryLinesLayer({mapRef, sourceId}: BoundaryLinesLayerProps) {
   return <Layer
     id="farm-management-units"
     type="line"
@@ -32,7 +32,7 @@ function BoundaryLinesLayer({ mapRef, sourceId }: BoundaryLinesLayerProps) {
 export default function InteractiveMap({
                                          location,
                                          pinLocation,
-                                          children,
+                                         children,
                                        }: {
   location: ViewLocation,
   pinLocation: (location: ViewLocation) => void,

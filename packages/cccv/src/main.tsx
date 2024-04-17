@@ -5,6 +5,8 @@ import routes from '@src/routes.tsx'
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {ErrorProvider} from "@components/ErrorContext/ErrorProvider.tsx";
 
+import { ThemeProvider } from "@material-tailwind/react";
+
 const queryClient = new QueryClient()
 
 const rootElement = document.getElementById('root')
@@ -20,9 +22,11 @@ export function App() {
 createRoot(rootElement).render(
       <QueryClientProvider client={queryClient}>
         <StrictMode>
+          <ThemeProvider>
             <ErrorProvider>
               <App />
             </ErrorProvider>
+          </ThemeProvider>
         </StrictMode>
       </QueryClientProvider>
 )
