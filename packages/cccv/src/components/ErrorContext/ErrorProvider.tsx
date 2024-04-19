@@ -10,7 +10,7 @@ export const ErrorProvider = ({ children }: { children: React.ReactNode }) => {
       <div className="relative min-h-screen">
         {/* Error banner absolutely positioned to overlay at the top of the container */}
         {error && (
-          <div className="absolute inset-x-0 top-0 bg-red-500 text-white z-50 p-2 shadow-lg">
+          <div className="absolute inset-x-0 top-0 bg-red-500 text-white text-xl z-50 tracking-wide p-2 shadow-lg text-center">
             {error.message}
           </div>
         )}

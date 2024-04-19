@@ -24,13 +24,17 @@ export const get = async (url: string) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 2000); // Set timeout to 5 seconds
 
-  const res = await fetch(url, {signal: controller.signal});
+  try {
+    const res = await fetch(url, {signal: controller.signal});
 
-  clearTimeout(timeoutId);
+    clearTimeout(timeoutId);
 
-  if (!res.ok) {
-    return null
+    if (!res.ok) {
+      return null
+    }
+
+    return await res.json();
+  } catch (e) {
+    return null;
   }
-
-  return await res.json();
 }
