@@ -1,6 +1,10 @@
 package nz.govt.eop
 
 import com.fasterxml.jackson.core.StreamReadConstraints
+import java.nio.file.Files
+import java.util.Base64
+import kotlin.io.path.pathString
+import kotlin.io.path.writeBytes
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -12,31 +16,27 @@ import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
-import java.nio.file.Files
-import java.util.Base64
-import kotlin.io.path.pathString
-import kotlin.io.path.writeBytes
 
 @EnableKafka
 @EnableCaching
 @SpringBootApplication
 class Application {
-    @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
+  @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
 }
 
 private const val ENV_CONFIG_KEYSTORE_CONTENT = "CONFIG_KEYSTORE_CONTENT"
 private const val PROP_CONFIG_KEYSTORE_PATH = "CONFIG_KEYSTORE_PATH"
 
 fun main(args: Array<String>) {
-    if (System.getenv(ENV_CONFIG_KEYSTORE_CONTENT) != null) {
-        storeKeystoreFromEnvironment()
-    }
+  if (System.getenv(ENV_CONFIG_KEYSTORE_CONTENT) != null) {
+    storeKeystoreFromEnvironment()
+  }
 
-    StreamReadConstraints.overrideDefaultStreamReadConstraints(
-        StreamReadConstraints.builder().maxStringLength(50_000_000).build(),
-    )
+  StreamReadConstraints.overrideDefaultStreamReadConstraints(
+      StreamReadConstraints.builder().maxStringLength(50_000_000).build(),
+  )
 
-    runApplication<Application>(*args)
+  runApplication<Application>(*args)
 }
 
 /**
@@ -50,25 +50,25 @@ fun main(args: Array<String>) {
  * variable and that will become available as a file.
  */
 private fun storeKeystoreFromEnvironment() {
-    val keyStoreContent = System.getenv(ENV_CONFIG_KEYSTORE_CONTENT)
-    val keyStoreFile = Files.createTempFile("keystore", ".jks")
-    val keyStoreBytes = Base64.getDecoder().decode(keyStoreContent)
+  val keyStoreContent = System.getenv(ENV_CONFIG_KEYSTORE_CONTENT)
+  val keyStoreFile = Files.createTempFile("keystore", ".jks")
+  val keyStoreBytes = Base64.getDecoder().decode(keyStoreContent)
 
-    keyStoreFile.writeBytes(keyStoreBytes)
+  keyStoreFile.writeBytes(keyStoreBytes)
 
-    System.setProperty(PROP_CONFIG_KEYSTORE_PATH, keyStoreFile.pathString)
+  System.setProperty(PROP_CONFIG_KEYSTORE_PATH, keyStoreFile.pathString)
 }
 
 /**
  * Check the health of the application.
  *
  * TODO: This is a placeholder for the health check endpoint. It should be replaced with a more
- * comprehensive health check.
+ *   comprehensive health check.
  */
 @RestController
 class HealthCheckController {
-    @GetMapping("/health", produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun healthCheck(): ResponseEntity<Any> {
-        return ResponseEntity.ok().body(mapOf("status" to "UP"))
-    }
+  @GetMapping("/health", produces = [MediaType.APPLICATION_JSON_VALUE])
+  fun healthCheck(): ResponseEntity<Any> {
+    return ResponseEntity.ok().body(mapOf("status" to "UP"))
+  }
 }

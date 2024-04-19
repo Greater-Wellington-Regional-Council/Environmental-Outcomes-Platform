@@ -17,19 +17,20 @@ data class FarmManagementUnitFeature(
 )
 
 fun FarmManagementUnit.toFeature(): FarmManagementUnitFeature {
-    val objectMapper = ObjectMapper()
+  val objectMapper = ObjectMapper()
 
-    return FarmManagementUnitFeature(
-        id = this.id,
-        geometry = objectMapper.readTree(this.geom),
-        properties =
-            this::class.memberProperties
-                .filter { it.name != "geom" }
-                .mapNotNull { prop -> prop.getter.call(this)?.let { prop.name to it } }
-                .toMap(), // Provide a default value for nulls,
-    )
+  return FarmManagementUnitFeature(
+      id = this.id,
+      geometry = objectMapper.readTree(this.geom),
+      properties =
+          this::class
+              .memberProperties
+              .filter { it.name != "geom" }
+              .mapNotNull { prop -> prop.getter.call(this)?.let { prop.name to it } }
+              .toMap(), // Provide a default value for nulls,
+  )
 }
 
 fun List<FarmManagementUnit>.toFeatureCollection(): FarmManagementUnitFeatureCollection {
-    return FarmManagementUnitFeatureCollection(features = this.map { it.toFeature() })
+  return FarmManagementUnitFeatureCollection(features = this.map { it.toFeature() })
 }
