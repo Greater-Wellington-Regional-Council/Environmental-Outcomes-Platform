@@ -33,13 +33,13 @@
       "@assets/*": ["src/assets/*"],
       "@shared/*": ["../sharedLib/*"],
       "@models/*": ["src/models/*"],
-      "@services/*": ["src/services/*"],
+      "@services/*": ["src/services/*"]
     }
   },
   "include": [
     "src",
-    "../cccv.old/src/lib/sharedTypes.d.ts",
-    "node_modules/vitest/globals.d.ts"
+    "node_modules/vitest/globals.d.ts",
+    "node_modules/@types/node/globals.global.d.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

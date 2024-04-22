@@ -18,13 +18,24 @@
 .map-style-selector {
   position: absolute;
   top: 10px;
-  left: 10px;
+  left: 54px;
   z-index: 1000;
   padding: 4px;
   border-radius: 6px;
+  border: 0.3px solid darkgray;
+  font-size: 16px;
   option * {
     padding: 4px;
-    font-size: 24px;
+    font-size: 16px;
   }
 }
 
+.mapboxgl-ctrl-group {
+  border-radius: 6px;
+  border: 0.3px solid darkgray;
+  box-shadow: none;
+}
+
+.mapboxgl-ctrl-group:not(:empty) {
+  box-shadow: none;
+}

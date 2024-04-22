@@ -1,22 +1,56 @@
-@keyframes slideInRight {
-  0% {
-    right: -100%; /* Start from the right, outside of the view */
+@media (max-width: 640px) {
+  @keyframes slideIn {
+    0% {
+      bottom: -100%; /* Start from the bottom, outside of the view */
+    }
+    100% {
+      bottom: 0; /* End at the bottom edge of the container */
+    }
   }
-  100% {
-    right: 0; /* End at the right edge of the container */
+
+  .info-panel {
+    position: absolute;
+    width: 100%;
+    height: 50%;
+    bottom: -100%; // Initially off-screen
+    transition: bottom 0.5s ease-in-out;
+  }
+
+  .animate-in {
+    bottom: 0;
+  }
+
+  .animate-out {
+    right: -100%;
   }
 }
 
-.info-panel {
-  position: absolute;
-  width: 33.333%;
-  height: 100%;
-  right: -100%;  // Initially off-screen
-  transition: right 0.5s ease-in-out;
-}
+@media (min-width: 641px) {
+  @keyframes slideIn {
+    0% {
+      right: -100%; /* Start from the right, outside of the view */
+    }
+    100% {
+      right: 0; /* End at the right edge of the container */
+    }
+  }
 
-.animate-slide-in-right {
-  right: 0;
+  .info-panel {
+    position: absolute;
+    width: 33.333%;
+    height: 100%;
+    right: -100%; // Initially off-screen
+    transition: right 0.5s ease-in-out;
+    border-left: 8px solid white;
+  }
+
+  .animate-in {
+    right: 0;
+  }
+
+  .animate-out {
+    right: -100%;
+  }
 }
 
 .map-page {
@@ -57,4 +91,12 @@
 
 .pulsate {
   animation: pulsate 0.5s ease-in-out;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  cursor: pointer;
+  font-size: 1.5em;
 }
