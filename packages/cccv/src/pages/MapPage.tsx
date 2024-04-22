@@ -11,7 +11,11 @@ import farmManagementService from "@services/FarmManagementUnits.ts";
 
 export default function MapPage() {
 
+  console.log("MapPage.tsx");
+
   const setError = useContext(ErrorContext).setError;
+
+  farmManagementService.checkServiceHealth(setError, "The backend service is appears to be unavailable")
 
   const locationDetails = useLoaderData();
 
@@ -25,7 +29,11 @@ export default function MapPage() {
   function useFetchFmu(setSelectedFmu: (fmu: FarmManagementUnitProps | null) => void, setError: (error: Error | null) => void) {
     useEffect(() => {
       const fetchFmu = async () => {
-        if (!pinnedLocation) return;
+        if (!pinnedLocation) {
+          setSelectedFmu(null);
+          setShowPanel(false)
+          return;
+        }
         const fmu = await farmManagementService.getByLngAndLat(pinnedLocation.longitude, pinnedLocation.latitude);
         setFmuChanged(selectedFmu != null && fmu != null  && (fmu != selectedFmu));
         setShowPanel(fmu != null)
@@ -40,7 +48,7 @@ export default function MapPage() {
 
   useEscapeKey(() => setShowPanel(false))
 
-  const revealOrHideInfoPanel = showPanel ? 'animate-slide-in-right' : 'right-[-100%]';
+  const revealOrHideInfoPanel = showPanel ? 'animate-in' : 'animate-out';
   const signalUpdatedInfoPanel = fmuChanged ? 'pulsate' : '';
 
   return (
@@ -57,8 +65,8 @@ export default function MapPage() {
           <InteractiveMap location={location} pinLocation={setPinnedLocation}/>
         </div>
         <div
-          className={`info-panel border-l-white border-l-8 text-white font-mono shadow-black m-4 absolute w-1/3 h-full ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition-transform`}
-          key={`${fmuChanged ? selectedFmu?.fmuNo : ''}`}>
+          className={`info-panel border-l-white text-white font-mono shadow-black m-4 absolute ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
+          <span className="close-button" onClick={() => setShowPanel(false)}>x</span>
           <FarmManagementUnit {...selectedFmu!} />
         </div>
       </main>

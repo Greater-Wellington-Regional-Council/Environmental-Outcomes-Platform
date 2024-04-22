@@ -1,32 +1,37 @@
-import Layout from './Layout.tsx'
-import { Navigate } from 'react-router-dom'
+import {useNavigate} from 'react-router-dom';
+import loadLocation from "@loaders/location.ts";
 import MapPage from "@pages/MapPage.tsx";
-import ErrorPage from "@pages/ErrorPage.tsx";
-import loadLocation from '@loaders/location'
+import Layout from "@src/Layout.tsx";
+import {useEffect} from "react";
 
-const defaultAppPath = 'map/@-41,175.35,8z'
+export const DefaultRedirect = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate('map/@-41,175.35,8z', {replace: true});
+  }, []);
 
-const routes  = [
+  return null;
+}
+
+const routes = [
   {
-    element: <Layout />,
+    element: <Layout/>,
     children: [
       {
         index: true,
-        element: <Navigate replace to={defaultAppPath} />
+        element: <DefaultRedirect/>
       },
       {
         path: 'map/:location',
         loader: loadLocation,
-        element: <MapPage />
+        element: <MapPage/>
       }
     ]
   },
   {
     path: '*',
-    element: <ErrorPage />,
-    loader: () => {
-      return { status: 404, message: 'Page Not Found' }
-    }
+    index: true,
+    element: <DefaultRedirect/>
   }
 ]
 
