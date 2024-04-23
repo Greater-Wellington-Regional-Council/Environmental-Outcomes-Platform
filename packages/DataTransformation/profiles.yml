@@ -11,7 +11,7 @@ eop:
       threads: 4
     test:
       type: postgres
-      host: test-database
+      host: host.docker.internal
       port: 5432
       dbname: eop_test
       pass: password

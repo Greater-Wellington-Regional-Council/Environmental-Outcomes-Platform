@@ -26,8 +26,6 @@ tasks:
 
   test:
     description: Run DBT tests against the local DB
-    dependencies:
-      - test-database
     run:
       container: dbt-env
       command: build --profiles-dir /usr/app/dbt --target test
