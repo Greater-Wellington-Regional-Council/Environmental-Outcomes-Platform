@@ -5,8 +5,8 @@ WITH source AS (
     (data -> 'properties' -> 'Headwater')::INT::BOOLEAN AS "is_headwater",
     (data -> 'properties' -> 'StreamOrde')::INT AS "stream_order",
     ingested_at AS created_at,
-    NULLIF((data -> 'properties' -> 'NextDownID')::INT, -1) AS "next_hydro_id",
-    ST_GEOMFROMGEOJSON(data -> 'geometry') AS "geom"
+    ST_GEOMFROMGEOJSON(data -> 'geometry')::GEOMETRY (GEOMETRY, 4326) AS "geom",
+    NULLIF((data -> 'properties' -> 'NextDownID')::INT, -1) AS "next_hydro_id"
   FROM {{ source('public', 'raw_rec_features_rivers') }}
 )
 
