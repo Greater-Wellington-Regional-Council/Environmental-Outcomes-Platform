@@ -29,6 +29,7 @@ temp_plan_regions AS (
 final AS (
 
   SELECT
+
     plan_id,
     ROW_NUMBER() OVER () AS id,
     region ->> 'id' AS source_id,
