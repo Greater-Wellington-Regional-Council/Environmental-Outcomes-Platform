@@ -52,4 +52,3 @@ sources:
             data_type: timestamp without time zone
           - name: comment
             data_type: varchar
-
