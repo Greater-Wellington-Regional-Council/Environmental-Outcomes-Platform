@@ -1,0 +1,54 @@
+version: 2
+
+sources:
+  - name: public
+    tables:
+      - name: raw_rec_features_rivers
+        columns:
+          - name: id
+            data_type: integer
+          - name: ingested_at
+            data_type: timestamp without time zone
+          - name: data
+            data_type: jsonb
+
+      - name: rec_rivers_modifications
+        columns:
+          - name: hydro_id
+            data_type: integer
+          - name: next_hydro_id
+            data_type: integer
+          - name: nz_segment
+            data_type: integer
+          - name: is_headwater
+            data_type: boolean
+          - name: stream_order
+            data_type: integer
+          - name: geom
+            data_type: geometry
+          - name: created_at
+            data_type: timestamp without time zone
+          - name: comment
+            data_type: varchar
+
+      - name: raw_rec_features_watersheds
+        columns:
+          - name: id
+            data_type: integer
+          - name: ingested_at
+            data_type: timestamp without time zone
+          - name: data
+            data_type: jsonb
+
+      - name: rec_watersheds_modifications
+        columns:
+          - name: hydro_id
+            data_type: integer
+          - name: nz_segment
+            data_type: integer
+          - name: geom
+            data_type: geometry
+          - name: created_at
+            data_type: timestamp without time zone
+          - name: comment
+            data_type: varchar

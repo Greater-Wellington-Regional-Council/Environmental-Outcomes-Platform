@@ -29,6 +29,10 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   eop:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
     +grants:
       select: ['eop_manager_app_user', 'developers']
 

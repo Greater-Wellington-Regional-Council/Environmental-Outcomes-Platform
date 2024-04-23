@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: rivers
+    description: "Rivers modeled to combine the REC with our modifications"
+    columns:
+      - name: hydro_id
+        data_type: integer
+        description: "ID of the river segment"
+
+      - name: next_hydro_id
+        data_type: integer
+        description: "ID of the next downstream river segment"
+
+      - name: nz_segment
+        data_type: integer
+        description: "NZ Segment id which is used for linking with river names from LINZ"
+
+      - name: is_headwater
+        data_type: boolean
+        description: "If this river segment is a headwater, i.e. there are no upstream segments"
+
+      - name: stream_order
+        data_type: integer
+        description: "A measure of stream or river size defined by the degree of branching in a drainage system. See https://www.lawa.org.nz/learn/glossary/s/stream-order/"
+
+      - name: geom
+        data_type: user-defined
+        description: "The geometry of the river line"
+
+      - name: created_at
+        data_type: timestamp without time zone
+        description: "When this record was created in the EOP system"
+
+  - name: watersheds
+    description: "Watersheds modeled to combine the REC with our modifications"
+    columns:
+      - name: hydro_id
+        data_type: integer
+        description: "ID of the watershed, it is a pair with the matching hydro_id from the rivers model"
+
+      - name: nz_segment
+        data_type: integer
+        description: "NZ Segment id which is used for linking with river names from LINZ"
+
+      - name: geom
+        data_type: user-defined
+        description: "The geometry of the watershed polygon"
+
+      - name: created_at
+        data_type: timestamp without time zone
+        description: "When this record was created in the EOP system"
