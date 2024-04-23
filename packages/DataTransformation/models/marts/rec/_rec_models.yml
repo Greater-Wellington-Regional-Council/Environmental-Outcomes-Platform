@@ -25,7 +25,7 @@ models:
         description: "A measure of stream or river size defined by the degree of branching in a drainage system. See https://www.lawa.org.nz/learn/glossary/s/stream-order/"
 
       - name: geom
-        data_type: user-defined
+        data_type: GEOMETRY(GEOMETRY, 4326)
         description: "The geometry of the river line"
 
       - name: created_at
@@ -44,9 +44,27 @@ models:
         description: "NZ Segment id which is used for linking with river names from LINZ"
 
       - name: geom
-        data_type: user-defined
+        data_type: GEOMETRY(GEOMETRY, 4326)
         description: "The geometry of the watershed polygon"
 
       - name: created_at
         data_type: timestamp without time zone
         description: "When this record was created in the EOP system"
+
+  - name: river_tile_features
+    description: "Rivers data exposed for Tile Server access"
+    config:
+      grants:
+        select: [ 'eop_tileserver_user' ]
+    columns:
+      - name: hydro_id
+        data_type: integer
+        description: "ID of the river segment"
+
+      - name: stream_order
+        data_type: integer
+        description: "A measure of stream or river size defined by the degree of branching in a drainage system. See https://www.lawa.org.nz/learn/glossary/s/stream-order/"
+
+      - name: geom
+        data_type: GEOMETRY(GEOMETRY, 4326)
+        description: "The geometry of the river line"
