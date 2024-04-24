@@ -219,3 +219,15 @@ models:
       - name: boundary
         data_type: geometry
         description: "Boundary associated with the flow limit"
+
+
+  - name: dbt_water_allocations_by_area
+    description: "Information water allocation per area"
+    columns:
+      - name: area_id
+        data_type: varchar
+        description: "Unique identifier for each area"
+
+      - name: allocation_amount
+        data_type: numeric
+        description: "Consolidated allocation amount for each area"

@@ -32,3 +32,12 @@ sources:
               - unique
           - name: boundary
             data_type: jsonb
+
+      - name: water_allocations
+        columns:
+          - name: id
+            constraints:
+              - type: primary_key
+            tests:
+              - unique
+              - not_null
