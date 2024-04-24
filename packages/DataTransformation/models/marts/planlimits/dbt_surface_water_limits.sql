@@ -7,7 +7,7 @@ WITH council_plan_documents AS (
   SELECT * FROM {{ ref('stg_planlimits_council_plan_documents') }}
 ),
 
-council_plan_boundary AS (
+council_plan_boundaries AS (
 
   SELECT * FROM {{ ref('stg_planlimits_council_plan_boundaries') }}
 ),
@@ -96,7 +96,7 @@ combined_surface_water_limits AS (
     plan_region_id,
     surface_water_limit ->> 'id' AS source_id,
     NULL AS parent_surface_water_limit_id,
-    surface_water_limit ->> 'name',
+    surface_water_limit ->> 'name' AS name,
     (surface_water_limit -> 'allocationLimit')::INT AS allocation_limit,
     (
       SELECT 
@@ -119,7 +119,7 @@ combined_surface_water_limits AS (
     plan_region_id,
     surface_water_limit ->> 'id' AS source_id,
     parent_surface_water_limit_id,
-    surface_water_limit ->> 'name',
+    surface_water_limit ->> 'name' AS name,
     (surface_water_limit -> 'allocationLimit')::INT AS allocation_limit,
     (
       SELECT 

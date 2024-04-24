@@ -1,9 +1,13 @@
+{{ config(
+    materialized = 'view'
+) }}
+
 WITH council_plan_documents AS (
 
   SELECT * FROM {{ ref('stg_planlimits_council_plan_documents') }}
 ),
 
-council_plan_boundary AS (
+council_plan_boundaries AS (
 
   SELECT * FROM {{ ref('stg_planlimits_council_plan_boundaries') }}
 ),

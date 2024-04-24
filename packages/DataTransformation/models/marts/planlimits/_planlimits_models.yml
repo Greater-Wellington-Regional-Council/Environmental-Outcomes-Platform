@@ -1,0 +1,221 @@
+version: 2
+
+models:
+  - name: dbt_plans
+    description: "Information about plans"
+    columns:
+      - name: id
+        data_type: integer
+        description: "Unique identifier for the plan"
+
+      - name: council_id
+        data_type: integer
+        description: "ID of the council associated with the plan"
+
+      - name: source_id
+        data_type: varchar
+        description: "Source ID of the plan"
+
+      - name: name
+        data_type: varchar
+        description: "Name of the plan"
+
+      - name: default_surface_water_limit
+        data_type: integer
+        description: "Default surface water limit for the plan"
+
+      - name: default_groundwater_limit
+        data_type: integer
+        description: "Default groundwater limit for the plan"
+
+      - name: default_flow_management_site
+        data_type: integer
+        description: "Default flow management site for the plan"
+
+      - name: default_flow_management_limit
+        data_type: integer
+        description: "Default flow management limit for the plan"
+
+
+  - name: dbt_plan_regions
+    description: "Information about plan regions"
+    columns:
+      - name: id
+        data_type: integer
+        description: "Unique identifier for the plan region"
+
+      - name: plan_id
+        data_type: integer
+        description: "ID of the plan associated with the region"
+
+      - name: source_id
+        data_type: varchar
+        description: "Source ID of the plan region"
+
+      - name: name
+        data_type: varchar
+        description: "Name of the plan region"
+
+      - name: boundary
+        data_type: geometry
+        description: "Boundary of the plan region"
+
+      - name: default_surface_water_limit
+        data_type: varchar
+        description: "Default surface water limit for the plan region"
+
+      - name: default_groundwater_limit
+        data_type: varchar
+        description: "Default groundwater limit for the plan region"
+
+      - name: default_flow_management_site
+        data_type: varchar
+        description: "Default flow management site for the plan region"
+
+      - name: default_flow_management_limit
+        data_type: varchar
+        description: "Default flow management limit for the plan region"
+
+      - name: reference_url
+        data_type: varchar
+        description: "Reference URL for the plan region"
+
+
+  - name: dbt_surface_water_limits
+    description: "Information about surface water limits"
+    columns:
+      - name: id
+        data_type: integer
+        description: "Unique identifier for the surface water limit"
+
+      - name: plan_region_id
+        data_type: integer
+        description: "ID of the plan region associated with the surface water limit"
+
+      - name: source_id
+        data_type: varchar
+        description: "Source ID of the surface water limit"
+
+      - name: parent_surface_water_limit_id
+        data_type: integer
+        description: "ID of the parent surface water limit, if any"
+
+      - name: name
+        data_type: varchar
+        description: "Name of the surface water limit"
+
+      - name: allocation_limit
+        data_type: integer
+        description: "Allocation limit for the surface water"
+
+      - name: boundary
+        data_type: geometry
+        description: "Boundary of the surface water limit"
+
+
+  - name: dbt_groundwater_limits
+    description: "Information about groundwater limits"
+    columns:
+      - name: id
+        data_type: integer
+        description: "Unique identifier for the groundwater limit"
+
+      - name: plan_region_id
+        data_type: integer
+        description: "ID of the plan region associated with the groundwater limit"
+
+      - name: source_id
+        data_type: varchar
+        description: "Source ID of the groundwater limit"
+
+      - name: name
+        data_type: varchar
+        description: "Name of the groundwater limit"
+
+      - name: allocation_limit
+        data_type: integer
+        description: "Allocation limit for the groundwater"
+
+
+  - name: dbt_groundwater_areas
+    description: "Information about groundwater areas"
+    columns:
+      - name: id
+        data_type: integer
+        description: "Unique identifier for the groundwater area"
+
+      - name: groundwater_limit_id
+        data_type: integer
+        description: "ID of the groundwater limit associated with the area"
+
+      - name: source_id
+        data_type: varchar
+        description: "Source ID of the groundwater area"
+
+      - name: category
+        data_type: varchar
+        description: "Category of the groundwater area"
+
+      - name: depth
+        data_type: varchar
+        description: "Depth of the groundwater area"
+
+      - name: depletion_limit_id
+        data_type: integer
+        description: "ID of the depletion limit associated with the area"
+
+      - name: boundary
+        data_type: geometry
+        description: "Boundary of the groundwater area"
+
+
+  - name: dbt_flow_measurement_sites
+    description: "Information about flow measurement sites"
+    columns:
+      - name: id
+        data_type: integer
+        description: "Unique identifier for the flow measurement site"
+
+      - name: plan_region_id
+        data_type: integer
+        description: "ID of the plan region associated with the site"
+
+      - name: source_id
+        data_type: varchar
+        description: "Source ID of the site"
+
+      - name: name
+        data_type: varchar
+        description: "Name of the flow measurement site"
+
+      - name: location
+        data_type: geometry
+        description: "Location of the flow measurement site"
+
+
+  - name: dbt_flow_limits
+    description: "Information about flow limits"
+    columns:
+      - name: id
+        data_type: integer
+        description: "Unique identifier for the flow limit"
+
+      - name: plan_region_id
+        data_type: integer
+        description: "ID of the plan region associated with the flow limit"
+
+      - name: source_id
+        data_type: varchar
+        description: "Source ID of the flow limit"
+
+      - name: minimum_flow
+        data_type: integer
+        description: "Minimum flow limit"
+
+      - name: measured_at_site_id
+        data_type: integer
+        description: "ID of the flow measurement site where the minimum flow was measured"
+
+      - name: boundary
+        data_type: geometry
+        description: "Boundary associated with the flow limit"
