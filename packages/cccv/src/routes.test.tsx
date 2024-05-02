@@ -48,13 +48,13 @@ describe('Test Routes', () => {
         expect(layoutElement).toBeInTheDocument()
     })
 
-    it('renders Error Page when invalid', () => {
+    it('renders Default Page when invalid', () => {
         render(
             <MemoryRouter initialEntries={['/this-is-bad']}>
                 <Routes>{renderRoutes(routes as RouteType[])}</Routes>
             </MemoryRouter>
         )
-        const layoutElement = screen.getByText('Error Page')
+        const layoutElement = screen.getByText('Map Page')
         expect(layoutElement).toBeInTheDocument()
     })
 })

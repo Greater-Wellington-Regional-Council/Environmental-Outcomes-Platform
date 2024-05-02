@@ -1,0 +1,57 @@
+.FreshwaterManagementUnit {
+  font-family: "Courier New";
+  overflow-y: auto;
+
+  h1 {
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-bottom: 1.1rem;
+  }
+
+  h2 {
+    margin-bottom: 1.6rem;
+    margin-top: 1.2em;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+
+  h3 {
+    font-weight: bold;
+    margin-top: 1.5em !important;
+    margin-bottom: 0.6em !important;
+  }
+
+  li {
+    margin-left: 10px;
+    padding-left: 10px;
+  }
+
+  p {
+    font-size: 1em;
+    margin-bottom: 1em;
+  };
+
+  .tangataWhenua {
+    background-color: white;
+    box-shadow: #0a3069;
+    font-color: black !important;
+    padding: 8px 20px 8px 20px;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+  }
+}
+
+.contaminant {
+  ol {
+    list-style-type: none !important;
+  }
+  ol, ul, li {
+    font-size: 1em;
+    padding-left: 0;
+    margin-left: 0;
+  }
+
+  .contaminants {
+    margin-bottom: 1.5em;
+  }
+}

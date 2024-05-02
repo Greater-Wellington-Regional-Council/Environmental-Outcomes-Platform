@@ -1,8 +1,8 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './InteractiveMap.scss';
-import React, {LegacyRef, useRef, useState} from 'react';
+import React, {LegacyRef, useContext, useRef, useState} from 'react';
 import {
-  Layer,
+  Layer, MapboxGeoJSONFeature,
   MapMouseEvent,
   MapRef,
   NavigationControl,
@@ -16,8 +16,9 @@ import {Map} from 'react-map-gl';
 import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx";
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts";
 import {ViewLocation} from "@src/global";
-import farmManagementUnitService from "@services/FarmManagementUnits.ts";
+import freshwaterManagementUnitService from "@services/FreshwaterManagementUnits.ts";
 import { debounce } from 'lodash';
+import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 
 const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -42,11 +43,11 @@ function BoundaryLinesLayer({id, mapRef, sourceId, mapStyle = "topographical"}: 
 }
 
 interface FeatureHighlightProps {
-  highlightedFeature: Feature<Geometry> | null,
+  highlightedFeature: Feature<Geometry> | null | undefined,
   id?: string,
   fillColor?: string,
   fillOpacity?: number,
-  filter?: (string | string[] | any)[]
+  filter?: (string | string[] | never)[]
   sourceId: string
 }
 
@@ -87,12 +88,17 @@ function FeatureHighlight({
 export default function InteractiveMap({
                                          location,
                                          pinLocation,
-                                         children,
+                                         highlightedFeature,
+                                         setHighlightedFeature,
+                                         children
                                        }: {
   location: ViewLocation,
   pinLocation: (location: ViewLocation) => void,
   children?: React.ReactNode,
+  highlightedFeature?: Feature | null,
+  setHighlightedFeature?: (feature: Feature | null) => void
 }) {
+  const setError = useContext(ErrorContext).setError;
 
   const mapRef = useRef<MapRef | null>(null);
 
@@ -118,12 +124,16 @@ export default function InteractiveMap({
 
   const [moving, setMoving] = useState(false);
 
+  const [tooltipInfo, setTooltipInfo] = useState<{ feature: MapboxGeoJSONFeature | null, x: number, y: number }>({ feature: null, x: 0, y: 0 });
+
   const handleMove = debounce((evt: ViewStateChangeEvent) => {
     setMoving(true);
     setViewState(evt.viewState);
   }, 1);
 
   const handleClick = (e: MapMouseEvent) => {
+    setError(null);
+
     if (!moving) {
       pinLocation({
         longitude: e.lngLat.lng,
@@ -138,8 +148,6 @@ export default function InteractiveMap({
     setMoving(false);
   }
 
-  const [featureUnderPointer, setFeatureUnderPointer] = useState<Feature | null>(null);
-
   const handleHover = debounce((e) => {
     const map = mapRef.current;
     if (!map) return;
@@ -147,7 +155,14 @@ export default function InteractiveMap({
     const hoveredFeatures = map.queryRenderedFeatures(e.point);
 
     if (hoveredFeatures.length > 0) {
-      setFeatureUnderPointer(hoveredFeatures[0]);
+      setHighlightedFeature && setHighlightedFeature(hoveredFeatures[0]);
+      setTooltipInfo({
+        feature: hoveredFeatures[0],
+        x: e.point.x,
+        y: e.point.y
+      });
+    } else {
+      setTooltipInfo({ feature: null, x: 0, y: 0 });
     }
   }, 0.5);
 
@@ -180,12 +195,23 @@ export default function InteractiveMap({
         <NavigationControl position="top-left" visualizePitch={true}/>
         {children}
         <Source
-          id="farm-management-units"
+          id="freshwater-management-units"
           type="geojson"
-          data={farmManagementUnitService.urlToGetFmuBoundaries()}>
-          <BoundaryLinesLayer id="farm-management-units" mapRef={mapRef.current!} sourceId="farm-management-units" mapStyle={mapStyle}/>
-          <FeatureHighlight sourceId="farm-management-units" highlightedFeature={featureUnderPointer}/>
+          data={freshwaterManagementUnitService.urlToGetFmuBoundaries()}>
+          <BoundaryLinesLayer id="freshwater-management-units" mapRef={mapRef.current!} sourceId="freshwater-management-units" mapStyle={mapStyle}/>
+          <FeatureHighlight sourceId="freshwater-management-units" highlightedFeature={highlightedFeature}/>
         </Source>
       </Map>
+      {tooltipInfo.feature && tooltipInfo.feature.properties?.fmuName1 && (
+        <div
+          className="tooltip"
+          style={{
+            left: tooltipInfo.x,
+            top: tooltipInfo.y,
+          }}
+        >
+          {tooltipInfo.feature.properties?.fmuName1}
+        </div>
+      )}
     </div>)
 }

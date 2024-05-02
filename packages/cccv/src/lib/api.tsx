@@ -30,11 +30,11 @@ export const get = async (url: string) => {
     clearTimeout(timeoutId);
 
     if (!res.ok) {
-      return null
+      return null;
     }
 
     return await res.json();
   } catch (e) {
-    return null;
+    return { error: e };
   }
 }

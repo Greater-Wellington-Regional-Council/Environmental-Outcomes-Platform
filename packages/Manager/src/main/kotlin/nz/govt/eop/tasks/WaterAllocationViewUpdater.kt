@@ -22,7 +22,8 @@ class WaterAllocationViewUpdater(val jdbcTemplate: JdbcTemplate) {
         { true },
         {
           jdbcTemplate.update(
-              "SET ROLE materialized_views_role; REFRESH MATERIALIZED VIEW water_allocation_and_usage_by_area; RESET ROLE;",
+              "SET ROLE materialized_views_role; REFRESH MATERIALIZED VIEW CONCURRENTLY " +
+                  "water_allocation_and_usage_by_area; RESET ROLE;",
           )
         },
     )

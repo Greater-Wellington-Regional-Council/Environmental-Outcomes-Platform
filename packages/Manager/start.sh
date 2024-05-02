@@ -27,7 +27,7 @@ stop_and_delete_containers () {
   echo Stopping and deleting containers..
   docker ps -a --filter "name=manager-" --format '{{.ID}} {{.Image}}' | \
   awk '{print $1}' | xargs -r -I {} docker rm -f {} && \
-  docker images --format '{{.Repository}}:{{.Tag}} {{.ID}}' | grep 'manager-' | awk '{print $2}' | xargs -r -I {} docker rmi {}
+  docker images --format '{{.Repository}}:{{.Tag}} {{.ID}}' | grep 'manager-' | awk '{print $2}' | xargs -r -I {} docker rmi {} --force
 }
 
 delete_database () {
