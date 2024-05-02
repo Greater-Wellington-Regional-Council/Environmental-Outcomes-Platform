@@ -12,7 +12,7 @@
     position: absolute;
     width: 100%;
     height: 50%;
-    bottom: -100%; // Initially off-screen
+    bottom: -50%;
     transition: bottom 0.5s ease-in-out;
   }
 
@@ -21,7 +21,7 @@
   }
 
   .animate-out {
-    right: -100%;
+    bottom: -100%;
   }
 }
 
@@ -66,7 +66,7 @@
   border-radius: 10px;
 }
 
-.farmManagementUnit {
+.freshwaterManagementUnit {
   border-radius: 0 10px 10px 0;
 }
 
@@ -96,7 +96,9 @@
 .close-button {
   position: absolute;
   top: 10px;
-  right: 40px;
+  right: 14px;
   cursor: pointer;
-  font-size: 1.5em;
+  font-size: 1.2em;
+  font-weight: bold;
+  font-family: "Helvetica Neue", sans-serif;
 }

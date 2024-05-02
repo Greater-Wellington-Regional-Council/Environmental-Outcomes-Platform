@@ -28,7 +28,7 @@ describe('InteractiveMap component', () => {
     });
 
     it('should render', () => {
-        render(<InteractiveMap location={{ longitude: 174.7, latitude: -41.3, zoom: 10 }} pinLocation={() => {}} />)
+        render(<InteractiveMap location={{ longitude: 174.7, latitude: -41.3, zoom: 10 }} pinLocation={() => {}}  highlightedFeature={null}/>)
 
         expect(screen.getByTestId('InteractiveMap')).toBeInTheDocument()
     })

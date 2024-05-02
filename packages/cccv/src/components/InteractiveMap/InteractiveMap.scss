@@ -30,6 +30,17 @@
   }
 }
 
+.tooltip {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  background-color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid darkgrey;
+  font-weight: lighter;
+}
+
 .mapboxgl-ctrl-group {
   border-radius: 6px;
   border: 0.3px solid darkgray;

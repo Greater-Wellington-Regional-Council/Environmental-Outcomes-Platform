@@ -2,16 +2,16 @@ SET CLIENT_ENCODING TO UTF8;
 
 SET STANDARD_CONFORMING_STRINGS TO ON;
 
-CREATE SEQUENCE farm_management_units_id_seq;
+CREATE SEQUENCE freshwater_management_units_id_seq;
 
-CREATE TABLE farm_management_units
+CREATE TABLE freshwater_management_units
 (
-    id INTEGER PRIMARY KEY DEFAULT nextval('farm_management_units_id_seq'),
-    LIKE farm_management_units_raw INCLUDING ALL
+    id INTEGER PRIMARY KEY DEFAULT nextval('freshwater_management_units_id_seq'),
+    LIKE freshwater_management_units_raw INCLUDING ALL
 
 );
 
-INSERT INTO farm_management_units (
+INSERT INTO freshwater_management_units (
     gid,
     "objectid",
     "fmu_no",
@@ -47,8 +47,8 @@ INSERT INTO farm_management_units (
     "ecoli_obj",
     "geom"
 )
-SELECT * FROM farm_management_units_raw;
+SELECT * FROM freshwater_management_units_raw;
 
-CREATE INDEX ON farm_management_units USING GIST ("geom");
+CREATE INDEX ON freshwater_management_units USING GIST ("geom");
 
-ANALYZE farm_management_units;
+ANALYZE freshwater_management_units;
