@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: dbt_plans
+  - name: plans
     description: "Information about plans"
     columns:
       - name: id
@@ -37,7 +37,7 @@ models:
         description: "Default flow management limit for the plan"
 
 
-  - name: dbt_plan_regions
+  - name: plan_regions
     description: "Information about plan regions"
     columns:
       - name: id
@@ -81,7 +81,7 @@ models:
         description: "Reference URL for the plan region"
 
 
-  - name: dbt_surface_water_limits
+  - name: surface_water_limits
     description: "Information about surface water limits"
     columns:
       - name: id
@@ -113,7 +113,7 @@ models:
         description: "Boundary of the surface water limit"
 
 
-  - name: dbt_groundwater_limits
+  - name: groundwater_limits
     description: "Information about groundwater limits"
     columns:
       - name: id
@@ -137,7 +137,7 @@ models:
         description: "Allocation limit for the groundwater"
 
 
-  - name: dbt_groundwater_areas
+  - name: groundwater_areas
     description: "Information about groundwater areas"
     columns:
       - name: id
@@ -169,7 +169,7 @@ models:
         description: "Boundary of the groundwater area"
 
 
-  - name: dbt_flow_measurement_sites
+  - name: flow_measurement_sites
     description: "Information about flow measurement sites"
     columns:
       - name: id
@@ -193,7 +193,7 @@ models:
         description: "Location of the flow measurement site"
 
 
-  - name: dbt_flow_limits
+  - name: flow_limits
     description: "Information about flow limits"
     columns:
       - name: id
@@ -221,7 +221,7 @@ models:
         description: "Boundary associated with the flow limit"
 
 
-  - name: dbt_water_allocations_by_area
+  - name: water_allocations_by_area
     description: "Information water allocation per area"
     columns:
       - name: area_id

@@ -9,12 +9,12 @@ WITH council_plan_documents AS (
 
 plans AS (
 
-  SELECT * FROM {{ ref('dbt_plans') }}
+  SELECT * FROM {{ ref('plans') }}
 ),
 
 plan_regions AS (
 
-  SELECT * FROM {{ ref('dbt_plan_regions') }}
+  SELECT * FROM {{ ref('plan_regions') }}
 ),
 
 temp_plan_regions AS (

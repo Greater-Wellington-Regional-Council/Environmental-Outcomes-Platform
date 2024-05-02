@@ -14,17 +14,17 @@ council_plan_boundaries AS (
 
 plans AS (
 
-  SELECT * FROM {{ ref('dbt_plans') }}
+  SELECT * FROM {{ ref('plans') }}
 ),
 
 plan_regions AS (
 
-  SELECT * FROM {{ ref('dbt_plan_regions') }}
+  SELECT * FROM {{ ref('plan_regions') }}
 ),
 
 flow_measurement_sites as (
 
-  SELECT * FROM {{ ref('dbt_flow_measurement_sites')}}
+  SELECT * FROM {{ ref('flow_measurement_sites')}}
 ),
 
 temp_plan_regions AS (

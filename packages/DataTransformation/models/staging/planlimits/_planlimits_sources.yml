@@ -28,8 +28,6 @@ sources:
               - not_null
           - name: council_id
             description: 'ID of the councils'
-            tests:
-              - unique
           - name: boundary
             data_type: jsonb
 

@@ -14,7 +14,7 @@ council_plan_boundaries AS (
 
 plans AS (
 
-  SELECT * FROM {{ ref('dbt_plans') }}
+  SELECT * FROM {{ ref('plans') }}
 ),
 
 temp_plan_regions AS (
