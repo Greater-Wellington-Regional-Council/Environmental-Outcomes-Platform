@@ -39,3 +39,21 @@ sources:
             tests:
               - unique
               - not_null
+          - name: area_id
+            tests:
+              - not_null
+          - name: allocation_plan
+            tests:
+              - not_null
+          - name: status
+            tests:
+              - not_null
+          - name: is_metered
+            tests:
+              - not_null
+          - name: allocation_daily
+            tests:
+              - not_null
+          - name: allocation_yearly
+            tests:
+              - not_null
