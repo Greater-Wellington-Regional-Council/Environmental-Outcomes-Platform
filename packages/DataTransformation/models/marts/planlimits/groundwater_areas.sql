@@ -29,15 +29,7 @@ surface_water_limit AS (
 
 temp_plan_regions AS (
 
-  SELECT
-
-    p.council_id,
-    p.id AS plan_id,
-    JSONB_ARRAY_ELEMENTS(document -> 'regions') AS region
-
-  FROM council_plan_documents AS cpd
-
-  INNER JOIN plans AS p ON cpd.council_id = p.council_id
+  SELECT * FROM {{ ref('int_temp_plan_regions')}}
 ),
 
 temp_groundwater_limits AS (
