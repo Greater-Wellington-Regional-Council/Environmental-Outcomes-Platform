@@ -2,12 +2,7 @@
     materialized = 'view'
 ) }}
 
-WITH council_plan_documents AS (
-
-  SELECT * FROM {{ ref('stg_planlimits_council_plan_documents') }}
-),
-
-council_plan_boundaries AS (
+WITH council_plan_boundaries AS (
 
   SELECT * FROM {{ ref('stg_planlimits_council_plan_boundaries') }}
 ),
@@ -24,26 +19,26 @@ plan_regions AS (
 
 surface_water_limit AS (
 
-  SELECT * FROM {{ ref('surface_water_limits')}}
+  SELECT * FROM {{ ref('surface_water_limits') }}
 ),
 
 temp_plan_regions AS (
 
-  SELECT * FROM {{ ref('int_temp_plan_regions')}}
+  SELECT * FROM {{ ref('int_temp_plan_regions') }}
 ),
 
 temp_groundwater_limits AS (
 
-SELECT
+  SELECT
 
-  tpr.council_id,
-  pr.plan_id,
-  pr.id AS plan_region_id,
-  JSONB_ARRAY_ELEMENTS(region -> 'groundwaterLimits') AS groundwater_limit
+    tpr.council_id,
+    pr.plan_id,
+    pr.id AS plan_region_id,
+    JSONB_ARRAY_ELEMENTS(region -> 'groundwaterLimits') AS groundwater_limit
 
-FROM temp_plan_regions tpr
+  FROM temp_plan_regions AS tpr
 
-  INNER JOIN plan_regions pr
+  INNER JOIN plan_regions AS pr
     ON tpr.plan_id = pr.plan_id AND tpr.region ->> 'id' = pr.source_id
 ),
 
@@ -56,40 +51,41 @@ temp_groundwater_areas AS (
     gl.id,
     JSONB_ARRAY_ELEMENTS(tgl.groundwater_limit -> 'areas') AS areas
 
-  FROM temp_groundwater_limits tgl
+  FROM temp_groundwater_limits AS tgl
 
-    INNER JOIN groundwater_limits gl
-      ON tgl.plan_region_id = gl.plan_region_id 
-        AND tgl.groundwater_limit ->> 'id' = gl.source_id
+  INNER JOIN groundwater_limits AS gl
+    ON
+      tgl.plan_region_id = gl.plan_region_id
+      AND tgl.groundwater_limit ->> 'id' = gl.source_id
 ),
 
 groundwater_areas AS (
 
-  SELECT 
-  
-    row_number() over () as id,
-    id as groundwater_limit_id,
-    areas ->> 'id' as source_id,
-    areas ->> 'category' as category,
-    areas ->> 'depth' as depth,
+  SELECT
+
+    id AS groundwater_limit_id,
+    ROW_NUMBER() OVER () AS id,
+    areas ->> 'id' AS source_id,
+    areas ->> 'category' AS category,
+    areas ->> 'depth' AS depth,
     (
-      SELECT
-        id
+      SELECT id
       FROM surface_water_limits
-      WHERE plan_region_id = tga.plan_region_id
-      AND source_id = areas ->> 'depletionLimitId'
+      WHERE
+        plan_region_id = tga.plan_region_id
+        AND source_id = areas ->> 'depletionLimitId'
 
     ) AS depletion_limit_id,
     (
-      SELECT
-        boundary
+      SELECT boundary
       FROM council_plan_boundaries
-      WHERE council_id = tga.council_id
-      AND areas ->> 'boundaryId' = council_plan_boundaries.source_id
+      WHERE
+        council_id = tga.council_id
+        AND areas ->> 'boundaryId' = council_plan_boundaries.source_id
 
-        ) AS boundary
+    ) AS boundary
 
-    FROM temp_groundwater_areas tga
+  FROM temp_groundwater_areas AS tga
 
 )
 

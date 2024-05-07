@@ -2,12 +2,7 @@
     materialized = 'view'
 ) }}
 
-WITH council_plan_documents AS (
-
-  SELECT * FROM {{ ref('stg_planlimits_council_plan_documents') }}
-),
-
-council_plan_boundaries AS (
+WITH council_plan_boundaries AS (
 
   SELECT * FROM {{ ref('stg_planlimits_council_plan_boundaries') }}
 ),
@@ -19,7 +14,7 @@ plans AS (
 
 temp_plan_regions AS (
 
-  SELECT * FROM {{ ref('int_temp_plan_regions')}}
+  SELECT * FROM {{ ref('int_temp_plan_regions') }}
 ),
 
 final AS (

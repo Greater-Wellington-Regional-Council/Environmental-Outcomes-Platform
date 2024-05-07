@@ -15,9 +15,9 @@ water_allocations_by_area AS (
     SUM(allocation_plan) AS allocation_amount
 
   FROM water_allocations
-    WHERE
-        effective_to IS NULL
-    GROUP BY 1
+  WHERE
+    effective_to IS NULL
+  GROUP BY 1
 
 )
 
