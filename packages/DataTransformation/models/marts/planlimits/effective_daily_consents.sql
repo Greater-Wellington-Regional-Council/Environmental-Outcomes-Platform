@@ -2,25 +2,28 @@
     materialized = 'view'
 ) }}
 
+{# {% import "macros/generate_date_series.sql" as macros %} #}
+
 WITH water_allocations AS (
 
   SELECT * FROM {{ ref('stg_planlimits_water_allocations') }}
 ),
 
 all_consents AS (
-  SELECT DISTINCT source_id
-  FROM
-    water_allocations
+
+  SELECT DISTINCT source_id FROM water_allocations
+
 ),
 
 days_in_last_year AS (
+
   SELECT
-    GENERATE_SERIES(
-      DATE_TRUNC('day', NOW()) - INTERVAL '1 YEAR', DATE_TRUNC('day', NOW()) - INTERVAL '1 DAY', INTERVAL '1 DAY'
-    ) AS effective_on
+    {{ generate_date_series('NOW()', 'NOW()', "INTERVAL '1 DAY'") }} AS effective_on
+
 ),
 
 data_per_day AS (
+
   SELECT *
   FROM
     all_consents
@@ -28,7 +31,9 @@ data_per_day AS (
 ),
 
 effective_daily_data AS (
+
   SELECT
+
     dpd.source_id,
     dpd.effective_on,
     wa.area_id,
@@ -39,6 +44,7 @@ effective_daily_data AS (
     wa.allocation_daily,
     wa.allocation_yearly,
     wa.meters
+
   FROM
     data_per_day AS dpd
   LEFT JOIN
@@ -56,6 +62,4 @@ effective_daily_data AS (
     ) AS wa ON dpd.source_id = wa.source_id
 )
 
-SELECT *
-FROM
-  effective_daily_data
+SELECT * FROM effective_daily_data
