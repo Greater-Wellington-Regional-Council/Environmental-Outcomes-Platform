@@ -41,6 +41,22 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
     RETURNING id
         """
 
+  val UPDATE_MEASUREMENT_LAST_OBSERVED_QUERY =
+      """
+        UPDATE observation_sites_measurements
+        SET last_observation_at = ?
+        WHERE id = ?
+        AND last_observation_at < ?;
+        """
+
+  val UPDATE_MEASUREMENT_FIRST_OBSERVED_QUERY =
+      """
+        UPDATE observation_sites_measurements
+        SET first_observation_at  = ?
+        WHERE id = ?
+        AND first_observation_at > ?;
+        """
+
   val BATCH_OBSERVATION_QUERY =
       """
     INSERT INTO observations (observation_measurement_id, observed_at, amount) 
@@ -123,6 +139,20 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
 
           override fun getBatchSize() = observations.size
         })
+
+    jdbcTemplate.update(
+        UPDATE_MEASUREMENT_FIRST_OBSERVED_QUERY,
+        Timestamp.from(observations.first().observedAt.toInstant()),
+        measurementId,
+        Timestamp.from(observations.first().observedAt.toInstant()),
+    )
+
+    jdbcTemplate.update(
+        UPDATE_MEASUREMENT_LAST_OBSERVED_QUERY,
+        Timestamp.from(observations.last().observedAt.toInstant()),
+        measurementId,
+        Timestamp.from(observations.last().observedAt.toInstant()),
+    )
   }
 
   private fun fetchExistingSiteId(councilStatsId: Int, siteName: String): Int? {
