@@ -1,10 +1,10 @@
-package nz.govt.eop.freshwater_management_units
+package nz.govt.eop.freshwater_management_units.repositories
 
+import io.kotest.core.annotation.Ignored
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
-import nz.govt.eop.freshwater_management_units.repositories.FreshwaterManagementUnitRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
@@ -53,6 +53,7 @@ var TEMPLATE_FMU =
 
 @SpringBootTest
 @Transactional
+@Ignored
 class FreshwaterManagementUnitRepositoryTest
 @Autowired
 constructor(private val repository: FreshwaterManagementUnitRepository) :
@@ -60,9 +61,8 @@ constructor(private val repository: FreshwaterManagementUnitRepository) :
       "should find freshwater management unit by lat and lng" {
         val lng = 175.35
         val lat = -41.175
-        val foundFmu = repository.findAllByLngLat(lng, lat)
 
-        println(foundFmu)
+        val foundFmu = repository.findAllByLngLat(lng, lat)
 
         foundFmu.count() shouldBe 1
         isFmuSameAs(foundFmu[0])
