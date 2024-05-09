@@ -33,7 +33,5 @@ fun FreshwaterManagementUnit.toFeature(): FreshwaterManagementUnitFeature {
 
 fun List<FreshwaterManagementUnit>.toFeatureCollection():
     FreshwaterManagementUnitFeatureCollection {
-  return FreshwaterManagementUnitFeatureCollection(features = this.map { it.toFeature() }).apply {
-    println("collection: $this")
-  }
+  return FreshwaterManagementUnitFeatureCollection(features = this.map { it.toFeature() })
 }

@@ -6,36 +6,37 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jakarta.persistence.*
-import org.hibernate.annotations.Formula
 import java.io.IOException
+import kotlin.jvm.Transient
+import org.hibernate.annotations.Formula
 
 class GeoJsonSerializer : JsonSerializer<String>() {
-    private val objectMapper = ObjectMapper()
+  private val objectMapper = ObjectMapper()
 
-    override fun serialize(
-        value: String?,
-        gen: JsonGenerator,
-        serializers: SerializerProvider,
-    ) {
-        val geoJson: JsonNode = objectMapper.readTree(value)
-        gen.writeObject(geoJson)
-    }
+  override fun serialize(
+      value: String?,
+      gen: JsonGenerator,
+      serializers: SerializerProvider,
+  ) {
+    val geoJson: JsonNode = objectMapper.readTree(value)
+    gen.writeObject(geoJson)
+  }
 }
 
 internal class GeoJsonDeserializer : JsonDeserializer<JsonNode>() {
-    private val mapper = ObjectMapper()
+  private val mapper = ObjectMapper()
 
-    override fun deserialize(
-        jp: JsonParser,
-        ctxt: DeserializationContext,
-    ): JsonNode {
-        try {
-            return mapper.readTree(jp)
-        } catch (e: IOException) {
-            println("Error deserializing GeoJSON: " + e.message)
-            throw RuntimeException("Failed to deserialize GeoJSON", e)
-        }
+  override fun deserialize(
+      jp: JsonParser,
+      ctxt: DeserializationContext,
+  ): JsonNode {
+    try {
+      return mapper.readTree(jp)
+    } catch (e: IOException) {
+      println("Error deserializing GeoJSON: " + e.message)
+      throw RuntimeException("Failed to deserialize GeoJSON", e)
     }
+  }
 }
 
 @Entity
@@ -92,8 +93,25 @@ data class FreshwaterManagementUnit(
     )""",
     )
     val catchmentDescription: String? = null,
+    @Transient var tangataWhenua: Set<TangataWhenuaSite> = emptySet(),
 ) {
-    companion object {
-        const val DEFAULT_SRID = 4326
-    }
+  companion object {
+    const val DEFAULT_SRID = 4326
+  }
+}
+
+data class FmuCccvDetails(
+    val freshwaterManagementUnit: FreshwaterManagementUnit,
+    val tangataWhenuaSites: List<TangataWhenuaSiteSummary>,
+) {
+  companion object {
+    fun fromFmuAndTws(
+        fmu: FreshwaterManagementUnit,
+        tws: Set<TangataWhenuaSite>,
+    ): FmuCccvDetails =
+        FmuCccvDetails(
+            freshwaterManagementUnit = fmu,
+            tangataWhenuaSites = tws.map { TangataWhenuaSiteSummary(it.location!!) },
+        )
+  }
 }

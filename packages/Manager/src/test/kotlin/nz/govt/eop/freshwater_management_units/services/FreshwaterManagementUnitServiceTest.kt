@@ -1,14 +1,13 @@
-package nz.govt.eop.freshwater_management_units
+package nz.govt.eop.freshwater_management_units.services
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.repositories.FreshwaterManagementUnitRepository
-import nz.govt.eop.freshwater_management_units.services.FreshwaterManagementUnitService
+import nz.govt.eop.freshwater_management_units.repositories.TEMPLATE_FMU
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyDouble
-import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.Mockito.`when`
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -25,7 +24,13 @@ class FreshwaterManagementUnitServiceTest : FunSpec() {
 
   @Test
   fun `get freshwater-management-units by lng and lat`() {
-    `when`(fmuRepository.findAllByLngLat(anyDouble(), anyDouble(), anyInt()))
+    Mockito.`when`(
+            fmuRepository.findAllByLngLat(
+                ArgumentMatchers.anyDouble(),
+                ArgumentMatchers.anyDouble(),
+                ArgumentMatchers.anyInt(),
+            ),
+        )
         .thenReturn(listOf(FreshwaterManagementUnit(id = 1, fmuGroup = "Western hill rivers")))
 
     val foundFmu =
@@ -37,7 +42,7 @@ class FreshwaterManagementUnitServiceTest : FunSpec() {
 
   @Test
   fun `Get all freshwater-management-units`() {
-    `when`(fmuRepository.findAll())
+    Mockito.`when`(fmuRepository.findAll())
         .thenReturn(
             listOf(
                 FreshwaterManagementUnit(id = 1, boundary = TEMPLATE_FMU.boundary),
