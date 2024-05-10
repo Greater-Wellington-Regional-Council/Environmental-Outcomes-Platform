@@ -1,16 +1,31 @@
-import FreshwaterManagementUnitProps from "@models/FreshwaterManagementUnit.ts";
 import "./FreshwaterManagementUnit.scss";
 import purify from "dompurify";
+import { Key } from "react";
+import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
 
-const FreshwaterManagementUnit = ({ id, fmuName1, ecoliBase, ecoliObj, periBase, periObj, atoxBase, atoxObj, ntoxBase, ntoxObj, mciBase, mciObj, byWhen, catchmentDescription, tangataWhenua }: FreshwaterManagementUnitProps ) => {
-
-  //TODO: This is a dummy data. Replace it with actual data
-  tangataWhenua = {
-    iwi: ["Ngāti Kahungunu ki Wairarapa" ],
-    sites: [
-      { name: "Sample site" },
-    ]
+const FreshwaterManagementUnit = (details: FmuFullDetails) => {
+  if (!details) {
+    return <div className="FreshwaterManagementUnit p-6 space-y-0 h-full bg-gray-700">No data available</div>
   }
+
+  const {
+    id,
+    fmuName1,
+    catchmentDescription,
+    ecoliBase,
+    ecoliObj,
+    atoxBase,
+    atoxObj,
+    ntoxBase,
+    ntoxObj,
+    periBase,
+    periObj,
+    mciBase,
+    mciObj,
+    byWhen,
+  } = details.freshwaterManagementUnit;
+
+  const tangataWhenuaSites = details.tangataWhenuaSites;
 
   return <div className="FreshwaterManagementUnit p-6 space-y-0 h-full bg-gray-700" id={`fmu_${id}`}>
     <h1 className={""}>{fmuName1}</h1>
@@ -60,22 +75,18 @@ const FreshwaterManagementUnit = ({ id, fmuName1, ecoliBase, ecoliObj, periBase,
         </ol>
       </div>
 
-      {tangataWhenua && <div className="tangataWhenua text-black">
-        <h2>Tangata whenua</h2>
+      {tangataWhenuaSites?.length && <div className="tangataWhenua text-black">
+          <p>This area contains sites of significance to Tangata Whenua.</p>
 
-        <p>This area contains sites of significance to {tangataWhenua?.iwi.map((iwi: string, key: number) => <span
-          key={key}>{iwi}</span>) || "iwi"}</p>
-
-        {tangataWhenua?.sites && (
-          <p>They include:-
+        {tangataWhenuaSites && (<span className="tangata-whenua-sites p-4 m-0">
+          <p>They may include:-</p>
             <ul>
-              {tangataWhenua?.sites?.map((site: { name: string }, index) => <li key={index}>{site?.name}</li>)}
+              {tangataWhenuaSites?.map((site: { location: string }, index: Key | null | undefined) => <li className="list-disc" key={index}>{site?.location}</li>)}
             </ul>
-          </p>
-        )}
+        </span>)}
       </div>}
 
-      <a href={'#about'}>About this information</a>
+      {/*<a href={'#about'}>About this information</a>*/}
     </div>
   </div>
 };

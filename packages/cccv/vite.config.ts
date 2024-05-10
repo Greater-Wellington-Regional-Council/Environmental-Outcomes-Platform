@@ -5,6 +5,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 const config: UserConfig = defineConfig({
   plugins: [tsconfigPaths(), react()],
+  build: {
+    sourcemap: true
+  },
+  logLevel: 'info',
   test: {
     globals: true,
     environment: 'jsdom',

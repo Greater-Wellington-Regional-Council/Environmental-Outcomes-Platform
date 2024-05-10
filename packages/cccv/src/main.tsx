@@ -2,12 +2,9 @@ import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import {createBrowserRouter, RouteObject, RouterProvider} from 'react-router-dom'
 import routes from '@src/routes.tsx'
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {ErrorProvider} from "@components/ErrorContext/ErrorProvider.tsx";
 
 import {ThemeProvider} from "@material-tailwind/react";
-
-const queryClient = new QueryClient()
 
 const rootElement = document.getElementById('root')
 
@@ -21,12 +18,10 @@ export function App() {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
       <ErrorProvider>
         <ThemeProvider>
           <App/>
         </ThemeProvider>
       </ErrorProvider>
-    </QueryClientProvider>
   </StrictMode>
 )

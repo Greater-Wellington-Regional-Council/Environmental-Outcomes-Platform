@@ -1,5 +1,5 @@
 export default interface FreshwaterManagementUnit {
-  id: number | null | undefined
+  id?: number | null
   gid?: string
   objectId?: number,
   fmuNo?: number,
@@ -35,4 +35,11 @@ export default interface FreshwaterManagementUnit {
   ntoxObj?: string
   catchmentDescription?: string
   tangataWhenua?: {  iwi: string[], sites: { name: string }[] }
+}
+
+export interface FmuFullDetails {
+  freshwaterManagementUnit: FreshwaterManagementUnit,
+  tangataWhenuaSites: {
+    location: string,
+  }[],
 }
