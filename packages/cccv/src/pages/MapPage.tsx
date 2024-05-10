@@ -2,32 +2,32 @@ import InteractiveMap from "@components/InteractiveMap/InteractiveMap";
 import {useLoaderData} from "react-router-dom";
 import './MapPage.scss';
 import {ViewLocation} from "@src/global";
-import FreshwaterManagementUnitProps from "@models/FreshwaterManagementUnit.ts";
+import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
 import useEscapeKey from "@lib/useEscapeKey.tsx";
-import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
 import {useContext, useEffect, useState} from "react";
 import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 import freshwaterManagementService from "@services/FreshwaterManagementUnits.ts";
 import {Feature} from "geojson";
+import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
 
 export default function MapPage() {
 
   const setError = useContext(ErrorContext).setError;
 
-  freshwaterManagementService.checkServiceHealth(setError, "The backend service appears to be unavailable")
+  freshwaterManagementService.checkServiceHealth(setError, "The backend service appears to be unavailable").then()
 
   const locationDetails = useLoaderData();
 
   const [location] = useState<ViewLocation>(locationDetails as ViewLocation);
   const [pinnedLocation, setPinnedLocation] = useState<ViewLocation | null>(null);
-  const [selectedFmu, setSelectedFmu] = useState<FreshwaterManagementUnitProps | null>(null);
+  const [selectedFmu, setSelectedFmu] = useState<FmuFullDetails | null>(null);
 
   const [ featureUnderPointer, setFeatureUnderPointer ] = useState<Feature | null>(null);
 
   const [showPanel, setShowPanel] = useState(false);
   const [fmuChanged, setFmuChanged] = useState(false);
 
-  function useFetchFmu(setSelectedFmu: (fmu: FreshwaterManagementUnitProps | null) => void, setError: (error: Error | null) => void) {
+  function useFetchFmu(setSelectedFmu: (fmu: FmuFullDetails | null) => void, setError: (error: Error | null) => void) {
     useEffect(() => {
       const fetchFmu = async () => {
         if (!pinnedLocation) {
@@ -69,7 +69,7 @@ export default function MapPage() {
         <div
           className={`info-panel border-l-white text-white font-mono xshadow-black m-4 absolute ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
           {/*<span className="close-button" onClick={() => setShowPanel(false)}>x</span>*/}
-          <FreshwaterManagementUnit {...selectedFmu!} />
+          {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} />}
         </div>
       </main>
     </div>

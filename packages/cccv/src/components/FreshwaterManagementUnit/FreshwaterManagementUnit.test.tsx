@@ -6,11 +6,14 @@ describe('Spec FreshwaterManagementUnit', function () {
     it('it exists', () => {
         expect(FreshwaterManagementUnit).to.be.ok;
     });
-});
 
-describe('Catchment description', function () {
-  it('shows catchment description if it exists for the FMU', () => {
-    render(<FreshwaterManagementUnit catchmentDescription="This is a catchment description"  id={123}/>)
+  it('shows fmu with catchment description', () => {
+    render(<FreshwaterManagementUnit freshwaterManagementUnit={{ catchmentDescription: "This is a catchment description" }} tangataWhenuaSites={[]} />)
     expect(screen.getByTestId('catchment-description')).toBeInTheDocument()
+  })
+
+  it('shows tangata whenua sites if it exists for the FMU', () => {
+    render(<FreshwaterManagementUnit freshwaterManagementUnit={{}} tangataWhenuaSites={[{ location: "TW site 1" }]} />)
+    expect(screen.getByText('TW site 1')).toBeInTheDocument()
   })
 })

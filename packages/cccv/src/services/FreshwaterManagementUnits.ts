@@ -1,13 +1,13 @@
 import {determineBackendUri, get} from "@lib/api.tsx";
-import FreshwaterManagementUnit from "@models/FreshwaterManagementUnit.ts";
+import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
 
 const service = {
-  getByLngAndLat: async (lng: number, lat: number, setError: null | ((error: Error | null) => void) = null): Promise<FreshwaterManagementUnit> => {
+  getByLngAndLat: async (lng: number, lat: number, setError: null | ((error: Error | null) => void) = null): Promise<FmuFullDetails> => {
     setError && await service.checkServiceHealth(setError);
     const response = await get(`${determineBackendUri(window.location.hostname)}/freshwater-management-units?lng=${lng}&lat=${lat}&srid=4326`);
     setError && !response &&
       setError(Error("No Freshwater Management Unit was not found at that location, or there was an error fetching the data. Please try again."));
-    return response as FreshwaterManagementUnit;
+    return response as FmuFullDetails;
   },
   urlToGetFmuBoundaries: (): string => `${determineBackendUri(window.location.hostname)}/freshwater-management-units/as-features`,
   isUp: async () => {
