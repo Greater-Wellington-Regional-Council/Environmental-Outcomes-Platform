@@ -4,7 +4,7 @@ import React, {LegacyRef, useContext, useRef, useState} from 'react';
 import {
   Layer, MapboxGeoJSONFeature,
   MapMouseEvent,
-  MapRef,
+  MapRef, Marker,
   NavigationControl,
   ScaleControl,
   Source,
@@ -131,6 +131,8 @@ export default function InteractiveMap({
     setViewState(evt.viewState);
   }, 1);
 
+  const [ marker, setMarker ] = useState<[number, number] | null>(null);
+
   const handleClick = (e: MapMouseEvent) => {
     setError(null);
 
@@ -140,6 +142,7 @@ export default function InteractiveMap({
         latitude: e.lngLat.lat,
         zoom: location.zoom,
       });
+      setMarker([e.lngLat.lng, e.lngLat.lat])
     }
     setMoving(false);
   }
@@ -201,6 +204,7 @@ export default function InteractiveMap({
           <BoundaryLinesLayer id="freshwater-management-units" mapRef={mapRef.current!} sourceId="freshwater-management-units" mapStyle={mapStyle}/>
           <FeatureHighlight sourceId="freshwater-management-units" highlightedFeature={highlightedFeature}/>
         </Source>
+        {marker && <Marker longitude={marker[0]} latitude={marker[1]}></Marker>}
       </Map>
       {tooltipInfo.feature && tooltipInfo.feature.properties?.fmuName1 && (
         <div
