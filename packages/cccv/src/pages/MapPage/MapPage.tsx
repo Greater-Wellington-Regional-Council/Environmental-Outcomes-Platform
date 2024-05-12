@@ -55,7 +55,7 @@ export default function MapPage() {
 
   return (
     <div className="map-page bg-white h-">
-      <header className={"headers flex-2 font-medium m-4 mt-4 my-0 rounded-xl p-4 pt-1 bg-cyan-800 text-blue-50 font-sans"}>
+      <header className={"headers flex-2 font-medium m-4 mt-4 my-0 rounded-xl p-4 pt-1 bg-teal-900 text-blue-50 font-sans"}>
         <h1
           className={"mb-4 text-4xl text-bo leading-none tracking-tight md:text-5xl lg:text-6xl mx-auto my-4"}>Freshwater
           Management</h1>
