@@ -1,49 +1,52 @@
 .FreshwaterManagementUnit {
   font-family: "Courier New", serif;
   overflow-y: auto;
+}
 
-  h1 {
-    font-weight: bold;
-    font-size: 1.5em;
-    margin-bottom: 1.1rem;
-  }
+h1 {
+  font-weight: bold;
+  font-size: 2.0em;
+  margin-bottom: 1.1rem;
+}
 
-  h2 {
-    margin-bottom: 1.6rem;
-    margin-top: 1.2em;
-    font-weight: bold;
-    font-size: 1.2em;
-  }
+h2 {
+  margin-bottom: 1.6rem;
+  margin-top: 1.2em;
+  font-weight: bold;
+  font-size: 1.2em;
+}
 
-  h3 {
-    font-weight: bold;
-    margin-top: 1.5em !important;
-    margin-bottom: 0.6em !important;
-  }
+h3 {
+  font-weight: bold;
+  margin-top: 1.5em !important;
+  margin-bottom: 0.6em !important;
+}
 
-  li {
-    margin-left: 10px;
-    padding-left: 10px;
-  }
+li {
+  margin-left: 10px;
+  padding-left: 10px;
+}
 
-  p {
-    font-size: 1em;
-    margin-bottom: 1em;
-  };
+p {
+  font-size: 1em;
+  margin-bottom: 1em;
+}
 
-  .tangataWhenua {
-    background-color: white;
-    color: black !important;
-    padding: 8px 20px 8px 20px;
-    margin-top: 1.5em;
-    margin-bottom: 1.5em;
-  }
+;
+
+.tangata-whenua {
+  background-color: white;
+  color: black !important;
+  padding: 14px 16px;
+  margin-top: 2em;
+  margin-bottom: 1.5em;
 }
 
 .contaminant {
   ol {
     list-style-type: none !important;
   }
+
   ol, ul, li {
     font-size: 1em;
     padding-left: 0;
@@ -58,6 +61,7 @@
 .tangata-whenua-sites {
   ul {
     list-style-position: inside;
+
     li {
       margin-left: 0;
     }

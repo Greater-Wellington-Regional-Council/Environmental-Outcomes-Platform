@@ -75,10 +75,10 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
         </ol>
       </div>
 
-      {tangataWhenuaSites?.length && <div className="tangataWhenua text-black">
+      {tangataWhenuaSites?.length && <div className="tangata-whenua text-black">
           <p>This area contains sites of significance to Tangata Whenua.</p>
 
-        {tangataWhenuaSites && (<span className="tangata-whenua-sites p-4 m-0">
+        {tangataWhenuaSites && (<span className="tangata-whenua-sites p-4">
           <p>They may include:-</p>
             <ul>
               {tangataWhenuaSites?.map((site: { location: string }, index: Key | null | undefined) => <li className="list-disc" key={index}>{site?.location}</li>)}

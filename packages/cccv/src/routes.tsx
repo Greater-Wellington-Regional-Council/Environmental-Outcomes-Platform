@@ -1,6 +1,6 @@
 import {useNavigate} from 'react-router-dom';
 import loadLocation from "@loaders/location.ts";
-import MapPage from "@pages/MapPage.tsx";
+import MapPage from "@pages/MapPage/MapPage.tsx";
 import Layout from "@src/Layout.tsx";
 import {useEffect} from "react";
 
