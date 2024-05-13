@@ -85,9 +85,7 @@ data class FreshwaterManagementUnit(
         """(
         SELECT bi.description
         FROM boundary_info bi
-        JOIN council_plan_boundaries cpb
-        ON cpb.source_id = bi.source_id AND cpb.council_id = bi.council_id
-        WHERE ST_Intersects(ST_Transform(cpb.boundary, 4326), ST_Transform(geom, 4326))
+        WHERE ST_Intersects(ST_Transform(bi.boundary, 4326), ST_Transform(geom, 4326))
         AND bi.context = 'cccv_catchments'
         LIMIT 1
     )""",

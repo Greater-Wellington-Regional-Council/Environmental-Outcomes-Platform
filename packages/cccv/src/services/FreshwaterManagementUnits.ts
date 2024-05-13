@@ -14,7 +14,7 @@ const service = {
     const response = await get(`${determineBackendUri(window.location.hostname)}/health`);
     return response?.status === "UP";
   },
-  checkServiceHealth: async (setError: (error: Error | null) => void, message: string | null = null) => {
+  checkServiceHealth:  async (setError: (error: Error | null) => void, message: string | null = null) => {
     const response = await service.isUp();
     if (!response) {
       setError(new Error(message || "Freshwater Management Units API is unavailable"));

@@ -1,9 +1,9 @@
 package nz.govt.eop.freshwater_management_units.repositories
 
-import io.kotest.core.annotation.Ignored
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldInclude
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -51,9 +51,9 @@ var TEMPLATE_FMU =
         catchmentDescription = null,
     )
 
+// @Ignored
 @SpringBootTest
 @Transactional
-@Ignored
 class FreshwaterManagementUnitRepositoryTest
 @Autowired
 constructor(private val repository: FreshwaterManagementUnitRepository) :
@@ -68,12 +68,23 @@ constructor(private val repository: FreshwaterManagementUnitRepository) :
         isFmuSameAs(foundFmu[0])
       }
 
-      "should not find freshwater management unit for out of range lat and lng" {
-        val lng = 100.23
-        val lat = -41.9999
+      "should find include overview if available" {
+        val lng = 175.35
+        val lat = -41.175
+
         val foundFmu = repository.findAllByLngLat(lng, lat)
 
-        foundFmu.count() shouldBe 0
+        foundFmu.count() shouldBe 1
+        isFmuSameAs(foundFmu[0])
+      }
+
+      "should not find freshwater management unit for out of range lat and lng" {
+        val lng = 175.5622931810379
+        val lat = -41.05740753251105
+        val foundFmu = repository.findAllByLngLat(lng, lat, 4326)
+
+        foundFmu.count() shouldBe 1
+        foundFmu[0].catchmentDescription shouldInclude "Parkvale"
       }
 
       "should be able to find all freshwater management units" {
