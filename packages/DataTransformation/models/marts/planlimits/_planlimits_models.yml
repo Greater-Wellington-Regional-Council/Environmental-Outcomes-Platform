@@ -285,3 +285,23 @@ models:
         description: The meters associated with the consent
         meta:
           data_type: varchar
+
+  - name: water_allocation_and_usage_by_area
+    columns:
+      - name: date
+        description: The date of the allocation
+        tests:
+          - not_null
+      - name: area_id
+        description: The ID of the area
+        tests:
+          - not_null
+      - name: allocation_plan
+        description: The allocation plan
+      - name: allocation_daily
+        description: The daily allocation
+      - name: allocation_daily_used
+        description: The daily allocation used
+      - name: daily_usage
+        description: The daily usage
+

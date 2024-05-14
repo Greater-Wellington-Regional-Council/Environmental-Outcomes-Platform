@@ -1,5 +1,5 @@
 {{ config(
-    materialized = 'view'
+    materialized = 'table'
 ) }}
 
 {# {% import "macros/generate_date_series.sql" as macros %} #}
