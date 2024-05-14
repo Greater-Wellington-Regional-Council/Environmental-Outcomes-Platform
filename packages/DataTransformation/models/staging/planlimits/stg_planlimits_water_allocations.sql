@@ -1,5 +1,5 @@
 WITH source AS (
-    
+
   SELECT
 
     id,

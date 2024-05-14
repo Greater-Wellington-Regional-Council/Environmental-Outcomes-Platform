@@ -231,3 +231,77 @@ models:
       - name: allocation_amount
         data_type: numeric
         description: "Consolidated allocation amount for each area"
+
+
+  - name: effective_daily_consents
+    description: A table to store effective daily consents
+    columns:
+      - name: source_id
+        description: The ID of the source
+        meta:
+          data_type: varchar
+
+      - name: effective_on
+        description: The effective date of the consent
+        meta:
+          data_type: timestamp
+
+      - name: area_id
+        description: The ID of the area
+        meta:
+          data_type: varchar
+
+      - name: allocation_plan
+        description: The allocation usage
+        meta:
+          data_type: numeric
+
+      - name: consent_id
+        description: The ID of the consent
+        meta:
+          data_type: varchar
+
+      - name: status
+        description: The status of the consent
+        meta:
+          data_type: varchar
+
+      - name: is_metered
+        description: Indicates whether the consent is metered
+        meta:
+          data_type: boolean
+
+      - name: allocation_daily
+        description: The daily allocation associated with the consent
+        meta:
+          data_type: numeric
+
+      - name: allocation_yearly
+        description: The yearly allocation associated with the consent
+        meta:
+          data_type: numeric
+
+      - name: meters
+        description: The meters associated with the consent
+        meta:
+          data_type: varchar
+
+  - name: water_allocation_and_usage_by_area
+    columns:
+      - name: date
+        description: The date of the allocation
+        tests:
+          - not_null
+      - name: area_id
+        description: The ID of the area
+        tests:
+          - not_null
+      - name: allocation_plan
+        description: The allocation plan
+      - name: allocation_daily
+        description: The daily allocation
+      - name: allocation_daily_used
+        description: The daily allocation used
+      - name: daily_usage
+        description: The daily usage
+
