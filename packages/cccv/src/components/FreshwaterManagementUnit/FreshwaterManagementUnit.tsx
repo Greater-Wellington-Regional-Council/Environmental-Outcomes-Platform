@@ -2,6 +2,12 @@ import "./FreshwaterManagementUnit.scss";
 import purify from "dompurify";
 import { Key } from "react";
 import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
+import {PDFDownloadLink} from "@react-pdf/renderer";
+import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf";
+import { PrinterIcon } from '@heroicons/react/24/solid';
+import formatFilename from "@lib/formatAsFilename";
+import dateTimeString from "@lib/dateTimeString";
+import {contaminant, contaminants as fmuContaminants} from "@components/FreshwaterManagementUnit/utils.ts";
 
 const FreshwaterManagementUnit = (details: FmuFullDetails) => {
   if (!details) {
@@ -12,25 +18,24 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
     id,
     fmuName1,
     catchmentDescription,
-    ecoliBase,
-    ecoliObj,
-    atoxBase,
-    atoxObj,
-    ntoxBase,
-    ntoxObj,
-    periBase,
-    periObj,
-    mciBase,
-    mciObj,
-    byWhen,
   } = details.freshwaterManagementUnit;
 
   const tangataWhenuaSites = details.tangataWhenuaSites;
 
-  return <div className="FreshwaterManagementUnit p-6 space-y-0 h-full bg-gray-700" id={`fmu_${id}`}>
+  const fileName = formatFilename((fmuName1 || '').toString(), `fmu_${id}`) + `_${dateTimeString()}` + '.pdf';
+
+  const contaminants: Array<contaminant> = fmuContaminants(details.freshwaterManagementUnit);
+
+  return <div className="FreshwaterManagementUnit p-6 space-y-0 h-full bg-gray-700" id={`fmu_${id || ''}`}>
     <h1 className={""}>{fmuName1}</h1>
 
-    <div className="overview" data-testid="catchment-description">
+    <div className="absolute top-8 right-8 m-4">
+      <PDFDownloadLink document={<FreshwaterManagementUnitPDF {...details} />} fileName={fileName}>
+        {({loading}: { loading: boolean }) => loading ? 'Loading document...' : <PrinterIcon className="h-8 w-6 text-white" />}
+      </PDFDownloadLink>
+    </div>
+
+    <div className="overview" data-testid="catchment-desc">
       <h2>Overview</h2>
       <div dangerouslySetInnerHTML={{__html: purify.sanitize(catchmentDescription || "<p>No overview available</p>")}}/>
       <div/>
@@ -39,40 +44,18 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
         <h2>Contaminants</h2>
         <p>Freshwater objectives from {fmuName1} Whaitua Implementation Plan (as at August 2018)</p>
 
-        <h3>E. coli</h3>
-        <ol className={`contaminant`}>
-          <li>{`Ecoli base ${ecoliBase}`}</li>
-          <li>{`Ecoli objective ${ecoliObj}`}</li>
-          <li>{`By ${byWhen}`}</li>
-        </ol>
-
-        <h3>Periphyton</h3>
-        <ol className={`contaminant`}>
-          <li>{`Base ${periBase}`}</li>
-          <li>{`Goal ${periObj}`}</li>
-          <li>{`By ${byWhen}`}</li>
-        </ol>
-
-        <h3>Ammonia toxicity</h3>
-        <ol className={`contaminant`}>
-          <li>{`Base ${atoxBase}`}</li>
-          <li>{`Goal ${atoxObj}`}</li>
-          <li>{`By ${byWhen}`}</li>
-        </ol>
-
-        <h3>Nitrate toxicity</h3>
-        <ol className={`contaminant`}>
-          <li>{`Base ${ntoxBase}`}</li>
-          <li>{`Goal ${ntoxObj}`}</li>
-          <li>{`By ${byWhen}`}</li>
-        </ol>
-
-        <h3>MCI</h3>
-        <ol className={`contaminant`}>
-          <li>{`Base ${mciBase}`}</li>
-          <li>{`Goal ${mciObj}`}</li>
-          <li>{`By ${byWhen}`}</li>
-        </ol>
+        <div className="grid grid-cols-2 gap-4 place-items-center">
+          {contaminants.map((contaminant, index) => (
+            <div key={index} className="w-full">
+              <h3>{contaminant.title}</h3>
+              <ol className="contaminant">
+                <li>{contaminant.base}</li>
+                <li>{contaminant.objective}</li>
+                <li>{contaminant.byWhen}</li>
+              </ol>
+            </div>
+          ))}
+        </div>
       </div>
 
       {tangataWhenuaSites?.length && <div className="tangata-whenua text-black">
@@ -86,7 +69,9 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
         </span>)}
       </div>}
 
-      {/*<a href={'#about'}>About this information</a>*/}
+      <div className="mt-6">
+        <a href={'#about'} className="text-amber-500">About this information</a>
+      </div>
     </div>
   </div>
 };

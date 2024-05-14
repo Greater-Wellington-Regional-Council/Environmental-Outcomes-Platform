@@ -33,6 +33,7 @@
       "@assets/*": ["src/assets/*"],
       "@shared/*": ["../sharedLib/*"],
       "@models/*": ["src/models/*"],
+      "@pdfs/*": ["src/pdfs/*"],
       "@services/*": ["src/services/*"]
     }
   },
