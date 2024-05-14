@@ -44,7 +44,7 @@ tasks:
 
 containers:
   dbt-env:
-    image: ghcr.io/dbt-labs/dbt-postgres:1.5.8
+    image: ghcr.io/dbt-labs/dbt-postgres:1.7.14
     volumes:
       - local: <{batect.project_directory}
         container: /usr/app/dbt
