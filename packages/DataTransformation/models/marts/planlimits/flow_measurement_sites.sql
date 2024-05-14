@@ -4,7 +4,7 @@
 
 WITH council_plan_boundaries AS (
 
-  SELECT * FROM {{ ref('stg_planlimits_council_plan_boundaries') }}
+  SELECT * FROM {{ ref('council_plan_boundaries') }}
 ),
 
 plans AS (
