@@ -51,7 +51,8 @@ class FreshwaterManagementUnitsControllerTest(
         .andExpect(MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites").isNotEmpty())
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites[0].location")
-                .value("Tangata Whenua site 1"))
+                .value("Tangata Whenua site 1"),
+        )
         .andReturn()
   }
 
@@ -79,10 +80,12 @@ class FreshwaterManagementUnitsControllerTest(
         .andExpect(MockMvcResultMatchers.jsonPath("$.features.length()").value(2))
         .andExpect(MockMvcResultMatchers.jsonPath("$.features[0].id").value(1))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$.features[0].properties.fmuName1").value("fmu 1"))
+            MockMvcResultMatchers.jsonPath("$.features[0].properties.fmuName1").value("fmu 1"),
+        )
         .andExpect(MockMvcResultMatchers.jsonPath("$.features[1].id").value(2))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$.features[1].properties.fmuName1").value("fmu 2"))
+            MockMvcResultMatchers.jsonPath("$.features[1].properties.fmuName1").value("fmu 2"),
+        )
         .andReturn()
   }
 }

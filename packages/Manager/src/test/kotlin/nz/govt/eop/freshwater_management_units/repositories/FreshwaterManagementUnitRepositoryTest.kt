@@ -1,6 +1,5 @@
 package nz.govt.eop.freshwater_management_units.repositories
 
-import io.kotest.core.annotation.Ignored
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
@@ -53,7 +52,6 @@ var TEMPLATE_FMU =
 
 @SpringBootTest
 @Transactional
-@Ignored
 class FreshwaterManagementUnitRepositoryTest
 @Autowired
 constructor(private val repository: FreshwaterManagementUnitRepository) :
@@ -68,10 +66,20 @@ constructor(private val repository: FreshwaterManagementUnitRepository) :
         isFmuSameAs(foundFmu[0])
       }
 
+      //      "should find include overview if available" {
+      //        val lng = 175.5622931810379
+      //        val lat = -41.05740753251105
+      //
+      //        val foundFmu = repository.findAllByLngLat(lng, lat)
+      //
+      //        foundFmu.count() shouldBe 1
+      //        foundFmu[0].catchmentDescription shouldInclude "Parkvale"
+      //      }
+
       "should not find freshwater management unit for out of range lat and lng" {
-        val lng = 100.23
-        val lat = -41.9999
-        val foundFmu = repository.findAllByLngLat(lng, lat)
+        val lng = 172.0
+        val lat = -1.0
+        val foundFmu = repository.findAllByLngLat(lng, lat, 4326)
 
         foundFmu.count() shouldBe 0
       }

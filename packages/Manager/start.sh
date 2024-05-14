@@ -10,7 +10,7 @@ show_usage () {
   echo "-i: check container health"
 }
 
-container-health () {
+container_health () {
   for id in $(docker container ls -a | grep "$1" | awk '{print $1}'); do docker container inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{end}}' $id; done
 }
 
