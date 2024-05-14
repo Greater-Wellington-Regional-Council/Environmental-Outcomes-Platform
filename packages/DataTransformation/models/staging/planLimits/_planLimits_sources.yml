@@ -1,0 +1,50 @@
+version: 2
+
+sources:
+  - name: public
+    tables:
+      - name: council_plan_boundary_geojson_source
+        description: "Reference table for council boundaries that are sourced from a URL that returns GeoJson"
+        columns:
+          - name: id
+            data_type: integer
+            description: "unique id"
+          - name: council_id
+            data_type: integer
+            description: "ID of the council"
+          - name: source_id
+            data_type: character varying
+            description: "ID of the source"
+          - name: url
+            data_type: character varying
+            description: "URL to fetch the GeoJson"
+          - name: feature_id
+            data_type: character varying
+            description: "feature id in the resulting GeoJson to use as this boundary"
+          - name: created_at
+            data_type: timestamp with time zone
+          - name: updated_at
+            data_type: timestamp with time zone
+
+      - name: council_plan_boundary_rec2_source
+        description: "Reference table for council boundaries that are sourced from the REC2 model based on river segments and watershed"
+        columns:
+          - name: id
+            data_type: integer
+            description: "unique id"
+          - name: council_id
+            data_type: integer
+            description: "ID of the council"
+          - name: source_id
+            data_type: character varying
+            description:  "ID of the source"
+          - name: hydro_ids
+            data_type: array
+            description: "the hydro ids at the base of the boundary"
+          - name: excluded_hydro_ids
+            data_type: array
+            description: "the hydro ids to exclude going past when creating the boundary"
+          - name: created_at
+            data_type: timestamp with time zone
+          - name: updated_at
+            data_type: timestamp with time zone
