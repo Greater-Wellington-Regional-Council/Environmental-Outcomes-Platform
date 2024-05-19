@@ -10,11 +10,7 @@ import org.springframework.boot.runApplication
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.kafka.annotation.EnableKafka
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 
 @EnableKafka
@@ -33,8 +29,7 @@ fun main(args: Array<String>) {
   }
 
   StreamReadConstraints.overrideDefaultStreamReadConstraints(
-      StreamReadConstraints.builder().maxStringLength(50_000_000).build(),
-  )
+      StreamReadConstraints.builder().maxStringLength(50_000_000).build())
 
   runApplication<Application>(*args)
 }
@@ -57,18 +52,4 @@ private fun storeKeystoreFromEnvironment() {
   keyStoreFile.writeBytes(keyStoreBytes)
 
   System.setProperty(PROP_CONFIG_KEYSTORE_PATH, keyStoreFile.pathString)
-}
-
-/**
- * Check the health of the application.
- *
- * TODO: This is a placeholder for the health check endpoint. It should be replaced with a more
- *   comprehensive health check.
- */
-@RestController
-class HealthCheckController {
-  @GetMapping("/health", produces = [MediaType.APPLICATION_JSON_VALUE])
-  fun healthCheck(): ResponseEntity<Any> {
-    return ResponseEntity.ok().body(mapOf("status" to "UP"))
-  }
 }

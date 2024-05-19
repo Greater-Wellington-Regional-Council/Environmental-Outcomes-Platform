@@ -3,7 +3,6 @@ package nz.govt.eop.tasks
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -11,13 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 class WaterAllocationViewUpdater(val jdbcTemplate: JdbcTemplate) {
-  private val logger = KotlinLogging.logger {}
 
-  @Value(
-      "\${sql.commands.refresh-water-allocation-view:SET ROLE materialized_views_role; " +
-          "REFRESH MATERIALIZED VIEW CONCURRENTLY water_allocation_and_usage_by_area;RESET ROLE;}",
-  )
-  private lateinit var sqlCmdRefreshMaterialView: String
+  private val logger = KotlinLogging.logger {}
 
   @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
   @SchedulerLock(name = "waterAllocationViewUpdater")
@@ -29,9 +23,7 @@ class WaterAllocationViewUpdater(val jdbcTemplate: JdbcTemplate) {
         { true },
         {
           jdbcTemplate.update(
-              sqlCmdRefreshMaterialView,
-          )
-        },
-    )
+              "SET ROLE materialized_views_role; REFRESH MATERIALIZED VIEW CONCURRENTLY water_allocation_and_usage_by_area; RESET ROLE;")
+        })
   }
 }

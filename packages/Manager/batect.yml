@@ -39,7 +39,6 @@ tasks:
       command: ./gradlew bootRun
       environment:
         CONFIG_DATABASE_HOST: database
-        SPRING_PROFILES_ACTIVE: local
       ports:
         - local: 8080
           container: 8080
