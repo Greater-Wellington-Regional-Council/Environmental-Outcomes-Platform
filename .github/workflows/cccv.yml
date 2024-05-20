@@ -1,0 +1,23 @@
+name: CCCV UI
+
+on:
+  push:
+    paths:
+      - .github/workflows/cccv.yml
+      - packages/LocalInfrastructure/**
+      - packages/cccv/**
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/cccv
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build app
+        run: ./batect --config-var git_sha=${GITHUB_SHA} --config-var linz_api_key=${{ secrets.LINZ_API_KEY }} --config-var  mapbox_token=${{ secrets.MAPBOX_TOKEN }} build
+
