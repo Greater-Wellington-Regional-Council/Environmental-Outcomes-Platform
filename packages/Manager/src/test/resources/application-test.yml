@@ -18,7 +18,3 @@ logging:
     nz.govt.eop: INFO
     org.jooq.Constants: OFF
     org.jooq: INFO
-
-arcgis:
-  tangata_whenua_sites:
-    url: "http://test.url"

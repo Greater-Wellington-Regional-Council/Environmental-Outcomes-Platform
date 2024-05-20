@@ -148,7 +148,7 @@ function buildSurfaceWaterLimitView(
     limit: surfaceWaterSubUnitLimit?.allocationLimit,
     allocated: surfaceWaterSubUnitLimit?.allocationAmount,
   };
-  // Ruamahanga (Whaitua s with source_id ='493cb5ae-4086-4649-8d3a-6d41ee9fded7' in the new plan models) uses 2 levels of surface water units. So in areas
+  // Ruamahanga (Whaitua s with source_id ='493cb5ae-4086-4649-8d3a-6d41ee9fded7' in the new plan model) uses 2 levels of surface water units. So in areas
   // where there is no value at the Subunit and there is a management unit,
   // limit P121 applies.
   if (
