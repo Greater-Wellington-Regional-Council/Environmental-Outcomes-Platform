@@ -6,7 +6,7 @@ const service = {
     setError && await service.checkServiceHealth(setError);
     const response = await get(`${determineBackendUri(window.location.hostname)}/freshwater-management-units?lng=${lng}&lat=${lat}&srid=4326`);
     setError && !response &&
-      setError(Error("No Freshwater Management Unit was not found at that location, or there was an error fetching the data. Please try again."));
+      setError(new ErrorFlag("No Freshwater Management Unit was not found at that location, or there was an error fetching the data. Please try again.", ErrorLevel.WARNING));
     return response as FmuFullDetails;
   },
   urlToGetFmuBoundaries: (): string => `${determineBackendUri(window.location.hostname)}/freshwater-management-units/as-features`,

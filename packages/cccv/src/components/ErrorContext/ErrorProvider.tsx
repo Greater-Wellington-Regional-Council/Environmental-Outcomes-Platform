@@ -1,16 +1,15 @@
+import "./ErrorProvider.scss";
 import React, { useState } from "react";
-import ErrorContext from "./ErrorContext";
+import ErrorContext, {ErrorFlag} from "./ErrorContext";
 
 export const ErrorProvider = ({ children }: { children: React.ReactNode }) => {
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error | null | ErrorFlag>(null);
 
   return (
     <ErrorContext.Provider value={{error, setError}}>
-      {/* This parent div is positioned relative to allow absolute positioned children within */}
-      <div className="relative min-h-screen">
-        {/* Error banner absolutely positioned to overlay at the top of the container */}
+      <div className="error-signal">
         {error && (
-          <div className="absolute inset-x-0 top-0 bg-red-500 text-white text-xl z-50 tracking-wide p-2 shadow-lg text-center">
+          <div className={`error-info error-level-${(error as ErrorFlag).level}`}>
             {error.message}
           </div>
         )}

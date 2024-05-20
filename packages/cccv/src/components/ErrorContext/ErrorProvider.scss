@@ -1,0 +1,19 @@
+.error-info {
+  display: none;
+}
+
+.error-level-2 {
+  display: block;
+  position: absolute;
+  inset: 0;
+  top: 0;
+  background-color: red;
+  color: white;
+  font-size: 1.1rem;
+  z-index: 50; // z-50 in Tailwind
+  letter-spacing: 0.05em; // tracking-wide in Tailwind
+  padding: 0.3rem; // p-2 in Tailwind
+  text-align: center; // text-center in Tailwind
+  margin: 0;
+  height: 2.4rem;
+}
