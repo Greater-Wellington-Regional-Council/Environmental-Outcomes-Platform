@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "sql.commands.refresh-water-allocation-view",
+      "type": "java.lang.String",
+      "description": "SQL command to use for sql.commands.refresh-water-allocation-view."
+  }
+] }

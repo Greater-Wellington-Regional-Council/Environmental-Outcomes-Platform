@@ -47,7 +47,6 @@ spring:
           value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       application-id: nz.govt.eop.consumers.manager
 
-
 management:
   endpoints:
     enabled-by-default: true
@@ -69,3 +68,6 @@ logging:
     org.apache.kafka: INFO
     org.apache.kafka.streams.processor.internals.assignment.RackAwareTaskAssignor: OFF # Because it logs an error at startup even though it isn't used.
 
+arcgis:
+  tangata_whenua_sites:
+    url: "https://mapping.gw.govt.nz/arcgis/rest/services/GW/NRPMap_P_operative/MapServer/8/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=geojson"
