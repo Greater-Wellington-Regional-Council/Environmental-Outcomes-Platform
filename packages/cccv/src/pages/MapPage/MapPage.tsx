@@ -14,8 +14,6 @@ export default function MapPage() {
 
   const setError = useContext(ErrorContext).setError;
 
-  freshwaterManagementService.checkServiceHealth(setError, "The backend service appears to be unavailable").then()
-
   const locationDetails = useLoaderData();
 
   const [location] = useState<ViewLocation>(locationDetails as ViewLocation);
