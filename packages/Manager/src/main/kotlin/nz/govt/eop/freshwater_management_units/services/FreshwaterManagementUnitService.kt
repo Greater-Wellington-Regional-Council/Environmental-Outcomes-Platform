@@ -28,6 +28,9 @@ constructor(
     return fmus.firstOrNull()
   }
 
+  fun findFreshwaterManagementUnitById(id: Int): FreshwaterManagementUnit? =
+      repository.findById(id).orElse(null)
+
   fun findAllFreshwaterManagementUnits(): List<FreshwaterManagementUnit> {
     return repository.findAll()
   }

@@ -10,15 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/freshwater-management-units")
 class FreshwaterManagementUnitsController(
     @Autowired private val fmuService: FreshwaterManagementUnitService,
     @Autowired private val twsService: TangataWhenuaSiteService,
 ) {
-  @GetMapping("/freshwater-management-units", produces = [MediaType.APPLICATION_JSON_VALUE])
+  @GetMapping("", "/", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun getFreshwaterManagementUnitByLngAndLat(
       @RequestParam lng: Double,
       @RequestParam lat: Double,
@@ -33,8 +36,21 @@ class FreshwaterManagementUnitsController(
     }
   }
 
+  @GetMapping("/{id}", "/{id}/", produces = [MediaType.APPLICATION_JSON_VALUE])
+  fun getFreshwaterManagementUnitById(
+      @PathVariable id: Int,
+  ): ResponseEntity<FmuCccvDetails> {
+    val fmu = fmuService.findFreshwaterManagementUnitById(id)
+    val tws = if (fmu == null) null else twsService.findTangataWhenuaInterestSitesForFMU(fmu)
+    return if (fmu == null) {
+      ResponseEntity.notFound().build()
+    } else {
+      ResponseEntity.ok().body(FmuCccvDetails.fromFmuAndTws(fmu, tws ?: emptySet()))
+    }
+  }
+
   @GetMapping(
-      "/freshwater-management-units/as-features",
+      "/as-features",
       produces = [MediaType.APPLICATION_JSON_VALUE],
   )
   fun getFreshwaterManagementUnits(): ResponseEntity<FreshwaterManagementUnitFeatureCollection> =

@@ -3,6 +3,8 @@ import loadLocation from "@loaders/location.ts";
 import MapPage from "@pages/MapPage/MapPage.tsx";
 import Layout from "@src/Layout.tsx";
 import {useEffect} from "react";
+import loadFmuById from "@loaders/fmuById.ts";
+import FmuPdfPreview from "@pages/FmuPdfPreview/FmuPdfPreview.tsx";
 
 export const DefaultRedirect = () => {
   const navigate = useNavigate();
@@ -25,6 +27,11 @@ const routes = [
         path: 'map/:location',
         loader: loadLocation,
         element: <MapPage/>
+      },
+      {
+        path: 'fmu/:id',
+        loader: loadFmuById,
+        element: <FmuPdfPreview />
       }
     ]
   },

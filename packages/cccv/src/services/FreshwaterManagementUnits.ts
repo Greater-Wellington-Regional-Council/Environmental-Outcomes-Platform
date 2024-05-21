@@ -1,7 +1,15 @@
 import {determineBackendUri, get} from "@lib/api.tsx";
 import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
+import {ErrorFlag, ErrorLevel} from "@components/ErrorContext/ErrorContext.ts";
 
 const service = {
+  getById: async (id: number, setError: null | ((error: Error | null) => void) = null): Promise<FmuFullDetails> => {
+    setError && await service.checkServiceHealth(setError);
+    const response = await get(`${determineBackendUri(window.location.hostname)}/freshwater-management-units/${id}`);
+    setError && !response &&
+    setError(new ErrorFlag("No such Freshwater Management Unit was found.", ErrorLevel.WARNING));
+    return response as FmuFullDetails;
+  },
   getByLngAndLat: async (lng: number, lat: number, setError: null | ((error: Error | null) => void) = null): Promise<FmuFullDetails> => {
     setError && await service.checkServiceHealth(setError);
     const response = await get(`${determineBackendUri(window.location.hostname)}/freshwater-management-units?lng=${lng}&lat=${lat}&srid=4326`);
