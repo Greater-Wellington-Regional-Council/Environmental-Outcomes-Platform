@@ -53,7 +53,7 @@ export default function MapPage() {
 
   return (
     <div className="map-page bg-white h-">
-      <header className={"headers flex-2 font-medium m-4 mt-4 my-0 rounded-xl p-4 pt-1 bg-teal-900 text-blue-50 font-sans"}>
+      <header className={"headers flex-2 font-medium m-4 mt-4 my-0 rounded-xl p-4 pl-6 pt-2 space-x-0 bg-cyan-900 text-blue-50 font-sans"}>
         <h1
           className={"mb-4 text-4xl text-bo leading-none tracking-tight md:text-5xl lg:text-6xl mx-auto my-4"}>Freshwater
           Management</h1>
@@ -65,7 +65,7 @@ export default function MapPage() {
           <InteractiveMap location={location} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
         </div>
         <div
-          className={`info-panel border-l-white text-white font-mono xshadow-black m-4 absolute ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
+          className={`info-panel border-l-white text-white font-mono shadow-black m-4 absolute  h-full bg-gray-700 ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
           {/*<span className="close-button" onClick={() => setShowPanel(false)}>x</span>*/}
           {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} />}
         </div>
