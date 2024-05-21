@@ -10,8 +10,8 @@ import dateTimeString from "@lib/dateTimeString";
 import {contaminant, contaminants as fmuContaminants} from "@components/FreshwaterManagementUnit/utils.ts";
 
 const FreshwaterManagementUnit = (details: FmuFullDetails) => {
-  if (!details) {
-    return <div className="FreshwaterManagementUnit p-6 space-y-0 h-full bg-gray-700">No data available</div>
+  if (!details?.freshwaterManagementUnit) {
+    return <div className={`FreshwaterManagementUnit ${panelStyle}`}>No data found.</div>
   }
 
   const {
