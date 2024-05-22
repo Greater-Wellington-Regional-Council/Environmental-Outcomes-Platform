@@ -74,4 +74,4 @@ arcgis:
 
 org:
   contact:
-    email: "${CONFIG_ORG_CONTACT_EMAIL}"
+    email: "${CONFIG_ORG_CONTACT_EMAIL:org-contact-email-missing}"
