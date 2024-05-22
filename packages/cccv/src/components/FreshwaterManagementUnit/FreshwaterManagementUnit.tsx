@@ -41,8 +41,6 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) {
         setShowAbout(false)
-        // Perform an action when about-text is not visible
-        console.log('User scrolled away from about-text');
       }
     });
   };
@@ -109,14 +107,16 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
     </div>) : <div></div>}
 
     <div className={`about-this-information cursor-pointer ${showAbout ? 'show-about' : ''}`}>
-      {showAbout && <div className={`about-text bg-gray-300 border-black p-4 text-black`} data-testid="about" ref={aboutTextRef}>
-          <p onClick={() => setShowAbout(false)}>The content, data, and information used in this app comes from multiple sources, including Greater
-              Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implentation Plans.</p>
-          <EmailLink style={{color: "mediumaquamarine"}}>Email us here for more information</EmailLink>
-      </div>}
-      <div className={`about-link mt-6 bottom`}>
-        <a className="text-gray-400" onClick={handleShowAbout}>About this information</a>
+      <div className={`about-link underline mt-6 bottom`}>
+        <a className="font-medium" onClick={handleShowAbout}>About this information</a>
       </div>
+      {showAbout &&
+          <div className={`about-text p-4 text-black`} data-testid="about" ref={aboutTextRef}>
+              <p onClick={() => setShowAbout(false)}>The content, data, and information used in this app comes from
+                  multiple sources, including Greater
+                  Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implentation Plans.</p>
+              <EmailLink style={{color: "lightblue", fontSize: "1.2em" }}>Email us here for more information</EmailLink>
+          </div>}
     </div>
   </div>
 };

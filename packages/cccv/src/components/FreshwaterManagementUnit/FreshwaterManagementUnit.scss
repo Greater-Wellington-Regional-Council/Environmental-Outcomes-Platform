@@ -4,22 +4,20 @@
 
   .about-this-information {
     margin-top: 1.5em;
-    margin-bottom: 0;
+    margin-right: 1em;
     width: 100%;
     position: relative;
   }
 
   .about-link {
-    position: relative;
-    width: auto;
-    height: auto;
+    height: 2em;
     display: flex;
     align-items: flex-end;
-    transform-origin: bottom left;
     padding: 0;
     font-family: "Helvetica Neue", sans-serif;
     letter-spacing: 1px;
     font-size: 1em;
+    color: mintcream;
   }
 
   .about-link a {
@@ -27,27 +25,20 @@
   }
 
   .about-text {
-    width: 92%;
-    left: 8%;
+    width: fit-content;
     padding: 1em;
-    margin-left: 0;
-    max-height: 0; /* Initially hidden */
-    overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.5s ease-in-out;
-    position: relative;
     display: block;
+    margin-top: 1em;
+    background-color: mintcream;
+    font-size: 0.8em;
   }
 
   .show-about .about-link {
-    transform: rotate(-90deg) translateY(1.3em) translateX(10%);
   }
 
   .show-about .about-text {
-    max-height: 500px;
     opacity: 1;
-    transition: max-height 2s ease-in-out, opacity 2s ease-in-out;
-    transform:  translateY(4%);
+    display: block;
   }
 
   h1 {
