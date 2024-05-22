@@ -1,17 +1,54 @@
 import "./FreshwaterManagementUnit.scss";
 import purify from "dompurify";
-import { Key } from "react";
+import {Key, useRef, useState} from "react";
 import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
 import {PDFDownloadLink} from "@react-pdf/renderer";
 import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf";
-import { PrinterIcon } from '@heroicons/react/24/solid';
+import {PrinterIcon} from '@heroicons/react/24/solid';
 import formatFilename from "@lib/formatAsFilename";
 import dateTimeString from "@lib/dateTimeString";
 import {contaminant, contaminants as fmuContaminants} from "@components/FreshwaterManagementUnit/utils.ts";
+import EmailLink from "@components/EmailLink/EmailLink.tsx";
+import useIntersectionObserver from "@lib/useIntersectionObserver.ts";
 
 export const panelStyle = "p-6 h-full bg-gray-700 relative overflow-auto";
 
 const FreshwaterManagementUnit = (details: FmuFullDetails) => {
+
+  const [showAbout, setShowAbout] = useState(false);
+
+  const ignoreIntersection = useRef(false);
+
+  const handleShowAbout = () => {
+    setShowAbout(!showAbout);
+
+    setTimeout(() => {
+      const aboutTextElement = document.querySelector('.about-text');
+      if (aboutTextElement) {
+        ignoreIntersection.current = true;
+        aboutTextElement.scrollIntoView({ behavior: 'smooth' });
+
+        setTimeout(() => {
+          ignoreIntersection.current = false;
+        }, 1000);
+      }
+    }, 0);
+  }
+
+  const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+    if (ignoreIntersection.current) return;
+
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) {
+        setShowAbout(false)
+        // Perform an action when about-text is not visible
+        console.log('User scrolled away from about-text');
+      }
+    });
+  };
+
+  const aboutTextRef = useIntersectionObserver(handleIntersection, { threshold: 0.1 });
+
   if (!details?.freshwaterManagementUnit) {
     return <div className={`FreshwaterManagementUnit ${panelStyle}`}>No data found.</div>
   }
@@ -33,45 +70,54 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
     <div className="absolute top-4 right-8 m-4">
       <PDFDownloadLink document={<FreshwaterManagementUnitPDF {...details} />} fileName={fileName}>
-        {({loading}: { loading: boolean }) => loading ? 'Loading document...' : <PrinterIcon className="h-8 w-6 text-green-100" />}
+        {({loading}: { loading: boolean }) => loading ? 'Loading document...' :
+          <PrinterIcon className="h-8 w-6 text-green-100"/>}
       </PDFDownloadLink>
     </div>
 
     <div className="overview" data-testid="catchment-desc">
       <h2>Overview</h2>
       <div dangerouslySetInnerHTML={{__html: purify.sanitize(catchmentDescription || "<p>No overview available</p>")}}/>
+    </div>
+
+    <div className="contaminants">
+      <h2>Contaminants</h2>
+      <p>Freshwater objectives from {fmuName1} Whaitua Implementation Plan (as at August 2018)</p>
+
+      <div className="contaminants-list grid grid-cols-2 gap-4 place-items-top">
+        {contaminants.map((contaminant, index) => (
+          <div key={index} className="w-full">
+            <h3>{contaminant.title}</h3>
+            <ol className="contaminant">
+              <li>{contaminant.base}</li>
+              <li>{contaminant.objective}</li>
+              <li>{contaminant.byWhen}</li>
+            </ol>
+          </div>
+        ))}
       </div>
+    </div>
 
-      <div className="contaminants">
-        <h2>Contaminants</h2>
-        <p>Freshwater objectives from {fmuName1} Whaitua Implementation Plan (as at August 2018)</p>
-
-        <div className="contaminants-list grid grid-cols-2 gap-4 place-items-top">
-          {contaminants.map((contaminant, index) => (
-            <div key={index} className="w-full">
-              <h3>{contaminant.title}</h3>
-              <ol className="contaminant">
-                <li>{contaminant.base}</li>
-                <li>{contaminant.objective}</li>
-                <li>{contaminant.byWhen}</li>
-              </ol>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {tangataWhenuaSites?.length ? (<div className="tangata-whenua text-black">
-          <p className={"font-italic"}>This area contains sites of significance to Tangata Whenua including:-</p>
-        {tangataWhenuaSites && (<span className="tangata-whenua-sites">
+    {tangataWhenuaSites?.length ? (<div className="tangata-whenua text-black">
+      <p className={"font-italic"}>This area contains sites of significance to Tangata Whenua including:-</p>
+      {tangataWhenuaSites && (<span className="tangata-whenua-sites">
             <ul>
-              {tangataWhenuaSites?.map((site: { location: string }, index: Key | null | undefined) => <li className="list-disc" key={index}>{site?.location}</li>)}
+              {tangataWhenuaSites?.map((site: { location: string }, index: Key | null | undefined) => <li
+                className="list-disc" key={index}>{site?.location}</li>)}
             </ul>
         </span>)}
-      </div>) : <div></div>}
+    </div>) : <div></div>}
 
-      <div className="about-link mt-6 bottom">
-        <a href={'#about'} className="text-amber-500">About this information</a>
+    <div className={`about-this-information cursor-pointer ${showAbout ? 'show-about' : ''}`}>
+      {showAbout && <div className={`about-text bg-gray-300 border-black p-4 text-black`} data-testid="about" ref={aboutTextRef}>
+          <p onClick={() => setShowAbout(false)}>The content, data, and information used in this app comes from multiple sources, including Greater
+              Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implentation Plans.</p>
+          <EmailLink style={{color: "mediumaquamarine"}}>Email us here for more information</EmailLink>
+      </div>}
+      <div className={`about-link mt-6 bottom`}>
+        <a className="text-gray-400" onClick={handleShowAbout}>About this information</a>
       </div>
+    </div>
   </div>
 };
 

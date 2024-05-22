@@ -5,6 +5,7 @@ import java.nio.file.Files
 import java.util.Base64
 import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -14,6 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 
@@ -70,5 +72,17 @@ class HealthCheckController {
   @GetMapping("/health", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun healthCheck(): ResponseEntity<Any> {
     return ResponseEntity.ok().body(mapOf("status" to "UP"))
+  }
+}
+
+/** Return system values for the front end. It will be replaced with a controller as needs grow. */
+@RestController
+@RequestMapping("/org")
+class OrgController {
+  @Value("\${org.contact.email}") private lateinit var email: String
+
+  @GetMapping("/contact-details", produces = [MediaType.APPLICATION_JSON_VALUE])
+  fun getContactDetails(): ResponseEntity<Any> {
+    return ResponseEntity.ok().body(mapOf("email" to email))
   }
 }

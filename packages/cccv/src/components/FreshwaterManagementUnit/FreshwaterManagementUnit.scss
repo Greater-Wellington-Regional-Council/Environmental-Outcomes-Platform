@@ -2,8 +2,52 @@
   font-family: "Courier New", serif;
   overflow-y: auto;
 
+  .about-this-information {
+    margin-top: 1.5em;
+    margin-bottom: 0;
+    width: 100%;
+    position: relative;
+  }
+
+  .about-link {
+    position: relative;
+    width: auto;
+    height: auto;
+    display: flex;
+    align-items: flex-end;
+    transform-origin: bottom left;
+    padding: 0;
+    font-family: "Helvetica Neue", sans-serif;
+    letter-spacing: 1px;
+    font-size: 1em;
+  }
+
   .about-link a {
     cursor: pointer;
+  }
+
+  .about-text {
+    width: 92%;
+    left: 8%;
+    padding: 1em;
+    margin-left: 0;
+    max-height: 0; /* Initially hidden */
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease-in-out;
+    position: relative;
+    display: block;
+  }
+
+  .show-about .about-link {
+    transform: rotate(-90deg) translateY(1.3em) translateX(10%);
+  }
+
+  .show-about .about-text {
+    max-height: 500px;
+    opacity: 1;
+    transition: max-height 2s ease-in-out, opacity 2s ease-in-out;
+    transform:  translateY(4%);
   }
 
   h1 {

@@ -1,4 +1,4 @@
-import service from '@services/FreshwaterManagementUnits.ts';
+import service from '@services/FreshwaterManagementUnitService.ts';
 
 describe('FreshwaterManagementUnits service', () => {
   it('should return a FreshwaterManagementUnits service with required functions', () => {

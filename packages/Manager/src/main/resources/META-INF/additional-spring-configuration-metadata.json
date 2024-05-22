@@ -1,8 +1,8 @@
 {
   "properties": [
     {
-      "name": "sql.commands.refresh-water-allocation-view",
+      "name": "org.contact.email",
       "type": "java.lang.String",
-      "description": "SQL command to use for sql.commands.refresh-water-allocation-view."
+      "description": "Email address for contacting organization."
   }
 ] }

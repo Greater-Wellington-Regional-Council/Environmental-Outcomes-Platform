@@ -16,7 +16,7 @@ import {Map} from 'react-map-gl';
 import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx";
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts";
 import {ViewLocation} from "@src/global";
-import freshwaterManagementUnitService from "@services/FreshwaterManagementUnits.ts";
+import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService.ts";
 import { debounce } from 'lodash';
 import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 

@@ -6,7 +6,7 @@ import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
 import useEscapeKey from "@lib/useEscapeKey.tsx";
 import {useContext, useEffect, useState} from "react";
 import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
-import freshwaterManagementService from "@services/FreshwaterManagementUnits.ts";
+import freshwaterManagementService from "@services/FreshwaterManagementUnitService.ts";
 import {Feature} from "geojson";
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
 
