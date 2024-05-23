@@ -40,6 +40,7 @@ tasks:
       environment:
         CONFIG_DATABASE_HOST: database
         SPRING_PROFILES_ACTIVE: local
+        CONFIG_ORG_CONTACT_EMAIL: eopdev-notifications@gw.govt.nz
       ports:
         - local: 8080
           container: 8080
