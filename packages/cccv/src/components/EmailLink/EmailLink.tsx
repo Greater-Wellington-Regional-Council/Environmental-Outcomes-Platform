@@ -21,7 +21,7 @@ const EmailLink = ({children = null, style = {}}: {children: ReactNode, style: R
   };
 
   return (
-      <button style={{...style}} className={"email-link text-blue-900 text-left font-bold"} onClick={handleEmailClick}>
+      <button style={{...style}} className={"email-link text-blue-900 text-left font-bold"} onClick={handleEmailClick} aria-label="Send email">
         {children}
       </button>
   );
