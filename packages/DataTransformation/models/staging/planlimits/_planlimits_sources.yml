@@ -1,0 +1,59 @@
+version: 2
+
+sources:
+  - name: public
+    tables:
+      - name: council_plan_documents
+        columns:
+          - name: id
+            constraints:
+              - type: primary_key
+            tests:
+              - unique
+              - not_null
+          - name: council_id
+            description: 'ID of the councils'
+            tests:
+              - unique
+          - name: document
+            data_type: jsonb
+
+      - name: council_plan_boundaries
+        columns:
+          - name: id
+            constraints:
+              - type: primary_key
+            tests:
+              - unique
+              - not_null
+          - name: council_id
+            description: 'ID of the councils'
+          - name: boundary
+            data_type: jsonb
+
+      - name: water_allocations
+        columns:
+          - name: id
+            constraints:
+              - type: primary_key
+            tests:
+              - unique
+              - not_null
+          - name: area_id
+            tests:
+              - not_null
+          - name: allocation_plan
+            tests:
+              - not_null
+          - name: status
+            tests:
+              - not_null
+          - name: is_metered
+            tests:
+              - not_null
+          - name: allocation_daily
+            tests:
+              - not_null
+          - name: allocation_yearly
+            tests:
+              - not_null
