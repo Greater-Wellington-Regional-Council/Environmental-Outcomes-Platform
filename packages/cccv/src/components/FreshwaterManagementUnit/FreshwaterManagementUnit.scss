@@ -1,0 +1,111 @@
+.FreshwaterManagementUnit {
+  font-family: "Courier New", serif;
+  overflow-y: auto;
+
+  .about-this-information {
+    margin-top: 1.5em;
+    margin-right: 1em;
+    width: 100%;
+    position: relative;
+  }
+
+  .about-link {
+    height: 2em;
+    display: flex;
+    align-items: flex-end;
+    padding: 0;
+    font-family: "Helvetica Neue", sans-serif;
+    letter-spacing: 1px;
+    font-size: 1em;
+    color: lightgray;
+  }
+
+  .about-link a {
+    cursor: pointer;
+  }
+
+  .about-text {
+    width: fit-content;
+    padding: 1em;
+    display: block;
+    margin-top: 1em;
+    background-color: mintcream;
+    font-size: 0.8em;
+  }
+
+  .show-about .about-link {
+  }
+
+  .show-about .about-text {
+    opacity: 1;
+    display: block;
+  }
+
+  h1 {
+    font-weight: bold;
+    font-size: 2.0em;
+    margin-bottom: 1.1rem;
+  }
+
+  h2 {
+    margin-bottom: 1.6rem;
+    margin-top: 1.2em;
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+
+  h3 {
+    font-weight: bold;
+    margin-top: 1.5em !important;
+    margin-bottom: 0.6em !important;
+  }
+
+  a[text="About^"] {
+    color: blue;
+  }
+
+  p {
+    font-size: 1.1em;
+    margin-bottom: 1em;
+  }
+
+  .tangata-whenua {
+    background-color: white;
+    color: black !important;
+    padding: 14px 16px;
+    margin: 2.5em 0;
+    font-size: 1em;
+
+    .tangata-whenua-sites {
+      ul {
+        list-style-position: inside;
+        padding-left: 1.5em;
+
+        li {
+          margin-left: -1.5em;
+          padding-left: 1.5em;
+          text-indent: -1.5em;
+        }
+      }
+    }
+
+    .contaminants {
+      margin-top: 1.2em;
+
+      .contaminant {
+        ol, ul {
+          list-style-type: none !important;
+          padding-left: 0;
+
+          li {
+            font-size: 1em;
+            padding-left: 0;
+            margin-left: 0;
+            text-indent: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
