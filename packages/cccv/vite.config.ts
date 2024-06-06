@@ -6,7 +6,13 @@ import tsconfigPaths from "vite-tsconfig-paths";
 const config: UserConfig = defineConfig({
   plugins: [tsconfigPaths(), react()],
   build: {
-    sourcemap: true
+    outDir: 'dist',
+    rollupOptions: {
+      input: 'index.html',
+      output: {
+        manualChunks: undefined,
+      },
+    },
   },
   logLevel: 'info',
   test: {
@@ -19,6 +25,7 @@ const config: UserConfig = defineConfig({
       VITE_MAPBOX_TOKEN: 'mock_mapbox_token'
     }
   },
+  base: './',
 })
 
 export default config

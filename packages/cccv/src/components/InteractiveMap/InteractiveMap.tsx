@@ -2,9 +2,12 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './InteractiveMap.scss';
 import React, {LegacyRef, useContext, useRef, useState} from 'react';
 import {
-  Layer, MapboxGeoJSONFeature,
+  Layer,
+  Map,
+  MapboxGeoJSONFeature,
   MapMouseEvent,
-  MapRef, Marker,
+  MapRef,
+  Marker,
   NavigationControl,
   ScaleControl,
   Source,
@@ -12,16 +15,13 @@ import {
   ViewStateChangeEvent
 } from "react-map-gl";
 import {Feature, Geometry} from "geojson";
-import {Map} from 'react-map-gl';
 import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx";
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts";
 import {ViewLocation} from "@src/global";
 import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService.ts";
-import { debounce } from 'lodash';
+import {debounce} from 'lodash';
 import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
-
-const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+import env from "@src/env.ts";
 
 interface BoundaryLinesLayerProps {
   id: string,
@@ -116,10 +116,10 @@ export default function InteractiveMap({
     },
   });
 
-  const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(LINZ_API_KEY));
+  const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY));
 
   const handleStyleChange = (newStyle: string) => {
-    setMapStyle(newStyle || urlDefaultMapStyle(LINZ_API_KEY));
+    setMapStyle(newStyle || urlDefaultMapStyle(env.LINZ_API_KEY));
   };
 
   const [moving, setMoving] = useState(false);
@@ -171,7 +171,7 @@ export default function InteractiveMap({
 
   return (
     <div className={`map-container ${moving ? 'moving' : 'pointing'}`} data-testid={"InteractiveMap"}>
-      <MapStyleSelector value={mapStyle} onStyleChange={handleStyleChange} apiKey={LINZ_API_KEY}/>
+      <MapStyleSelector value={mapStyle} onStyleChange={handleStyleChange} apiKey={env.LINZ_API_KEY}/>
       <Map
         ref={mapRef as LegacyRef<MapRef>}
         data-Testid="map"
@@ -179,8 +179,8 @@ export default function InteractiveMap({
         style={{width: '100%', height: '100vh', cursor: moving ? 'move' : 'pointer'}}
         viewState={{...viewState, width: 100, height: 100}}
         cursor={moving ? 'move' : 'pointer'}
-        mapboxAccessToken={MAPBOX_TOKEN}
-        accessToken={LINZ_API_KEY}
+        mapboxAccessToken={env.MAPBOX_TOKEN}
+        accessToken={env.LINZ_API_KEY}
         doubleClickZoom={true}
         dragPan={true}
         zoom-={11}
