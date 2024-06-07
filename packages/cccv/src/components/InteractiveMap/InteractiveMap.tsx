@@ -85,6 +85,8 @@ function FeatureHighlight({
   </>;
 }
 
+export const MAP_HEIGHT = '200vh';
+
 export default function InteractiveMap({
                                          location,
                                          pinLocation,
@@ -176,7 +178,7 @@ export default function InteractiveMap({
         ref={mapRef as LegacyRef<MapRef>}
         data-Testid="map"
         mapStyle={mapStyle}
-        style={{width: '100%', height: '100vh', cursor: moving ? 'move' : 'pointer'}}
+        style={{width: '100%', height: MAP_HEIGHT, cursor: moving ? 'move' : 'pointer'}}
         viewState={{...viewState, width: 100, height: 100}}
         cursor={moving ? 'move' : 'pointer'}
         mapboxAccessToken={env.MAPBOX_TOKEN}

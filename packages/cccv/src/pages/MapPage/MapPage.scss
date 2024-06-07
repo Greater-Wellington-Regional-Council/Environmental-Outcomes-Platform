@@ -1,33 +1,34 @@
-.header {
-    font-weight: bold;
-    margin: 1em;
-    margin-bottom: 0;
-    padding: 0.5em;
-    padding-left: 1.5em;
-    border-radius: 10px;
-    background-color: #0d2f4a;
-    color: white;
-}
+// Page structure and effects here
+// Component styles are in the component file using tailwindcss
 
-.header-title {
-    font-size: 2.5em;
-    font-weight: bold;
-    letter-spacing: 0.05em;
-   margin-top: 0.2em;
-}
+div.map-page {
+  // 12 column grid
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto;
 
-.header-subtitle {
-    font-size: 1.5em;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.8em;
-}
+  header {
+    grid-column: 1 / span 12;
+    grid-row: 1;
+  }
 
-.preamble {
-    font-size: 1.2em;
-    font-weight: lighter;
-    margin-bottom: 1em;
-    letter-spacing: 0.05em;
-    color: lightgray;
+  main {
+    grid-column: 1 / span 12;
+    grid-row: 2;
+    position: relative;
+
+    .map-panel {
+      grid-column: 1 / span 8;
+      grid-row: 3;
+    }
+
+    .info-panel {
+      top: 0;
+      position: absolute;
+      grid-column: 9 / span 4;
+      grid-row: 3;
+    }
+  }
 }
 
 @media (max-width: 640px) {

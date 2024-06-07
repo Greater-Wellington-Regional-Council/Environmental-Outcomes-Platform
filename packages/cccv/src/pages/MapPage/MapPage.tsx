@@ -9,6 +9,7 @@ import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 import freshwaterManagementService from "@services/FreshwaterManagementUnitService.ts";
 import {Feature} from "geojson";
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
+import {MAP_HEIGHT} from "@components/InteractiveMap/InteractiveMap"
 
 export default function MapPage() {
 
@@ -54,21 +55,22 @@ export default function MapPage() {
   return (
     <div className="map-page bg-white h-">
       <header
-        className={"header"}>
+        className={"header bold m-4 mb-0 p-[0.5em] pl-[1.5em] bg-[#0d2f4a] text-white"}>
         <h1
-          className={"header-title"}>Freshwater
+          className={"header-title text-3xl font-bold tracking-wider mt-2"}>Freshwater
           Management</h1>
-        <h2 className={"header-subtitle"}>Catchment, context, challenges and values (CCCV)</h2>
-        <p className={"preamble"}>Use this app to find information useful for creating a Freshwater Farm Plan, such as contaminant goals, sites
+        <h2 className={"header-subtitle text-2xl tracking-wider mb-2"}>Catchment, context, challenges and values (CCCV)</h2>
+        <p className={"preamble font-light text-lg text-gray-400 mb-4"}>Use this app to find information useful for creating a Freshwater Farm Plan, such as contaminant goals, sites
           of significance, and implementation ideas for your catchment area.</p>
       </header>
 
-      <main className="map-page flex hscreen" role="application">
-        <div className={`map-panel flex-1 h-full m-4 rounded shrink`}>
+      <main className="map-page" role="application">
+        <div className={`map-panel m-4`}>
           <InteractiveMap location={location} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
         </div>
         <div
-          className={`info-panel border-l-white text-white font-mono shadow-black m-4 absolute  h-full bg-gray-700 ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
+          style={{height: MAP_HEIGHT}}
+          className={`info-panel border-l-white text-white font-mono shadow-black m-4 bg-gray-700 ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
           {/*<span className="close-button" onClick={() => setShowPanel(false)}>x</span>*/}
           {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} />}
         </div>

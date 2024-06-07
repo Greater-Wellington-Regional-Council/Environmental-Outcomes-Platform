@@ -11,8 +11,6 @@ import {contaminant, contaminants as fmuContaminants} from "@components/Freshwat
 import EmailLink from "@components/EmailLink/EmailLink.tsx";
 import useIntersectionObserver from "@lib/useIntersectionObserver";
 
-export const panelStyle = "p-6 h-full bg-gray-700 relative overflow-auto";
-
 const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
   const [showAbout, setShowAbout] = useState(false);
@@ -48,7 +46,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
   const aboutTextRef = useIntersectionObserver(handleIntersection, { threshold: 0.1 });
 
   if (!details?.freshwaterManagementUnit) {
-    return <div className={`FreshwaterManagementUnit ${panelStyle}`}>No data found.</div>
+    return <div>No data found.</div>
   }
 
   const {
@@ -63,7 +61,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
   const contaminants: Array<contaminant> = fmuContaminants(details.freshwaterManagementUnit);
 
-  return <div className={`FreshwaterManagementUnit ${panelStyle}`} id={`fmu_${id || ''}`}>
+  return <div className={`FreshwaterManagementUnit p-6 h-full bg-gray-700 relative overflow-hidden`} id={`fmu_${id || ''}`}>
     <h1 className={""}>{fmuName1}</h1>
 
     <div className="absolute top-4 right-8 m-4">
