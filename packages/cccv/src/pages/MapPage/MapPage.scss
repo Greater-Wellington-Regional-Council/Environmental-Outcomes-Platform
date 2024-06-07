@@ -94,9 +94,7 @@ div.map-page {
 .map-container {
   border: none;
   border-radius: 10px !important;
-}
-
-@keyframes pulsate {
+} @keyframes pulsate {
   0% {
     transform: translateX(0);
     opacity: 1;
