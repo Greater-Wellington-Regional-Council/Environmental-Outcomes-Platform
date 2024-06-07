@@ -9,7 +9,6 @@ import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 import freshwaterManagementService from "@services/FreshwaterManagementUnitService.ts";
 import {Feature} from "geojson";
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
-import {MAP_HEIGHT} from "@components/InteractiveMap/InteractiveMap"
 
 export default function MapPage() {
 
@@ -53,9 +52,9 @@ export default function MapPage() {
   const signalUpdatedInfoPanel = fmuChanged ? 'pulsate' : '';
 
   return (
-    <div className="map-page bg-white h-">
+    <div className="map-page bg-white">
       <header
-        className={"header bold m-4 mb-0 p-[0.5em] pl-[1.5em] bg-[#0d2f4a] text-white"}>
+        className={"header bold p-[0.5em] pl-[1.5em] bg-[#0d2f4a] text-white"}>
         <h1
           className={"header-title text-3xl font-bold tracking-wider mt-2"}>Freshwater
           Management</h1>
@@ -65,12 +64,11 @@ export default function MapPage() {
       </header>
 
       <main className="map-page" role="application">
-        <div className={`map-panel m-4`}>
+        <div className={`map-panel`}>
           <InteractiveMap location={location} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
         </div>
         <div
-          style={{height: MAP_HEIGHT}}
-          className={`info-panel border-l-white text-white font-mono shadow-black m-4 bg-gray-700 ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
+          className={`info-panel text-white font-mono shadow-black bg-gray-700 ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
           {/*<span className="close-button" onClick={() => setShowPanel(false)}>x</span>*/}
           {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} />}
         </div>

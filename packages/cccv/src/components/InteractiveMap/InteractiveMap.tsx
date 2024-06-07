@@ -85,7 +85,7 @@ function FeatureHighlight({
   </>;
 }
 
-export const MAP_HEIGHT = '200vh';
+export const MAP_HEIGHT = '150vh';
 
 export default function InteractiveMap({
                                          location,
@@ -178,8 +178,8 @@ export default function InteractiveMap({
         ref={mapRef as LegacyRef<MapRef>}
         data-Testid="map"
         mapStyle={mapStyle}
-        style={{width: '100%', height: MAP_HEIGHT, cursor: moving ? 'move' : 'pointer'}}
-        viewState={{...viewState, width: 100, height: 100}}
+        style={{aspectRatio: '1 / 1', cursor: moving ? 'move' : 'pointer'}}
+        viewState={{...viewState, width: 100, height: 150}}
         cursor={moving ? 'move' : 'pointer'}
         mapboxAccessToken={env.MAPBOX_TOKEN}
         accessToken={env.LINZ_API_KEY}

@@ -26,6 +26,11 @@ const config: UserConfig = defineConfig({
     }
   },
   base: './',
+  server: {
+    hmr: {
+      overlay: false
+    }
+  }
 })
 
 export default config

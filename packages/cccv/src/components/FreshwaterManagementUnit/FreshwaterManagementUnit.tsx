@@ -61,7 +61,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
   const contaminants: Array<contaminant> = fmuContaminants(details.freshwaterManagementUnit);
 
-  return <div className={`FreshwaterManagementUnit p-6 h-full bg-gray-700 relative overflow-hidden`} id={`fmu_${id || ''}`}>
+  return <div className={`FreshwaterManagementUnit p-6 bg-gray-700 relative overflow-hidden`} id={`fmu_${id || ''}`}>
     <h1 className={""}>{fmuName1}</h1>
 
     <div className="absolute top-4 right-8 m-4">

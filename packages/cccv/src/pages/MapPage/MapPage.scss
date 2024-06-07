@@ -1,13 +1,17 @@
 // Page structure and effects here
 // Component styles are in the component file using tailwindcss
 
+$grid-gap: 12px;
+
 div.map-page {
   // 12 column grid
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: auto;
+  gap: $grid-gap;
 
   header {
+    left: 0;
     grid-column: 1 / span 12;
     grid-row: 1;
   }
@@ -16,10 +20,12 @@ div.map-page {
     grid-column: 1 / span 12;
     grid-row: 2;
     position: relative;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 
     .map-panel {
       grid-column: 1 / span 8;
       grid-row: 3;
+      overflow: hidden;
     }
 
     .info-panel {
@@ -27,6 +33,7 @@ div.map-page {
       position: absolute;
       grid-column: 9 / span 4;
       grid-row: 3;
+      min-height: 100%;
     }
   }
 }
@@ -71,10 +78,8 @@ div.map-page {
   .info-panel {
     position: absolute;
     width: 40%;
-    height: 100%;
     right: -100%; // Initially off-screen
     transition: right 0.5s ease-in-out;
-    border-left: 8px solid white;
     z-index: 1000;
   }
 
@@ -87,13 +92,8 @@ div.map-page {
   }
 }
 
-.map-page {
-  max-height: 600px;
-}
-
 .map-container {
   border: none;
-  border-radius: 10px !important;
 } @keyframes pulsate {
   0% {
     transform: translateX(0);
