@@ -58,10 +58,10 @@ export default function MapPage() {
         className={"header bold p-[0.5em] pl-[1.5em] bg-[#0d2f4a] text-white grid grid-cols-12"}>
         <div className={"header-text col-span-10"}>
           <h1
-            className={"header-title text-3xl font-bold tracking-wider mt-2"}>Freshwater
+            className={"header-title"}>Freshwater
             Management</h1>
-          <h2 className={"header-subtitle text-1xl tracking-wider mb-4"}>Catchment, context, challenges and values (CCCV)</h2>
-          <p className={"preamble font-light text-[0.8em] text-gray-400 mb-2"}>Find information useful for creating a Freshwater Farm Plan, such as contaminant goals, sites
+          <h2 className={"header-subtitle mb-3"}>Catchment, context, challenges and values (CCCV)</h2>
+          <p className={"preamble text-[#737373] font-lighter"}>Find information useful for creating a Freshwater Farm Plan, such as contaminant goals, sites
             of significance, and implementation ideas for your catchment area.</p>
         </div>
         <div className={"header-image col-span-2 mt-2 mr-2 scale-105 ml-auto"}>

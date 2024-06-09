@@ -2,7 +2,7 @@ import React, {ReactNode, useContext} from "react";
 import orgService from "@services/OrgService.ts";
 import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 
-const EmailLink = ({children = null, style = {}}: {children: ReactNode, style: React.CSSProperties}) => {
+const EmailLink = ({children = null, style = {}}: {children: ReactNode, style?: React.CSSProperties | {}}) => {
   const setError = useContext(ErrorContext).setError;
 
   const handleEmailClick = (e: React.MouseEvent) => {

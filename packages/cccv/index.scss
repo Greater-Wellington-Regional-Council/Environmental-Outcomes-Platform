@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1 {
+  @apply font-source-sans-3 font-bold text-[32px] leading-[40px];
+}
+
+h2 {
+  @apply font-source-sans-3 font-bold text-[22px] leading-[34px];
+}
+
+h3 {
+  @apply font-source-sans-3 font-bold text-[18px] leading-[24px];
+}
+
+h4 {
+  @apply font-source-sans-3 font-bold text-[18px] leading-[24px] capitalize;
+}
+
+h5 {
+  @apply font-source-sans-3 font-bold text-[16px] leading-[22px];
+}
+
+h6 {
+  @apply font-source-sans-3 font-bold text-[16px] leading-[22px];
+}
+
+body {
+  @apply font-source-sans-3 text-[16px] font-bold leading-[22px];
+}
+
+caption {
+  @apply font-source-sans-3 text-[16px] leading-[22px] text-[#737373];
+}
+
+button {
+  @apply font-source-sans-3 text-[#174A5B] font-bold text-[16px] leading-[22px];
+}
+
+button:hover {
+  @apply font-source-sans-3 text-[#FFFFFF] font-bold text-[16px] leading-[22px];
+}
+
+button:disabled {
+  @apply font-source-sans-3 text-[#174A5B] font-bold text-[16px] leading-[22px];
+}

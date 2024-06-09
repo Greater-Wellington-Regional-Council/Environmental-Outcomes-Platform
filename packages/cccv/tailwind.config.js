@@ -9,7 +9,11 @@ module.exports = withMT({
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                'source-sans-3': ['"Source Sans 3"', 'sans-serif'],
+            },
+        },
     },
     plugins: [],
 })

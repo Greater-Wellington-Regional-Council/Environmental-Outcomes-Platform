@@ -106,14 +106,14 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
     <div className={`about-this-information cursor-pointer ${showAbout ? 'show-about' : ''}`}>
       <div className={`about-link underline mt-6 bottom`}>
-        <a className="font-medium" onClick={handleShowAbout}>About this information</a>
+        <a onClick={handleShowAbout}>About this information</a>
       </div>
       {showAbout &&
           <div className={`about-text p-4 text-black`} data-testid="about-text" ref={aboutTextRef}>
               <p onClick={() => setShowAbout(false)}>The content, data, and information used in this app comes from
                   multiple sources, including Greater
                   Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implentation Plans.</p>
-              <EmailLink style={{color: "black", fontSize: "1.2em", textDecoration: "underline" }}>Email us here for more information</EmailLink>
+              <EmailLink>Email us here for more information</EmailLink>
           </div>}
     </div>
   </div>
