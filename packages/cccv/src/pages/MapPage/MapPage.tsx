@@ -68,7 +68,7 @@ export default function MapPage() {
           <InteractiveMap location={location} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
         </div>
         <div
-          className={`info-panel text-white font-mono shadow-black bg-gray-700 ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
+          className={`info-panel bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
           {/*<span className="close-button" onClick={() => setShowPanel(false)}>x</span>*/}
           {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} />}
         </div>

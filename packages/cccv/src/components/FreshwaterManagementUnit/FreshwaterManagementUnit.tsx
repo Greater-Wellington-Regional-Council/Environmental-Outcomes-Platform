@@ -61,7 +61,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
   const contaminants: Array<contaminant> = fmuContaminants(details.freshwaterManagementUnit);
 
-  return <div className={`FreshwaterManagementUnit p-6 bg-gray-700 relative overflow-hidden`} id={`fmu_${id || ''}`}>
+  return <div className={`FreshwaterManagementUnit bg-white p-6 relative overflow-hidden`} id={`fmu_${id || ''}`}>
     <h1 className={""}>{fmuName1}</h1>
 
     <div className="absolute top-4 right-8 m-4">
@@ -94,7 +94,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
       </div>
     </div>
 
-    {tangataWhenuaSites?.length ? (<div className="tangata-whenua text-black">
+    {tangataWhenuaSites?.length ? (<div className="tangata-whenua">
       <p className={"font-italic"}>This area contains sites of significance to Tangata Whenua including:-</p>
       {tangataWhenuaSites && (<span className="tangata-whenua-sites">
             <ul>

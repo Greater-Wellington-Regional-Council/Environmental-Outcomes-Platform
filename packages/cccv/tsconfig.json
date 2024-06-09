@@ -34,7 +34,8 @@
       "@shared/*": ["../sharedLib/*"],
       "@models/*": ["src/models/*"],
       "@pdfs/*": ["src/pdfs/*"],
-      "@services/*": ["src/services/*"]
+      "@services/*": ["src/services/*"],
+      "@elements/*": ["src/elements/*"]
     }
   },
   "include": [
