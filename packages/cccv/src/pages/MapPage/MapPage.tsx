@@ -9,6 +9,7 @@ import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 import freshwaterManagementService from "@services/FreshwaterManagementUnitService.ts";
 import {Feature} from "geojson";
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
+import gwrcLogo from "@images/GWLogoFullColorWhiteText.png";
 
 export default function MapPage() {
 
@@ -54,13 +55,18 @@ export default function MapPage() {
   return (
     <div className="map-page bg-white">
       <header
-        className={"header bold p-[0.5em] pl-[1.5em] bg-[#0d2f4a] text-white"}>
-        <h1
-          className={"header-title text-3xl font-bold tracking-wider mt-2"}>Freshwater
-          Management</h1>
-        <h2 className={"header-subtitle text-2xl tracking-wider mb-2"}>Catchment, context, challenges and values (CCCV)</h2>
-        <p className={"preamble font-light text-lg text-gray-400 mb-4"}>Use this app to find information useful for creating a Freshwater Farm Plan, such as contaminant goals, sites
-          of significance, and implementation ideas for your catchment area.</p>
+        className={"header bold p-[0.5em] pl-[1.5em] bg-[#0d2f4a] text-white grid grid-cols-12"}>
+        <div className={"header-text col-span-10"}>
+          <h1
+            className={"header-title text-3xl font-bold tracking-wider mt-2"}>Freshwater
+            Management</h1>
+          <h2 className={"header-subtitle text-1xl tracking-wider mb-4"}>Catchment, context, challenges and values (CCCV)</h2>
+          <p className={"preamble font-light text-[0.8em] text-gray-400 mb-2"}>Find information useful for creating a Freshwater Farm Plan, such as contaminant goals, sites
+            of significance, and implementation ideas for your catchment area.</p>
+        </div>
+        <div className={"header-image col-span-2 mt-2 mr-2 scale-105 ml-auto"}>
+          <img src={gwrcLogo} alt={"Greater Wellington Regional Council logo"} className={"h-[50px]"} />
+        </div>
       </header>
 
       <main className="map-page" role="application">

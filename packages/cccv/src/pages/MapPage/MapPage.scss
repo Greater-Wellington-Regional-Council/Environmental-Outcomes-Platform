@@ -9,6 +9,7 @@ div.map-page {
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: auto;
   gap: $grid-gap;
+  margin: $grid-gap;
 
   header {
     left: 0;
