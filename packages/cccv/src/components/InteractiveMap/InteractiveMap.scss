@@ -17,4 +17,7 @@
 
 .mapboxgl-ctrl-group:not(:empty) {
   box-shadow: none;
+  button {
+    width: 30px;
+  }
 }
