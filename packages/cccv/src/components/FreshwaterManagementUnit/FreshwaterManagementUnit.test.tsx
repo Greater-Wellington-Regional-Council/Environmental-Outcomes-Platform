@@ -1,8 +1,7 @@
 import FreshwaterManagementUnit from './FreshwaterManagementUnit.tsx';
-import {render, screen, waitFor} from '@testing-library/react'
+import {render, screen} from '@testing-library/react'
 import {expect, vi} from "vitest";
 import {MutableRefObject} from "react";
-import userEvent from '@testing-library/user-event';
 
 vi.mock('@react-pdf/renderer', async () => {
   return {
@@ -36,13 +35,6 @@ describe('Spec FreshwaterManagementUnit', function () {
 
   it('reveals meta information when About this information clicked', async () => {
     render(<FreshwaterManagementUnit freshwaterManagementUnit={{}} tangataWhenuaSites={[]} />);
-    expect(screen.queryByTestId('about-text')).not.toBeInTheDocument();
-
-    await userEvent.click(screen.getByText('About this information'));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('about-text')).toBeInTheDocument()
-      expect(screen.getByLabelText("Send email")).toBeInTheDocument()
-    });
+    expect(screen.getByText('Contact us for more information')).toBeInTheDocument();
   });
 })

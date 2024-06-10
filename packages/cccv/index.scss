@@ -27,7 +27,7 @@ h6 {
 }
 
 body {
-  @apply font-source-sans-3 text-[16px] font-bold leading-[22px];
+  @apply font-source-sans-3 text-[16px] leading-[22px];
 }
 
 caption {
@@ -35,13 +35,28 @@ caption {
 }
 
 button {
-  @apply font-source-sans-3 text-[#174A5B] font-bold text-[16px] leading-[22px];
+  @apply font-source-sans-3 text-[#174A5B] font-bold text-[16px] leading-[22px] border-2 rounded-3xl pl-4 border-[#174A5B] pr-4 pt-2 pb-2;
 }
 
 button:hover {
-  @apply font-source-sans-3 text-[#FFFFFF] font-bold text-[16px] leading-[22px];
+  @apply font-source-sans-3 text-[#666666] font-bold text-[16px] leading-[22px];
 }
 
 button:disabled {
   @apply font-source-sans-3 text-[#174A5B] font-bold text-[16px] leading-[22px];
+}
+
+ul {
+    @apply list-inside ml-[-1.5em] pl-1.5 indent-[-1.5em];
+
+    li {
+        @apply list-disc ml-6 pl-6 -mt-1.5 leading-7;
+    }
+}
+
+// Define custom color names I can use in styles and tailwind class names
+@layer components {
+  .color-primary {
+    @apply text-[#174A5B];
+  }
 }

@@ -2,16 +2,16 @@
   position: absolute;
   z-index: 1;
   pointer-events: none;
-  background-color: white;
   padding: 0.2rem 0.5rem;
   border-radius: 0.5rem;
-  border: 1px solid darkgrey;
-  font-weight: lighter;
+  border: 1px solid #174A5B;
+  background-color: white;
+  font-weight: bold;
 }
 
 .mapboxgl-ctrl-group {
-  border-radius: 10px;
-  border: 2px solid black;
+  border-radius: 6px;
+  border: 1px solid black;
   box-shadow: none;
 }
 
@@ -19,5 +19,6 @@
   box-shadow: none;
   button {
     width: 30px;
+    border-radius: 0;
   }
 }

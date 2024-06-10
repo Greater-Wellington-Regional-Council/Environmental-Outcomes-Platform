@@ -2,7 +2,7 @@ import React, {ReactNode, useContext} from "react";
 import orgService from "@services/OrgService.ts";
 import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 
-const EmailLink = ({children = null, style = {}}: {children: ReactNode, style?: React.CSSProperties | {}}) => {
+const EmailLink = ({children = null}: {children: ReactNode}) => {
   const setError = useContext(ErrorContext).setError;
 
   const handleEmailClick = (e: React.MouseEvent) => {
@@ -21,7 +21,7 @@ const EmailLink = ({children = null, style = {}}: {children: ReactNode, style?: 
   };
 
   return (
-      <button style={{...style}} className={"email-link text-blue-900 text-left font-bold"} onClick={handleEmailClick} aria-label="Send email">
+      <button onClick={handleEmailClick} aria-label="Send email">
         {children}
       </button>
   );
