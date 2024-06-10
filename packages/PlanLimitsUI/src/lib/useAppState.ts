@@ -21,7 +21,7 @@ export function useAppState(
       let flowSite = null;
       if (activeLimits.flowLimit) {
         flowSite = allPlanData.flowMeasurementSites.find(
-          (fs) => fs.id === activeLimits.flowLimit.measuredAtSiteId,
+          (fs) => fs.id === activeLimits!.flowLimit!.measuredAtSiteId,
         );
         if (!flowSite) throw new Error('Flow site not found');
       }
@@ -133,7 +133,7 @@ function buildSurfaceWaterLimitView(
   surfaceWaterSubUnitLimit: SurfaceWaterLimit | null,
   defaultSurfaceWaterLimit: string,
   planRegionId?: string,
-  unit: string,
+  unit?: string,
 ): SurfaceWaterLimitView {
   const unitLimitView: LimitView = surfaceWaterUnitLimit
     ? {
@@ -160,8 +160,8 @@ function buildSurfaceWaterLimitView(
   }
 
   return {
-    unitLimitView: formatLimitView(unitLimitView, unit),
-    subUnitLimitView: formatLimitView(subUnitLimitView, unit),
+    unitLimitView: formatLimitView(unitLimitView, unit!),
+    subUnitLimitView: formatLimitView(subUnitLimitView, unit!),
   };
 }
 

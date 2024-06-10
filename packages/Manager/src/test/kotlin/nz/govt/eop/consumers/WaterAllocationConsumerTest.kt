@@ -15,17 +15,18 @@ import org.jooq.Result
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jooq.JooqTest
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 
 fun OffsetDateTime.truncateToMillis(): Instant = this.truncatedTo(ChronoUnit.MILLIS).toInstant()
 
 @ActiveProfiles("test")
-@JooqTest
+@SpringBootTest
 @Transactional
-class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
-
+class WaterAllocationConsumerTest(
+    @Autowired val context: DSLContext,
+) {
   private val consumer = WaterAllocationConsumer(context)
 
   @BeforeEach
@@ -57,7 +58,8 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
         firstMessage.copy(
             allocationPlan = BigDecimal("200.11"),
             ingestId = "secondIngestId",
-            receivedAt = firstMessage.receivedAt.plusSeconds(3600))
+            receivedAt = firstMessage.receivedAt.plusSeconds(3600),
+        )
 
     // WHEN
     consumer.processMessage(firstMessage)
@@ -95,7 +97,8 @@ class WaterAllocationConsumerTest(@Autowired val context: DSLContext) {
         BigDecimal("10.0"),
         listOf("meter-0", "meter-1"),
         "firstIngestId",
-        Instant.now())
+        Instant.now(),
+    )
   }
 
   fun fetchWaterAllocations(sourceId: String): Result<WaterAllocationsRecord> {

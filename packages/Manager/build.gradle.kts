@@ -46,6 +46,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.apache.kafka:kafka-streams")
   implementation("io.micrometer:micrometer-tracing-bridge-brave")
@@ -59,12 +62,19 @@ dependencies {
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:5.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.10.0")
-  implementation("net.postgis:postgis-jdbc:2021.1.0")
+  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2021.1.0")
+  implementation("de.grundid.opendatalab:geojson-jackson:1.14")
+  implementation("org.locationtech.jts:jts-core:1.18.1")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
   testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+  testImplementation("io.kotest:kotest-framework-engine:5.8.0")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
+  testImplementation("io.mockk:mockk:1.13.10")
+  testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }
@@ -99,7 +109,8 @@ val dbConfig =
         "testUrl" to
             "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?: "localhost"}:5432/eop_test",
         "user" to "postgres",
-        "password" to "password")
+        "password" to "password",
+    )
 
 flyway {
   url = dbConfig["testUrl"]
@@ -132,7 +143,18 @@ jooq {
                       binding = "nz.govt.eop.si.jooq.PostgisGeometryBinding"
                       includeExpression = ".*"
                       includeTypes = "GEOMETRY"
-                    })
+                    },
+                    ForcedType().apply {
+                      userType = "nz.govt.eop.si.jooq.TakeType"
+                      isEnumConverter = true
+                      includeExpression = ".*take_type"
+                    },
+                    ForcedType().apply {
+                      userType = "nz.govt.eop.si.jooq.ManagementUnitType"
+                      isEnumConverter = true
+                      includeExpression = ".*management_unit_type"
+                    },
+                )
             excludes =
                 "st_.*|spatial_ref_sys|geography_columns|geometry_columns|flyway_schema_history"
           }
@@ -180,7 +202,11 @@ tasks.register("loadSampleData") {
   doLast {
     println("Loading Sample Data")
     SingleConnectionDataSource(
-            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+            dbConfig["devUrl"]!!,
+            dbConfig["user"]!!,
+            dbConfig["password"]!!,
+            true,
+        )
         .let {
           it.connection.use { connection ->
             executeSqlScript(connection, FileSystemResource("./sample-data/allocation_data.sql"))
@@ -196,11 +222,17 @@ tasks.register("refreshSampleData") {
     println("Refresh Sample Data Dates")
 
     SingleConnectionDataSource(
-            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+            dbConfig["devUrl"]!!,
+            dbConfig["user"]!!,
+            dbConfig["password"]!!,
+            true,
+        )
         .let {
           it.connection.use { connection ->
             executeSqlScript(
-                connection, FileSystemResource("./sample-data/update_observation_dates.sql"))
+                connection,
+                FileSystemResource("./sample-data/update_observation_dates.sql"),
+            )
           }
         }
   }

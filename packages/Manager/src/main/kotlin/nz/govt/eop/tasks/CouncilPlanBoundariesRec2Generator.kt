@@ -12,9 +12,8 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 class CouncilPlanBoundariesRec2Generator(
     val context: DSLContext,
-    val parameterJdbcTemplate: NamedParameterJdbcTemplate
+    val parameterJdbcTemplate: NamedParameterJdbcTemplate,
 ) {
-
   private val logger = KotlinLogging.logger {}
 
   @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
@@ -22,7 +21,11 @@ class CouncilPlanBoundariesRec2Generator(
   @Transactional
   fun updateRecPlanData() {
     processDataRefresh(
-        logger, "updateCouncilPlanRecBoundaries", { true }, ::updateCouncilPlanRecBoundaries)
+        logger,
+        "updateCouncilPlanRecBoundaries",
+        { true },
+        ::updateCouncilPlanRecBoundaries,
+    )
   }
 
   private fun updateCouncilPlanRecBoundaries() {
@@ -51,6 +54,7 @@ class CouncilPlanBoundariesRec2Generator(
                           FROM new_boundary
                           WHERE council_id = :councilId
                             AND source_id = :sourceId
+                            AND new_boundary.geom is not null
                             AND (ST_GEOMFROMTEXT('POLYGON EMPTY', 4326) = boundary OR NOT ST_EQUALS(new_boundary.geom, boundary))
               """
                   .trimIndent(),
@@ -58,7 +62,8 @@ class CouncilPlanBoundariesRec2Generator(
                   "councilId" to councilId,
                   "sourceId" to sourceId,
                   "hydroIds" to result,
-              ))
+              ),
+          )
         }
   }
 }

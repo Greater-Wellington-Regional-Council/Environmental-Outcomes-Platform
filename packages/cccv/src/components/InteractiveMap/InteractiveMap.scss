@@ -1,0 +1,25 @@
+.tooltip {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid;
+  background-color: white;
+  font-weight: bold;
+  @apply border-nui bg-white text-nui;
+}
+
+.mapboxgl-ctrl-group {
+  border-radius: 6px;
+  border: 1px solid black;
+  box-shadow: none;
+}
+
+.mapboxgl-ctrl-group:not(:empty) {
+  box-shadow: none;
+  button {
+    width: 30px;
+    border-radius: 0;
+  }
+}
