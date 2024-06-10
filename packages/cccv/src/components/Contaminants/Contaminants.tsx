@@ -11,7 +11,7 @@ interface ContaminantsTableProps {
   contaminants: Contaminant[];
 }
 
-export const ContaminantsTable: React.FC<ContaminantsTableProps> = ({contaminants}) => {
+export const Contaminants: React.FC<ContaminantsTableProps> = ({contaminants}) => {
 
   const showTitle = (title: string) => title
 
@@ -29,7 +29,7 @@ export const ContaminantsTable: React.FC<ContaminantsTableProps> = ({contaminant
           <th className="px-4 py-2 text-left text-sm font-semibold text-transparent">Title</th>
           <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Base</th>
           <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">Objective</th>
-          <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">By When</th>
+          <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">By</th>
         </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">

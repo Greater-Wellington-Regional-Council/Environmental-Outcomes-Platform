@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, expect } from 'vitest';
-import { ContaminantsTable } from './ContaminantsTable';
+import { Contaminants} from './Contaminants.tsx';
 
 const contaminants = [
   { title: 'Contaminant 1', base: 'Base 1', objective: 'Objective 1', byWhen: 'Date 1' },
@@ -11,7 +11,7 @@ const contaminants = [
 
 describe('ContaminantsTable', () => {
   it('renders the correct number of rows and columns', () => {
-    render(<ContaminantsTable contaminants={contaminants} />);
+    render(<Contaminants contaminants={contaminants} />);
 
     const rows = screen.getAllByRole('row');
     expect(rows).toHaveLength(4);

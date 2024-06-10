@@ -8,7 +8,7 @@ import formatFilename from "@lib/formatAsFilename";
 import dateTimeString from "@lib/dateTimeString";
 import {contaminant, contaminants as fmuContaminants} from "@components/FreshwaterManagementUnit/utils.ts";
 import EmailLink from "@components/EmailLink/EmailLink.tsx";
-import {ContaminantsTable} from "@components/ContaminantsTable/ContaminantsTable.tsx";
+import {Contaminants} from "@components/Contaminants/Contaminants.tsx";
 
 const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
@@ -47,8 +47,8 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
       <h2>Contaminants</h2>
       <p>Freshwater objectives from {fmuName1} Whaitua Implementation Plan (as at August 2018)</p>
 
-      <div className="mt-6">
-          <ContaminantsTable contaminants={contaminants} />
+      <div className="mt-4">
+          <Contaminants contaminants={contaminants} />
       </div>
     </div>
 
