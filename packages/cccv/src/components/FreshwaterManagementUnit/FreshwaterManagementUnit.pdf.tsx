@@ -1,6 +1,6 @@
 import {Document, Page, View, Text, Font, Image} from '@react-pdf/renderer';
-import purify from 'dompurify';
-import {contaminants as fmuContaminants, contaminant} from "@components/FreshwaterManagementUnit/utils.ts";
+// import purify from 'dompurify';
+// import {contaminants as fmuContaminants, contaminant} from "@components/FreshwaterManagementUnit/utils.ts";
 import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
 import colors from '@lib/colors';
 import { createTw } from "react-pdf-tailwind";
@@ -93,9 +93,9 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
     catchmentDescription,
   } = details.freshwaterManagementUnit;
 
-  const tangataWhenuaSites = details.tangataWhenuaSites;
-
-  const contaminants: Array<contaminant> = fmuContaminants(details.freshwaterManagementUnit);
+  // const tangataWhenuaSites = details.tangataWhenuaSites;
+  //
+  // const contaminants: Array<contaminant> = fmuContaminants(details.freshwaterManagementUnit);
 
   return (
     <Document >
