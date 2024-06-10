@@ -25,7 +25,7 @@ containers:
       home_directory: /home/container-user
 
   node-build-env:
-    image: node:18.14.0
+    image: node:20.14.0
     volumes:
       - local: <{batect.project_directory}
         container: /code

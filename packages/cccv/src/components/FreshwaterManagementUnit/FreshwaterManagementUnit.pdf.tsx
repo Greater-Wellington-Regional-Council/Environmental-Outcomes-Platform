@@ -97,8 +97,6 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
 
   const contaminants: Array<contaminant> = fmuContaminants(details.freshwaterManagementUnit);
 
-
-
   return (
     <Document >
       <Page style={st("bg-white font-inter")}>
@@ -115,6 +113,12 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
 
           <View style={st("p-4")}>
             <Text style={st("h1")}>{fmuName1}</Text>
+
+            {catchmentDescription ? (<>
+              <Text style={st("h2")}>Overview</Text>
+              <Text style={st("h2")}>{catchmentDescription}</Text>
+            </>) : null}
+
           </View>
 
           {/*<View style={st("")}>*/}
