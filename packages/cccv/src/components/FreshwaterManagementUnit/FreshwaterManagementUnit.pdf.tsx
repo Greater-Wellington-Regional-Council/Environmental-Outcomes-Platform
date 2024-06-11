@@ -71,7 +71,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
 
   return (
     <Document>
-      <Page size="A4" style={tw("p-4 bg-white font-sans flex flex-col justify-between")}>
+      <Page size="A4" style={tw("bg-white font-sans flex flex-col justify-between")}>
         <View style={tw("mb-4")} id={`fmu_${id}`}>
           <View style={tw("bg-nui p-4 pb-6 text-white flex flex-row justify-between items-start")}>
             <View style={tw("flex flex-col")}>
@@ -82,7 +82,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
             </View>
             <Image style={[{width: 120, height: 'auto'}, tw("ml-4")]} source={gwrcLogo}/>
           </View>
-          <View style={tw("pt-4")}>
+          <View style={tw("m-4")}>
 
             <View style={tw("mb-4")}>
               <Text style={tw("h1")}>{fmuName1}</Text>
@@ -105,7 +105,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
 
             {tangataWhenuaSites?.length ? (
               <View style={tw("mb-4")} wrap={false}>
-                <Text style={tw("h2 mb-2")}>Sites of significance</Text>
+                <Text style={tw("h2")}>Sites of significance</Text>
                 <Text style={tw("body mb-1")}>
                   This area contains sites of significance to Tangata Whenua.
                 </Text>
@@ -125,7 +125,8 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
             </View>
           </View>
         </View>
-        <View style={tw('absolute bottom-0 left-0 right-0 flex flex-row justify-between items-center p-4')} fixed>
+
+        <View style={tw('absolute bottom-0 left-0 right-0 flex flex-row justify-between items-center m-4')} fixed>
           <Text style={tw('text-xs')}>CCCV details for {fmuName1}</Text>
           <Text
             style={tw('text-xs')}
