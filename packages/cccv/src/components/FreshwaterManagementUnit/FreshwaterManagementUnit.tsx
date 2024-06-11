@@ -6,7 +6,7 @@ import {PDFDownloadLink} from "@react-pdf/renderer";
 import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf";
 import formatFilename from "@lib/formatAsFilename";
 import dateTimeString from "@lib/dateTimeString";
-import {contaminant, contaminants as fmuContaminants} from "@components/FreshwaterManagementUnit/utils.ts";
+import {ContaminantList, contaminants as fmuContaminants} from "@components/FreshwaterManagementUnit/utils.ts";
 import EmailLink from "@components/EmailLink/EmailLink.tsx";
 import {Contaminants} from "@components/Contaminants/Contaminants.tsx";
 
@@ -26,7 +26,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
   const fileName = formatFilename((fmuName1 || '').toString(), `fmu_${id}`) + `_${dateTimeString()}` + '.pdf';
 
-  const contaminants: Array<contaminant> = fmuContaminants(details.freshwaterManagementUnit);
+  const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit);
 
   return <div className={`FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidden`} id={`fmu_${id || ''}`}>
     <h1 className={""}>{fmuName1}</h1>
