@@ -90,7 +90,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
               {catchmentDescription ? (<>
                 <Text style={tw("h2 mb-2")}>Overview</Text>
                 <Text
-                  style={tw("body")}>{purify.sanitize(catchmentDescription || 'No overview available').replace(/<[^>]+>/g, '')}</Text>
+                  style={tw("body mb-4")}>{purify.sanitize(catchmentDescription || 'No overview available').replace(/<[^>]+>/g, '')}</Text>
               </>) : null}
             </View>
 
@@ -104,7 +104,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
             </View>
 
             {tangataWhenuaSites?.length ? (
-              <View style={tw("mb-4")}>
+              <View style={tw("mb-4")} wrap={false}>
                 <Text style={tw("h2 mb-2")}>Sites of significance</Text>
                 <Text style={tw("body mb-1")}>
                   This area contains sites of significance to Tangata Whenua.
@@ -125,9 +125,13 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
             </View>
           </View>
         </View>
-        <Text style={tw("text-sm p-4 text-center text-base")} render={({ pageNumber, totalPages}) => (
-          `Page ${pageNumber} of ${totalPages}`
-        )} fixed />
+        <View style={tw('absolute bottom-0 left-0 right-0 flex flex-row justify-between items-center p-4')} fixed>
+          <Text style={tw('text-xs')}>CCCV details for {fmuName1}</Text>
+          <Text
+            style={tw('text-xs')}
+            render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`}
+          />
+        </View>
       </Page>
     </Document>
   )
