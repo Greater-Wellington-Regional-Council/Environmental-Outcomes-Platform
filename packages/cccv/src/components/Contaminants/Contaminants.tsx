@@ -1,26 +1,7 @@
 import React from "react";
+import {Contaminant, ContaminantList} from "@components/FreshwaterManagementUnit/utils.ts";
 
-interface Contaminant {
-  title: string;
-  base: string;
-  objective: string;
-  byWhen: string;
-}
-
-interface ContaminantsTableProps {
-  contaminants: Contaminant[];
-}
-
-export const Contaminants: React.FC<ContaminantsTableProps> = ({contaminants}) => {
-
-  const showTitle = (title: string) => title
-
-  const showBase = (base: string) => base.replace(/^(Ecoli base )|(Base )/, "")
-
-  const showObjective = (objective: string) => objective.replace(/^(Ecoli objective )|(Goal )/, "")
-
-  const showByWhen = (byWhen: string) => byWhen.replace(/^By /, "")
-
+export const Contaminants: React.FC<{  contaminants: ContaminantList }> = ( { contaminants }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full">
@@ -33,12 +14,12 @@ export const Contaminants: React.FC<ContaminantsTableProps> = ({contaminants}) =
         </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-        {contaminants.map((contaminant, index) => (
+        {contaminants.map((contaminant: Contaminant, index: number) => (
           <tr key={index}>
-            <td className="px-4 py-1 pl-2 text-sm font-bold text-gray">{showTitle(contaminant.title)}</td>
-            <td className="px-4 py-1 text-sm font-medium text-gray-600">{showBase(contaminant.base)}</td>
-            <td className="px-4 py-1 text-sm font-medium text-gray-600">{showObjective(contaminant.objective)}</td>
-            <td className="px-4 py-1 text-sm font-medium text-gray-600">{showByWhen(contaminant.byWhen)}</td>
+            <td className="px-4 py-1 pl-2 text-sm font-bold text-gray">{contaminant.title}</td>
+            <td className="px-4 py-1 text-sm font-medium text-gray-600">{contaminant.base}</td>
+            <td className="px-4 py-1 text-sm font-medium text-gray-600">{contaminant.objective}</td>
+            <td className="px-4 py-1 text-sm font-medium text-gray-600">{contaminant.byWhen}</td>
           </tr>
         ))}
         </tbody>

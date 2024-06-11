@@ -1,89 +1,61 @@
-import {Document, Page, View, Text, Font, Image} from '@react-pdf/renderer';
-// import purify from 'dompurify';
-// import {contaminants as fmuContaminants, contaminant} from "@components/FreshwaterManagementUnit/utils.ts";
+import {Document, Font, Image, Page, Text, View} from '@react-pdf/renderer';
+import purify from 'dompurify';
+import {
+  contaminants as fmuContaminants,
+  ContaminantList
+} from "@components/FreshwaterManagementUnit/utils.ts";
 import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
 import colors from '@lib/colors';
-import { createTw } from "react-pdf-tailwind";
-import gwrcLogo from "@images/GWLogoFullColorWhiteText-forPDF.png";
-import _ from "lodash";
-import { Style } from '@react-pdf/types';
+import {createTw} from "react-pdf-tailwind";
+import gwrcLogo from "@images/printLogo_500x188px.png";
+import {tw as predefinedTw} from "@lib/pdfTailwindStyles.ts";
+import fonts from "@src/fonts.ts";
+import React from "react";
 
-Font.register({
-  family: 'Inter',
-  fonts: [
-    {
-      src: 'http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyeMZhrib2Bg-4.ttf',
-      fontWeight: 100,
-    },
-    {
-      src: 'http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyfMZhrib2Bg-4.ttf',
-      fontWeight: 200,
-    },
-    {
-      src: 'http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuOKfMZhrib2Bg-4.ttf',
-      fontWeight: 300,
-    },
-    {
-      src: 'http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf',
-      fontWeight: 400,
-    },
-    {
-      src: 'http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuI6fMZhrib2Bg-4.ttf',
-      fontWeight: 500,
-    },
-    {
-      src: 'http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYMZhrib2Bg-4.ttf',
-      fontWeight: 600,
-    },
-    {
-      src: 'http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf',
-      fontWeight: 700,
-    },
-    {
-      src: 'http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyYMZhrib2Bg-4.ttf',
-      fontWeight: 800,
-    },
-    {
-      src: 'http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuBWYMZhrib2Bg-4.ttf',
-      fontWeight: 900,
-    },
-  ],
-});
+Font.register(fonts.inter);
 
-const source = 'http://fonts.gstatic.com/s/sourcecodepro/v6/mrl8jkM18OlOQN8JLgasD9zbP97U9sKh0jjxbPbfOKg.ttf';
-
-Font.register({ family: 'Source Sans Pro', src: source });
-
-const tw = createTw({
+const twContext = createTw({
   theme: {
     fontFamily: {
-      'inter': ['Inter'],
+      'sans': ['Inter'],
     },
     extend: {
       colors,
     },
-  },
-});
+  }
+})
 
-const styles = {
-  h1: "font-source-sans-3 font-bold text-[32px] leading-[40px]",
-  h2: "font-source-sans-3 font-bold text-[22px] leading-[34px]",
-  h3: "font-source-sans-3 font-bold text-[18px] leading-[24px]",
-  h4: "font-source-sans-3 font-bold text-[18px] leading-[24px] capitalize",
-  h5: "font-source-sans-3 font-bold text-[16px] leading-[22px]",
-  h6: "font-source-sans-3 font-bold text-[16px] leading-[22px]",
-  body: "font-source-sans-3 text-[16px] leading-[22px]",
-  caption: "font-source-sans-3 text-[16px] leading-[22px] text-textCaption",
-  button: "font-source-sans-3 text-nui font-bold text-[16px] leading-[22px] border-2 rounded-3xl pl-4 border-nui pr-4 pt-2 pb-2",
-  "button:hover": "font-source-sans-3 text-white bg-nui font-bold text-[16px] leading-[22px]",
-  "button:disabled": "font-source-sans-3 text-nui font-bold text-[16px] leading-[22px]",
-  ul: "list-inside ml-[-1.5em] pl-1.5 indent-[-1.5em]",
-  "ul li": "list-disc ml-6 pl-6 -mt-1.5 leading-7",
+const tw = (input: string) => twContext(predefinedTw(input))
+
+const Contaminants: React.FC<{ contaminants: ContaminantList }> = ({contaminants}) => (
+  <View style={tw('w-full body mt-2')}>
+    <View style={tw('flex flex-row border-b border-gray-300')}>
+      <Text style={tw('w-1/4 p-2 font-bold')}></Text>
+      <Text style={tw('w-1/4 p-2')}>Base</Text>
+      <Text style={tw('w-1/4 p-2')}>Objective</Text>
+      <Text style={tw('w-1/4 p-2')}>By</Text>
+    </View>
+    {contaminants.map((contaminant, index) => (
+      <View key={index} style={tw('flex flex-row border-b border-gray-300')}>
+        <Text style={tw('w-1/4 p-2 font-bold')}>{contaminant.title}</Text>
+        <Text style={tw('w-1/4 p-2')}>{contaminant.base}</Text>
+        <Text style={tw('w-1/4 p-2')}>{contaminant.objective}</Text>
+        <Text style={tw('w-1/4 p-2')}>{contaminant.byWhen}</Text>
+      </View>
+    ))}
+  </View>
+);
+
+const BulletList: React.FC<{ items: string[] }> = ({items}) => {
+  return (
+    items.map((item: string, index: number) => (
+      <View key={index} style={tw('flex flex-row items-center mb-2 body')}>
+        <Text style={tw('mr-2')}>•</Text>
+        <Text style={tw('body')}>{item}</Text>
+      </View>
+    ))
+  );
 };
-
-const st = (input: string): Style => {
-  return tw(_.get(styles, input,  input)) as Style;
-}
 
 export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
 
@@ -93,74 +65,69 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
     catchmentDescription,
   } = details.freshwaterManagementUnit;
 
-  // const tangataWhenuaSites = details.tangataWhenuaSites;
-  //
-  // const contaminants: Array<contaminant> = fmuContaminants(details.freshwaterManagementUnit);
+  const tangataWhenuaSites = details.tangataWhenuaSites;
+
+  const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit);
 
   return (
-    <Document >
-      <Page style={st("bg-white font-inter")}>
-        <View style={st("")} id={`fmu_${id}`}>
-          <View style={st("bg-nui p-4 text-white flex flex-row justify-between items-start")}>
-            <View style={st("flex flex-col")}>
-              <Text style={st("text-3xl leading-8 font-bold")}>Freshwater Management Unit</Text>
-              <Text style={st("text-2xl leading-6 font-bold")}>Catchment context, challenges and values (CCCV)</Text>
-              <Text style={st("text-2xl mt-3 leading-6 font-normal")}>Find information useful for creating a Freshwater Farm Plan, such as contaminant
+    <Document>
+      <Page size="A4" style={tw("p-4 bg-white font-sans flex flex-col justify-between")}>
+        <View style={tw("mb-4")} id={`fmu_${id}`}>
+          <View style={tw("bg-nui p-4 pb-6 text-white flex flex-row justify-between items-start")}>
+            <View style={tw("flex flex-col")}>
+              <Text style={tw("h1 mb-1")}>Freshwater Management Unit</Text>
+              <Text style={tw("h2 mb-6")}>Catchment context, challenges and values (CCCV)</Text>
+              <Text style={tw("body")}>Find information useful for creating a Freshwater Farm Plan, such as contaminant
                 goals, sites of significance, and implementation ideas for your catchment area.</Text>
             </View>
-            <Image style={[{ width: 100, height: 'auto' }, st("ml-4")]} source={gwrcLogo} />
+            <Image style={[{width: 120, height: 'auto'}, tw("ml-4")]} source={gwrcLogo}/>
           </View>
+          <View style={tw("pt-4")}>
 
-          <View style={st("p-4")}>
-            <Text style={st("h1")}>{fmuName1}</Text>
+            <View style={tw("mb-4")}>
+              <Text style={tw("h1")}>{fmuName1}</Text>
 
-            {catchmentDescription ? (<>
-              <Text style={st("h2")}>Overview</Text>
-              <Text style={st("h2")}>{catchmentDescription}</Text>
-            </>) : null}
+              {catchmentDescription ? (<>
+                <Text style={tw("h2 mb-2")}>Overview</Text>
+                <Text
+                  style={tw("body")}>{purify.sanitize(catchmentDescription || 'No overview available').replace(/<[^>]+>/g, '')}</Text>
+              </>) : null}
+            </View>
 
+            <View style={tw("mb-6")}>
+              <Text style={tw("h2 mb-2")}>Contaminants</Text>
+              <Text style={tw("body")}>
+                Freshwater objectives from {fmuName1} Whaitua Implementation Plan (as at August 2018)
+              </Text>
+
+              <Contaminants contaminants={contaminants}/>
+            </View>
+
+            {tangataWhenuaSites?.length ? (
+              <View style={tw("mb-4")}>
+                <Text style={tw("h2 mb-2")}>Sites of significance</Text>
+                <Text style={tw("body mb-1")}>
+                  This area contains sites of significance to Tangata Whenua.
+                </Text>
+
+                <BulletList items={tangataWhenuaSites?.map(s => s.location)}/>
+              </View>
+            ) : null}
+
+            <View style={tw("mb-4")} wrap={false}>
+              <Text style={tw("h2 mb-2")}>About this Information</Text>
+              <Text style={tw("body")}>
+                The content, data, and information used in this app comes from multiple sources,
+                including Greater Wellington’s Natural Resources Plan (2018) and Whaitua
+                Implentation Plans, and the National Policy Statement for Freshwater Management
+                2020 (Amended January 2024).
+              </Text>
+            </View>
           </View>
-
-          {/*<View style={st("")}>*/}
-          {/*  <Text style={st("")}>Contaminants</Text>*/}
-          {/*  <Text style={st("")}>*/}
-          {/*    Freshwater objectives from {fmuName1} Whaitua Implementation Plan (as at August 2018)*/}
-          {/*  </Text>*/}
-
-          {/*  <View style={st("")}>*/}
-          {/*    {contaminants.map((contaminant, index) => (*/}
-          {/*      <View key={index} style={st("")}>*/}
-          {/*        <Text style={st("")}>{contaminant.title}</Text>*/}
-          {/*        <Text style={st("")}>{contaminant.base}</Text>*/}
-          {/*        <Text style={st("")}>{contaminant.objective}</Text>*/}
-          {/*        <Text style={st("")}>{contaminant.byWhen}</Text>*/}
-          {/*      </View>*/}
-          {/*    ))}*/}
-          {/*  </View>*/}
-          {/*</View>*/}
-
-          {/*{tangataWhenuaSites?.length && (*/}
-          {/*  <View style={st("")} wrap={false}>*/}
-
-          {/*    <Text>*/}
-          {/*      This area contains sites of significance to Tangata Whenua.*/}
-          {/*    </Text>*/}
-
-          {/*    <View style={st("")}>*/}
-          {/*      <Text style={{color: 'black', marginBottom: 8}}>They may include:-</Text>*/}
-          {/*      <View style={st("")}>*/}
-          {/*        {tangataWhenuaSites.map((site, index) => (*/}
-          {/*          <View key={index} style={st("")}>*/}
-          {/*            <Text key={index} style={st("")}>*/}
-          {/*              {site.location}*/}
-          {/*            </Text>*/}
-          {/*          </View>*/}
-          {/*        ))}*/}
-          {/*      </View>*/}
-          {/*    </View>*/}
-          {/*  </View>)}*/}
-
         </View>
+        <Text style={tw("text-sm p-4 text-center text-base")} render={({ pageNumber, totalPages}) => (
+          `Page ${pageNumber} of ${totalPages}`
+        )} fixed />
       </Page>
     </Document>
   )
