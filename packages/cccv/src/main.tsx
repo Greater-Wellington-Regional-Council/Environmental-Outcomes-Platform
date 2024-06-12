@@ -6,6 +6,8 @@ import {ErrorProvider} from "@components/ErrorContext/ErrorProvider.tsx";
 
 import {ThemeProvider} from "@material-tailwind/react";
 
+import '../i18n.js'
+
 const rootElement = document.getElementById('root')
 
 if (!rootElement) throw new Error('Failed to find the root element')

@@ -1,6 +1,6 @@
 import FreshwaterManagementUnit from './FreshwaterManagementUnit.tsx';
 import {render, screen} from '@testing-library/react'
-import {expect, vi} from "vitest";
+import {describe, expect, vi} from "vitest";
 import {MutableRefObject} from "react";
 
 vi.mock('@react-pdf/renderer', async () => {
@@ -8,6 +8,14 @@ vi.mock('@react-pdf/renderer', async () => {
     PDFDownloadLink: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
     StyleSheet: {
       create: (styles: never) => styles,
+    },
+    Document: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    Page: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    Text: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    View: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    Image: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    Font: {
+      register: () => {},
     },
   };
 });

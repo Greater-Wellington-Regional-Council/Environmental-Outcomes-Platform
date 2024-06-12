@@ -9,7 +9,7 @@ import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 import freshwaterManagementService from "@services/FreshwaterManagementUnitService.ts";
 import {Feature} from "geojson";
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
-import gwrcLogo from "@images/GWLogoFullColorWhiteText.png";
+import gwrcLogo from "@images/printLogo_2000x571px.png";
 
 export default function MapPage() {
 
@@ -61,15 +61,16 @@ export default function MapPage() {
             className={"header-title"}>Freshwater
             Management</h1>
           <h2 className={"header-subtitle mb-3"}>Catchment, context, challenges and values (CCCV)</h2>
-          <p className={"preamble text-textCaption font-lighter"}>Find information useful for creating a Freshwater Farm Plan, such as contaminant goals, sites
+          <p className={"preamble font-light text-body"}>Find information useful for creating a Freshwater Farm Plan, such as contaminant goals, sites
             of significance, and implementation ideas for your catchment area.</p>
         </div>
         <div className={"header-image col-span-2 mt-2 mr-2 scale-105 ml-auto"}>
-          <img src={gwrcLogo} alt={"Greater Wellington Regional Council logo"} className={"h-[50px]"} />
+          <img src={gwrcLogo} style={{maxHeight: "83px"}}
+               alt={"Greater Wellington Regional Council logo"}/>
         </div>
       </header>
 
-      <main className="map-page" role="application">
+      <main role="application">
         <div className={`map-panel`}>
           <InteractiveMap location={location} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
         </div>
