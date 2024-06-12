@@ -65,11 +65,12 @@ export default function MapPage() {
             of significance, and implementation ideas for your catchment area.</p>
         </div>
         <div className={"header-image col-span-2 mt-2 mr-2 scale-105 ml-auto"}>
-          <img src={gwrcLogo} alt={"Greater Wellington Regional Council logo"} />
+          <img src={gwrcLogo} style={{maxHeight: "83px"}}
+               alt={"Greater Wellington Regional Council logo"}/>
         </div>
       </header>
 
-      <main className="map-page" role="application">
+      <main role="application">
         <div className={`map-panel`}>
           <InteractiveMap location={location} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
         </div>
