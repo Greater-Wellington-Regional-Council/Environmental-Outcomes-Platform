@@ -1,0 +1,150 @@
+$gapSize: 12px;
+
+.map-panel {
+  position: relative;
+  height: calc(100vh - #{$gapSize * 2});
+}
+
+.mapboxgl-ctrl-group {
+  border-radius: 6px;
+  border: 1px solid black;
+  box-shadow: none;
+}
+
+.mapboxgl-ctrl-group:not(:empty) {
+  box-shadow: none;
+}
+
+.mapboxgl-ctrl-group button {
+  width: 30px;
+  border-radius: 0;
+}
+
+@media (max-width: 640px) {
+  @keyframes slideInBottom {
+    0% {
+      bottom: -100%;
+    }
+    100% {
+      bottom: 0;
+    }
+  }
+
+  @keyframes slideOutBottom {
+    0% {
+      bottom: 0;
+    }
+    100% {
+      bottom: -100%;
+    }
+  }
+
+  .preamble {
+    display: none;
+  }
+
+  .map-page {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .map-panel {
+    order: 1;
+    position: relative;
+  }
+
+  .info-panel {
+    position: fixed;
+    width: 100%;
+    height: 50%;
+    bottom: -50%;
+    transition: bottom 0.5s ease-in-out;
+    z-index: 1000;
+    padding-top: 1em;
+    overflow-y: auto;
+  }
+
+  .animate-in {
+    animation: slideInBottom 0.5s forwards;
+  }
+
+  .animate-out {
+    animation: slideOutBottom 0.5s forwards;
+  }
+}
+
+@media (min-width: 641px) {
+  @keyframes slideInRight {
+    0% {
+      right: -100%;
+    }
+    100% {
+      right: 0;
+    }
+  }
+
+  @keyframes slideOutRight {
+    0% {
+      right: 0;
+    }
+    100% {
+      right: -100%;
+    }
+  }
+
+  .map-page {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  header {
+    grid-column: 1 / span 12;
+    grid-row: 1;
+  }
+
+  main {
+    grid-column: 1 / span 12;
+    grid-row: 2;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  .map-panel {
+    grid-column: 1 / span 12;
+    grid-row: 1;
+    overflow: hidden;
+    transition: grid-column 0.5s ease-in-out;
+    position: relative;
+  }
+
+  .info-panel {
+    position: absolute;
+    grid-column: 9 / span 4;
+    grid-row: 1;
+    height: 100%;
+    width: 100%;  /* This will make the info panel occupy 100% of its 4-column space */
+    right: -100%;
+    transition: right 0.5s ease-in-out, width 0.5s ease-in-out;
+    z-index: 1000;
+  }
+
+  .animate-in {
+    right: 0;
+  }
+
+  .animate-out {
+    right: -100%;
+  }
+
+  .info-panel-open ~ .map-panel {
+    grid-column: 1 / span 8;
+  }
+}

@@ -5,8 +5,7 @@ import java.net.URI
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
-import org.geojson.FeatureCollection
-import org.springframework.http.HttpStatus
+import nz.govt.eop.utils.GeoJsonFetcher
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -16,9 +15,8 @@ import org.springframework.web.client.RestTemplate
 @Component
 class CouncilPlanBoundariesGeoJsonFetcher(
     val jdbcTemplate: JdbcTemplate,
-    val restTemplate: RestTemplate
-) {
-
+    restTemplate: RestTemplate,
+) : GeoJsonFetcher(restTemplate) {
   private val logger = KotlinLogging.logger {}
 
   @Transactional
@@ -29,15 +27,13 @@ class CouncilPlanBoundariesGeoJsonFetcher(
         logger,
         "updateCouncilPlanGeoJsonBoundaries",
         { true },
-        ::updateCouncilPlanGeoJsonBoundaries)
+        ::updateCouncilPlanGeoJsonBoundaries,
+    )
   }
 
   private fun updateCouncilPlanGeoJsonBoundaries() {
-
     // Expect multiple rows to pull from the same source URL, so cache the results for the length of
     // this execution
-    val fetchCache = mutableMapOf<String, FeatureCollection>()
-
     jdbcTemplate.queryForList("SELECT * FROM council_plan_boundary_geojson_source").forEach {
       val councilId = it["council_id"] as Int
       val sourceId = it["source_id"] as String
@@ -58,17 +54,8 @@ class CouncilPlanBoundariesGeoJsonFetcher(
                 councilId,
                 sourceId,
                 geoJsonGeometry,
-                geoJsonGeometry)
+            )
           }
-    }
-  }
-
-  private fun fetchFeatureCollection(url: URI): FeatureCollection {
-    val resp = restTemplate.getForEntity(url, FeatureCollection::class.java)
-    if (resp.statusCode == HttpStatus.OK) {
-      return resp.body!!
-    } else {
-      throw RuntimeException("Request failed with status: ${resp.statusCode} ")
     }
   }
 }
