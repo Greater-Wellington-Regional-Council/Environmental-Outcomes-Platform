@@ -1,0 +1,47 @@
+include:
+  - ../LocalInfrastructure/batect-shared.yml
+
+containers:
+  app:
+    build_directory: .
+    ports:
+      - local: 8080
+        container: 8000
+
+  pytest:
+    build_directory: .
+    command: pytest
+
+tasks:
+  check:
+    description: Validate and test the app
+    dependencies:
+      - test-database
+    run:
+      container: pytest
+      command: pytest
+
+  build:
+    description: Build the Docker image.
+    dependencies:
+      - database
+    run:
+      container: app
+      command: echo "Build completed"
+      environment:
+        LINZ_API_KEY: ${LINZ_ADDRESSES_API_KEY}
+
+  run:
+    description: Run the app.
+    dependencies:
+      - database
+    run:
+      container: app
+      command: uvicorn main:app --host 0.0.0.0 --port 8000
+      environment:
+        CONFIG_DATABASE_HOST: database
+        SPRING_PROFILES_ACTIVE: local
+        CONFIG_ORG_CONTACT_EMAIL: eopdev-notifications@gw.govt.nz
+      ports:
+        - local: 8080
+          container: 8000
