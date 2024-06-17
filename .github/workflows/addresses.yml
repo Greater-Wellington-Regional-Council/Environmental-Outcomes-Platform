@@ -1,0 +1,74 @@
+name: addresses
+
+permissions:
+    id-token: write
+    contents: read
+
+on:
+  push:
+    paths:
+      - .github/workflows/addresses.yml
+      - packages/LocalInfrastructure/**
+      - packages/Addresses/**
+
+env:
+  WORKING_DIR: ./packages/Addresses
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BATECT_CACHE_TYPE: directory
+      BATECT_ENABLE_TELEMETRY: false    
+    defaults:
+      run:
+        working-directory: ./packages/Addresses
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cache Batect
+        uses: actions/cache@v3.2.4
+        with:
+          path: ~/.batect/cache
+          key: batect-${{ hashFiles(format('{0}/batect', env.WORKING_DIR)) }}
+
+#      - name: Cache Python dependencies
+#        uses: actions/cache@v3.2.4
+#        id: cache-packages
+#        with:
+#          path: ${{ env.WORKING_DIR }}/.batect/caches
+#          key: batect-caches-${{ hashFiles(format('{0}/**/*.gradle.kts', env.WORKING_DIR)) }}
+
+      - name: Check app
+        run: ./batect check
+
+      - name: Build app
+        run: ./batect build
+
+      - name: Configure AWS credentials
+        if: ${{ github.actor != 'dependabot[bot]' }}      
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}    
+            aws-region: ap-southeast-2
+            role-to-assume: arn:aws:iam::898449181946:role/allow-auto-deploy-from-other-accounts
+            role-duration-seconds: 1200
+            role-session-name: GitHubActions
+
+      - name: Login to Amazon ECR
+        if: ${{ github.actor != 'dependabot[bot]' }}      
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push docker image
+        if: ${{ github.actor != 'dependabot[bot]' }}      
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: eop-addresses
+        run: |
+             echo "$ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA"
+             docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA .
+             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
