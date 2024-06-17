@@ -130,7 +130,7 @@ $gapSize: 12px;
     grid-column: 9 / span 4;
     grid-row: 1;
     height: 100%;
-    width: 100%;  /* This will make the info panel occupy 100% of its 4-column space */
+    width: 100%;
     right: -100%;
     transition: right 0.5s ease-in-out, width 0.5s ease-in-out;
     z-index: 1000;
@@ -142,6 +142,10 @@ $gapSize: 12px;
 
   .animate-out {
     right: -100%;
+  }
+
+  .address-box {
+    @apply fixed bottom-0 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent
   }
 
   .info-panel-open ~ .map-panel {
