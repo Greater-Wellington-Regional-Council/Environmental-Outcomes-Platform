@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import _ from 'lodash';
-import {MagnifyingGlassIcon} from "@heroicons/react/16/solid";
+import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
 
 export interface ComboBoxProps {
   initialValue?: string;
@@ -19,7 +19,16 @@ export type OptionsArray = LabelAndValue[];
 
 export interface LabelAndValue { label: string; value: unknown }
 
-const ComboBox: React.FC<ComboBoxProps> = ({ initialValue = null, label = "Select item", placeholder= "Select item", options, onSelect, className = null, buttonStyle = null, directionUp = false }) => {
+const ComboBox: React.FC<ComboBoxProps> = ({
+                                             initialValue = null,
+                                             label = "Select item",
+                                             placeholder = "Select item",
+                                             options,
+                                             onSelect,
+                                             className = null,
+                                             buttonStyle = null,
+                                             directionUp = false
+                                           }) => {
   const [query, setQuery] = useState(initialValue || '');
   const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const inputContainerRef = useRef<HTMLDivElement>(null);
@@ -33,8 +42,8 @@ const ComboBox: React.FC<ComboBoxProps> = ({ initialValue = null, label = "Selec
       } else {
         setFilteredOptions(filteredOptions.filter(option => option.toLowerCase().includes(query.toLowerCase())));
       }
-  } else {
-      if(query.length === 0) {
+    } else {
+      if (query.length === 0) {
         setFilteredOptions([]);
       } else if (query.length < 2) {
         setFilteredOptions((options as never[]).filter(option =>
@@ -49,7 +58,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ initialValue = null, label = "Selec
     <div className={`relative aria-label=${label} ${className}`}>
       <div ref={inputContainerRef} className="flex">
         <input
-          className={_.join([`mt-1 block text-nui w-48 py-2 px-3 border-nui border-[2.3px] border-r-0 bg-white shadow-sm focus:outline-none focus:ring-nui-500 focus:border-nui sm:text-sm`, className])}
+          className={_.join([`mt-1 block text-nui w-full py-2 px-3 border-nui border-[2.3px] border-r-0 bg-white shadow-sm focus:outline-none focus:ring-nui-500 focus:border-nui sm:text-sm`, className])}
           type="search"
           placeholder={placeholder}
           autoComplete="off"
@@ -80,8 +89,12 @@ const ComboBox: React.FC<ComboBoxProps> = ({ initialValue = null, label = "Selec
                 setQuery(option);
                 setFilteredOptions([]);
               }}
-              className={`cursor-pointer p-2 bg-nui text-white border-b-2 border-white hover:bg-kaitoke hover:text-white ${option.toLowerCase() === query.toLowerCase() ? 'bg-kapiti' : ''}`}
-              style={{ whiteSpace: 'nowrap' }}
+              className={`cursor-pointer p-2 bg-nui text-white hover:bg-kaitoke hover:text-white ${option.toLowerCase() === query.toLowerCase() ? 'bg-kapiti' : ''}`}
+              style={{
+                whiteSpace: 'nowrap',
+                marginTop: index === 0 ? '0' : '2px',
+                marginBottom: index === filteredOptions.length - 1 ? '0' : '2px'
+              }}
             >
               {option}
             </div>

@@ -75,6 +75,10 @@ $gapSize: 12px;
   .animate-out {
     animation: slideOutBottom 0.5s forwards;
   }
+
+  .address-box {
+    @apply z-[1000] w-[60%]
+  }
 }
 
 @media (min-width: 641px) {
@@ -145,7 +149,7 @@ $gapSize: 12px;
   }
 
   .address-box {
-    @apply fixed bottom-0 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent
+    @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[60%]
   }
 
   .info-panel-open ~ .map-panel {
