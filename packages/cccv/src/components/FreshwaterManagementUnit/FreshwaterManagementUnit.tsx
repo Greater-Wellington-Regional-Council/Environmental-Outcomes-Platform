@@ -33,7 +33,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
   return (
     <div className={`FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidden`} id={`fmu_${id || ''}`}>
-      <h1>{t(fmuName1 || "")}</h1>
+      <h1 style={{width: "70%"}}>{t(fmuName1 || "")}</h1>
 
       <div className="absolute top-0 right-0 m-6 mt-0">
         <PDFDownloadLink document={<FreshwaterManagementUnitPDF {...details} />} fileName={fileName}>

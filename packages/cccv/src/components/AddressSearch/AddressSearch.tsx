@@ -1,19 +1,18 @@
-import {Option, Select} from "@material-tailwind/react";
-import addressesService, {Address} from "@services/AddressesService.ts";
+import ComboBox, {ComboBoxProps} from '@elements/ComboBox/ComboBox';
+import addressesService from '@services/AddressesService';
 
-export type AddressSearchProps = {
-  startPattern: string;
-}
+export interface AddressSearchProps extends Omit<ComboBoxProps, 'options'> {}
 
-export default function AddressSearch({ startPattern }: AddressSearchProps) {
+const AddressSearch = (props: AddressSearchProps) => {
   return (
-      <div className="w-72">
-        <Select label="Search for address" placeholder={startPattern} onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined} className={"text-textCaption rounded-none"}>
-          {addressesService.getAddresses().map((address: Address, index: number) => (
-            <Option key={index} value={address.address}>{address.address}</Option>
-          ))}
-        </Select>
-      </div>
-    );
-  }
+    <ComboBox
+      label={props.label || "Search for address"}
+      placeholder={props.placeholder || "Search here"}
+      options={addressesService.getAddressOptions}
+      onSelect={props.onSelect}
+      directionUp={props.directionUp}
+    />
+  );
+};
+
+export default AddressSearch;

@@ -10,6 +10,8 @@ import freshwaterManagementService from "@services/FreshwaterManagementUnitServi
 import {Feature} from "geojson";
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
 import gwrcLogo from "@images/printLogo_2000x571px.png";
+import AddressSearch from "@components/AddressSearch/AddressSearch.tsx";
+import addressesService from "@services/AddressesService.ts";
 
 export default function MapPage() {
 
@@ -52,6 +54,12 @@ export default function MapPage() {
   const revealOrHideInfoPanel = showPanel ? 'animate-in' : 'animate-out';
   const signalUpdatedInfoPanel = fmuChanged ? 'pulsate' : '';
 
+  const selectAddress = (address: unknown) =>  {
+    addressesService.getAddress(address).then((address: unknown) => {
+      setPinnedLocation(address as ViewLocation)
+    });
+  }
+
   return (
     <div className="map-page bg-white">
       <header
@@ -71,12 +79,18 @@ export default function MapPage() {
       </header>
 
       <main role="application">
-        <div className={`map-panel`}>
+        <div className={`map-panel relative`}>
           <InteractiveMap location={location} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
+          <div className={`address-box`}>
+            <AddressSearch
+              onSelect={address => selectAddress(address)}
+              placeholder={"Search for address"}
+              directionUp={true}
+          />
+          </div>
         </div>
         <div
           className={`info-panel bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
-          {/*<span className="close-button" onClick={() => setShowPanel(false)}>x</span>*/}
           {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} />}
         </div>
       </main>
