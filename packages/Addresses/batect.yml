@@ -28,8 +28,6 @@ tasks:
     run:
       container: app
       command: echo "Build completed"
-      environment:
-#        LINZ_API_KEY: ${LINZ_ADDRESSES_API_KEY}
 
   run:
     description: Run the app.
