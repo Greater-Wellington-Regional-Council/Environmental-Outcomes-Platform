@@ -34,11 +34,12 @@ const ComboBox: React.FC<ComboBoxProps> = ({
   const inputContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    console.log('useEffect called with query:', query);
     if (options instanceof Function) {
       if (query.length === 0) {
         setFilteredOptions([]);
       } else if (query.length < 3) {
-        options(query).then((options) => setFilteredOptions(options.map(option => option.label.toLowerCase())));
+        options(query).then((options) => setFilteredOptions(options.map(option => option.label)));
       } else {
         setFilteredOptions(filteredOptions.filter(option => option.toLowerCase().includes(query.toLowerCase())));
       }
@@ -55,7 +56,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
   }, [query, options]);
 
   return (
-    <div className={`relative aria-label=${label} ${className}`}>
+    <div className={`relative ${className}`} aria-label={label} >
       <div ref={inputContainerRef} className="flex">
         <input
           className={_.join([`mt-1 block text-nui w-full py-2 px-3 border-nui border-[2.3px] border-r-0 bg-white shadow-sm focus:outline-none focus:ring-nui-500 focus:border-nui sm:text-sm`, className])}

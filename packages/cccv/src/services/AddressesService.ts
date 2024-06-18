@@ -36,8 +36,10 @@ export interface AddressLabelAndValue extends LabelAndValue {
 }
 
 const service = {
-    getAddressOptions: async (query: string): Promise<AddressLabelAndValue[]> => {
-      const addresses = tempAddressStringsWithLatLng.filter(address => address.address.toLowerCase().includes(query.toLowerCase()));
+    getAddressOptions: async (query: string | null = null): Promise<AddressLabelAndValue[]> => {
+      const addresses = query ?
+        tempAddressStringsWithLatLng.filter(address => address.address.toLowerCase().includes(query.toLowerCase())) :
+        tempAddressStringsWithLatLng;
       return addresses.map((address) => ({ label: address.address, value: address.id }));
     },
     getAddress: async (id: unknown): Promise<Address | undefined> => {
