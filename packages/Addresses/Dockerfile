@@ -9,8 +9,7 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir -r requirements.txt.old
-
+RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8000
 
 ENV NAME GW Python API
