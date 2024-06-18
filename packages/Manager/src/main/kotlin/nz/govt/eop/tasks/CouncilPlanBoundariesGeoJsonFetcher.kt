@@ -54,6 +54,7 @@ class CouncilPlanBoundariesGeoJsonFetcher(
                 councilId,
                 sourceId,
                 geoJsonGeometry,
+                geoJsonGeometry,
             )
           }
     }

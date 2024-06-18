@@ -1,5 +1,8 @@
 {{ config(
-    materialized = 'view'
+    materialized = 'table',
+    indexes=[
+      {'columns': ['council_id', 'source_id'], 'unique': True},
+    ]
 ) }}
 
 WITH geom_source AS (

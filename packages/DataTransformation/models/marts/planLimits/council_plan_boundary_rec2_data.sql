@@ -45,7 +45,7 @@ with_watershed_geom AS (
     w.geom
   FROM
     all_hydro_ids AS a
-  INNER JOIN watersheds AS w ON a.hydro_id = w.hydro_id
+  INNER JOIN {{ ref('watersheds') }} AS w ON a.hydro_id = w.hydro_id
 ),
 
 as_grouped_boundaries AS (

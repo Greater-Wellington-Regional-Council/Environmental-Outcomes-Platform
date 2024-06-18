@@ -320,16 +320,6 @@ VALUES (9, '8936935d0ccb80be87860bd028e8cbf05c3c60340da3a44f38c684494afa17d3', '
        (9, 'ab19c63d84d22ce9d6f4fe3e02da70100799ff1204dc9b51d45d7b514528ff7b', '{258982}', '{257409}');
 
 INSERT INTO council_plan_boundary_geom_source (council_id, source_id, boundary)
-SELECT council_id, source_id, st_geomfromtext('POLYGON EMPTY', 4326)
-FROM council_plan_boundary_geojson_source
-WHERE council_id = 9;
-
-INSERT INTO council_plan_boundary_geom_source (council_id, source_id, boundary)
-SELECT council_id, source_id, st_geomfromtext('POLYGON EMPTY', 4326)
-FROM council_plan_boundary_rec2_source
-WHERE council_id = 9;
-
-INSERT INTO council_plan_boundary_geom_source (council_id, source_id, boundary)
 VALUES (9, '000ddc566df46403e4a83fb6cd0510d84b10b2b2a7a4f52d51ceb27bbb07d67b', '0101000020E6100000DA11B9A6C1EB6540041B7C06F99744C0'),
        (9, '05013e41f023c2ec0208d4879d0e008e62c25689275c071e5b538fa6c6cf7fa8', '0101000020E61000009222CF81E7E26540418CC690D28C44C0'),
        (9, '0f6c6448aea38d1553ac08bfd41066d0687c32b9202cc22b1b57dab86aa6d5cc', '0101000020E61000008535DFD2BBF0654012D196107F7144C0'),
