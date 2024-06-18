@@ -1,15 +1,11 @@
-import pytest
-from httpx import Client, WSGITransport
+from fastapi.testclient import TestClient
+
 from main import app
 
-
-@pytest.fixture
-def client():
-    return Client(transport=WSGITransport(app=app))
+client = TestClient(app)
 
 
-@pytest.mark.skip
-def test_read_own_items(client):
+def test_read_own_items():
     response = client.get("/addresses")
     assert response.status_code == 200
     assert len(response.json()) == 5

@@ -19,7 +19,7 @@ tasks:
       - test-database
     run:
       container: pytest
-      command: echo "Check completed"
+      command: pytest
 
   build:
     description: Build the Docker image.
