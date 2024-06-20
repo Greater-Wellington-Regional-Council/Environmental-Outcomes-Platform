@@ -12,8 +12,12 @@ export const Default = Template.bind({});
 Default.args = {
   label: 'Search for address',
   placeholder: 'Search here',
-  options: ['123 Main St', '456 Elm St', '789 Oak St'],
-  onSelect: (value: string) => console.log('Selected:', value),
+  options: [
+    { label: '123 Main St', value: '123 Main St' },
+    { label: '456 Elm St', value: '456 Elm St' },
+    { label: '789 Oak St', value: '789 Oak St' },
+  ],
+  onSelect: (lv) => console.log('Selected:', lv?.label, lv?.value),
 };
 //
 // export const Upwards = Template.bind({});

@@ -1,6 +1,5 @@
 import gwrcLogo from '@images/gwrc-logo-header.svg';
 import horizonsLogo from '@images/horizons-logo-header.png';
-import {Council} from "@src/global";
 
 const Councils: Council[] = [
   {

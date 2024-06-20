@@ -12,5 +12,5 @@ export const Default = Template.bind({});
 Default.args = {
   label: 'Search for address',
   placeholder: 'Search here',
-  onSelect: (value: string) => console.log('Selected:', value),
+  onSelect: (lv) => console.log(`label: ${lv?.label}, value: ${lv?.value}`),
 };
