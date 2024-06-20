@@ -1,7 +1,6 @@
 import InteractiveMap from "@components/InteractiveMap/InteractiveMap";
 import {useLoaderData} from "react-router-dom";
 import './MapPage.scss';
-import {ViewLocation} from "@src/global";
 import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
 import useEscapeKey from "@lib/useEscapeKey.tsx";
 import {useContext, useEffect, useState} from "react";
@@ -11,7 +10,8 @@ import {Feature} from "geojson";
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
 import gwrcLogo from "@images/printLogo_2000x571px.png";
 import AddressSearch from "@components/AddressSearch/AddressSearch.tsx";
-import addressesService from "@services/AddressesService.ts";
+import addressesService, {Address} from "@services/AddressesService.ts";
+import {LabelAndValue} from "@elements/ComboBox/ComboBox.tsx";
 
 export default function MapPage() {
 
@@ -36,7 +36,7 @@ export default function MapPage() {
           setShowPanel(false)
           return;
         }
-        const fmu = await freshwaterManagementService.getByLngAndLat(pinnedLocation.longitude, pinnedLocation.latitude, setError);
+        const fmu = await freshwaterManagementService.getByLocation(pinnedLocation, setError);
         setFmuChanged(selectedFmu != null && fmu != null  && (fmu != selectedFmu));
         setShowPanel(fmu != null)
         setSelectedFmu(fmu)
@@ -54,9 +54,16 @@ export default function MapPage() {
   const revealOrHideInfoPanel = showPanel ? 'animate-in' : 'animate-out';
   const signalUpdatedInfoPanel = fmuChanged ? 'pulsate' : '';
 
-  const selectAddress = (address: unknown) =>  {
-    addressesService.getAddress(address).then((address: unknown) => {
-      setPinnedLocation(address as ViewLocation)
+  const selectAddress = (address: LabelAndValue | null = null) =>  {
+    if (!address) return;
+
+    addressesService.getAddress(address).then((selectedAddress: Address | null) => {
+    if (!selectedAddress) {
+        setError(new Error("Address not found"));
+        return;
+      }
+      const loc = { latitude: selectedAddress.latitude, longitude: selectedAddress.longitude, description: selectedAddress.address } as ViewLocation;
+      setPinnedLocation(loc)
     });
   }
 
@@ -80,7 +87,7 @@ export default function MapPage() {
 
       <main role="application">
         <div className={`map-panel relative`}>
-          <InteractiveMap location={location} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
+          <InteractiveMap location={location} pinnedLocation={pinnedLocation} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
           <div className={`address-box`}>
             <AddressSearch
               onSelect={address => selectAddress(address)}

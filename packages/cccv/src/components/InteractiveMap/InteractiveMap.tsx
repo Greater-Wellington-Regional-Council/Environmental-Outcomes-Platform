@@ -1,6 +1,6 @@
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './InteractiveMap.scss';
-import React, {LegacyRef, useContext, useRef, useState} from 'react';
+import React, {LegacyRef, useContext, useEffect, useRef, useState} from 'react';
 import {
   Layer,
   Map,
@@ -17,11 +17,11 @@ import {
 import {Feature, Geometry} from "geojson";
 import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx";
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts";
-import {ViewLocation} from "@src/global";
 import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService.ts";
 import {debounce} from 'lodash';
 import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 import env from "@src/env.ts";
+import * as mapboxgl from "mapbox-gl";
 
 interface BoundaryLinesLayerProps {
   id: string,
@@ -92,13 +92,15 @@ export default function InteractiveMap({
                                          pinLocation,
                                          highlightedFeature,
                                          setHighlightedFeature,
-                                         children
+                                         children,
+                                         pinnedLocation
                                        }: {
   location: ViewLocation,
   pinLocation: (location: ViewLocation) => void,
   children?: React.ReactNode,
   highlightedFeature?: Feature | null,
-  setHighlightedFeature?: (feature: Feature | null) => void
+  setHighlightedFeature?: (feature: Feature | null) => void,
+  pinnedLocation?: ViewLocation | null
 }) {
   const setError = useContext(ErrorContext).setError;
 
@@ -133,7 +135,13 @@ export default function InteractiveMap({
     setViewState(evt.viewState);
   }, 1);
 
-  const [ marker, setMarker ] = useState<[number, number] | null>(null);
+  const [ marker, setMarker ] = useState<ViewLocation | null>(null);
+
+  useEffect(() => {
+    if (pinnedLocation) {
+      setMarker(pinnedLocation);
+    }
+  }, [pinnedLocation]);
 
   const handleClick = (e: MapMouseEvent) => {
     setError(null);
@@ -144,7 +152,6 @@ export default function InteractiveMap({
         latitude: e.lngLat.lat,
         zoom: location.zoom,
       });
-      setMarker([e.lngLat.lng, e.lngLat.lat])
     }
     setMoving(false);
   }
@@ -206,7 +213,9 @@ export default function InteractiveMap({
           <BoundaryLinesLayer id="freshwater-management-units" mapRef={mapRef.current!} sourceId="freshwater-management-units" mapStyle={mapStyle}/>
           <FeatureHighlight sourceId="freshwater-management-units" highlightedFeature={highlightedFeature}/>
         </Source>
-        {marker && <Marker longitude={marker[0]} latitude={marker[1]}></Marker>}
+        {marker && <Marker longitude={marker.longitude} latitude={marker.latitude} popup={
+          marker.description ? new mapboxgl.Popup({offset: 25 }).setText(marker.description) : null
+        }></Marker>}
       </Map>
       {tooltipInfo.feature && tooltipInfo.feature.properties?.fmuName1 && (
         <div
