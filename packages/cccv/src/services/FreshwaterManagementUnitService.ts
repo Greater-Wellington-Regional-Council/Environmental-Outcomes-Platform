@@ -10,9 +10,9 @@ const service = {
     setError(new ErrorFlag("No such Freshwater Management Unit was found.", ErrorLevel.WARNING));
     return response as FmuFullDetails;
   },
-  getByLngAndLat: async (lng: number, lat: number, setError: null | ((error: Error | null) => void) = null): Promise<FmuFullDetails> => {
+  getByLocation: async ({ longitude, latitude, srid = null }: ViewLocation, setError: null | ((error: Error | null) => void) = null): Promise<FmuFullDetails> => {
     setError && await service.checkServiceHealth(setError);
-    const response = await get(`${determineBackendUri(window.location.hostname)}/freshwater-management-units?lng=${lng}&lat=${lat}&srid=4326`);
+    const response = await get(`${determineBackendUri(window.location.hostname)}/freshwater-management-units?lng=${longitude}&lat=${latitude}${srid ? "&srid="+srid : ""}`);
     setError && !response &&
       setError(new ErrorFlag("No Freshwater Management Unit was not found at that location, or there was an error fetching the data. Please try again.", ErrorLevel.WARNING));
     return response as FmuFullDetails;

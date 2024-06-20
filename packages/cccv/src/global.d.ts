@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 declare global {
   const _: typeof _;
 }
@@ -130,6 +128,8 @@ interface ViewLocation {
   longitude: number;
   latitude: number;
   zoom: number;
+  srid?: number | null;
+  description?: string;
 }
 
 type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';

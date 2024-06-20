@@ -77,7 +77,7 @@ $gapSize: 12px;
   }
 
   .address-box {
-    @apply z-[1000] w-[60%]
+    @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[90%]
   }
 }
 
@@ -149,7 +149,7 @@ $gapSize: 12px;
   }
 
   .address-box {
-    @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[60%]
+    @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[50%]
   }
 
   .info-panel-open ~ .map-panel {

@@ -52,7 +52,7 @@ describe('AddressSearch Component', () => {
     ]);
   });
 
-  it.skip('should display fetched address options in the ComboBox', async () => {
+  it('should display fetched address options in the ComboBox', async () => {
     renderComponent();
 
     const input = screen.getByPlaceholderText('Search here');
