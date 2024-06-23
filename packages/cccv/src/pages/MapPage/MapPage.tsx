@@ -13,6 +13,8 @@ import addressesService, {Address} from "@services/AddressesService.ts";
 import {LabelAndValue} from "@elements/ComboBox/ComboBox.tsx";
 
 
+const ADDRESS_ZOOM = 12;
+
 export default function MapPage() {
 
   const setError = useContext(ErrorContext).setError;
@@ -56,7 +58,7 @@ export default function MapPage() {
         return;
       }
 
-      selectLocation({latitude: selectedAddress.latitude, longitude: selectedAddress.longitude, description: address.label} as ViewLocation);
+      selectLocation({latitude: selectedAddress.latitude, longitude: selectedAddress.longitude, description: address.label, zoom: ADDRESS_ZOOM} as ViewLocation);
     });
   }
 
