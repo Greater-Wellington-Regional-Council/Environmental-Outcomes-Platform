@@ -76,6 +76,7 @@ data class FreshwaterManagementUnit(
     @Column(name = "mci_base") var mciBase: String? = null,
     @Column(name = "mci_obj") var mciObj: String? = null,
     @Column(name = "ecoli_obj") var ecoliObj: String? = null,
+    @Column(name = "implementation_ideas") var implementationIdeas: String? = null,
     @JsonSerialize(using = GeoJsonSerializer::class)
     @JsonDeserialize(using = GeoJsonDeserializer::class)
     @Formula("CAST(ST_AsGeoJSON(ST_Transform(geom, 4326), 6 ,2) AS jsonb)")
