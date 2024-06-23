@@ -112,7 +112,7 @@ meter_use_by_consent_area AS (
 
   FROM
     expanded_meters_per_consent_area
-  LEFT JOIN observed_water_use_aggregated_daily AS use 
+  LEFT JOIN observed_water_use_aggregated_daily AS use
     ON date = day_observed_at AND meter = site_name
 
   WHERE meter NOT LIKE 'WAR%_Combined'

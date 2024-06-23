@@ -48,18 +48,12 @@ class CouncilPlanBoundariesGeoJsonFetcher(
             val geoJsonGeometry = ObjectMapper().writeValueAsString(geometry)
             jdbcTemplate.update(
                 """
-                UPDATE
-                    council_plan_boundaries
-                SET boundary   = ST_GEOMFROMGEOJSON(?),
-                    updated_at = NOW()
-                WHERE council_id = ?
-                  AND source_id = ?
-                  AND (ST_GEOMFROMTEXT('POLYGON EMPTY', 4326) = boundary OR NOT ST_EQUALS(ST_GEOMFROMGEOJSON(?), boundary))
+                INSERT INTO council_plan_boundary_geojson_data (council_id, source_id, boundary) VALUES (?, ?, st_geomfromgeojson(?)) ON CONFLICT (council_id, source_id) DO UPDATE SET boundary = st_geomfromgeojson(?), updated_at = NOW()
                 """
                     .trimIndent(),
-                geoJsonGeometry,
                 councilId,
                 sourceId,
+                geoJsonGeometry,
                 geoJsonGeometry,
             )
           }
