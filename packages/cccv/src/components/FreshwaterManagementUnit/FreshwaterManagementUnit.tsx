@@ -54,13 +54,14 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
       {tangataWhenuaSites?.length ? (
         <div className="tangata-whenua mt-6">
+          <h2>Tangata Whenua</h2>
           <p className={"font-italic"}>This area contains sites of significance to Tangata Whenua including:-</p>
-          {tangataWhenuaSites && (<div className="tangata-whenua-sites">
+          <div className="tangata-whenua-sites">
             <ul className={"mt-2"}>
               {tangataWhenuaSites?.map((site: { location: string }, index: Key | null | undefined) => <li
                 className="list-disc" key={index}>{site?.location}</li>)}
             </ul>
-          </div>)}
+          </div>
         </div>
       ) : <div></div>}
 

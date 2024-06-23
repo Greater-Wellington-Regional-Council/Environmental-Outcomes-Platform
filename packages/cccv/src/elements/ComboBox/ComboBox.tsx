@@ -38,13 +38,13 @@ const ComboBox: React.FC<ComboBoxProps> = ({
     if (options instanceof Function) {
       if (query.length === 0) {
         setFilteredOptions([]);
-      } else {
+      } else if (query.length > 2) {
         options(query).then((options) => setFilteredOptions(options));
       }
     } else {
-      if (query.length === 0) {
-        setFilteredOptions([]);
-      } else if (query.length < 2) {
+      if (query.length < 3) {
+        filteredOptions?.length && setFilteredOptions([]);
+      } else if (query.length < 5) {
         setFilteredOptions((options as never[]).filter(option =>
           (_.get(option, "label", option) as string).toLowerCase().includes(query.toLowerCase())));
       } else {
@@ -70,13 +70,14 @@ const ComboBox: React.FC<ComboBoxProps> = ({
         />
         <button
           type="button"
-          className="flex bg-white items-center mt-1 py-2 px-3 hover:text-white border-[2.3px]"
+          className="flex bg-white items-center mt-1 py-2 px-3 hover:text-textDefault hover:bg-white border-[2.3px]"
           onClick={() => onSelect(selectedOption(query))}
           style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0, borderLeft: 'none', ...buttonStyle }}
         >
-          <MagnifyingGlassIcon className="h-6 border-none ml-2 mr-2 text-nui hover:text-white" />
+          <MagnifyingGlassIcon className="h-6 border-none ml-2 mr-2 text-nui" />
         </button>
       </div>
+
       {filteredOptions.length > 0 && (
         <div
           id="options_list"
