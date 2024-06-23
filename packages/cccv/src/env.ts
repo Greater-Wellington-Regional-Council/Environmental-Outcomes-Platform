@@ -8,6 +8,8 @@ const envVar = (name: string, defaultValue: unknown | null = null): string =>
     )
   );
 
+export type EnvVars = { [key: string]: string };
+
 const config = {
   LINZ_API_KEY: envVar("LINZ_API_KEY", 'missing-linz-api-key'),
   MAPBOX_TOKEN: envVar( "MAPBOX_TOKEN", 'missing-mapbox-token'),

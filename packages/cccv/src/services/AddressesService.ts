@@ -11,6 +11,13 @@ export interface Address {
   longitude: number;
 }
 
+// const DUMMY_ADDRESS: Address = {
+// id: 0,
+//   address: "19 Rhodes Street, Carterton",
+//   latitude: -41.2865,
+//   longitude: 174.7762
+// };
+
 const regionCodes: { [key: string]: string } = {
   "Auckland": "1",
   "Bay of Plenty": "2",
@@ -46,40 +53,6 @@ export interface AddressFinderResponse {
   "demo": false,
   "success": true
 }
-
-// Eg,
-//
-//   {
-//     "completions": [
-//       {
-//         "a": "123 Willow Park Drive, Ōpaki 5871",
-//         "pxid": "2-39w2Bl2OjTvApfm571TSO",
-//         "v": 0,
-//         "highlighted_a": "123 Willow Park Drive, Ōpaki 5871"
-//       },
-//       {
-//         "a": "123 Willis Street, Te Aro, Wellington 6011",
-//         "pxid": "2-.F.1W.p.0G1Jt",
-//         "v": 0,
-//         "highlighted_a": "123 Willis Street, Te Aro, Wellington 6011"
-//       },
-//       {
-//         "a": "123 William Street, Petone, Lower Hutt 5012",
-//         "pxid": "2-.F.b.P.18orr",
-//         "v": 1,
-//         "highlighted_a": "123 William Street, Petone, Lower Hutt 5012"
-//       },
-//       {
-//         "a": "123 Willow Park Drive, RD 11, Masterton 5871",
-//         "pxid": "2-39w2Bl2OjTvApfm571TSO",
-//         "v": 1,
-//         "highlighted_a": "123 Willow Park Drive, RD 11, Masterton 5871"
-//       }
-//     ],
-//     "paid": true,
-//     "demo": false,
-//     "success": true
-//   }
 
 export interface AddressLabelAndValue extends LabelAndValue {
   label: string;
