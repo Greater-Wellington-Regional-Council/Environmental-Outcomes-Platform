@@ -20,6 +20,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
     id,
     fmuName1,
     catchmentDescription,
+    implementationIdeas,
   } = details.freshwaterManagementUnit;
 
   const tangataWhenuaSites = details.tangataWhenuaSites;
@@ -62,6 +63,14 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
                 className="list-disc" key={index}>{site?.location}</li>)}
             </ul>
           </div>
+        </div>
+      ) : <div></div>}
+
+      {implementationIdeas ? (
+        <div className="implementation-ideas mt-6">
+          <h2>Implementation Ideas</h2>
+          <div
+            dangerouslySetInnerHTML={{__html: purify.sanitize(implementationIdeas)}}/>
         </div>
       ) : <div></div>}
 

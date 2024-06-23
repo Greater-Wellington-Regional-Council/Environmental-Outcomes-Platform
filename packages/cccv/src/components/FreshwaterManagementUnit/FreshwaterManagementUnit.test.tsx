@@ -36,6 +36,11 @@ describe('Spec FreshwaterManagementUnit', function () {
     expect(screen.getByText('This is a catchment description')).toBeInTheDocument()
   })
 
+  it('shows fmu with implementation ideas', () => {
+    render(<FreshwaterManagementUnit freshwaterManagementUnit={{ implementationIdeas: "Ideas for implementation" }} tangataWhenuaSites={[]} />)
+    expect(screen.getByText('Ideas for implementation')).toBeInTheDocument()
+  })
+
   it('shows tangata whenua sites if it exists for the FMU', () => {
     render(<FreshwaterManagementUnit freshwaterManagementUnit={{}} tangataWhenuaSites={[{ location: "TW site 1" }]} />)
     expect(screen.getByText('TW site 1')).toBeInTheDocument()
