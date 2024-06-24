@@ -113,7 +113,7 @@ export default function InteractiveMap({
         ref={mapRef as LegacyRef<MapRef>}
         data-Testid="map"
         mapStyle={mapStyle}
-        style={{aspectRatio: '1 / 1'}}
+        style={{ width: '100%', height: '100vh', aspectRatio: '24/9'}}
         viewState={{...viewState, width: DEFAULT_VIEW_WIDTH, height: DEFAULT_VIEW_HEIGHT}}
         mapboxAccessToken={env.MAPBOX_TOKEN}
         accessToken={env.LINZ_API_KEY}

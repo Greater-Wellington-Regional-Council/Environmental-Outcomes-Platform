@@ -11,7 +11,7 @@ export type ContaminantList = Contaminant[];
 
 export const contaminants = (fmu: FreshwaterManagementUnit): ContaminantList => ([
   {
-    title: 'E. coli',
+    title: 'E_Coli',
     base: fmu.ecoliBase,
     objective: fmu.ecoliObj,
     byWhen: fmu.byWhen,
@@ -23,19 +23,20 @@ export const contaminants = (fmu: FreshwaterManagementUnit): ContaminantList => 
     byWhen: fmu.byWhen,
   },
   {
-    title: 'Ammonia toxicity',
+    title: 'Ammonia',
     base: fmu.atoxBase,
     objective: fmu.atoxObj,
     byWhen: fmu.byWhen,
   },
   {
-    title: 'Nitrate toxicity',
+    title: 'Nitrate',
     base: fmu.ntoxBase,
     objective: fmu.ntoxObj,
     byWhen: fmu.byWhen,
   },
   {
-    title: 'MCI',
+    // title: 'MCI',
+    title: 'Nitrogen',
     base: fmu.mciBase,
     objective: fmu.mciObj,
     byWhen: fmu.byWhen,

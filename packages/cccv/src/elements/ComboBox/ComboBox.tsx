@@ -92,7 +92,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
                 onSelect(option);
                 setFilteredOptions([option]);
               }}
-              className={`cursor-pointer p-2 bg-white rounded text-textDefault border-black hover:bg-nui hover:text-white ${option.label.toLowerCase() === query.toLowerCase() ? 'bg-nui' : ''}`}
+              className={`cursor-pointer p-2 bg-gray-100 shadow rounded text-textDefault hover:bg-nui hover:text-white ${option.label.toLowerCase() === query.toLowerCase() ? 'bg-nui' : ''}`}
               style={{
                 whiteSpace: 'nowrap',
                 marginTop: index === 0 ? '0' : '2px',

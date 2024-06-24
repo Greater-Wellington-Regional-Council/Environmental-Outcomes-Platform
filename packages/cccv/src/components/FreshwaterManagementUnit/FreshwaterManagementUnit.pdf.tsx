@@ -119,7 +119,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
               <Text style={tw("body")}>
                 The content, data, and information used in this app comes from multiple sources,
                 including Greater Wellington’s Natural Resources Plan (2018) and Whaitua
-                Implentation Plans, and the National Policy Statement for Freshwater Management
+                Implementation Plans, and the National Policy Statement for Freshwater Management
                 2020 (Amended January 2024).
               </Text>
             </View>
