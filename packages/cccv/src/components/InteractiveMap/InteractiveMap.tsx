@@ -72,8 +72,8 @@ export default function InteractiveMap({
   }
 
   useEffect(() => {
+    marker && marker.remove();
     if (selected && mapRef?.current) {
-      marker && marker.remove();
 
       const newMarker = new mapboxgl.Marker()
         .setLngLat([selected.longitude, selected.latitude])
@@ -93,21 +93,18 @@ export default function InteractiveMap({
   }, [selected]);
 
   const handleClick = (e: MapMouseEvent) => {
+    select && select(null);
     const clickedFeature = mapRef?.current?.queryRenderedFeatures(e.point);
-    if (clickedFeature!.filter( f => f.layer.id == "highlighted-features-candidates").length > 0) {
+    if (clickedFeature!.filter( f => f.layer.id == "highlighted-fmu-candidates").length > 0) {
       const location = {longitude: e.lngLat.lng, latitude: e.lngLat.lat, zoom: mapRef.current!.getZoom()};
       select && select(location);
-    } else {
-      select && select(null);
     }
   }
 
   const handleHover = debounce((e) => {
-    const hoveredFeatures = mapRef?.current?.queryRenderedFeatures(e.point);
-
-    if (hoveredFeatures?.length)
-      highlightFeature && highlightFeature({feature: hoveredFeatures[0], x: e.point.x, y: e.point.y});
-  }, 0.5);
+    const hoveredFeatures = mapRef?.current?.getMap().queryRenderedFeatures(e.point) || [];
+    hoveredFeatures?.length && highlightFeature && highlightFeature({feature: hoveredFeatures[0], x: e.point.x, y: e.point.y});
+  }, 0);
 
   return (
     <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>
@@ -143,7 +140,8 @@ export default function InteractiveMap({
           <FmuBoundariesLayer id="freshwater-management-units"
                               source="freshwater-management-units" mapStyle={mapStyle}/>
 
-          {highlightedFeature && <FeatureHighlight id={"highlighted-features"}
+          {highlightedFeature && <FeatureHighlight id={"highlighted-fmu"}
+                                                   mapRef={mapRef}
                                                    source="freshwater-management-units"
                                                    highlightedFeature={highlightedFeature}
                                                    tooltip={{

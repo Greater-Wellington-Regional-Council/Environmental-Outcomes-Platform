@@ -27,6 +27,7 @@ type CombinedMapRef = MapRef & mapboxgl.Map;
 interface FeatureHighlightProps {
   highlightedFeature: HighlightedFeature | null;
   id?: string;
+  mapRef: React.RefObject<CombinedMapRef>;
   fillColor?: string;
   fillOpacity?: number;
   filter?: (string | string[] | never)[];

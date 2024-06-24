@@ -16,7 +16,7 @@ export const useViewState = (initialLocation: ViewState) => {
 
   const handleMove = debounce((evt: ViewStateChangeEvent) => {
     setViewState(evt.viewState);
-  }, 10);
+  }, 0.5);
 
   return {
     viewState,
