@@ -1,0 +1,5 @@
+SET CLIENT_ENCODING TO UTF8;
+SET STANDARD_CONFORMING_STRINGS TO ON;
+
+ALTER TABLE freshwater_management_units
+    ADD COLUMN implementation_ideas VARCHAR;

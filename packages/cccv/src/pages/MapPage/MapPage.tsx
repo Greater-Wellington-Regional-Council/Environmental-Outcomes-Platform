@@ -1,15 +1,19 @@
+import './MapPage.scss';
 import InteractiveMap from "@components/InteractiveMap/InteractiveMap";
 import {useLoaderData} from "react-router-dom";
-import './MapPage.scss';
-import {ViewLocation} from "@src/global";
 import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
 import useEscapeKey from "@lib/useEscapeKey.tsx";
 import {useContext, useEffect, useState} from "react";
 import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
 import freshwaterManagementService from "@services/FreshwaterManagementUnitService.ts";
-import {Feature} from "geojson";
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
 import gwrcLogo from "@images/printLogo_2000x571px.png";
+import AddressSearch from "@components/AddressSearch/AddressSearch.tsx";
+import addressesService, {Address} from "@services/AddressesService.ts";
+import {LabelAndValue} from "@elements/ComboBox/ComboBox.tsx";
+
+
+const ADDRESS_ZOOM = 12;
 
 export default function MapPage() {
 
@@ -17,40 +21,46 @@ export default function MapPage() {
 
   const locationDetails = useLoaderData();
 
-  const [location] = useState<ViewLocation>(locationDetails as ViewLocation);
-  const [pinnedLocation, setPinnedLocation] = useState<ViewLocation | null>(null);
-  const [selectedFmu, setSelectedFmu] = useState<FmuFullDetails | null>(null);
-
-  const [ featureUnderPointer, setFeatureUnderPointer ] = useState<Feature | null>(null);
+  const [selectedLocation, selectLocation] = useState<ViewLocation | null>(null);
+  const [selectedFmu, selectFmu] = useState<FmuFullDetails | null>(null);
 
   const [showPanel, setShowPanel] = useState(false);
   const [fmuChanged, setFmuChanged] = useState(false);
 
-  function useFetchFmu(setSelectedFmu: (fmu: FmuFullDetails | null) => void, setError: (error: Error | null) => void) {
-    useEffect(() => {
-      const fetchFmu = async () => {
-        if (!pinnedLocation) {
-          setSelectedFmu(null);
-          setShowPanel(false)
-          return;
-        }
-        const fmu = await freshwaterManagementService.getByLngAndLat(pinnedLocation.longitude, pinnedLocation.latitude, setError);
-        setFmuChanged(selectedFmu != null && fmu != null  && (fmu != selectedFmu));
-        setShowPanel(fmu != null)
-        setSelectedFmu(fmu)
-        fmu && setError(null)
-      };
+  useEffect(() => {
+    const fetchFmu = async () => {
+      if (!selectedLocation) {
+        setShowPanel(false)
+        selectFmu(null);
+        return;
+      }
+      const fmu = await freshwaterManagementService.getByLocation(selectedLocation, setError);
+      setFmuChanged(selectedFmu != null && fmu != null && (fmu != selectedFmu));
+      setShowPanel(fmu != null)
+      selectFmu(fmu);
+      fmu && setError(null)
+    };
 
-      fetchFmu().then()
-    }, [pinnedLocation, setSelectedFmu, setError]);
-  }
-
-  useFetchFmu(setSelectedFmu, setError);
+    fetchFmu().then()
+  }, [selectedLocation, setError]);
 
   useEscapeKey(() => setShowPanel(false))
 
   const revealOrHideInfoPanel = showPanel ? 'animate-in' : 'animate-out';
   const signalUpdatedInfoPanel = fmuChanged ? 'pulsate' : '';
+
+  const selectAddress = (address: LabelAndValue | null = null) => {
+    if (!address) return;
+
+    addressesService.getAddress(address).then((selectedAddress: Address | null) => {
+      if (!selectedAddress) {
+        setError(new Error("Address not found"));
+        return;
+      }
+
+      selectLocation({latitude: selectedAddress.latitude, longitude: selectedAddress.longitude, description: address.label, zoom: ADDRESS_ZOOM} as ViewLocation);
+    });
+  }
 
   return (
     <div className="map-page bg-white">
@@ -60,8 +70,9 @@ export default function MapPage() {
           <h1
             className={"header-title"}>Freshwater
             Management</h1>
-          <h2 className={"header-subtitle mb-3"}>Catchment, context, challenges and values (CCCV)</h2>
-          <p className={"preamble font-light text-body"}>Find information useful for creating a Freshwater Farm Plan, such as contaminant goals, sites
+          <h2 className={"header-subtitle mb-3"}>Catchment context, challenges and values (CCCV)</h2>
+          <p className={"preamble font-light text-body"}>Find information useful for creating a Freshwater Farm Plan,
+            such as contaminant goals, sites
             of significance, and implementation ideas for your catchment area.</p>
         </div>
         <div className={"header-image col-span-2 mt-2 mr-2 scale-105 ml-auto"}>
@@ -71,12 +82,19 @@ export default function MapPage() {
       </header>
 
       <main role="application">
-        <div className={`map-panel`}>
-          <InteractiveMap location={location} pinLocation={setPinnedLocation} highlightedFeature={featureUnderPointer} setHighlightedFeature={setFeatureUnderPointer}/>
+        <div className={`map-panel relative`}>
+          <InteractiveMap startLocation={locationDetails as ViewLocation} selected={selectedLocation} select={(selectLocation)}/>
+          <div className={`address-box`}>
+            <AddressSearch
+              onSelect={address => selectAddress(address)}
+              placeholder={"Search for address"}
+              directionUp={true}
+            />
+          </div>
         </div>
+
         <div
           className={`info-panel bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
-          {/*<span className="close-button" onClick={() => setShowPanel(false)}>x</span>*/}
           {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} />}
         </div>
       </main>

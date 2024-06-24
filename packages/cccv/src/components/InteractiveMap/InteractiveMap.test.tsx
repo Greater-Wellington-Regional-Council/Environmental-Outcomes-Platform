@@ -4,10 +4,12 @@ import {expect} from "vitest";
 
 beforeAll(() => {
     vi.mock('mapbox-gl', () => ({
+      default: {
         Map: vi.fn(() => ({
             on: vi.fn(),
             remove: vi.fn()
         }))
+      }
     }))
 
   vi.mock('@tanstack/react-query', () => {
@@ -28,7 +30,7 @@ describe('InteractiveMap component', () => {
     });
 
     it('should render', () => {
-        render(<InteractiveMap location={{ longitude: 174.7, latitude: -41.3, zoom: 10 }} pinLocation={() => {}}  highlightedFeature={null}/>)
+        render(<InteractiveMap startLocation={{ longitude: 174.7, latitude: -41.3, zoom: 10 }} select={() => {}}  selected={null}/>)
 
         expect(screen.getByTestId('InteractiveMap')).toBeInTheDocument()
     })

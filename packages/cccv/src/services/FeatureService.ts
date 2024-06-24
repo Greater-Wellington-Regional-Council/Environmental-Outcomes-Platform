@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const featureService = {
   "showFMUAsPopup": false,
 }
