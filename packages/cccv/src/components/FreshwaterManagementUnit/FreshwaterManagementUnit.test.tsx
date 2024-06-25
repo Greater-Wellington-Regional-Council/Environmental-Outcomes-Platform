@@ -37,7 +37,7 @@ describe('Spec FreshwaterManagementUnit', function () {
   })
 
   it('shows fmu with implementation ideas', () => {
-    render(<FreshwaterManagementUnit freshwaterManagementUnit={{ implementationIdeas: "Ideas for implementation" }} tangataWhenuaSites={[]} />)
+    render(<FreshwaterManagementUnit freshwaterManagementUnit={{ implementationIdeas: ["Ideas for implementation"] }} tangataWhenuaSites={[]} />)
     expect(screen.getByText('Ideas for implementation')).toBeInTheDocument()
   })
 

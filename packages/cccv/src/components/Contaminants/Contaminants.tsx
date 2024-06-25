@@ -17,32 +17,32 @@ export const Contaminants: React.FC<{ contaminants: ContaminantList }> = ({ cont
   return (
     <div>
       {contaminants.map((contaminant, index) => (
-        <div className={`min-w-full border-b border-gray-300 pb-3`} key={index}>
-          <div className="grid mb-1 mt-3 items-center" style={{ gridTemplateColumns: "20px 4fr" }}>
-            <div className="pl-0 text-left text-md font-medium text-gray-600 cursor-pointer" onClick={() => handleRowClick(contaminant.title)}>
+        <div className={`contaminant min-w-full border-b border-gray-300 pb-3`} key={index}>
+          <div className="contaminant-title grid mb-1 mt-3 items-center" role="row" style={{ gridTemplateColumns: "20px 4fr" }}>
+            <div className="contaminant-expander pl-0 text-left text-md font-medium text-gray-600 cursor-pointer" data-testid="contaminant-expander" onClick={() => handleRowClick(contaminant.title)}>
               {expandedRows[contaminant.title] ? <ChevronUpIcon className="h-6 w-6 text-blue-500" /> : <ChevronDownIcon className="h-6 w-6 text-blue-500" />}
             </div>
-            <div className="pl-4 text-left text-md font-semibold">
-              {index.toString()+" "+contaminants.length+" "+contaminantTitle(contaminant)}
+            <div className="pl-4 text-left text-md font-semibold" data-testid="contaminant-title">
+              {contaminantTitle(contaminant)}
             </div>
             <div></div>
           </div>
-          <div className={`grid mb-2 items-top`} style={{ gridTemplateColumns: "20px 2fr 2fr" }}>
+          <div className={`contaminant-levels grid mb-2 items-top`} role="row" style={{ gridTemplateColumns: "20px 2fr 2fr" }}>
             <div className="pl-1"></div>
-            <div className="pl-4 text-left text-sm font-medium text-gray-600">
+            <div className="pl-4 text-left text-sm font-medium text-gray-600" data-testid="contaminant-base" >
               Base Rating (2018) <span className="font-bold">{contaminant.base || "None"}</span>
             </div>
-            <div className="pl-4 text-left text-sm font-medium text-gray-600">
+            <div className="pl-4 text-left text-sm font-medium text-gray-600" data-testid="contaminant-objective">
               Objective {contaminant.byWhen ? ` (${byWhen(contaminant)})` : ''} <span className="font-bold">{contaminant.objective || 'None'}</span>
             </div>
           </div>
           {expandedRows[contaminant.title] && (
-            <div className="grid" style={{ gridTemplateColumns: "20px 2fr 2fr" }}>
+            <div className="contaminant-descriptions grid" role="row" style={{ gridTemplateColumns: "20px 2fr 2fr" }}>
               <div className="pl-1 text-xs text-left align-text-top"></div>
-              <div className="pl-4 text-xs text-left align-text-top">
+              <div className="pl-4 text-xs text-left align-text-top" data-testid="contaminant-base-desc">
                 <div dangerouslySetInnerHTML={{ __html: getObjectiveDescription(contaminant, contaminant.base) ?? '' }} />
               </div>
-              <div className="pl-4 text-left text-xs align-text-top">
+              <div className="pl-4 text-left text-xs align-text-top" data-testid="contaminant-objective-desc">
                 <div dangerouslySetInnerHTML={{ __html: getObjectiveDescription(contaminant, contaminant.objective) ?? '' }} />
               </div>
             </div>

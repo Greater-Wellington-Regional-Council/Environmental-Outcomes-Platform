@@ -1,28 +1,40 @@
-import { render, screen } from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { describe, it, expect } from 'vitest';
-import { Contaminants} from './Contaminants.tsx';
+import {describe, it, expect} from 'vitest';
+import {Contaminants} from './Contaminants.tsx';
+import {userEvent} from "@storybook/test";
 
 const contaminants = [
-  { title: 'Contaminant 1', base: 'Base 1', objective: 'Objective 1', byWhen: 'Date 1' },
-  { title: 'Contaminant 2', base: 'Base 2', objective: 'Objective 2', byWhen: 'Date 2' },
-  { title: 'Contaminant 3', base: 'Base 3', objective: 'Objective 3', byWhen: 'Date 3' },
+  {title: 'Nitrogen', base: 'A', objective: 'B', byWhen: '2040 (2080 for MCI)'},
+  {title: 'Periphyton', base: 'A', objective: 'A then B', byWhen: '2040 (2080 for MCI)'},
+  {title: 'Ammonia', base: 'B', objective: 'Top of B', byWhen: '2040'},
+  {title: 'Ammonia', base: 'B', objective: 'C', byWhen: 'Maintain'},
 ];
 
 describe('ContaminantsTable', () => {
-  it('renders the correct number of rows and columns', () => {
-    render(<Contaminants contaminants={contaminants} />);
+  it('renders the correct number of rows and columns', async () => {
+    render(<Contaminants contaminants={contaminants}/>);
 
-    const rows = screen.getAllByRole('row');
-    expect(rows).toHaveLength(4);
+    const testIdPairs: [string, number][] = [
+      ['contaminant-expander', 4],
+      ['contaminant-title', 4],
+      ['contaminant-base', 4],
+      ['contaminant-objective', 4],
+      ['contaminant-base-desc', 0],
+      ['contaminant-objective-desc', 0],
+    ];
 
-    const columns = screen.getAllByRole('columnheader');
-    expect(columns).toHaveLength(4);
+    testIdPairs.forEach(([testId, expectedLength]) => {
+      const elements = screen.queryAllByTestId(testId);
+      expect(elements, `Contaminant ${testId} failed: expected ${expectedLength}`).toHaveLength(expectedLength);
+    });
 
-    const topLeftCell = screen.getByText(contaminants[0].title);
-    expect(topLeftCell).toBeInTheDocument();
+    const expanders = screen.getAllByTestId("contaminant-expander");
+    userEvent.click(expanders[0]);
 
-    const bottomRightCell = screen.getByText(contaminants[contaminants.length - 1].byWhen);
-    expect(bottomRightCell).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('contaminant-base-desc')).toBeInTheDocument();
+      expect(screen.getByTestId('contaminant-objective-desc')).toBeInTheDocument();
+    })
   });
 });
