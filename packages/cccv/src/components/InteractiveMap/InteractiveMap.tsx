@@ -1,223 +1,154 @@
-import 'mapbox-gl/dist/mapbox-gl.css';
-import './InteractiveMap.scss';
-import React, {LegacyRef, useContext, useRef, useState} from 'react';
 import {
-  Layer,
   Map,
-  MapboxGeoJSONFeature,
   MapMouseEvent,
   MapRef,
-  Marker,
-  NavigationControl,
-  ScaleControl,
   Source,
-  ViewState,
-  ViewStateChangeEvent
 } from "react-map-gl";
-import {Feature, Geometry} from "geojson";
-import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx";
-import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts";
-import {ViewLocation} from "@src/global";
-import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService.ts";
+import {LegacyRef, useEffect, useRef, useState} from 'react';
+import mapboxgl, {Marker, Popup} from "mapbox-gl";
 import {debounce} from 'lodash';
-import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
+
+import 'mapbox-gl/dist/mapbox-gl.css';
+import './InteractiveMap.scss';
+
+import {
+  CombinedMapRef,
+  HighlightedFeature,
+  InteractiveMapProps,
+} from "@components/InteractiveMap/lib/InteractiveMap";
+import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx";
+import FmuBoundariesLayer from "@components/InteractiveMap/lib/FmuBoundariesLayer/FmuBoundariesLayer.tsx";
+import FeatureHighlight from "@components/InteractiveMap/lib/FeatureHighlight/FeatureHighlight.tsx";
+import MapControls from "@components/InteractiveMap/lib/MapControls/MapControls.tsx";
+import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService.ts";
 import env from "@src/env.ts";
+import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts";
+import {useViewState} from "@components/InteractiveMap/lib/useViewState.ts";
 
-interface BoundaryLinesLayerProps {
-  id: string,
-  sourceId: string,
-  mapRef: MapRef,
-  mapStyle: string,
-}
-
-function BoundaryLinesLayer({id, mapRef, sourceId, mapStyle = "topographical"}: BoundaryLinesLayerProps) {
-  return <Layer
-    id={id}
-    type="line"
-    paint={{
-      "line-color": `${(((mapRef as never) as { mapStyle: string })?.mapStyle || mapStyle).includes("aerial") ? "yellow" : "blue"}`,
-      "line-width": 2,
-      "line-dasharray": [2, 2],
-    }}
-    source={sourceId}/>;
-}
-
-interface FeatureHighlightProps {
-  highlightedFeature: Feature<Geometry> | null | undefined,
-  id?: string,
-  fillColor?: string,
-  fillOpacity?: number,
-  filter?: (string | string[] | never)[]
-  sourceId: string
-}
-
-function FeatureHighlight({
-                            highlightedFeature,
-                            id,
-                            fillColor = "orange",
-                            fillOpacity = 0.3,
-                            filter = ["==", ["id"], highlightedFeature?.properties?.id || null],
-                            sourceId
-                          }: FeatureHighlightProps) {
-  return <>
-    <Layer
-      id={id}
-      type="fill"
-      paint={{
-        'fill-color': fillColor,
-        'fill-opacity': 0,
-      }}
-      source={sourceId}
-    />
-    {highlightedFeature && (<Layer
-        id={id}
-        type="fill"
-        filter={
-          filter
-        }
-        paint={{
-          "fill-color": fillColor,
-          "fill-opacity": fillOpacity,
-        }}
-        source={sourceId}
-      />
-    )}
-  </>;
-}
-
-export const MAP_HEIGHT = '150vh';
+const DEFAULT_ZOOM = 8;
+const DEFAULT_VIEW_WIDTH = 100;
+const DEFAULT_VIEW_HEIGHT = 150;
+const DEFAULT_PITCH = 30;
 
 export default function InteractiveMap({
-                                         location,
-                                         pinLocation,
-                                         highlightedFeature,
-                                         setHighlightedFeature,
+                                         startLocation,
+                                         select,
+                                         selected,
                                          children
-                                       }: {
-  location: ViewLocation,
-  pinLocation: (location: ViewLocation) => void,
-  children?: React.ReactNode,
-  highlightedFeature?: Feature | null,
-  setHighlightedFeature?: (feature: Feature | null) => void
-}) {
-  const setError = useContext(ErrorContext).setError;
+                                       }: InteractiveMapProps) {
 
-  const mapRef = useRef<MapRef | null>(null);
-
-  const [viewState, setViewState] = useState<ViewState>({
-    latitude: location.latitude,
-    longitude: location.longitude,
-    zoom: location.zoom,
+  const {viewState, handleMove} = useViewState({
+    latitude: startLocation.latitude,
+    longitude: startLocation.longitude,
+    zoom: startLocation.zoom || DEFAULT_ZOOM,
     bearing: 0,
-    pitch: 30,
+    pitch: DEFAULT_PITCH,
     padding: {
       left: 0,
       top: 0,
       bottom: 0,
       right: 0,
-    },
+    }
   });
 
-  const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY));
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<CombinedMapRef | null>(null);
 
-  const handleStyleChange = (newStyle: string) => {
-    setMapStyle(newStyle || urlDefaultMapStyle(env.LINZ_API_KEY));
-  };
+  const [mapStyle, setMapStyle]
+    = useState(urlDefaultMapStyle(env.LINZ_API_KEY));
 
-  const [moving, setMoving] = useState(false);
+  const [highlightedFeature, highlightFeature]
+    = useState<HighlightedFeature | null>(null);
 
-  const [tooltipInfo, setTooltipInfo] = useState<{ feature: MapboxGeoJSONFeature | null, x: number, y: number }>({ feature: null, x: 0, y: 0 });
+  const [marker, setMarker] = useState<Marker | null>(null);
 
-  const handleMove = debounce((evt: ViewStateChangeEvent) => {
-    setMoving(true);
-    setViewState(evt.viewState);
-  }, 1);
-
-  const [ marker, setMarker ] = useState<[number, number] | null>(null);
-
-  const handleClick = (e: MapMouseEvent) => {
-    setError(null);
-
-    if (!moving) {
-      pinLocation({
-        longitude: e.lngLat.lng,
-        latitude: e.lngLat.lat,
-        zoom: location.zoom,
-      });
-      setMarker([e.lngLat.lng, e.lngLat.lat])
-    }
-    setMoving(false);
+  const centreOn = (location: ViewLocation) => {
+    mapRef?.current?.flyTo({
+      center: [location.longitude, location.latitude],
+      essential: true,
+      zoom: location.zoom || DEFAULT_ZOOM,
+      offset: [mapRef?.current?.getContainer().clientHeight * -0.03, mapRef?.current?.getContainer().clientHeight * -0.05],
+    });
   }
 
-  const handleMouseUp = () => {
-    setMoving(false);
+  useEffect(() => {
+    marker && marker.remove();
+    if (selected && mapRef?.current) {
+
+      const newMarker = new mapboxgl.Marker()
+        .setLngLat([selected.longitude, selected.latitude])
+        .addTo(mapRef.current.getMap());
+
+      if (selected.description) {
+        const popup = new Popup({closeButton: false})
+          .setLngLat([selected.longitude, selected.latitude])
+          .setHTML(selected.description)
+          .addTo(mapRef.current.getMap());
+        newMarker.setPopup(popup);
+        centreOn(selected);
+      }
+
+      setMarker(newMarker)
+    }
+  }, [selected]);
+
+  const handleClick = (e: MapMouseEvent) => {
+    select && select(null);
+    const clickedFeature = mapRef?.current?.queryRenderedFeatures(e.point);
+    if (clickedFeature!.filter( f => f.layer.id == "highlighted-fmu-candidates").length > 0) {
+      const location = {longitude: e.lngLat.lng, latitude: e.lngLat.lat, zoom: mapRef.current!.getZoom()};
+      select && select(location);
+    }
   }
 
   const handleHover = debounce((e) => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    const hoveredFeatures = map.queryRenderedFeatures(e.point);
-
-    if (hoveredFeatures.length > 0) {
-      setHighlightedFeature && setHighlightedFeature(hoveredFeatures[0]);
-      setTooltipInfo({
-        feature: hoveredFeatures[0],
-        x: e.point.x,
-        y: e.point.y
-      });
-    } else {
-      setTooltipInfo({ feature: null, x: 0, y: 0 });
-    }
-  }, 0.5);
+    const hoveredFeatures = mapRef?.current?.getMap().queryRenderedFeatures(e.point) || [];
+    hoveredFeatures?.length && highlightFeature && highlightFeature({feature: hoveredFeatures[0], x: e.point.x, y: e.point.y});
+  }, 0);
 
   return (
-    <div className={`map-container ${moving ? 'moving' : 'pointing'}`} data-testid={"InteractiveMap"}>
-      <MapStyleSelector value={mapStyle} onStyleChange={handleStyleChange} apiKey={env.LINZ_API_KEY}/>
+    <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>
+      <MapStyleSelector onStyleChange={setMapStyle}/>
       <Map
         ref={mapRef as LegacyRef<MapRef>}
         data-Testid="map"
         mapStyle={mapStyle}
-        style={{aspectRatio: '1 / 1', cursor: moving ? 'move' : 'pointer'}}
-        viewState={{...viewState, width: 100, height: 150}}
-        cursor={moving ? 'move' : 'pointer'}
+        style={{ width: '100%', height: '100vh', aspectRatio: '24/9'}}
+        viewState={{...viewState, width: DEFAULT_VIEW_WIDTH, height: DEFAULT_VIEW_HEIGHT}}
         mapboxAccessToken={env.MAPBOX_TOKEN}
         accessToken={env.LINZ_API_KEY}
         doubleClickZoom={true}
+        cursor={highlightedFeature ? 'pointer' : 'grab'}
         dragPan={true}
-        zoom-={11}
+        zoom-={DEFAULT_ZOOM}
         minZoom={5}
         interactive={true}
         onClick={handleClick}
         onMove={handleMove}
-        onMouseUp={handleMouseUp}
         onMouseMove={handleHover}
         trackResize={true}
         onError={(event: { error: Error; }) => {
           console.error('Map error:', event.error);
         }}>
-        <ScaleControl/>
-        <NavigationControl position="top-left" visualizePitch={true}/>
+        <MapControls/>
         {children}
         <Source
           id="freshwater-management-units"
           type="geojson"
           data={freshwaterManagementUnitService.urlToGetFmuBoundaries()}>
-          <BoundaryLinesLayer id="freshwater-management-units" mapRef={mapRef.current!} sourceId="freshwater-management-units" mapStyle={mapStyle}/>
-          <FeatureHighlight sourceId="freshwater-management-units" highlightedFeature={highlightedFeature}/>
+
+          <FmuBoundariesLayer id="freshwater-management-units"
+                              source="freshwater-management-units" mapStyle={mapStyle}/>
+
+          {highlightedFeature && <FeatureHighlight id={"highlighted-fmu"}
+                                                   mapRef={mapRef}
+                                                   source="freshwater-management-units"
+                                                   highlightedFeature={highlightedFeature}
+                                                   tooltip={{
+                                                     source: (f) => f.properties!.fmuName1,
+                                                   }}/>}
         </Source>
-        {marker && <Marker longitude={marker[0]} latitude={marker[1]}></Marker>}
       </Map>
-      {tooltipInfo.feature && tooltipInfo.feature.properties?.fmuName1 && (
-        <div
-          className="tooltip"
-          style={{
-            left: tooltipInfo.x,
-            top: tooltipInfo.y,
-          }}
-        >
-          {tooltipInfo.feature.properties?.fmuName1}
-        </div>
-      )}
-    </div>)
+    </div>
+  );
 }

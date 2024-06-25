@@ -1,5 +1,4 @@
 import {Document, Font, Image, Page, Text, View} from '@react-pdf/renderer';
-import purify from 'dompurify';
 import {
   contaminants as fmuContaminants,
   ContaminantList
@@ -11,6 +10,12 @@ import gwrcLogo from "@images/printLogo_500x188px.png";
 import {tw as predefinedTw} from "@lib/pdfTailwindStyles.ts";
 import fonts from "@src/fonts.ts";
 import React from "react";
+import {
+  getObjectiveDescription,
+  contaminantTitle,
+  byWhen
+} from "@components/Contaminants/ContaminantObjectiveDescription";
+import makeSafe from "@lib/makeSafe.ts";
 
 Font.register(fonts.inter);
 
@@ -28,19 +33,28 @@ const twContext = createTw({
 const tw = (input: string) => twContext(predefinedTw(input))
 
 const Contaminants: React.FC<{ contaminants: ContaminantList }> = ({contaminants}) => (
-  <View style={tw('w-full body mt-2')}>
+  <View style={tw('w-full body mt-4')}>
     <View style={tw('flex flex-row border-b border-gray-300')}>
-      <Text style={tw('w-1/4 p-2 font-bold')}></Text>
-      <Text style={tw('w-1/4 p-2')}>Base</Text>
-      <Text style={tw('w-1/4 p-2')}>Objective</Text>
-      <Text style={tw('w-1/4 p-2')}>By</Text>
+      <Text style={tw('w-1/5 p-2 font-bold')}></Text>
+      <Text style={tw('w-2/5 p-2')}>Base</Text>
+      <Text style={tw('w-2/5 p-2')}>Objective</Text>
     </View>
     {contaminants.map((contaminant, index) => (
-      <View key={index} style={tw('flex flex-row border-b border-gray-300')}>
-        <Text style={tw('w-1/4 p-2 font-bold')}>{contaminant.title}</Text>
-        <Text style={tw('w-1/4 p-2')}>{contaminant.base}</Text>
-        <Text style={tw('w-1/4 p-2')}>{contaminant.objective}</Text>
-        <Text style={tw('w-1/4 p-2')}>{contaminant.byWhen}</Text>
+      <View>
+        <View key={index} style={tw('flex flex-row mt-2')}>
+          <Text style={tw('w-1/5 p-2 font-bold')}>{contaminantTitle(contaminant)}</Text>
+          <Text style={tw('w-2/5 p-2')}>{contaminant.base}</Text>
+          <Text style={tw('w-2/5 p-2')}>{`${contaminant.objective}${contaminant.byWhen ? ` (${byWhen(contaminant)})` : ''}`}</Text>
+        </View>
+        <View style={tw('flex flex-row pb-4 border-b border-gray-300')}>
+          <Text style={tw('w-1/5 text-left align-text-top')}></Text>
+          <Text style={tw('w-2/5 pl-2 text-left align-text-top')}>
+            <Text>{getObjectiveDescription(contaminant, contaminant.base) ?? ''}</Text>
+          </Text>
+          <Text style={tw('w-2/5 pl-2 text-left align-text-top')}>
+            <Text>{getObjectiveDescription(contaminant, contaminant.objective) ?? ''}</Text>
+          </Text>
+        </View>
       </View>
     ))}
   </View>
@@ -51,7 +65,7 @@ const BulletList: React.FC<{ items: string[] }> = ({items}) => {
     items.map((item: string, index: number) => (
       <View key={index} style={tw('flex flex-row items-center mb-2 body')}>
         <Text style={tw('mr-2')}>•</Text>
-        <Text style={tw('body')}>{item}</Text>
+        <Text style={tw('body')}>{makeSafe(item)}</Text>
       </View>
     ))
   );
@@ -63,6 +77,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
     id,
     fmuName1,
     catchmentDescription,
+    implementationIdeas,
   } = details.freshwaterManagementUnit;
 
   const tangataWhenuaSites = details.tangataWhenuaSites;
@@ -90,8 +105,8 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
               {catchmentDescription ? (<>
                 <Text style={tw("h2 mb-2")}>Overview</Text>
                 <Text
-                  style={tw("body mb-4")}>{purify.sanitize(catchmentDescription || 'No overview available').replace(/<[^>]+>/g, '')}</Text>
-              </>) : null}
+                  style={tw("body mb-4")}>{makeSafe(catchmentDescription ?? '')}</Text>
+              </>) : <View><Text style={tw("body mb4")}>No overview available</Text></View>}
             </View>
 
             <View style={tw("mb-6")}>
@@ -112,14 +127,21 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
 
                 <BulletList items={tangataWhenuaSites?.map(s => s.location)}/>
               </View>
-            ) : null}
+            ) : <View/>}
+
+            {implementationIdeas ? (
+              <View style={tw("mb-4")} wrap={false}>
+                <Text style={tw("h2")}>Implementation Ideas</Text>
+                <BulletList items={implementationIdeas}/>
+              </View>
+            ) : <View/>}
 
             <View style={tw("mb-4")} wrap={false}>
               <Text style={tw("h2 mb-2")}>About this Information</Text>
               <Text style={tw("body")}>
                 The content, data, and information used in this app comes from multiple sources,
                 including Greater Wellington’s Natural Resources Plan (2018) and Whaitua
-                Implentation Plans, and the National Policy Statement for Freshwater Management
+                Implementation Plans, and the National Policy Statement for Freshwater Management
                 2020 (Amended January 2024).
               </Text>
             </View>
@@ -130,7 +152,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
           <Text style={tw('text-xs')}>CCCV details for {fmuName1}</Text>
           <Text
             style={tw('text-xs')}
-            render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`}
+            render={({pageNumber, totalPages}) => `Page ${pageNumber} of ${totalPages}`}
           />
         </View>
       </Page>

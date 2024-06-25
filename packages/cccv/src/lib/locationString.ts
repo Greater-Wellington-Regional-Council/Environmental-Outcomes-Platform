@@ -1,5 +1,4 @@
 import proj4 from '@lib/proj4';
-import {PinnedLocation, ViewLocation} from "@src/global";
 
 export function parseLocationString(
   locationString: string

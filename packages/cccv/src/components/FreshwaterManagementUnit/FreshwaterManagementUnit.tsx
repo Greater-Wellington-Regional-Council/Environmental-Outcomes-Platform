@@ -9,20 +9,19 @@ import dateTimeString from "@lib/dateTimeString";
 import { ContaminantList, contaminants as fmuContaminants } from "@components/FreshwaterManagementUnit/utils.ts";
 import EmailLink from "@components/EmailLink/EmailLink.tsx";
 import { Contaminants } from "@components/Contaminants/Contaminants.tsx";
-import {useTranslation} from "react-i18next";
+import makeSafe from "@lib/makeSafe.ts";
 
 const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
-  const { t } = useTranslation();
-
   if (!details?.freshwaterManagementUnit) {
-    return <div>{t('No data found.')}</div>;
+    return <div>No data found.</div>;
   }
 
   const {
     id,
     fmuName1,
     catchmentDescription,
+    implementationIdeas,
   } = details.freshwaterManagementUnit;
 
   const tangataWhenuaSites = details.tangataWhenuaSites;
@@ -33,22 +32,22 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
   return (
     <div className={`FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidden`} id={`fmu_${id || ''}`}>
-      <h1>{t(fmuName1 || "")}</h1>
+      <h1 style={{width: "70%"}}>{fmuName1 || ""}</h1>
 
       <div className="absolute top-0 right-0 m-6 mt-0">
         <PDFDownloadLink document={<FreshwaterManagementUnitPDF {...details} />} fileName={fileName}>
-          {({ loading }: { loading: boolean }) => <button disabled={loading}>{t('Print')}</button>}
+          {({ loading }: { loading: boolean }) => <button disabled={loading}>Print</button>}
         </PDFDownloadLink>
       </div>
 
       <div className="overview mt-6" data-testid="catchment-desc">
-        <h2>{t('Overview')}</h2>
-        <div dangerouslySetInnerHTML={{ __html: purify.sanitize(catchmentDescription || t("<p>No overview available</p>")) }} />
+        <h2>Overview</h2>
+        <div dangerouslySetInnerHTML={{ __html: purify.sanitize(makeSafe(catchmentDescription ?? '') || "<p>No overview available</p>") }} />
       </div>
 
       <div className="contaminants mt-6">
-        <h2>{t('Contaminants')}</h2>
-        <p>{t('Freshwater objectives from')} {t(fmuName1 || "")} {t('Whaitua Implementation Plan (as at August 2018)')}</p>
+        <h2>Contaminants</h2>
+        <p>Freshwater objectives from {fmuName1 || ""} Whaitua Implementation Plan (as at August 2018)</p>
 
         <div className="mt-4">
           <Contaminants contaminants={contaminants} />
@@ -57,21 +56,35 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
 
       {tangataWhenuaSites?.length ? (
         <div className="tangata-whenua mt-6">
-          <p className={"font-italic"}>{t('This area contains sites of significance to Tangata Whenua including:-')}</p>
-          {tangataWhenuaSites && (<div className="tangata-whenua-sites">
+          <h2>Tangata Whenua</h2>
+          <p className={"font-italic"}>This area contains sites of significance to Tangata Whenua including:-</p>
+          <div className="tangata-whenua-sites">
             <ul className={"mt-2"}>
               {tangataWhenuaSites?.map((site: { location: string }, index: Key | null | undefined) => <li
-                className="list-disc" key={index}>{t(site?.location)}</li>)}
+                className="list-disc my-0" key={index}>{site?.location}</li>)}
             </ul>
-          </div>)}
+          </div>
+        </div>
+      ) : <div></div>}
+
+      {implementationIdeas ? (
+        <div className="implementation-ideas mt-6">
+          <h2>Implementation Ideas</h2>
+          <div className="implementation-ideas">
+            <ul className={"mt-2"}>
+              {implementationIdeas?.map((idea: string, index) => <li
+                className="list-disc my-0" key={index}>{makeSafe(idea)}</li>)}
+            </ul>
+          </div>
         </div>
       ) : <div></div>}
 
       <div className={`about-this-information mt-6`}>
-        <h3>{t('About this information')}</h3>
-        <p>{t('The content, data, and information used in this app comes from multiple sources, including Greater Wellington’s')} <a>{t('Natural Resources Plan')}</a> {t('(2018) and Whaitua Implementation Plans.')}</p>
+        <h3>About this information</h3>
+        <p>The content, data, and information used in this app comes from multiple sources, including Greater
+          Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Plans.</p>
         <div className="mt-6 flex justify-center">
-          <EmailLink>{t('Contact us for more information')}</EmailLink>
+          <EmailLink>Contact us for more information</EmailLink>
         </div>
       </div>
     </div>
