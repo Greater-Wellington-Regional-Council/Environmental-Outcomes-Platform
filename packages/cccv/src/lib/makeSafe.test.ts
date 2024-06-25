@@ -8,6 +8,24 @@ describe('makeSafe', () => {
     expect(safeString).toBe('HelloWorld');
   });
 
+  it('removes <script> tags with spaces and their content', () => {
+    const unsafeString = '<div>Hello<script>alert("XSS")</script >World</div>';
+    const safeString = makeSafe(unsafeString);
+    expect(safeString).toBe('HelloWorld');
+  });
+
+  it('removes self-closing <script/> tags', () => {
+    const unsafeString = '<div>Hello<script/>World</div>';
+    const safeString = makeSafe(unsafeString);
+    expect(safeString).toBe('HelloWorld');
+  });
+
+  it('removes incomplete <script> tags', () => {
+    const unsafeString = '<div>Hello<scriptWorld';
+    const safeString = makeSafe(unsafeString);
+    expect(safeString).toBe('Hello');
+  });
+
   it('removes other HTML tags', () => {
     const unsafeString = '<div><p>This is <strong>bold</strong> text</p></div>';
     const safeString = makeSafe(unsafeString);
