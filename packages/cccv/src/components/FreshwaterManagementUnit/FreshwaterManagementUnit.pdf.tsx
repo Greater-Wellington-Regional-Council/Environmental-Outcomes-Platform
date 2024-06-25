@@ -15,6 +15,7 @@ import {
   contaminantTitle,
   byWhen
 } from "@components/Contaminants/ContaminantObjectiveDescription";
+import makeSafe from "@lib/makeSafe.ts";
 
 Font.register(fonts.inter);
 
@@ -64,7 +65,7 @@ const BulletList: React.FC<{ items: string[] }> = ({items}) => {
     items.map((item: string, index: number) => (
       <View key={index} style={tw('flex flex-row items-center mb-2 body')}>
         <Text style={tw('mr-2')}>•</Text>
-        <Text style={tw('body')}>{item}</Text>
+        <Text style={tw('body')}>{makeSafe(item)}</Text>
       </View>
     ))
   );
@@ -104,7 +105,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetails) => {
               {catchmentDescription ? (<>
                 <Text style={tw("h2 mb-2")}>Overview</Text>
                 <Text
-                  style={tw("body mb-4")}>{(catchmentDescription ?? '').replace(/<[^>]+>/g, '')}</Text>
+                  style={tw("body mb-4")}>{makeSafe(catchmentDescription ?? '')}</Text>
               </>) : <View><Text style={tw("body mb4")}>No overview available</Text></View>}
             </View>
 
