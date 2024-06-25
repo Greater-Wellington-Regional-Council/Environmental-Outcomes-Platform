@@ -109,7 +109,6 @@ export function getObjectiveDescription(contaminant: Contaminant, contaminant_le
 export const level_codes = (level: string | undefined) => (level ?? '').trim().match(/\b[A-E]\b/g)?.sort();
 
 export const byWhen = (contaminant: Contaminant) => {
-  console.log(contaminant.byWhen);
   const mciYear  = Array.from((contaminant.byWhen ?? '').matchAll(/([0-9]+) for MCI/g), match => match[1]);
 
   if (contaminantTitle(contaminant).includes('MCI') && mciYear?.length)

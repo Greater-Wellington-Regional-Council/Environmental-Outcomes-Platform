@@ -33,7 +33,7 @@ export default interface FreshwaterManagementUnit {
   atoxObj?: string
   ntoxBase?: string
   ntoxObj?: string
-  implementationIdeas?: string
+  implementationIdeas?: string[]
   catchmentDescription?: string
   tangataWhenua?: {  iwi: string[], sites: { name: string }[] }
 }

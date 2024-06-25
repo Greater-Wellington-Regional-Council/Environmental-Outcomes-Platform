@@ -41,6 +41,8 @@ const FeatureHighlight: React.FC<FeatureHighlightProps> = ({
     moveToolTip();
     if (mapRef?.current) {
       const map = mapRef.current.getMap();
+      map.on('mouseup', moveToolTip);
+      map.on('drag', moveToolTip);
       map.on('move', moveToolTip);
       return () => {
         map.off('move', moveToolTip);

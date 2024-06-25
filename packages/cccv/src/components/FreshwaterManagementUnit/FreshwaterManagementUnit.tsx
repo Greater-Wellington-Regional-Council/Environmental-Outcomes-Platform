@@ -60,7 +60,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
           <div className="tangata-whenua-sites">
             <ul className={"mt-2"}>
               {tangataWhenuaSites?.map((site: { location: string }, index: Key | null | undefined) => <li
-                className="list-disc" key={index}>{site?.location}</li>)}
+                className="list-disc my-0" key={index}>{site?.location}</li>)}
             </ul>
           </div>
         </div>
@@ -69,14 +69,19 @@ const FreshwaterManagementUnit = (details: FmuFullDetails) => {
       {implementationIdeas ? (
         <div className="implementation-ideas mt-6">
           <h2>Implementation Ideas</h2>
-          <div
-            dangerouslySetInnerHTML={{__html: purify.sanitize(implementationIdeas)}}/>
+          <div className="implementation-ideas">
+            <ul className={"mt-2"}>
+              {implementationIdeas?.map((idea: string, index) => <li
+                className="list-disc my-0" key={index}>{idea}</li>)}
+            </ul>
+          </div>
         </div>
       ) : <div></div>}
 
       <div className={`about-this-information mt-6`}>
         <h3>About this information</h3>
-        <p>The content, data, and information used in this app comes from multiple sources, including Greater Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Plans.</p>
+        <p>The content, data, and information used in this app comes from multiple sources, including Greater
+          Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Plans.</p>
         <div className="mt-6 flex justify-center">
           <EmailLink>Contact us for more information</EmailLink>
         </div>
