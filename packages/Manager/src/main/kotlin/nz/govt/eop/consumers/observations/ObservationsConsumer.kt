@@ -30,7 +30,7 @@ class ObservationsConsumer(val store: ObservationStore) {
       try {
         when (value) {
           is SiteDetailsMessage -> {
-            store.storeSite(value.councilId, value.siteName, value.location)
+            store.storeSite(value.councilId, value.siteName, value.location, value.projection)
           }
           is ObservationDataMessage -> {
             store.storeObservations(

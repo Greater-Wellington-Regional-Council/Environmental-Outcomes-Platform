@@ -21,10 +21,26 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
       "SELECT id FROM observation_sites WHERE council_id = (SELECT id FROM councils WHERE stats_nz_id = ?) AND name = ? FOR UPDATE"
 
   val UPDATE_SITE_QUERY =
-      "UPDATE observation_sites SET location = ?, updated_at = NOW() WHERE id = ?"
+      """UPDATE observation_sites 
+        SET 
+            location = CASE
+                          WHEN ST_SRID(?) = 2193 THEN ?
+                          ELSE ST_Transform(?, 2193)
+                      END,
+            updated_at = NOW() 
+        WHERE 
+            id = ?;"""
 
   val INSERT_SITE_QUERY =
-      "INSERT INTO observation_sites (council_id, name, location)    VALUES ((SELECT id FROM councils WHERE stats_nz_id = ?), ?, ?)"
+      """INSERT INTO observation_sites (council_id, name, location) 
+        VALUES (
+            (SELECT id FROM councils WHERE stats_nz_id = ?), 
+            ?, 
+            CASE
+                WHEN ST_SRID(?) = 2193 THEN ?
+                ELSE ST_Transform(?, 2193)
+            END
+        )"""
 
   val SELECT_MEASUREMENT_ID_QUERY =
       """
@@ -66,8 +82,8 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
         """
 
   @Transactional
-  fun storeSite(councilStatsId: Int, siteName: String, location: Location?) {
-    val point = location?.let { createPoint(it.easting, it.northing) }
+  fun storeSite(councilStatsId: Int, siteName: String, location: Location?, projection: String) {
+    val point = location?.let { createPoint(it.easting, it.northing, projection) }
 
     val existingSiteId = fetchExistingSiteId(councilStatsId, siteName)
     existingSiteId?.let { updateSite(it, point) } ?: insertSite(councilStatsId, siteName, point)
@@ -180,8 +196,17 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
   }
 }
 
-fun createPoint(easting: Int, northing: Int): Point {
+fun createPoint(easting: Int, northing: Int, projection: String): Point {
   val point = Point(easting.toDouble(), northing.toDouble())
-  point.setSrid(2193)
+
+  val srid = projectionNametoSRID(projection)
+  if (srid != null) {
+    point.setSrid(srid)
+  }
   return point
+}
+
+fun projectionNametoSRID(projection: String): Int? {
+  val projectionMap = mapOf("NZTM2000" to 2193, "NZMG" to 27200)
+  return projectionMap[projection]
 }

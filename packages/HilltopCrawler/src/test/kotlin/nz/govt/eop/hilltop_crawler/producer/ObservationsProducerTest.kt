@@ -76,8 +76,9 @@ class ObservationsProducerTest(@Autowired val objectMapper: ObjectMapper) {
     val recordValues = records.map { it.value() }
 
     recordValues shouldContain
-        SiteDetailsMessage(555, "Wrens Creek at Graham Road", Location(2764950, 6100940))
-    recordValues shouldContain SiteDetailsMessage(555, "X Forest Rd Drain at Drop Structure", null)
+        SiteDetailsMessage(555, "Wrens Creek at Graham Road", Location(2764950, 6100940), "NZMG")
+    recordValues shouldContain
+        SiteDetailsMessage(555, "X Forest Rd Drain at Drop Structure", null, "NZMG")
   }
 
   @Test

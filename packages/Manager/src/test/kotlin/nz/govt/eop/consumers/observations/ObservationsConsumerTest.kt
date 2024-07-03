@@ -56,7 +56,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
     fun `should create site when none exists`() {
 
       // GIVEN
-      val message = SiteDetailsMessage(1, "A", Location(1, 2))
+      val message = SiteDetailsMessage(1, "A", Location(1, 2), "NZTM2000")
 
       // WHEN
       inputTopic.pipeInput(message.toKey(), message)
@@ -65,14 +65,14 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       val result = jdbcTemplate.queryForMap("SELECT * FROM observation_sites")
       result["council_id"] shouldBe 1
       result["name"] shouldBe "A"
-      result["location"] shouldBe PGgeometry(createPoint(1, 2))
+      result["location"] shouldBe PGgeometry(createPoint(1, 2, "NZTM2000"))
     }
 
     @Test
     fun `should create site with no location when none exists`() {
 
       // GIVEN
-      val message = SiteDetailsMessage(1, "B", null)
+      val message = SiteDetailsMessage(1, "B", null, "NZMG")
 
       // WHEN
       inputTopic.pipeInput(message.toKey(), message)
@@ -82,6 +82,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       result["council_id"] shouldBe 1
       result["name"] shouldBe "B"
       result["location"] shouldBe null
+      result["projection"] shouldBe "NZMG"
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -89,8 +90,8 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
     open fun `should update site when one exists`() {
 
       // GIVEN
-      val firstMessage = SiteDetailsMessage(1, "C", null)
-      val secondMessage = SiteDetailsMessage(1, "C", Location(1, 2))
+      val firstMessage = SiteDetailsMessage(1, "C", null, "NZTM2000")
+      val secondMessage = SiteDetailsMessage(1, "C", Location(1, 2), "NZTM2000")
 
       // WHEN
       inputTopic.pipeInput(firstMessage.toKey(), firstMessage)
@@ -100,8 +101,9 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       val result = jdbcTemplate.queryForMap("SELECT * FROM observation_sites")
       result["council_id"] shouldBe 1
       result["name"] shouldBe "C"
-      result["location"] shouldBe PGgeometry(createPoint(1, 2))
+      result["location"] shouldBe PGgeometry(createPoint(1, 2, "NZTM2000"))
       result["created_at"] shouldNotBe result["updated_at"]
+      result["projection"] shouldBe "NZTM2000"
     }
 
     @Test
@@ -110,7 +112,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       // and its a good example because 18 isn't an id on the councils table.
 
       // GIVEN
-      val message = SiteDetailsMessage(18, "SITE", null)
+      val message = SiteDetailsMessage(18, "SITE", null, "NZTM2000")
 
       // WHEN
       inputTopic.pipeInput(message.toKey(), message)
@@ -124,8 +126,8 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     open fun `should process messages after an error`() {
       // GIVEN
-      val messageThatWillFail = SiteDetailsMessage(365, "SITE", null)
-      val message2 = SiteDetailsMessage(1, "SITE", null)
+      val messageThatWillFail = SiteDetailsMessage(365, "SITE", null, "NZTM2000")
+      val message2 = SiteDetailsMessage(1, "SITE", null, "NZTM2000")
 
       // WHEN
       inputTopic.pipeInput(messageThatWillFail.toKey(), messageThatWillFail)
@@ -159,7 +161,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
     @Test
     fun `should store observation data when measurement record does not exist`() {
       // GIVEN
-      val siteMessage = SiteDetailsMessage(1, "SITE", null)
+      val siteMessage = SiteDetailsMessage(1, "SITE", null, "NZTM2000")
       inputTopic.pipeInput(siteMessage.toKey(), siteMessage)
 
       val observationMessage =
@@ -189,7 +191,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
     @Test
     fun `should store observation data when measurement record already exists`() {
       // GIVEN
-      val siteMessage = SiteDetailsMessage(1, "SITE", null)
+      val siteMessage = SiteDetailsMessage(1, "SITE", null, "NZTM2000")
       inputTopic.pipeInput(siteMessage.toKey(), siteMessage)
 
       val firstObservationMessage =
@@ -233,7 +235,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     open fun `should update observation data when data already exists`() {
       // GIVEN
-      val siteMessage = SiteDetailsMessage(1, "SITE", null)
+      val siteMessage = SiteDetailsMessage(1, "SITE", null, "NZTM2000")
       inputTopic.pipeInput(siteMessage.toKey(), siteMessage)
 
       val firstObservationMessage =
@@ -273,7 +275,7 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     open fun `should not update observation data when data already exists and is the same`() {
       // GIVEN
-      val siteMessage = SiteDetailsMessage(1, "SITE", null)
+      val siteMessage = SiteDetailsMessage(1, "SITE", null, "NZTM2000")
       inputTopic.pipeInput(siteMessage.toKey(), siteMessage)
 
       val firstObservationMessage =

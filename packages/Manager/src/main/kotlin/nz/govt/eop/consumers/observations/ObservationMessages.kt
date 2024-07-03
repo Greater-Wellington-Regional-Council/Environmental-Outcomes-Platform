@@ -50,7 +50,8 @@ abstract class ObservationMessage(val type: ObservationMessageType) {
 data class SiteDetailsMessage(
     override val councilId: Int,
     override val siteName: String,
-    val location: Location?
+    val location: Location?,
+    val projection: String
 ) : ObservationMessage(ObservationMessageType.SITE_DETAILS) {
   override fun toKey() =
       SiteMessageKey(

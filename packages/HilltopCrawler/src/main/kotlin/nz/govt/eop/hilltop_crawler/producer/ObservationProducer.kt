@@ -48,7 +48,8 @@ class ObservationProducer(
                         } else {
                           null
                         }
-                    SiteDetailsMessage(value.councilId, it.name, location)
+                    val projection = parsedXml.projection
+                    SiteDetailsMessage(value.councilId, it.name, location, projection)
                   }
 
               return@flatMap siteMessages.map { KeyValue.pair(it.toKey(), it) }
