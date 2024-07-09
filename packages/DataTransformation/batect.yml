@@ -42,6 +42,21 @@ tasks:
       container: dbt-env
       command: run --profiles-dir /usr/app/dbt --target dev
 
+  generate-docs:
+    description: Generate DBT documentation
+    run:
+      container: dbt-env
+      command: docs generate --profiles-dir /usr/app/dbt --target dev
+  
+  serve-docs:
+    description: Serve DBT documentation
+    run:
+      container: dbt-env
+      command: docs serve --port 8001 --profiles-dir /usr/app/dbt --target dev
+      ports:
+      - 8001:8001
+
+
 containers:
   dbt-env:
     image: ghcr.io/dbt-labs/dbt-postgres:1.5.8
