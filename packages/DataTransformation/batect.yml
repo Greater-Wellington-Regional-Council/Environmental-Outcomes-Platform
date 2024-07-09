@@ -56,7 +56,6 @@ tasks:
       ports:
       - 8001:8001
 
-
 containers:
   dbt-env:
     image: ghcr.io/dbt-labs/dbt-postgres:1.5.8
