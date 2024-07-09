@@ -32,15 +32,18 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
             id = ?;"""
 
   val INSERT_SITE_QUERY =
-      """INSERT INTO observation_sites (council_id, name, location) 
-        VALUES (
-            (SELECT id FROM councils WHERE stats_nz_id = ?), 
-            ?, 
-            CASE
-                WHEN ST_SRID(?) = 2193 THEN ?
-                ELSE ST_Transform(?, 2193)
-            END
-        )"""
+      """INSERT INTO observation_sites (council_id, name, location)
+      SELECT
+          council_id,
+          ? AS name,
+          CASE
+              WHEN ST_SRID(?) = 2193 THEN ?
+              ELSE ST_Transform(?, 2193)
+          END AS location
+      FROM (
+          SELECT id AS council_id FROM councils WHERE stats_nz_id = ?
+      ) AS subquery;
+      """
 
   val SELECT_MEASUREMENT_ID_QUERY =
       """
@@ -183,15 +186,18 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
   private fun insertSite(councilStatsId: Int, siteName: String, point: Geometry?) {
     jdbcTemplate.update(INSERT_SITE_QUERY) { ps: PreparedStatement ->
       ps.setInt(1, councilStatsId)
-      ps.setString(2, siteName)
+      ps.setString(2kafka-topics.sh, siteName)
       ps.setObject(3, point, Types.OTHER)
+      ps.setObject(4, point, Types.OTHER)
+      ps.setObject(5, point, Types.OTHER)
     }
   }
 
   private fun updateSite(existingSiteId: Int, point: Geometry?) {
     jdbcTemplate.update(UPDATE_SITE_QUERY) { ps: PreparedStatement ->
       ps.setObject(1, point, Types.OTHER)
-      ps.setInt(2, existingSiteId)
+      ps.setObject(2, point, Types.OTHER)
+      ps.setInt(3, existingSiteId)
     }
   }
 }
