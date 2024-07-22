@@ -5,7 +5,7 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
-  id("org.springframework.boot") version "3.2.0"
+  id("org.springframework.boot") version "3.3.2"
   id("io.spring.dependency-management") version "1.1.4"
   id("com.diffplug.spotless") version "6.23.3"
   id("org.flywaydb.flyway") version "10.6.0"
