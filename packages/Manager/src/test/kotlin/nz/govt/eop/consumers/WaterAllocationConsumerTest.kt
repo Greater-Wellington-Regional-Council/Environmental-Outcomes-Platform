@@ -98,6 +98,7 @@ class WaterAllocationConsumerTest(
         listOf("meter-0", "meter-1"),
         "firstIngestId",
         Instant.now(),
+        "category",
     )
   }
 

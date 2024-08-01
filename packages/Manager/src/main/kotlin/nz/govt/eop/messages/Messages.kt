@@ -23,7 +23,8 @@ data class WaterAllocationMessage(
     val allocationYearly: BigDecimal,
     val meters: List<String>,
     val ingestId: String,
-    val receivedAt: Instant
+    val receivedAt: Instant,
+    val category: String
 )
 
 object KafkaMessageTypes {

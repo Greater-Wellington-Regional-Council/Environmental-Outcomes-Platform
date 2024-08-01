@@ -22,6 +22,7 @@ data class WaterAllocation(
     val allocationYearly: BigDecimal,
     val isMetered: Boolean,
     val meters: List<String>,
+    val category: String,
 )
 
 data class WaterAllocationsRequestBody(
