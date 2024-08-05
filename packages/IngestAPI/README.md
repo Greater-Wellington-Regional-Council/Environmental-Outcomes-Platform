@@ -29,7 +29,9 @@ with plugins for Kotlin and Gradle also works (though support for running inline
 
 * Start two terminal sessions
 * In one session, start services required for development ```./batect --output=all runSupportServices```
-* In a second session start the application ```./gradlew bootRun```
+* In a second session start the application ```./gradlew bootRun --args='--server.port=9090'```
+* Turn on the consumer in the Manager application (see Readme in Manager package).
+
 
 ### Code Formatting
 
