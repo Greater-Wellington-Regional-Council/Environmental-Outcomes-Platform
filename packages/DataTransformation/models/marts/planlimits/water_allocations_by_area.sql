@@ -16,7 +16,10 @@ water_allocations_by_area AS (
 
   FROM water_allocations
   WHERE
-    effective_to IS NULL
+    effective_to IS NULL 
+  AND 
+    status = 'active'
+  
   GROUP BY 1
 
 ),
@@ -43,6 +46,10 @@ water_allocations_ruamahangasw AS (
     'WaiohineSW',
     'WaipouaSW'
   )
+  AND
+    effective_to IS NULL
+  AND 
+    status = 'active'
 
 )
 
