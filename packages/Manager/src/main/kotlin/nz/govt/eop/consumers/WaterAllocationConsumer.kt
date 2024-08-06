@@ -55,7 +55,8 @@ class WaterAllocationConsumer(@Autowired val context: DSLContext) {
                   WATER_ALLOCATIONS.EFFECTIVE_FROM,
                   WATER_ALLOCATIONS.INGEST_ID,
                   WATER_ALLOCATIONS.CREATED_AT,
-                  WATER_ALLOCATIONS.UPDATED_AT)
+                  WATER_ALLOCATIONS.UPDATED_AT,
+                  WATER_ALLOCATIONS.CATEGORY)
               .values(
                   allocation.sourceId,
                   allocation.consentId,
@@ -69,7 +70,8 @@ class WaterAllocationConsumer(@Autowired val context: DSLContext) {
                   receivedAtUTC,
                   allocation.ingestId,
                   now,
-                  now)
+                  now,
+                  allocation.category)
               .execute()
 
       logger.info { "Consumed allocation for source_id:${allocation.sourceId}" }

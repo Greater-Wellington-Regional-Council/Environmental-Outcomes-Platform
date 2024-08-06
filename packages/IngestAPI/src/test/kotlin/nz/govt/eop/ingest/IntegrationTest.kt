@@ -60,7 +60,7 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                   "ingestId": "1",
                   "allocations":
                     [
-                        { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": null, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": [] },
+                        { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": null, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": [], "category": "B" },
                     ]
                 }
               """))
@@ -79,7 +79,7 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                   "ingestId": "1",
                   "allocations":
                     [
-                        { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 0.0, "isMetered": true, "allocationDaily": null, "allocationYearly": 0.0, "meters": [] },
+                        { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 0.0, "isMetered": true, "allocationDaily": null, "allocationYearly": 0.0, "meters": [], "category": "B" },
                     ]
                 }
               """))
@@ -98,7 +98,7 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                   "ingestId": "1",
                   "allocations":
                     [
-                        { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 0.0, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": null, "meters": [] },
+                        { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 0.0, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": null, "meters": [], "category": "B" },
                     ]
                 }
               """))
@@ -114,9 +114,9 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
               "ingestId": "1",
               "allocations":
                 [
-                    { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 87.0, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": [] },
-                    { "sourceId": "Wairarapa-20544", "consentId":  "20544", "status":  "active", "areaId":  "Wairarapa CoastSW", "allocationPlan": 2.1, "isMetered": false, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": ["S25/5314"] },
-                    { "sourceId": "OtakiSW-20548", "consentId":  "20548", "status":  "inactive", "areaId":  "OtakiSW", "allocationPlan": 1.13, "isMetered": true, "allocationDaily": 6912.0, "allocationYearly": 1036800.0, "meters": ["BP34/0044", "BP34/0064", "T26/0871"] }
+                    { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 87.0, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": [], "category": "B" },
+                    { "sourceId": "Wairarapa-20544", "consentId":  "20544", "status":  "active", "areaId":  "Wairarapa CoastSW", "allocationPlan": 2.1, "isMetered": false, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": ["S25/5314"], "category": "ST" },
+                    { "sourceId": "OtakiSW-20548", "consentId":  "20548", "status":  "inactive", "areaId":  "OtakiSW", "allocationPlan": 1.13, "isMetered": true, "allocationDaily": 6912.0, "allocationYearly": 1036800.0, "meters": ["BP34/0044", "BP34/0064", "T26/0871"], "category": "A" }
                 ]
             }
         """
