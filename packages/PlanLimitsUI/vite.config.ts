@@ -6,6 +6,9 @@ import redirectAll from 'vite-plugin-rewrite-all';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    mainFields: ["module", "browser", "jsnext:main", "jsnext"],
+  },
   plugins: [react(), redirectAll()],
   test: {
     globals: true,
