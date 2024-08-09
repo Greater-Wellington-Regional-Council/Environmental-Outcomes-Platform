@@ -214,3 +214,4 @@ interface MissingDailyUsageHeatmapDataItem {
 type DailyUsageHeatmapDataItem =
   | PopulatedDailyUsageHeatmapDataItem
   | EmptyDailyUsageHeatmapDataItem;
+

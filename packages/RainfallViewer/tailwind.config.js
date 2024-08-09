@@ -6,6 +6,9 @@ module.exports = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './index.html',
+    './src/**/*.{js,jsx,ts,tsx}',
+    './.storybook/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
     extend: {
@@ -19,6 +22,9 @@ module.exports = {
     },
   },
   plugins: [
+    require('postcss-nesting'),
+    require('tailwindcss'),
+    require('autoprefixer'),
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio'),
