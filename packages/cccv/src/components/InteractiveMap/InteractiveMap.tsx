@@ -34,7 +34,8 @@ export default function InteractiveMap({
                                          startLocation,
                                          select,
                                          selected,
-                                         children
+                                         children,
+                                         setMapSnapshot
                                        }: InteractiveMapProps) {
 
   const {viewState, handleMove} = useViewState({
@@ -92,10 +93,18 @@ export default function InteractiveMap({
     }
   }, [selected]);
 
+  useEffect(() => {
+    if (marker && mapRef?.current && setMapSnapshot) {
+      const snapshot = mapRef.current?.getMap().getCanvas().toDataURL();
+      setMapSnapshot(snapshot ?? null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marker]);
+
   const handleClick = (e: MapMouseEvent) => {
     select && select(null);
     const clickedFeature = mapRef?.current?.queryRenderedFeatures(e.point);
-    if (clickedFeature!.filter( f => f.layer.id == "highlighted-fmu-candidates").length > 0) {
+    if (clickedFeature!.filter(f => f?.layer?.id == "highlighted-fmu-candidates").length > 0) {
       const location = {longitude: e.lngLat.lng, latitude: e.lngLat.lat, zoom: mapRef.current!.getZoom()};
       select && select(location);
     }
@@ -127,6 +136,12 @@ export default function InteractiveMap({
         onMove={handleMove}
         onMouseMove={handleHover}
         trackResize={true}
+        onLoad={() => {
+          if (setMapSnapshot && mapRef.current) {
+            const snapshot = mapRef.current.getMap().getCanvas().toDataURL();
+            setMapSnapshot(snapshot);
+          }
+        }}
         onError={(event: { error: Error; }) => {
           console.error('Map error:', event.error);
         }}>

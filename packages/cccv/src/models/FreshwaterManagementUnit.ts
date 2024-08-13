@@ -44,3 +44,7 @@ export interface FmuFullDetails {
     location: string,
   }[],
 }
+
+export interface FmuFullDetailsWithMap extends FmuFullDetails {
+  mapImage?: string | null;
+}
