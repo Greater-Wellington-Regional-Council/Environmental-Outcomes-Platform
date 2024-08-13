@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "storybook": "storybook dev",
     "storybooks": "tsx scripts/storybooks.ts",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "storybook-docs": "storybook dev --docs",
+    "build-storybook-docs": "storybook build --docs"
   },
   "dependencies": {
     "child_process": "^1.0.2",
@@ -22,7 +24,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^1.6.1",
     "@eslint/js": "^9.8.0",
-    "@storybook/addon-essentials": "^8.2.8",
+    "@storybook/addon-essentials": "^8.2.9",
     "@storybook/addon-interactions": "^8.2.8",
     "@storybook/addon-links": "^8.2.8",
     "@storybook/addon-onboarding": "^8.2.8",
