@@ -91,6 +91,7 @@ export default function InteractiveMap({
 
       setMarker(newMarker)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
 
   useEffect(() => {
