@@ -40,15 +40,16 @@ const FeatureHighlight: React.FC<FeatureHighlightProps> = ({
   useEffect(() => {
     moveToolTip();
     if (mapRef?.current) {
-      const map = mapRef.current.getMap();
-      map.on('mouseup', moveToolTip);
-      map.on('drag', moveToolTip);
-      map.on('move', moveToolTip);
-      return () => {
-        map.off('move', moveToolTip);
-        map.off('mouseup', moveToolTip);
-      }
+        const map = mapRef.current.getMap();
+        map.on('mouseup', moveToolTip);
+        map.on('drag', moveToolTip);
+        map.on('move', moveToolTip);
+        return () => {
+            map.off('move', moveToolTip);
+            map.off('mouseup', moveToolTip);
+        }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlightedFeature, mapRef]);
 
   return (
