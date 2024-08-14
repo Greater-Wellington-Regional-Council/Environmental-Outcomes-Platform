@@ -127,7 +127,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
                 </View>
 
                 {/* Map */}
-                <View style={tw("flex-grow overflow-hidden flex items-center justify-center")} wrap={false}>
+                <View style={tw("mb-8 overflow-hidden flex items-center justify-center")} wrap={false}>
                     {details.mapImage ? (
                         <Image
                             style={[

@@ -67,7 +67,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
         <div
             ref={panelRef}
             className={`sliding-panel absolute top-0 right-0 bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-10`}
-            style={{ minWidth: '33%', width: `${panelWidth}px`, height: '100vh', display: isPanelVisible ? 'block' : 'none' }}
+            style={{ minWidth: '33%', maxWidth: '100%', width: `${panelWidth}px`, height: '100vh', display: isPanelVisible ? 'block' : 'none' }}
             data-testid="sliding-panel"
         >
             {/* Bezel for resizing and double-click to hide */}

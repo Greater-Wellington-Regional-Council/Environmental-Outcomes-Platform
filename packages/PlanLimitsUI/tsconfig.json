@@ -16,8 +16,12 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
+  "paths": {
+    "@shared/*": ["../shared/*"],
+  },
   "include": [
     "src", "src/lib/types",
+    "../shared/types/global.d.ts",
     "node_modules/vitest/globals.d.ts",
   ],
   "references": [{ "path": "./tsconfig.node.json" }]

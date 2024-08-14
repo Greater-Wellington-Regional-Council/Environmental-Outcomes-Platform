@@ -59,52 +59,52 @@ export default function InteractiveMap({
     const clickTimeoutRef = useRef<number | null>(null)
 
     function buildPrintSnapshot(location: ViewLocation | null, layersToInclude: string[] = []) {
+        console.log("buildPrintSnapshot", location, layersToInclude)
         if (!mapRef?.current || !location) return null
 
         const map = mapRef.current.getMap()
-        const originalVisibility: { [key: string]: unknown } = {}
+        // const originalVisibility: { [key: string]: unknown } = {}
+        //
+        // const mapStyle = map.getStyle()
+        // const layers = mapStyle?.layers.map((layer) => layer.id)
+        //
+        // // Remember current view state
+        // const viewState = map.getCenter
+        //     ? {latitude: map.getCenter().lat, longitude: map.getCenter().lng, zoom: map.getZoom()}
+        //     : null
+        //
+        // // Remember current visibility of each layer
+        // layers?.forEach((layerId) => {
+        //     originalVisibility[layerId] = map.getLayoutProperty(layerId, 'visibility')
+        // })
+        //
+        // // Set visibility of layers to include in snapshot
+        // layers?.forEach((layerId) => {
+        //     map.setLayoutProperty(layerId, 'visibility', layerId in layersToInclude ? 'visible' : 'none')
+        // })
+        //
+        // // Set appropriate view state for printing without affecting what's on screen
+        // if (isValidLngLat([location?.longitude, location?.latitude]))
+        //     map.setCenter([location.longitude, location.latitude])
 
-        const mapStyle = map.getStyle()
-        const layers = mapStyle?.layers.map((layer) => layer.id)
+        const dataUrl = map.getCanvas().toDataURL('image/png')
 
-        // Remember current view state
-        const viewState = map.getCenter
-            ? {latitude: map.getCenter().lat, longitude: map.getCenter().lng, zoom: map.getZoom()}
-            : null
-
-        // Remember current visibility of each layer
-        layers?.forEach((layerId) => {
-            originalVisibility[layerId] = map.getLayoutProperty(layerId, 'visibility')
-        })
-
-        // Set visibility of layers to include in snapshot
-        layers?.forEach((layerId) => {
-            map.setLayoutProperty(layerId, 'visibility', layerId in layersToInclude ? 'visible' : 'none')
-        })
-
-        // Set appropriate view state for printing without affecting what's on screen
-        if (isValidLngLat([location?.longitude, location?.latitude]))
-            map.setCenter([location.longitude, location.latitude])
-
-        let dataUrl = null
-        map.once('idle', () => {
-            dataUrl = map.getCanvas().toDataURL('image/png')
-        })
-
-        // Restore original visibility
-        layers?.forEach((layerId) => {
-            map.setLayoutProperty(layerId, 'visibility', originalVisibility[layerId])
-        })
-
-        // Restore original view state
-        viewState && map.setCenter([viewState.longitude, viewState.latitude])
-        viewState && map.setZoom(viewState.zoom)
-
+        // // Restore original visibility
+        // layers?.forEach((layerId) => {
+        //     map.setLayoutProperty(layerId, 'visibility', originalVisibility[layerId])
+        // })
+        //
+        // // Restore original view state
+        // viewState && map.setCenter([viewState.longitude, viewState.latitude])
+        // viewState && map.setZoom(viewState.zoom)
+        //
+        console.log("End buildPrintSnapshot", dataUrl)
         return dataUrl
     }
 
     function updatePrintSnapshot(location: ViewLocation | null) {
         if (!mapRef?.current) {
+            removeSourceWithLayers(mapRef.current?.getMap(), HOVER_HIGHLIGHT_LAYER)
             setPrintSnapshot && setPrintSnapshot(null)
             return
         }
@@ -336,7 +336,7 @@ export default function InteractiveMap({
     }
 
     useEffect(() => {
-        updatePrintSnapshot(locationInFocus)
+        console.log("updatePrintSnapshot", locationInFocus)
 
         if (locationInFocus) {
             placeFocusPin(locationInFocus)
@@ -346,9 +346,16 @@ export default function InteractiveMap({
             const map = mapRef?.current?.getMap()
             map && removeSourceWithLayers(map, 'focus')
         }
+
         focusMapView(locationInFocus)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [locationInFocus])
+
+    useEffect(() => {
+        console.log("updatePrintSnapshot", locationInFocus)
+        updatePrintSnapshot(locationInFocus)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [focusPin])
 
     const handleClick = (e: MapMouseEvent) => {
         debounceClick(clickTimeoutRef, 200, () => {

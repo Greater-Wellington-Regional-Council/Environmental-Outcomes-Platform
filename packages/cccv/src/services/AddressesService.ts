@@ -1,13 +1,14 @@
 // import {ErrorFlag, ErrorLevel} from "@components/ErrorContext/ErrorContext.ts";
 // import {determineBackendUri, get} from "@lib/api.tsx";
-import {LabelAndValue} from "@elements/ComboBox/ComboBox.tsx";
-import env from "@src/env.ts";
-import {get} from "@lib/api.tsx";
-import {Point, Feature} from 'geojson'; // or wherever these types are imported from
+import {LabelAndValue} from "@elements/ComboBox/ComboBox.tsx"
+import env from "@src/env.ts"
+import {get} from "@lib/api.tsx"
+import {Feature, Point} from "geojson"; // or wherever these types are imported from
 
+export type AddressId = number | string;
 
 export interface Address {
-    id: number;
+    id: AddressId;
     address: string;
     location: Feature<Point>;
 }

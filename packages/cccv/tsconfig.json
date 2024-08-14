@@ -31,18 +31,20 @@
       "@src/*": ["src/*"],
       "@loaders/*": ["src/loaders/*"],
       "@assets/*": ["src/assets/*"],
-      "@shared/*": ["../sharedLib/*"],
       "@models/*": ["src/models/*"],
       "@pdfs/*": ["src/pdfs/*"],
       "@services/*": ["src/services/*"],
-      "@elements/*": ["src/elements/*"]
+      "@elements/*": ["src/elements/*"],
+      "@shared/*": ["../shared/*"]
     }
   },
   "include": [
+    "@shared/types/*.d.ts",
     "src",
     "src/types/*.d.ts",
     "node_modules/vitest/globals.d.ts",
-    "node_modules/@types/node/globals.global.d.ts"
+    "node_modules/@types/node/globals.global.d.ts",
+    "../RainfallViewer/src/app/global.d.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

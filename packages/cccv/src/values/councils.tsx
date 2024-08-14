@@ -1,5 +1,5 @@
-import gwrcLogo from '@images/gwrc-logo-header.svg';
-import horizonsLogo from '@images/horizons-logo-header.png';
+import gwrcLogo from '@images/gwrc-logo-header.svg'
+import horizonsLogo from '@images/horizons-logo-header.png'
 
 const Councils: Council[] = [
   {
@@ -77,8 +77,8 @@ const Councils: Council[] = [
     regionOverrides: [],
     usageDisplayGroups: []
   },
-];
+]
 
-export default Councils;
+export default Councils
 
-export const DefaultCouncil = Councils[0];
+export const DefaultCouncil = Councils[0]
