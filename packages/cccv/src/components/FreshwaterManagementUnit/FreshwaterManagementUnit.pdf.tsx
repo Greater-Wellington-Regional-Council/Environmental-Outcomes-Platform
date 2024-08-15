@@ -127,11 +127,11 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
                 </View>
 
                 {/* Map */}
-                <View style={tw("flex-grow mb-8 overflow-hidden flex items-center justify-center")} wrap={false}>
+                <View style={tw("flex-grow overflow-hidden flex items-center justify-center")} wrap={false}>
                     {details.mapImage ? (
                         <Image
                             style={[
-                                {width: '100%', height: '612px', flexShrink: 1},
+                                {width: '100%', height: '312px', flexShrink: 1},
                                 tw("object-cover")
                             ]}
                             src={details.mapImage}
@@ -141,12 +141,8 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
                     )}
                 </View>
 
-                <Footer {...details} />
-            </Page>
-
-            <Page size="A4" style={tw("bg-white font-sans p-4")}>
                 {/* Description */}
-                <View style={tw("mt-0")}>
+                <View style={tw("mt-6")}>
                     {catchmentDescription ? (
                         <>
                             <Text style={tw("h2 mb-2")}>Overview</Text>
@@ -157,7 +153,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
 
                 {/* Contaminants */}
                 {contaminants?.length ? (
-                    <View style={tw("mt-6 mb-2")}>
+                    <View style={tw("mt-4 mb-2")}>
                         <Text style={tw("h2 mb-2")}>Contaminants</Text>
                         <Text style={tw("body")}>
                             Freshwater objectives from {fmuName1} Whaitua Implementation Plan (as at August 2018)
