@@ -62,8 +62,9 @@ function mapFeatureLayer<T extends Identifyable>(
   layerName: string,
   collection: T[],
 ) {
-  // TODO: Throw if there is more than one result?
-  return mapFeatureLayers<T>(features, layerName, collection)[0];
+  const featureLayers = mapFeatureLayers<T>(features, layerName, collection)
+  if (layerName === "surfaceWaterSubUnitLimits") console.log("featureLayers", featureLayers)
+  return featureLayers[layerName === "surfaceWaterSubUnitLimits" ? featureLayers.length - 1 : 0];
 }
 
 // TODO: Push this into useAppState?

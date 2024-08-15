@@ -69,6 +69,7 @@ export function useAppState(
         allPlanData.surfaceWaterSubUnitLimits,
         defaultGroundWaterLimit,
         council.unitTypes.ground,
+        council.unitTypes.surface,
       );
 
       // TODO: Extract this!
@@ -170,7 +171,8 @@ function buildGroundWaterLimitView(
   surfaceWaterUnitLimits: SurfaceWaterLimit[],
   surfaceWaterSubUnitLimits: SurfaceWaterLimit[],
   defaultGroundWaterLimit: string,
-  unit: string,
+  measurementUnits: string,
+  swMeasurementUnits: string,
 ) {
   return groundwaterLimits.map((groundWaterLimit) => {
     const depletesFrom = mapDepletesFrom(
@@ -187,11 +189,11 @@ function buildGroundWaterLimitView(
     );
     limitsToDisplay.subUnitLimitView = formatLimitView(
       limitsToDisplay.subUnitLimitView,
-      unit,
+      groundWaterLimit.category === 'A' ? swMeasurementUnits : measurementUnits,
     );
     limitsToDisplay.unitLimitView = formatLimitView(
       limitsToDisplay.unitLimitView,
-      unit,
+      groundWaterLimit.category === 'A' ? swMeasurementUnits : measurementUnits,
     );
 
     return {
@@ -207,7 +209,6 @@ function mapDepletesFrom(
   surfaceWaterUnitLimits: SurfaceWaterLimit[],
   surfaceWaterSubUnitLimits: SurfaceWaterLimit[],
 ) {
-  // TODO: Add a verbal desc of what this is doing
   let depletesFromUnitLimit;
   let depletesFromSubunitLimit;
   if (limit.depletionLimitId) {

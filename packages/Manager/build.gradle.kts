@@ -144,16 +144,6 @@ jooq {
                       includeExpression = ".*"
                       includeTypes = "GEOMETRY"
                     },
-                    ForcedType().apply {
-                      userType = "nz.govt.eop.si.jooq.TakeType"
-                      isEnumConverter = true
-                      includeExpression = ".*take_type"
-                    },
-                    ForcedType().apply {
-                      userType = "nz.govt.eop.si.jooq.ManagementUnitType"
-                      isEnumConverter = true
-                      includeExpression = ".*management_unit_type"
-                    },
                 )
             excludes =
                 "st_.*|spatial_ref_sys|geography_columns|geometry_columns|flyway_schema_history"

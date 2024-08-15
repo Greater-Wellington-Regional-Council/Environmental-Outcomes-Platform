@@ -5,7 +5,7 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
     "skipLibCheck": true,
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
@@ -17,7 +17,7 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src",
+    "src", "src/lib/types",
     "node_modules/vitest/globals.d.ts",
   ],
   "references": [{ "path": "./tsconfig.node.json" }]

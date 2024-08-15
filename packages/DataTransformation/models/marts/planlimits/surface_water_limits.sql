@@ -4,25 +4,25 @@
 
 WITH council_plan_boundaries AS (
 
-  SELECT * FROM {{ ref('stg_planlimits_council_plan_boundaries') }}
+  SELECT * FROM {{ ref('council_plan_boundaries') }}
 ),
 
-plans AS (
+     plans AS (
 
   SELECT * FROM {{ ref('plans') }}
-),
+     ),
 
-plan_regions AS (
+     plan_regions AS (
 
   SELECT * FROM {{ ref('plan_regions') }}
-),
+     ),
 
-temp_plan_regions AS (
+     temp_plan_regions AS (
 
   SELECT * FROM {{ ref('int_temp_plan_regions') }}
-),
+     ),
 
-expanded_surface_water_limits AS (
+     expanded_surface_water_limits AS (
 
   SELECT
 
@@ -34,12 +34,12 @@ expanded_surface_water_limits AS (
   FROM
     temp_plan_regions AS tpr
 
-  INNER JOIN
-    plan_regions AS pr
-    ON tpr.plan_id = pr.plan_id AND tpr.region ->> 'id' = pr.source_id
-),
+      INNER JOIN
+      plan_regions AS pr
+      ON tpr.plan_id = pr.plan_id AND tpr.region ->> 'id' = pr.source_id
+     ),
 
-id_surface_water_limits AS (
+     id_surface_water_limits AS (
 
   SELECT
 
@@ -49,9 +49,9 @@ id_surface_water_limits AS (
     ROW_NUMBER() OVER () AS id
   FROM
     expanded_surface_water_limits
-),
+     ),
 
-expanded_surface_water_sub_limits AS (
+     expanded_surface_water_sub_limits AS (
   SELECT
 
     swl.council_id,
@@ -61,9 +61,9 @@ expanded_surface_water_sub_limits AS (
 
   FROM
     id_surface_water_limits AS swl
-),
+     ),
 
-id_surface_water_sub_limits AS (
+     id_surface_water_sub_limits AS (
 
   SELECT
 
@@ -75,9 +75,9 @@ id_surface_water_sub_limits AS (
 
   FROM
     expanded_surface_water_sub_limits
-),
+     ),
 
-combined_surface_water_limits AS (
+     combined_surface_water_limits AS (
   SELECT
     id,
     plan_region_id,
@@ -90,8 +90,8 @@ combined_surface_water_limits AS (
       FROM council_plan_boundaries
 
       WHERE
-        council_id = id_surface_water_limits.council_id
-        AND surface_water_limit ->> 'boundaryId' = council_plan_boundaries.source_id
+          council_id = id_surface_water_limits.council_id
+      AND surface_water_limit ->> 'boundaryId' = council_plan_boundaries.source_id
     ) AS boundary
 
   FROM
@@ -112,12 +112,12 @@ combined_surface_water_limits AS (
       FROM council_plan_boundaries
 
       WHERE
-        council_id = id_surface_water_sub_limits.council_id
-        AND surface_water_limit ->> 'boundaryId' = council_plan_boundaries.source_id
+          council_id = id_surface_water_sub_limits.council_id
+      AND surface_water_limit ->> 'boundaryId' = council_plan_boundaries.source_id
     ) AS boundary
 
   FROM
     id_surface_water_sub_limits
-)
+     )
 
 SELECT * FROM combined_surface_water_limits

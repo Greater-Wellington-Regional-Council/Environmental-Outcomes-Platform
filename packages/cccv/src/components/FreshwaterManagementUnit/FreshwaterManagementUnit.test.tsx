@@ -1,6 +1,6 @@
 import FreshwaterManagementUnit from './FreshwaterManagementUnit.tsx';
 import {render, screen} from '@testing-library/react'
-import {expect, vi} from "vitest";
+import {describe, expect, vi} from "vitest";
 import {MutableRefObject} from "react";
 
 vi.mock('@react-pdf/renderer', async () => {
@@ -8,6 +8,14 @@ vi.mock('@react-pdf/renderer', async () => {
     PDFDownloadLink: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
     StyleSheet: {
       create: (styles: never) => styles,
+    },
+    Document: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    Page: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    Text: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    View: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    Image: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    Font: {
+      register: () => {},
     },
   };
 });
@@ -26,6 +34,11 @@ describe('Spec FreshwaterManagementUnit', function () {
   it('shows fmu with catchment description', () => {
     render(<FreshwaterManagementUnit freshwaterManagementUnit={{ catchmentDescription: "This is a catchment description" }} tangataWhenuaSites={[]} />)
     expect(screen.getByText('This is a catchment description')).toBeInTheDocument()
+  })
+
+  it('shows fmu with implementation ideas', () => {
+    render(<FreshwaterManagementUnit freshwaterManagementUnit={{ implementationIdeas: ["Ideas for implementation"] }} tangataWhenuaSites={[]} />)
+    expect(screen.getByText('Ideas for implementation')).toBeInTheDocument()
   })
 
   it('shows tangata whenua sites if it exists for the FMU', () => {

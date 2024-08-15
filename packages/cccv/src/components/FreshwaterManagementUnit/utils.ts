@@ -1,41 +1,44 @@
 import FreshwaterManagementUnit from "@models/FreshwaterManagementUnit.ts";
 
-export interface contaminant {
+export interface Contaminant {
   title: string;
-  base: string;
-  objective: string;
-  byWhen: string;
+  base?: string;
+  objective?: string;
+  byWhen?: string;
 }
 
-export const contaminants = (fmu: FreshwaterManagementUnit): Array<contaminant> => ([
+export type ContaminantList = Contaminant[];
+
+export const contaminants = (fmu: FreshwaterManagementUnit): ContaminantList => ([
   {
-    title: 'E. coli',
-    base: `Ecoli base ${fmu.ecoliBase}`,
-    objective: `Ecoli objective ${fmu.ecoliObj}`,
-    byWhen: `By ${fmu.byWhen}`,
+    title: 'E_Coli',
+    base: fmu.ecoliBase,
+    objective: fmu.ecoliObj,
+    byWhen: fmu.byWhen,
   },
   {
     title: 'Periphyton',
-    base: `Base ${fmu.periBase}`,
-    objective: `Goal ${fmu.periObj}`,
-    byWhen: `By ${fmu.byWhen}`,
+    base: fmu.periBase,
+    objective: fmu.periObj,
+    byWhen: fmu.byWhen,
   },
   {
-    title: 'Ammonia toxicity',
-    base: `Base ${fmu.atoxBase}`,
-    objective: `Goal ${fmu.atoxObj}`,
-    byWhen: `By ${fmu.byWhen}`,
+    title: 'Ammonia',
+    base: fmu.atoxBase,
+    objective: fmu.atoxObj,
+    byWhen: fmu.byWhen,
   },
   {
-    title: 'Nitrate toxicity',
-    base: `Base ${fmu.ntoxBase}`,
-    objective: `Goal ${fmu.ntoxObj}`,
-    byWhen: `By ${fmu.byWhen}`,
+    title: 'Nitrate',
+    base: fmu.ntoxBase,
+    objective: fmu.ntoxObj,
+    byWhen: fmu.byWhen,
   },
   {
-    title: 'MCI',
-    base: `Base ${fmu.mciBase}`,
-    objective: `Goal ${fmu.mciObj}`,
-    byWhen: `By ${fmu.byWhen}`,
+    // title: 'MCI',
+    title: 'Nitrogen',
+    base: fmu.mciBase,
+    objective: fmu.mciObj,
+    byWhen: fmu.byWhen,
   },
 ]);

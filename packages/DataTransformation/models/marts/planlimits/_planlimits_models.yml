@@ -286,6 +286,7 @@ models:
         meta:
           data_type: varchar
 
+
   - name: water_allocation_and_usage_by_area
     columns:
       - name: date

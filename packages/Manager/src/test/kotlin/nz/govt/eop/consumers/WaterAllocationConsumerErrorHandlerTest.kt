@@ -58,7 +58,8 @@ class WaterAllocationConsumerErrorHandlerTest(
             BigDecimal("10.0"),
             listOf("meter-0", "meter-1"),
             "firstIngestId",
-            Instant.now())
+            Instant.now(),
+            "category")
 
     val secondMessage = firstMessage.copy(sourceId = "sourceId")
 

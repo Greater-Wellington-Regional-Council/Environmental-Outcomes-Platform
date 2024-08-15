@@ -52,7 +52,8 @@ class WaterAllocationConsumerIntegrationTest(
             BigDecimal("10.0"),
             listOf("meter-0", "meter-1"),
             "firstIngestId",
-            Instant.now())
+            Instant.now(),
+            "category")
 
     // WHEN
     template.send(WATER_ALLOCATION_TOPIC_NAME, message.sourceId, message)
