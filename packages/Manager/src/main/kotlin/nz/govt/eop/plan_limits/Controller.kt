@@ -1,14 +1,14 @@
 package nz.govt.eop.plan_limits
 
-import mu.KotlinLogging
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.YEARS
 import java.util.concurrent.TimeUnit
+import mu.KotlinLogging
 import org.jooq.*
 import org.springframework.http.CacheControl
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
 class Controller(val context: DSLContext, val queries: Queries, val manifest: Manifest) {
-    private val logger = KotlinLogging.logger {}
+  private val logger = KotlinLogging.logger {}
 
   @RequestMapping("/plan-limits/manifest", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
@@ -71,42 +71,42 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
   @GetMapping("/plan-limits/surface-water-pnrp", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun surfaceWaterPNRP(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
-      return try {
-          val result = queries.surfaceWaterPNRP(councilId)
+    return try {
+      val result = queries.surfaceWaterPNRP(councilId)
 
-          // Check if the result is empty or null and handle it
-          if (result.isEmpty()) {
-              ResponseEntity.status(HttpStatus.NOT_FOUND).body("No data found for the given council ID.")
-          } else {
-              ResponseEntity.ok()
-                  .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-                  .body(result)
-          }
-      } catch (e: Exception) {
-          logger.error("Error fetching surface water PNRP data", e)
-          // Return a generic Internal Server Error
-          ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while processing your request. Please try again later.")
+      // Check if the result is empty or null and handle it
+      if (result.isEmpty()) {
+        ResponseEntity.status(HttpStatus.NOT_FOUND).body("No data found for the given council ID.")
+      } else {
+        ResponseEntity.ok().cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS)).body(result)
       }
+    } catch (e: Exception) {
+      logger.error("Error fetching surface water PNRP data", e)
+      // Return a generic Internal Server Error
+      ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(
+              "An unexpected error occurred while processing your request. Please try again later.")
+    }
   }
 
   @GetMapping("/plan-limits/ground-water-pnrp", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
   fun groundWaterPNRP(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
     return try {
-        val result = queries.groundWaterPNRP(councilId)
+      val result = queries.groundWaterPNRP(councilId)
 
-        // Check if the result is empty or null and handle it
-        if (result.isEmpty()) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("No data found for the given council ID.")
-        } else {
-            ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-                .body(result)
-        }
+      // Check if the result is empty or null and handle it
+      if (result.isEmpty()) {
+        ResponseEntity.status(HttpStatus.NOT_FOUND).body("No data found for the given council ID.")
+      } else {
+        ResponseEntity.ok().cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS)).body(result)
+      }
     } catch (e: Exception) {
-        logger.error("Error fetching ground water PNRP data", e)
-        // Return a generic Internal Server Error
-        ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while processing your request. Please try again later.")
+      logger.error("Error fetching ground water PNRP data", e)
+      // Return a generic Internal Server Error
+      ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(
+              "An unexpected error occurred while processing your request. Please try again later.")
     }
   }
 
