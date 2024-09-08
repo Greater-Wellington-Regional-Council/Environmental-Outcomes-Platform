@@ -38,6 +38,10 @@ class Manifest(val queries: Queries, val context: DSLContext) {
         "/plan-limits/surface-water-limits" to generateHash(queries.surfaceWaterLimits(councilId)),
         "/plan-limits/ground-water-limits" to
             generateHash(queries.groundwaterWaterLimits(councilId)),
+        "/plan-limits/surface-water-pnrp" to
+         generateHash(queries.surfaceWaterPNRP(councilId)),
+        "/plan-limits/ground-water-pnrp" to
+         generateHash(queries.groundWaterPNRP(councilId)),
         "/plan-limits/flow-measurement-sites" to
             generateHash(queries.flowMeasurementSites(councilId)),
         "/plan-limits/flow-limits" to generateHash(queries.flowLimits(councilId)),

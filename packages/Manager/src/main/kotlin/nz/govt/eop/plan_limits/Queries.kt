@@ -11,6 +11,8 @@ import nz.govt.eop.si.jooq.tables.Plans.Companion.PLANS
 import nz.govt.eop.si.jooq.tables.SurfaceWaterLimits.Companion.SURFACE_WATER_LIMITS
 import nz.govt.eop.si.jooq.tables.WaterAllocationAndUsageByArea.Companion.WATER_ALLOCATION_AND_USAGE_BY_AREA
 import nz.govt.eop.si.jooq.tables.WaterAllocationsByArea.Companion.WATER_ALLOCATIONS_BY_AREA
+import nz.govt.eop.si.jooq.tables.GroundwaterAllocationLimitsByAreaAndCategory.Companion.GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY
+import nz.govt.eop.si.jooq.tables.SurfacewaterAllocationLimitsByAreaAndCategory.Companion.SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY
 import org.jooq.*
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.*
@@ -119,6 +121,60 @@ class Queries(@Autowired val context: DSLContext) {
                         .where(PLANS.COUNCIL_ID.eq(councilId))))
     return buildFeatureCollection(context, innerQuery)
   }
+
+    fun surfaceWaterPNRP(councilId: Int): String {
+      val innerQuery =
+          select(
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.AREA_ID,
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID,
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_A,
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_B,
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.SURFACE_TAKE,
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.TOTAL_ALLOCATION,
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.ALLOCATION_LIMIT,
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PNRP_ALLOCATION_PERCENTAGE,
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.NAME)
+              .from(SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY)
+              .where(
+                  SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID.`in`(
+                      select(PLAN_REGIONS.ID)
+                          .from(PLAN_REGIONS)
+                          .join(PLANS)
+                          .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
+                          .where(PLANS.COUNCIL_ID.eq(councilId))))
+        val featureCollection: Field<JSONB> =
+            function("to_jsonb", JSONB::class.java, field("to_jsonb(inputs)"))
+
+        val result = context.select(featureCollection).from(innerQuery.asTable("inputs")).fetch()
+        return result.firstNotNullOf { it.value1().toString() }
+    }
+
+    fun groundWaterPNRP(councilId: Int): String {
+      val innerQuery =
+          select(
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.AREA_ID,
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID,
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_B,
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_BC,
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_C,
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.TOTAL_ALLOCATION,
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.ALLOCATION_LIMIT,
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PNRP_ALLOCATION_PERCENTAGE,
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.NAME)
+              .from(GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY)
+              .where(
+                  GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID.`in`(
+                      select(PLAN_REGIONS.ID)
+                          .from(PLAN_REGIONS)
+                          .join(PLANS)
+                          .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
+                          .where(PLANS.COUNCIL_ID.eq(councilId))))
+        val featureCollection: Field<JSONB> =
+            function("to_jsonb", JSONB::class.java, field("to_jsonb(inputs)"))
+
+        val result = context.select(featureCollection).from(innerQuery.asTable("inputs")).fetch()
+        return result.firstNotNullOf { it.value1().toString() }
+   }
 
   fun flowMeasurementSites(councilId: Int): String {
     val innerQuery =
