@@ -16,6 +16,7 @@ import {
     byWhen
 } from "@components/Contaminants/ContaminantObjectiveDescription";
 import makeSafe from "@lib/makeSafe.ts";
+import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts";
 
 Font.register(fonts.inter);
 
@@ -182,7 +183,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
                 {implementationIdeas ? (
                     <View style={tw("mt-6")} wrap={false}>
                         <Text style={tw("h2")}>Implementation Ideas</Text>
-                        <BulletList items={implementationIdeas} />
+                        <BulletList items={parseHtmlListToArray(implementationIdeas)} />
                     </View>
                 ) : <View style={tw("mt-0")} />}
 
