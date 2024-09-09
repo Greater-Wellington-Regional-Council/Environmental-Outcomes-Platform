@@ -112,3 +112,30 @@ CREATE TABLE council_plan_boundary_rec2_data
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
   PRIMARY KEY (council_id, source_id)
 );
+
+CREATE TABLE IF NOT EXISTS groundwater_allocation_limits_by_area_and_category
+(
+  area_id                       VARCHAR,
+  category_B                    BIGINT,
+  category_BC                    BIGINT,
+  category_C                  BIGINT,
+  total_allocation              BIGINT,
+  allocation_limit              INTEGER,
+  pnrp_allocation_percentage    BIGINT,
+  name                          TEXT,
+  plan_region_id                BIGINT
+
+);
+
+CREATE TABLE IF NOT EXISTS surfacewater_allocation_limits_by_area_and_category
+(
+  area_id                       VARCHAR,
+  category_A                    BIGINT,
+  category_B                    BIGINT,
+  surface_take                  BIGINT,
+  total_allocation              BIGINT,
+  allocation_limit              INTEGER,
+  pnrp_allocation_percentage    BIGINT,
+  name                          TEXT,
+  plan_region_id                BIGINT
+);
