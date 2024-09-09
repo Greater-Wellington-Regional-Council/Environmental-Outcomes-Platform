@@ -1,15 +1,15 @@
-import { Meta, StoryFn } from '@storybook/react';
-import InteractiveMap from "./InteractiveMap.tsx";
-import {InteractiveMapProps} from "@components/InteractiveMap/lib/InteractiveMap";
+import { Meta, StoryFn } from '@storybook/react'
+import InteractiveMap from "./InteractiveMap.tsx"
+import {InteractiveMapProps} from "@components/InteractiveMap/lib/InteractiveMap"
 
 export default {
     title: 'Components/InteractiveMap',
     component: InteractiveMap,
-} as Meta;
+} as Meta
 
-const Template: StoryFn<InteractiveMapProps> = (args) => <InteractiveMap {...args} />;
+const Template: StoryFn<InteractiveMapProps> = (args) => <InteractiveMap {...args} />
 
-export const Default = Template.bind({});
+export const Default = Template.bind({})
 Default.args = {
     startLocation: {
         latitude: -41.2865,  // Wellington, NZ coordinates
@@ -19,4 +19,4 @@ Default.args = {
     select: (location) => console.log('Location selected:', location),
     selected: null,
     children: null,
-};
+}
