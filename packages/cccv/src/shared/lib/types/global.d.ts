@@ -1,4 +1,4 @@
-import {Feature} from "geojson";
+import {Feature, FeatureCollection} from "geojson";
 
 interface Dictionary<T> {
     [index: string]: T;
@@ -49,6 +49,7 @@ interface Council {
         surfaceWaterLimit: React.Element | string;
     }[];
     usageDisplayGroups: UsageDisplayGroup[];
+    [key: string]: any;
 }
 
 interface UsageDisplayGroup {
@@ -133,7 +134,7 @@ interface ViewLocation {
     zoom: number;
     srid?: number | null;
     description?: string;
-    geometry?: Feature;
+    geometry?: Feature | FeatureCollection;
 }
 
 type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
