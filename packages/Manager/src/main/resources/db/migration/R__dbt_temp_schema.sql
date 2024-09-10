@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS surfacewater_allocation_limits_by_area_and_category
   surface_take                  BIGINT,
   total_allocation              BIGINT,
   allocation_limit              INTEGER,
-  pnrp_allocation_percentage    BIGINT,
+  pnrp_allocation_percentage    NUMERIC,
   name                          TEXT,
   plan_region_id                BIGINT
 );
