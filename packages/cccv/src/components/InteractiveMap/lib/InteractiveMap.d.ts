@@ -10,7 +10,6 @@ interface MapProps {
 
 interface InteractiveMapProps extends MapProps {
   setLocationInFocus?: Dispatch<SetStateAction<ViewLocation | null>>;
-  setPrintSnapshot?: Dispatch<SetStateAction<string | null>>;
   children?: React.ReactNode;
 }
 

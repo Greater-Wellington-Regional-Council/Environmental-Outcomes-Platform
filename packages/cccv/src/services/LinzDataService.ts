@@ -85,7 +85,7 @@ const service = {
         return _.get(response, "features[0].properties.unit_of_property_id")
     },
     getGeometryForUnitOfProperty: async (unitOfPropertyId: UnitOfPropertyId, projection = DEFAULT_PROJECTION, setError: null | ((error: Error | null) => void) = null): Promise<UnitsOfProperty | null> => {
-        const response = await get(URL_LDS_GET_UOP_GEOMETRY(unitOfPropertyId, projection), { timeout: 5000 } )
+        const response = await get(URL_LDS_GET_UOP_GEOMETRY(unitOfPropertyId, projection), { timeout: 10000 } )
         if (!response) return handleError(`Failed to retrieve geometry data for address ${unitOfPropertyId}.  The LINZ Data service may be unavailable.`, setError) as null
         console.log('geometryForUOP', response)
         return response

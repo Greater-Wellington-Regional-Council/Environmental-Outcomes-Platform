@@ -9,6 +9,7 @@ import {ThemeProvider} from "@material-tailwind/react"
 import ErrorBoundary from "@components/ErrorBoundary.tsx"
 
 import {LoadingProvider} from "@components/Spinner/LoadingProvider.tsx"
+import {MapSnapshotProvider} from "@lib/MapSnapshotContext.tsx";
 
 const rootElement = document.getElementById('root')
 
@@ -29,7 +30,9 @@ createRoot(rootElement).render(
                 <LoadingProvider>
                     <QueryClientProvider client={queryClient}>
                         <ErrorBoundary>
-                            <App/>
+                            <MapSnapshotProvider>
+                                <App/>
+                            </MapSnapshotProvider>
                         </ErrorBoundary>
                     </QueryClientProvider>
                 </LoadingProvider>

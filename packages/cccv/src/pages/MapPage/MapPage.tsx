@@ -16,6 +16,7 @@ import linzDataService from "@services/LinzDataService.ts"
 import { useLoading } from "@components/Spinner/LoadingProvider.tsx"
 import SlidingPanel from '@components/InfoPanel/SlidingPanel.tsx'
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx"
+import {useMapSnapshot} from "@lib/MapSnapshotContext.tsx";
 
 const ADDRESS_ZOOM = 12
 
@@ -28,7 +29,8 @@ export default function MapPage() {
 
   const [showPanel, setShowPanel] = useState(false)
   const [fmuChanged, setFmuChanged] = useState(false)
-  const [mapSnapshot, setMapSnapshot] = useState<string | null>(null)
+
+  const { mapSnapshot } = useMapSnapshot()
 
   const { setLoading } = useLoading()
 
@@ -134,7 +136,7 @@ export default function MapPage() {
 
       <main role="application">
         <div className={`map-panel relative`}>
-          <InteractiveMap startLocation={locationDetails as ViewLocation} locationInFocus={selectedLocation} setLocationInFocus={(selectLocation)} setPrintSnapshot={setMapSnapshot} />
+          <InteractiveMap startLocation={locationDetails as ViewLocation} locationInFocus={selectedLocation} setLocationInFocus={(selectLocation)} />
           <div className={`address-box`}>
             <AddressSearch
               onSelect={selectAddress}

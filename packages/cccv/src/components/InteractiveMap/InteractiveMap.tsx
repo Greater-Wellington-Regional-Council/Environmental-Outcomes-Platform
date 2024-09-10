@@ -25,6 +25,7 @@ import {debounce} from "lodash"
 import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService.ts"
 import {debounceClick} from "@lib/debounceClick.ts"
 import {removeSourceWithLayers} from "@lib/removeSourceWithLayers.ts"
+import {useMapSnapshot} from "@lib/MapSnapshotContext.tsx";
 
 const DEFAULT_VIEW_WIDTH = 100
 const DEFAULT_VIEW_HEIGHT = 150
@@ -35,12 +36,12 @@ const MAX_WIDE_ZOOM = 10
 const HOVER_LAYER = "freshwater-management-units-candidates"
 const CLICK_LAYER = HOVER_LAYER
 const HOVER_HIGHLIGHT_LAYER = "fmu-highlight"
+const FMU_BOUNDARIES_SOURCE = "freshwater-management-units"
 
 export default function InteractiveMap({
                                            startLocation,
                                            locationInFocus,
                                            setLocationInFocus,
-                                           setPrintSnapshot,
                                            children
                                        }: InteractiveMapProps) {
 
@@ -56,6 +57,8 @@ export default function InteractiveMap({
     const [featureBeingRolledOver, setFeatureBeingRolledOver] = useState<Feature | null>(null)
     const [focusPin, setFocusPin] = useState<Marker | null>(null)
 
+    const { setMapSnapshot } = useMapSnapshot()
+
     const clickTimeoutRef = useRef<number | null>(null)
 
     function buildPrintSnapshot(location: ViewLocation | null, layersToInclude: string[] = []) {
@@ -63,54 +66,25 @@ export default function InteractiveMap({
         if (!mapRef?.current || !location) return null
 
         const map = mapRef.current.getMap()
-        // const originalVisibility: { [key: string]: unknown } = {}
-        //
-        // const mapStyle = map.getStyle()
-        // const layers = mapStyle?.layers.map((layer) => layer.id)
-        //
-        // // Remember current view state
-        // const viewState = map.getCenter
-        //     ? {latitude: map.getCenter().lat, longitude: map.getCenter().lng, zoom: map.getZoom()}
-        //     : null
-        //
-        // // Remember current visibility of each layer
-        // layers?.forEach((layerId) => {
-        //     originalVisibility[layerId] = map.getLayoutProperty(layerId, 'visibility')
-        // })
-        //
-        // // Set visibility of layers to include in snapshot
-        // layers?.forEach((layerId) => {
-        //     map.setLayoutProperty(layerId, 'visibility', layerId in layersToInclude ? 'visible' : 'none')
-        // })
-        //
-        // // Set appropriate view state for printing without affecting what's on screen
-        // if (isValidLngLat([location?.longitude, location?.latitude]))
-        //     map.setCenter([location.longitude, location.latitude])
 
-        const dataUrl = map.getCanvas().toDataURL('image/png')
+        const dataUrl = `${map.getCanvas().toDataURL('image/png')}?timestamp=${Date.now()}`;
 
-        // // Restore original visibility
-        // layers?.forEach((layerId) => {
-        //     map.setLayoutProperty(layerId, 'visibility', originalVisibility[layerId])
-        // })
-        //
-        // // Restore original view state
-        // viewState && map.setCenter([viewState.longitude, viewState.latitude])
-        // viewState && map.setZoom(viewState.zoom)
-        //
         console.log("End buildPrintSnapshot", dataUrl)
         return dataUrl
     }
 
     function updatePrintSnapshot(location: ViewLocation | null) {
         if (!mapRef?.current) {
-            removeSourceWithLayers(mapRef.current?.getMap(), HOVER_HIGHLIGHT_LAYER)
-            setPrintSnapshot && setPrintSnapshot(null)
-            return
+            setMapSnapshot(null);
+            return;
         }
 
-        const snapshot = buildPrintSnapshot(location)
-        setPrintSnapshot && setPrintSnapshot(snapshot ?? null)
+        const map = mapRef.current.getMap();
+
+        map.once('idle', () => {
+            const snapshot = buildPrintSnapshot(location);
+            setMapSnapshot && setMapSnapshot(snapshot ?? null);
+        });
     }
 
     function fitBoundsToFeatures(featureOrCollection: Feature | FeatureCollection) {
@@ -348,14 +322,10 @@ export default function InteractiveMap({
         }
 
         focusMapView(locationInFocus)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [locationInFocus])
 
-    useEffect(() => {
-        console.log("updatePrintSnapshot", locationInFocus)
         updatePrintSnapshot(locationInFocus)
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [focusPin])
+    }, [locationInFocus])
 
     const handleClick = (e: MapMouseEvent) => {
         debounceClick(clickTimeoutRef, 200, () => {
@@ -428,7 +398,7 @@ export default function InteractiveMap({
                 {children}
 
                 <Source
-                    id="freshwater-management-units"
+                    id={FMU_BOUNDARIES_SOURCE}
                     type="geojson"
                     data={freshwaterManagementUnitService.urlToGetFmuBoundaries()}>
 
