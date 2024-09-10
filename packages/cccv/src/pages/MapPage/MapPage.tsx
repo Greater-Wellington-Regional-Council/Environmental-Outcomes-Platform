@@ -79,28 +79,26 @@ export default function MapPage() {
     const addressBoundary = await linzDataService.getGeometryForAddressId(selectedAddress.id)
 
     if (!addressBoundary) {
-        setError(new Error("Failed to retrieve address data.  The LINZ service may be unavailable."))
+      setError(new Error("Failed to retrieve address data.  The LINZ service may be unavailable."))
 
-        // Default address Point if no geometry is available
-        const addressLocation = {
-          longitude: selectedAddress.location.geometry.coordinates[0],
-          latitude: selectedAddress.location.geometry.coordinates[1],
-          description: `<p>${selectedAddress.address}</p><br/><p class="tooltip-note">Boundary not available</p>`,
-          zoom: ADDRESS_ZOOM,
-        } as ViewLocation
+      // Default address Point if no geometry is available
+      const addressLocation = {
+        longitude: selectedAddress.location.geometry.coordinates[0],
+        latitude: selectedAddress.location.geometry.coordinates[1],
+        description: `<p>${selectedAddress.address}</p><br/><p class="tooltip-note">Boundary not available</p>`,
+        zoom: ADDRESS_ZOOM,
+      } as ViewLocation
 
-        selectLocation(addressLocation)
+      selectLocation(addressLocation)
 
-        setLoading(false)
-        return
+      setLoading(false)
+      return
     }
 
     // We have an address and a boundary object.
     // Use centroid of boundary as location if possible,
     // but resort to address location is that cannot be calculated.
     const centroid = calculateCentroids(addressBoundary!)
-
-    console.log("Centroid: ", centroid)
 
     const desc = `<p>${selectedAddress.address}</p>`
 
@@ -121,8 +119,7 @@ export default function MapPage() {
         <header
             className={"header bold p-4 pl-[1.5em] bg-nui text-white grid grid-cols-12"}>
           <div className={"header-text col-span-10"}>
-            <h1 className={"header-title"}>Freshwater
-              Management</h1>
+            <h1 className={"header-title"}>Freshwater Management</h1>
             <h2 className={"header-subtitle mb-3"}>Catchment context, challenges and values (CCCV)</h2>
             <p className={"preamble font-light text-body"}>Find information useful for creating a Freshwater Farm Plan,
               such as contaminant goals, sites
@@ -134,26 +131,27 @@ export default function MapPage() {
           </div>
         </header>
 
-      <main role="application">
-        <div className={`map-panel relative`}>
-          <InteractiveMap startLocation={locationDetails as ViewLocation} locationInFocus={selectedLocation} setLocationInFocus={(selectLocation)} />
-          <div className={`address-box`}>
-            <AddressSearch
-              onSelect={selectAddress}
-              placeholder={"Search for address"}
-              directionUp={true}
-            />
-          </div>
-        </div>
+        <main role="application">
+          {/* Position the sliding panel relative to this map panel */}
+          <div className={`map-panel relative`}>
+            <InteractiveMap startLocation={locationDetails as ViewLocation} locationInFocus={selectedLocation} setLocationInFocus={(selectLocation)} />
+            <div className={`address-box`}>
+              <AddressSearch
+                  onSelect={selectAddress}
+                  placeholder={"Search for address"}
+                  directionUp={true}
+              />
+            </div>
 
-          {selectedFmu && (
-            <SlidingPanel
-              showPanel={showPanel}
-              contentChanged={fmuChanged}
-              onClose={() => setShowPanel(false)}>
-              <FreshwaterManagementUnit {...selectedFmu} mapImage={mapSnapshot} />
-            </SlidingPanel>
-          )}
+            {selectedFmu && (
+                <SlidingPanel
+                    showPanel={showPanel}
+                    contentChanged={fmuChanged}
+                    onClose={() => setShowPanel(false)}>
+                  <FreshwaterManagementUnit {...selectedFmu} mapImage={mapSnapshot} />
+                </SlidingPanel>
+            )}
+          </div>
         </main>
       </div>
   )

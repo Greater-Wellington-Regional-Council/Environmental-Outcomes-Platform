@@ -1,3 +1,4 @@
+import './SlidingPanel.scss'
 import React, { useState, useEffect, useRef } from 'react'
 
 interface InfoPanelProps {
@@ -13,19 +14,33 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
     const isResizing = useRef(false)
     const [panelWidth, setPanelWidth] = useState(300)
     const [isPanelVisible, setIsPanelVisible] = useState(showPanel) // Track visibility state
+    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 640) // Detect if the screen is large
 
     useEffect(() => {
-        if (panelRef.current) {
+        // Listen for window resize to update isLargeScreen
+        const handleResize = () => {
+            setIsLargeScreen(window.innerWidth > 640)
+        }
+
+        window.addEventListener('resize', handleResize)
+
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (panelRef.current && isLargeScreen) {
             const parentWidth = panelRef.current.parentElement?.getBoundingClientRect().width || 0
             const initialWidth = parentWidth * 0.3
             setPanelWidth(initialWidth)
             onResize && onResize(initialWidth)
         }
-    }, [onResize])
+    }, [onResize, isLargeScreen])
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
-            if (isResizing.current && panelRef.current) {
+            if (isResizing.current && panelRef.current && isLargeScreen) {
                 const panelRightEdge = panelRef.current.getBoundingClientRect().right
                 const newWidth = panelRightEdge - e.clientX
 
@@ -49,11 +64,13 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
             document.removeEventListener('mousemove', handleMouseMove)
             document.removeEventListener('mouseup', handleMouseUp)
         }
-    }, [onResize])
+    }, [onResize, isLargeScreen])
 
     const handleMouseDown = () => {
-        isResizing.current = true
-        document.body.style.userSelect = 'none' // Disable text selection
+        if (isLargeScreen) {
+            isResizing.current = true
+            document.body.style.userSelect = 'none' // Disable text selection
+        }
     }
 
     const handleDoubleClick = () => {
@@ -66,16 +83,23 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
     return (
         <div
             ref={panelRef}
-            className={`sliding-panel absolute top-0 right-0 bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-10`}
-            style={{ minWidth: '33%', maxWidth: '100%', width: `${panelWidth}px`, height: '100vh', display: isPanelVisible ? 'block' : 'none' }}
+            className={`sliding-panel absolute bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-10`}
+            style={{
+                width: isLargeScreen ? `${panelWidth}px` : '100%', // Full width for small screens
+                maxHeight: isLargeScreen ? '100vh' : '60vh', // No taller than half the screen on small screens
+                height: isPanelVisible ? 'auto' : '0',
+                display: isPanelVisible ? 'block' : 'none',
+            }}
             data-testid="sliding-panel"
         >
-            {/* Bezel for resizing and double-click to hide */}
-            <div
-                className="absolute left-[-6px] top-0 bottom-0 w-[6px] cursor-ew-resize z-20 bg-gray-100"
-                onMouseDown={handleMouseDown}
-                onDoubleClick={handleDoubleClick} // Added double-click event
-            />
+            {/* Conditionally render the bezel only for large screens */}
+            {isLargeScreen && (
+                <div
+                    className="absolute left-[-6px] top-0 bottom-0 w-[6px] cursor-ew-resize z-20 bg-gray-100"
+                    onMouseDown={handleMouseDown}
+                    onDoubleClick={handleDoubleClick} // Added double-click event
+                />
+            )}
 
             {/* Scrollable content area */}
             <div className="relative z-30 overflow-auto h-full">
