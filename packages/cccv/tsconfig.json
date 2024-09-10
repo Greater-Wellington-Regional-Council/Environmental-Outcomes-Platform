@@ -35,7 +35,7 @@
       "@pdfs/*": ["src/pdfs/*"],
       "@services/*": ["src/services/*"],
       "@elements/*": ["src/elements/*"],
-      "@shared/*": ["../shared/*"]
+      "@shared/*": ["src/shared/*"]
     }
   },
   "include": [
