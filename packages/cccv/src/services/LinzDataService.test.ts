@@ -37,7 +37,7 @@ describe("LinzDataService", () => {
         it("should call setError and return null on failure", async () => {
             mockedGet.mockResolvedValueOnce(null)
 
-            const result = await service.getUnitOfPropertyIdForAddressId(mockAddressId, mockProjection, mockSetError)
+            const result = await service.getUnitOfPropertyIdForAddressId(mockAddressId, mockSetError)
 
             expect(result).toBeNull()
             expect(mockSetError).toHaveBeenCalledWith(new Error("Failed to retrieve address data.  The AddressFinder service may be unavailable."))

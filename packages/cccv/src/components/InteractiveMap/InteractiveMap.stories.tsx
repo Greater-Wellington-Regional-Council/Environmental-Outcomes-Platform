@@ -1,6 +1,7 @@
 import { Meta, StoryFn } from '@storybook/react'
 import InteractiveMap from "./InteractiveMap.tsx"
 import {InteractiveMapProps} from "@components/InteractiveMap/lib/InteractiveMap"
+import {ViewLocation} from "@shared/types/global";
 
 export default {
     title: 'Components/InteractiveMap',
@@ -16,7 +17,7 @@ Default.args = {
         longitude: 174.7762,
         zoom: 10,
     },
-    select: (location) => console.log('Location selected:', location),
-    selected: null,
+    setLocationInFocus: (location: ViewLocation) => console.log('Location selected:', location),
+    locationInFocus: null,
     children: null,
 }

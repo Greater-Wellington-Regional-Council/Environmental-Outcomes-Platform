@@ -1,5 +1,3 @@
-import mapboxgl from "mapbox-gl";
-
 export function removeSourceWithLayers(map: mapboxgl.Map | undefined, sourceId: string): void {
     if (!map || !sourceId) {
         return
