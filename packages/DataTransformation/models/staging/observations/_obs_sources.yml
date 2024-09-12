@@ -1,0 +1,65 @@
+version: 2
+
+sources:
+  - name: public
+    tables:
+      - name: observations
+        tests:
+            - dbt_utils.unique_combination_of_columns:
+                combination_of_columns:
+                    - observation_measurement_id
+                    - observed_at
+        columns:
+          - name: observation_measurement_id
+            tests:
+              - not_null
+        columns:
+          - name: amount
+            tests:
+              - not_null
+        columns:
+          - name: observed_at
+            tests:
+              - not_null     
+             
+
+      - name: observation_sites
+        tests:
+            - dbt_utils.unique_combination_of_columns:
+                combination_of_columns:
+                    - council_id
+                    - name
+        columns:
+          - name: id
+            tests:
+              - unique
+              - not_null
+        columns:
+          - name: council_id
+            tests:
+              - not_null     
+        columns:
+          - name: name
+            tests:
+              - not_null     
+
+
+      - name: observation_sites_measurements
+        tests:
+            - dbt_utils.unique_combination_of_columns:
+                combination_of_columns:
+                    - site_id
+                    - measurement_name
+        columns:
+          - name: id
+            constraints:
+              - type: primary_key
+            tests:
+              - unique
+              - not_null
+          - name: site_id
+            tests:
+              - not_null     
+          - name: measurement_name
+            tests:
+              - not_null     

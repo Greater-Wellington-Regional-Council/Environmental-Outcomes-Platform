@@ -1,0 +1,3 @@
+org:
+  contact:
+    email: "${CONFIG_ORG_CONTACT_EMAIL:wayne@ednastreet.nz}"

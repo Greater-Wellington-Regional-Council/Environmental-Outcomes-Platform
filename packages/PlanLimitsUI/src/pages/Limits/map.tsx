@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import mapboxgl from 'mapbox-gl';
-import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Map, {
   Layer,
@@ -11,12 +9,11 @@ import Map, {
   type MapRef,
   type ViewState,
   type ViewStateChangeEvent,
-  type MapboxEvent,
   type MapLayerMouseEvent,
-} from 'react-map-gl';
+} from 'react-map-gl/maplibre';
 import type { PlanLimitsData } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
-import Button from '../../components/Button';
+import Button from '../../components/RoundedButton';
 import RiverTilesSource from './RiverTilesSource';
 import flowMarkerImage from '../../images/marker_flow.svg';
 
@@ -33,7 +30,7 @@ type Props = {
   setViewState: (value: ViewState) => void;
   pinnedLocation: PinnedLocation | null;
   setPinnedLocation: (
-    updateFn: (prevValue: PinnedLocation | null) => PinnedLocation | null
+    updateFn: (prevValue: PinnedLocation | null) => PinnedLocation | null,
   ) => void;
   waterTakeFilter: WaterTakeFilter;
   planLimitsData: PlanLimitsData;
@@ -46,7 +43,7 @@ interface Identifyable {
 function mapFeatureLayers<T extends Identifyable>(
   features: mapboxgl.MapboxGeoJSONFeature[],
   layerName: string,
-  collection: T[]
+  collection: T[],
 ) {
   return features
     .filter((feature) => feature.layer.id === layerName)
@@ -54,7 +51,7 @@ function mapFeatureLayers<T extends Identifyable>(
       const item = collection.find((ci) => ci.id === Number(feature.id));
       if (!item)
         throw new Error(
-          `Could not find item with feature id ${feature.id} from layer ${layerName} `
+          `Could not find item with feature id ${feature.id} from layer ${layerName} `,
         );
       return item;
     });
@@ -63,44 +60,47 @@ function mapFeatureLayers<T extends Identifyable>(
 function mapFeatureLayer<T extends Identifyable>(
   features: mapboxgl.MapboxGeoJSONFeature[],
   layerName: string,
-  collection: T[]
+  collection: T[],
 ) {
-  return mapFeatureLayers<T>(features, layerName, collection)[0];
+  const featureLayers = mapFeatureLayers<T>(features, layerName, collection)
+  if (layerName === "surfaceWaterSubUnitLimits") console.log("featureLayers", featureLayers)
+  return featureLayers[layerName === "surfaceWaterSubUnitLimits" ? featureLayers.length - 1 : 0];
 }
 
+// TODO: Push this into useAppState?
 function mapAllFeatures(
   features: mapboxgl.MapboxGeoJSONFeature[],
-  appPlanData: AllPlanData
+  appPlanData: AllPlanData,
 ): ActiveLimits {
   return {
     planRegion:
       mapFeatureLayer<PlanRegion>(
         features,
         'planRegions',
-        appPlanData.planRegions
+        appPlanData.planRegions,
       ) || null,
     flowLimit:
       mapFeatureLayer<FlowLimit>(
         features,
         'flowLimits',
-        appPlanData.flowLimits
+        appPlanData.flowLimits,
       ) || null,
     surfaceWaterUnitLimit:
       mapFeatureLayer<SurfaceWaterLimit>(
         features,
         'surfaceWaterUnitLimits',
-        appPlanData.surfaceWaterUnitLimits
+        appPlanData.surfaceWaterUnitLimits,
       ) || null,
     surfaceWaterSubUnitLimit:
       mapFeatureLayer<SurfaceWaterLimit>(
         features,
         'surfaceWaterSubUnitLimits',
-        appPlanData.surfaceWaterSubUnitLimits
+        appPlanData.surfaceWaterSubUnitLimits,
       ) || null,
     groundWaterLimits: mapFeatureLayers<GroundWaterLimit>(
       features,
       'groundWaterLimits',
-      appPlanData.groundWaterLimits
+      appPlanData.groundWaterLimits,
     ),
   };
 }
@@ -128,14 +128,14 @@ export default function LimitsMap({
         mapRef.current.project([
           pinnedLocation.longitude,
           pinnedLocation.latitude,
-        ])
+        ]),
       );
       const activeLimits = mapAllFeatures(activeFeatures, allPlanData!);
       setAppState(activeLimits, allPlanData!);
     }
   }, [mapLoaded, isLoaded, pinnedLocation, setAppState]);
 
-  const handleLoad = (evt: MapboxEvent) => {
+  const handleLoad = (evt) => {
     setMapLoaded(true);
 
     const img = new Image(20, 20);
@@ -165,7 +165,7 @@ export default function LimitsMap({
         : {
             latitude: evt.lngLat.lat,
             longitude: evt.lngLat.lng,
-          }
+          },
     );
   };
 
@@ -173,7 +173,6 @@ export default function LimitsMap({
     <Map
       ref={mapRef}
       reuseMaps={true}
-      mapLib={maplibregl}
       style={{ width: '100%', height: '100vh' }}
       mapStyle={`https://basemaps.linz.govt.nz/v1/tiles/topographic/EPSG:4326/style/topographic.json?api=${LINZ_API_KEY}`}
       minZoom={5}

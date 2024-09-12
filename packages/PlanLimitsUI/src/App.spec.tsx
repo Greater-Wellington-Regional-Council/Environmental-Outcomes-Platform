@@ -22,7 +22,7 @@ describe('App Routing', () => {
     renderWithProviders(router);
 
     await waitFor(() => {
-      expect(router.state.location.pathname).toEqual('/limits/@-41,175.35,8z');
+      expect(router.state.location.pathname).toEqual('/limits/gw/@-41,175.35,8z');
     });
   });
 
@@ -33,7 +33,7 @@ describe('App Routing', () => {
     renderWithProviders(router);
 
     await waitFor(() => {
-      expect(router.state.location.pathname).toEqual('/limits/@-41,175.35,8z');
+      expect(router.state.location.pathname).toEqual('/limits/gw/@-41,175.35,8z');
     });
   });
 
@@ -44,18 +44,18 @@ describe('App Routing', () => {
     renderWithProviders(router);
 
     await waitFor(() => {
-      expect(router.state.location.pathname).toEqual('/limits/@-41,175.35,8z');
+      expect(router.state.location.pathname).toEqual('/limits/I-KNOW-NOTHING');
     });
   });
 
   it('should do nothing when location is in url', async () => {
     const router = createMemoryRouter(routes, {
-      initialEntries: ['/limits/@-44.675,169.138,16z'],
+      initialEntries: ['/limits/gw/@-44.675,169.138,16z'],
     });
     renderWithProviders(router);
 
     expect(router.state.location.pathname).toEqual(
-      '/limits/@-44.675,169.138,16z'
+      '/limits/gw/@-44.675,169.138,16z'
     );
   });
 

@@ -25,7 +25,7 @@ containers:
       home_directory: /home/container-user
 
   node-build-env:
-    image: node:18.14.0
+    image: node:20.14.0
     volumes:
       - local: <{batect.project_directory}
         container: /code
@@ -73,6 +73,9 @@ containers:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    run_as_current_user:
+      enabled: true
+      home_directory: /home/container-user
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -84,6 +87,9 @@ containers:
 
   kafka:
     image: confluentinc/cp-kafka:latest
+    run_as_current_user:
+      enabled: true
+      home_directory: /home/container-user
     dependencies:
       - zookeeper
     environment:

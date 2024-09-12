@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: observed_water_use_aggregated_daily
+    columns:
+      - name: site_name
+        description: The name of the site
+        meta:
+          data_type: varchar
+
+      - name: day_observed_at
+        description: The date of observation
+        meta:
+          data_type: timestamp
+
+      - name: daily_usage
+        description: The daily water usage
+        meta:
+          data_type: numeric

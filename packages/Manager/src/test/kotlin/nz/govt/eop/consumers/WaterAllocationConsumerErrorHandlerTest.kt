@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import java.math.BigDecimal
 import java.time.Duration
 import java.time.Instant
+import nz.govt.eop.messages.ConsentStatus
 import nz.govt.eop.messages.WaterAllocationMessage
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -21,6 +22,7 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker
 import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.kafka.test.utils.KafkaTestUtils
 import org.springframework.stereotype.Component
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test", "fake-consumer")
@@ -35,6 +37,7 @@ class WaterAllocationConsumerErrorHandlerTest(
     @Autowired val fakeConsumer: FakeConsumer
 ) {
 
+  @DirtiesContext
   @Test
   fun `Should send message to DLT when processing fails multiple times`() {
     // GIVEN
@@ -44,13 +47,25 @@ class WaterAllocationConsumerErrorHandlerTest(
     dltConsumer.subscribe(listOf("$WATER_ALLOCATION_TOPIC_NAME.manager-consumer.DLT"))
 
     val firstMessage =
-        WaterAllocationMessage("poison", BigDecimal("100.11"), "ingest-id", Instant.now())
-    val secondMessage =
-        WaterAllocationMessage("areaid", BigDecimal("100.11"), "ingest-id", Instant.now())
+        WaterAllocationMessage(
+            "poison",
+            "consentId",
+            ConsentStatus.valueOf("active"),
+            "area-id",
+            BigDecimal("100.11"),
+            true,
+            BigDecimal("10.0"),
+            BigDecimal("10.0"),
+            listOf("meter-0", "meter-1"),
+            "firstIngestId",
+            Instant.now(),
+            "category")
+
+    val secondMessage = firstMessage.copy(sourceId = "sourceId")
 
     // WHEN
     template.send(WATER_ALLOCATION_TOPIC_NAME, "poison", firstMessage)
-    template.send(WATER_ALLOCATION_TOPIC_NAME, "areaid", secondMessage)
+    template.send(WATER_ALLOCATION_TOPIC_NAME, "sourceId", secondMessage)
 
     // THEN
 
@@ -69,6 +84,31 @@ class WaterAllocationConsumerErrorHandlerTest(
       fakeConsumer.messageProcessed.shouldBe(true)
     }
   }
+
+  @DirtiesContext
+  @Test
+  fun `Should handle an unparsable message by sending it to the DLT`() {
+    // GIVEN
+    val consumerProps = KafkaTestUtils.consumerProps("test", "true", broker)
+    val cf = DefaultKafkaConsumerFactory(consumerProps, StringDeserializer(), StringDeserializer())
+    val dltConsumer: Consumer<String, String> = cf.createConsumer()
+    dltConsumer.subscribe(listOf("$WATER_ALLOCATION_TOPIC_NAME.manager-consumer.DLT"))
+
+    val invalidMessage = """{"foo":"bar"}"""
+
+    // WHEN
+    template.send(WATER_ALLOCATION_TOPIC_NAME, "key1", invalidMessage)
+
+    // THEN
+    // Assert the first message ended up in the DLT
+    val dltRecord =
+        KafkaTestUtils.getSingleRecord(
+            dltConsumer, "$WATER_ALLOCATION_TOPIC_NAME.manager-consumer.DLT")
+    dltRecord.shouldNotBeNull()
+
+    // This assert json shows how the message is a byte array encoded as JSON
+    dltRecord.value().shouldBe("\"IntcImZvb1wiOlwiYmFyXCJ9Ig==\"")
+  }
 }
 
 @Profile("fake-consumer")
@@ -83,7 +123,7 @@ class FakeConsumer {
   fun processMessage(allocation: WaterAllocationMessage) {
     timesCalled++
 
-    if (allocation.areaId == "poison") {
+    if (allocation.sourceId == "poison") {
       // Fake that processing fails
       throw RuntimeException("Fake failure")
     } else {

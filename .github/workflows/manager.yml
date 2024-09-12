@@ -51,11 +51,11 @@ jobs:
         if: always()
         with:
           name: reports
-          path: format('{0}/build/reports', env.WORKING_DIR)
+          path: ${{ env.WORKING_DIR }}/build/reports
 
       - name: Configure AWS credentials
         if: ${{ github.actor != 'dependabot[bot]' }}      
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
             aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
             aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}    

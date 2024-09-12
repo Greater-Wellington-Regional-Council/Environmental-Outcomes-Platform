@@ -1,3 +1,0 @@
-mutation($request: CreateObservationRequest!) {
-    createObservation(request: $request)
-}

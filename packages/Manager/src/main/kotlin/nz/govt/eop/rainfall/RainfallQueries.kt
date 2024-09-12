@@ -2,6 +2,7 @@ package nz.govt.eop.rainfall
 
 import java.sql.Timestamp
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import nz.govt.eop.si.jooq.tables.Councils.Companion.COUNCILS
 import nz.govt.eop.si.jooq.tables.ObservationSites.Companion.OBSERVATION_SITES
@@ -12,6 +13,8 @@ import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
+
+const val RAINFALL_MEASUREMENT_NAME = "Rainfall"
 
 @Component
 class RainfallQueries(
@@ -53,6 +56,10 @@ class RainfallQueries(
                     field(
                         "totals.OBSERVATION_MEASUREMENT_ID",
                         OBSERVATION_SITES_MEASUREMENTS.ID.dataType)))
+            .where(OBSERVATION_SITES_MEASUREMENTS.MEASUREMENT_NAME.eq(RAINFALL_MEASUREMENT_NAME))
+            .and(
+                OBSERVATION_SITES_MEASUREMENTS.LAST_OBSERVATION_AT.ge(
+                    OffsetDateTime.parse("2024-01-01T00:00:00Z")))
             .orderBy(field("amount", OBSERVATIONS.AMOUNT.dataType).desc())
 
     return buildFeatureCollection(context, innerQuery)
@@ -112,6 +119,7 @@ class RainfallQueries(
                 INNER JOIN councils ON observation_sites.council_id = councils.id
                 INNER JOIN observation_sites_measurements ON observation_sites.id = observation_sites_measurements.site_id
                 INNER JOIN hourly_data ON observation_measurement_id = observation_sites_measurements.id
+                WHERE observation_sites_measurements.measurement_name = ? AND observation_sites_measurements.last_observation_at >= ?
         )
     SELECT JSONB_BUILD_OBJECT(
         'type', 'FeatureCollection',
@@ -134,7 +142,9 @@ class RainfallQueries(
         Timestamp.from(from),
         Timestamp.from(to),
         Timestamp.from(from),
-        Timestamp.from(to))
+        Timestamp.from(to),
+        RAINFALL_MEASUREMENT_NAME,
+        Timestamp.from(Instant.parse("2024-01-01T00:00:00Z")))
   }
 
   private fun <R : Record> buildFeatureCollection(

@@ -4,6 +4,7 @@ import java.math.BigDecimal
 import java.time.Instant
 import mu.KotlinLogging
 import mu.withLoggingContext
+import nz.govt.eop.messages.ConsentStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.userdetails.UserDetails
@@ -11,7 +12,18 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
-data class WaterAllocation(val areaId: String, val amount: BigDecimal)
+data class WaterAllocation(
+    val sourceId: String,
+    val consentId: String,
+    val status: ConsentStatus,
+    val areaId: String,
+    val allocationPlan: BigDecimal,
+    val allocationDaily: BigDecimal,
+    val allocationYearly: BigDecimal,
+    val isMetered: Boolean,
+    val meters: List<String>,
+    val category: String,
+)
 
 data class WaterAllocationsRequestBody(
     val ingestId: String,

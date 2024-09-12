@@ -1,0 +1,70 @@
+include:
+  - ../LocalInfrastructure/batect-shared.yml
+
+tasks:
+  deps:
+    description: Install DBT deps
+    run:
+      container: dbt-env
+      command: deps --profiles-dir /usr/app
+
+  lint:
+    description: Run SQLfluff against the codebase
+    dependencies:
+      - test-database
+    run:
+      container: fluff-env
+      command: lint ./
+
+  lint-fix:
+    description: Run SQLfluff against the codebase
+    dependencies:
+      - test-database
+    run:
+      container: fluff-env
+      command: fix ./
+
+  test:
+    description: Run DBT tests against the local DB
+    run:
+      container: dbt-env
+      command: build --profiles-dir /usr/app/dbt --target test
+
+  compile:
+    description: Compile DBT against local env
+    run:
+      container: dbt-env
+      command: compile --profiles-dir /usr/app/dbt --target dev
+
+  run:
+    description: Run DBT against the local env
+    run:
+      container: dbt-env
+      command: run --profiles-dir /usr/app/dbt --target dev
+
+  generate-docs:
+    description: Generate DBT documentation
+    run:
+      container: dbt-env
+      command: docs generate --profiles-dir /usr/app/dbt --target dev
+  
+  serve-docs:
+    description: Serve DBT documentation
+    run:
+      container: dbt-env
+      command: docs serve --port 8001 --profiles-dir /usr/app/dbt --target dev
+      ports:
+      - 8001:8001
+
+containers:
+  dbt-env:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.5.8
+    volumes:
+      - local: <{batect.project_directory}
+        container: /usr/app/dbt
+
+  fluff-env:
+    build_directory: .batect/sqlfluff
+    volumes:
+      - local: <{batect.project_directory}
+        container: /usr/app/dbt

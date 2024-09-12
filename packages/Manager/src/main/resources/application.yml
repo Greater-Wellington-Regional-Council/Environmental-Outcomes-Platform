@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: manager
   main:
     banner-mode: off
   datasource:
@@ -16,10 +18,41 @@ spring:
 
     consumer:
       auto-offset-reset: earliest
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
         spring.json.value.type.method: nz.govt.eop.messages.KafkaMessageTypes.determineTypeFromTopicName
         spring.json.trusted.packages: nz.govt.eop.*
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+
+
+    # These producer settings are used when publishing messages to the DLQ
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # In the situation that a message was received as invalid JSON and could not be deserialized, it ends up being a ByteArray message that gets published.
+      # the JSON serializer will still serialize the ByteArray as a string, but it will be a string of bytes, not a string of characters.
+      # See WaterAllocationConsumerErrorHandlerTest
+      # Can't figure out a good way to avoid this without writing a custom serializer.
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+    streams:
+      properties:
+        num.stream.threads: 2
+        max.poll.records: 10
+        default:
+          key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+          value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+      application-id: nz.govt.eop.consumers.manager
+
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"
 
 server:
   compression:
@@ -29,6 +62,16 @@ server:
 logging:
   level:
     root: INFO
-    nz.govt.eop: INFO
+    nz.govt.eop: DEBUG
     org.jooq.Constants: OFF
     org.jooq: INFO
+    org.apache.kafka: INFO
+    org.apache.kafka.streams.processor.internals.assignment.RackAwareTaskAssignor: OFF # Because it logs an error at startup even though it isn't used.
+
+arcgis:
+  tangata_whenua_sites:
+    url: "https://mapping.gw.govt.nz/arcgis/rest/services/GW/NRPMap_P_operative/MapServer/8/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=geojson"
+
+org:
+  contact:
+    email: "${CONFIG_ORG_CONTACT_EMAIL:org-contact-email-missing}"

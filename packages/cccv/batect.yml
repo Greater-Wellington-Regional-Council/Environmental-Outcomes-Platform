@@ -1,0 +1,22 @@
+include:
+  - ../LocalInfrastructure/batect-shared.yml
+
+config_variables:
+  git_sha:
+    default: DEVELOPER_BUILD
+    description: The Git SHA being used for this build (expected for CI only)
+  linz_api_key:
+    description: The developer key from LINZ to use (see https://basemaps.linz.govt.nz/)
+  mapbox_token:
+    description: The developer key from mapbox to use (see https://docs.mapbox.com/help/getting-started/access-tokens/)
+
+tasks:
+  build:
+    description: Build the Site
+    run:
+      container: node-build-env
+      command: ./.batect/scripts/build.sh
+      environment:
+        VITE_GIT_SHA: <{git_sha}
+        VITE_LINZ_API_KEY: <{linz_api_key}
+        VITE_MAPBOX_TOKEN: <{mapbox_token}

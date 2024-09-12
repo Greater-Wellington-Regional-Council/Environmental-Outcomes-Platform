@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { useDebounce } from 'usehooks-ts';
-import type { ViewState } from 'react-map-gl';
+import type { ViewState } from 'react-map-gl/maplibre';
 import { useAtom } from 'jotai';
 import { councilAtom } from '../../lib/loader';
-import { useAppState } from './useAppState';
+import { useAppState } from '../../lib/useAppState';
 import { usePlanLimitsData } from '../../api';
 import Map from './map';
-import Sidebar from './sidebar';
+import Sidebar from './Sidebar';
 import {
   type loader,
   viewLocationUrlPath,

@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1 {
+  @apply font-source-sans-3 font-bold text-[32px] leading-[40px];
+}
+
+h2 {
+  @apply font-source-sans-3 font-bold text-[22px] leading-[34px];
+}
+
+h3 {
+  @apply font-source-sans-3 font-bold text-[18px] leading-[24px];
+}
+
+h4 {
+  @apply font-source-sans-3 font-bold text-[18px] leading-[24px] capitalize;
+}
+
+h5 {
+  @apply font-source-sans-3 font-bold text-[16px] leading-[22px];
+}
+
+h6 {
+  @apply font-source-sans-3 font-bold text-[16px] leading-[22px];
+}
+
+body {
+  @apply font-source-sans-3 text-[16px] leading-[22px];
+}
+
+caption {
+  @apply font-source-sans-3 text-[16px] leading-[22px] text-textCaption;
+}
+
+button {
+  @apply font-source-sans-3 text-nui font-bold text-[16px] leading-[22px] border-2 rounded-3xl pl-4 border-nui pr-4 pt-2 pb-2;
+}
+
+button:hover {
+  @apply font-source-sans-3 text-white bg-nui font-bold text-[16px] leading-[22px];
+}
+
+button:disabled {
+  @apply font-source-sans-3 text-nui font-bold text-[16px] leading-[22px];
+}
+
+ul {
+    @apply list-inside ml-[-1.5em] pl-1.5 indent-[-1.5em];
+
+    li {
+        @apply list-disc ml-6 pl-6 -mt-1.5 leading-7;
+    }
+}

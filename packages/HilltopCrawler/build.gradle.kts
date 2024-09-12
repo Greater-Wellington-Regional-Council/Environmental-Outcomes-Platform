@@ -41,10 +41,14 @@ dependencies {
   implementation("org.flywaydb:flyway-core:10.6.0")
   implementation("org.flywaydb:flyway-database-postgresql:10.6.0")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+  implementation("org.apache.kafka:kafka-streams")
+  implementation("com.bucket4j:bucket4j-core:8.3.0")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+  testImplementation("io.kotest:kotest-assertions-json:5.8.0")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
 }
 
 // Don't repackage build in a "-plain" Jar
@@ -68,21 +72,6 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     ktfmt()
   }
   kotlinGradle { ktfmt() }
-}
-
-val dbConfig =
-    mapOf(
-        "url" to
-            "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?: "localhost"}:5432/eop_test",
-        "user" to "postgres",
-        "password" to "password")
-
-flyway {
-  url = dbConfig["url"]
-  user = dbConfig["user"]
-  password = dbConfig["password"]
-  schemas = arrayOf("hilltop_crawler")
-  locations = arrayOf("filesystem:./src/main/resources/db/migration")
 }
 
 testlogger {

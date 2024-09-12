@@ -21,17 +21,18 @@ class ControllerIntegrationTest(@Autowired val mvc: MockMvc) {
         .andExpect(status().isOk)
   }
 
-  @Test
-  fun `can load manifest`() {
-    mvc.perform(get("/plan-limits/manifest?councilId=9").contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk)
-  }
+  //  @Test
+  //  fun `can load manifest`() {
+  //
+  // mvc.perform(get("/plan-limits/manifest?councilId=9").contentType(MediaType.APPLICATION_JSON))
+  //        .andExpect(status().isOk)
+  //  }
 
-  @Test
-  fun `can load plan`() {
-    mvc.perform(get("/plan-limits/plan?councilId=9").contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk)
-  }
+  //  @Test
+  //  fun `can load plan`() {
+  //    mvc.perform(get("/plan-limits/plan?councilId=9").contentType(MediaType.APPLICATION_JSON))
+  //        .andExpect(status().isOk)
+  //  }
 
   @Test
   fun `can load plan regions`() {

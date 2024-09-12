@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<Hilltop>
+    <Agency>GWRC</Agency>
+    <Measurement SiteName="R26/6804">
+        <DataSource Name="Water Meter Volume" NumItems="1">
+            <TSType>StdSeries</TSType>
+            <DataType>SimpleTimeSeries</DataType>
+            <Interpolation>Incremental</Interpolation>
+            <ItemInfo ItemNumber="1">
+                <ItemName>Water Meter Volume</ItemName>
+                <ItemFormat>F</ItemFormat>
+                <Units>m3</Units>
+                <Format>######.#</Format>
+            </ItemInfo>
+        </DataSource>
+        <Data DateFormat="Calendar" NumItems="1">
+            <E>
+                <T>2023-08-30T00:00:00</T>
+                <I1>0</I1>
+            </E>
+            <E>
+                <T>2023-08-31T00:00:00</T>
+                <I1>100</I1>
+            </E>
+        </Data>
+    </Measurement>
+</Hilltop>

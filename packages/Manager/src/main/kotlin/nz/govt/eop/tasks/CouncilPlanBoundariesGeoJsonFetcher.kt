@@ -5,8 +5,7 @@ import java.net.URI
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
-import org.geojson.FeatureCollection
-import org.springframework.http.HttpStatus
+import nz.govt.eop.utils.GeoJsonFetcher
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -16,9 +15,8 @@ import org.springframework.web.client.RestTemplate
 @Component
 class CouncilPlanBoundariesGeoJsonFetcher(
     val jdbcTemplate: JdbcTemplate,
-    val restTemplate: RestTemplate
-) {
-
+    restTemplate: RestTemplate,
+) : GeoJsonFetcher(restTemplate) {
   private val logger = KotlinLogging.logger {}
 
   @Transactional
@@ -29,15 +27,13 @@ class CouncilPlanBoundariesGeoJsonFetcher(
         logger,
         "updateCouncilPlanGeoJsonBoundaries",
         { true },
-        ::updateCouncilPlanGeoJsonBoundaries)
+        ::updateCouncilPlanGeoJsonBoundaries,
+    )
   }
 
   private fun updateCouncilPlanGeoJsonBoundaries() {
-
     // Expect multiple rows to pull from the same source URL, so cache the results for the length of
     // this execution
-    val fetchCache = mutableMapOf<String, FeatureCollection>()
-
     jdbcTemplate.queryForList("SELECT * FROM council_plan_boundary_geojson_source").forEach {
       val councilId = it["council_id"] as Int
       val sourceId = it["source_id"] as String
@@ -52,29 +48,15 @@ class CouncilPlanBoundariesGeoJsonFetcher(
             val geoJsonGeometry = ObjectMapper().writeValueAsString(geometry)
             jdbcTemplate.update(
                 """
-                UPDATE
-                    council_plan_boundaries
-                SET boundary   = ST_GEOMFROMGEOJSON(?),
-                    updated_at = NOW()
-                WHERE council_id = ?
-                  AND source_id = ?
-                  AND (ST_GEOMFROMTEXT('POLYGON EMPTY', 4326) = boundary OR NOT ST_EQUALS(ST_GEOMFROMGEOJSON(?), boundary))
+                INSERT INTO council_plan_boundary_geojson_data (council_id, source_id, boundary) VALUES (?, ?, st_geomfromgeojson(?)) ON CONFLICT (council_id, source_id) DO UPDATE SET boundary = st_geomfromgeojson(?), updated_at = NOW()
                 """
                     .trimIndent(),
-                geoJsonGeometry,
                 councilId,
                 sourceId,
-                geoJsonGeometry)
+                geoJsonGeometry,
+                geoJsonGeometry,
+            )
           }
-    }
-  }
-
-  private fun fetchFeatureCollection(url: URI): FeatureCollection {
-    val resp = restTemplate.getForEntity(url, FeatureCollection::class.java)
-    if (resp.statusCode == HttpStatus.OK) {
-      return resp.body!!
-    } else {
-      throw RuntimeException("Request failed with status: ${resp.statusCode} ")
     }
   }
 }

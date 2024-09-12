@@ -21,6 +21,11 @@ CREATE USER eop_manager_migrations_user WITH PASSWORD 'password' NOINHERIT;
 -- Migrations user has full access
 GRANT ALL ON SCHEMA public TO eop_manager_migrations_user WITH GRANT OPTION;
 
+-- A role which can be shared by eop_manager_migrations_user and eop_manager_app_user
+-- for creating and refreshing materialized views.
+CREATE ROLE materialized_views_role;
+
+
 -- App / Developers will be granted access by the migrations user in migration scripts
 CREATE USER eop_manager_app_user WITH PASSWORD 'password' NOINHERIT;
 

@@ -12,16 +12,13 @@ spring:
     user: postgres
     password: password
 
-  kafka:
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.add.type.headers: false
-
 logging:
   level:
     root: WARN
     nz.govt.eop: INFO
     org.jooq.Constants: OFF
     org.jooq: INFO
+
+arcgis:
+  tangata_whenua_sites:
+    url: "http://test.url"
