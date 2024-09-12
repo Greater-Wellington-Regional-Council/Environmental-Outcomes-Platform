@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {Layer} from 'react-map-gl';
-import {FeatureHighlightProps} from "@components/InteractiveMap/lib/InteractiveMap";
-import calculatePolygonCentroid from "@lib/calculatePolygonCentoid.ts";
-import { Point, Polygon } from 'geojson';
+import React, {useEffect, useState} from 'react'
+import {Layer} from 'react-map-gl'
+import {FeatureHighlightProps} from "@components/InteractiveMap/lib/InteractiveMap"
+import { calculatePolygonCentroid } from "@lib/calculatePolygonCentoid.ts"
+import { Point, Polygon } from 'geojson'
 
 const FeatureHighlight: React.FC<FeatureHighlightProps> = ({
                                                              highlightedFeature,
@@ -10,59 +10,50 @@ const FeatureHighlight: React.FC<FeatureHighlightProps> = ({
                                                              mapRef,
                                                              fillColor = 'orange',
                                                              fillOpacity = 0.3,
-                                                             filter = ['==', ['id'], highlightedFeature?.feature?.properties?.id || null],
+                                                             filter = ['==', ['id'], highlightedFeature?.properties?.id || null],
                                                              source,
                                                              tooltip = null
                                                            }) => {
 
-  const [tooltipPosition, setTooltipPosition] = useState<{ left: number, top: number } | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{ left: number, top: number } | null>(null)
 
   const moveToolTip = () => {
     if (highlightedFeature && mapRef?.current) {
-      const geometry = highlightedFeature.feature.geometry;
+      const geometry = highlightedFeature.geometry
 
-      let coordinates: [number, number] | null = null;
+      let coordinates: [number, number] | null = null
 
       if (geometry.type === 'Point') {
-        coordinates = (geometry as Point).coordinates as [number, number];
+        coordinates = (geometry as Point).coordinates as [number, number]
       } else if (geometry.type === 'Polygon') {
-        const polygon = geometry as Polygon;
-        coordinates = calculatePolygonCentroid(polygon);
+        const polygon = geometry as Polygon
+        coordinates = calculatePolygonCentroid(polygon)
       }
 
       if (coordinates) {
-        const screenCoords = mapRef.current.project(coordinates);
-        setTooltipPosition({ left: screenCoords.x, top: screenCoords.y });
+        const screenCoords = mapRef.current.project(coordinates)
+        setTooltipPosition({ left: screenCoords.x, top: screenCoords.y })
       }
     }
   }
 
   useEffect(() => {
-    moveToolTip();
+    moveToolTip()
     if (mapRef?.current) {
-        const map = mapRef.current.getMap();
-        map.on('mouseup', moveToolTip);
-        map.on('drag', moveToolTip);
-        map.on('move', moveToolTip);
+        const map = mapRef.current.getMap()
+        map.on('mouseup', moveToolTip)
+        map.on('drag', moveToolTip)
+        map.on('move', moveToolTip)
         return () => {
-            map.off('move', moveToolTip);
-            map.off('mouseup', moveToolTip);
+            map.off('move', moveToolTip)
+            map.off('mouseup', moveToolTip)
         }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [highlightedFeature, mapRef]);
+  }, [highlightedFeature, mapRef])
 
   return (
     <>
-      <Layer
-        id={`${id}-candidates`}
-        type="fill"
-        paint={{
-          'fill-color': fillColor,
-          'fill-opacity': 0,
-        }}
-        source={source}
-      />
       {highlightedFeature && (
         <Layer
           id={`${id}-highlight`}
@@ -74,7 +65,7 @@ const FeatureHighlight: React.FC<FeatureHighlightProps> = ({
           }}
           source={source}
         />)}
-      {highlightedFeature && tooltip?.source(highlightedFeature.feature) && tooltipPosition && (
+      {highlightedFeature && tooltip?.source(highlightedFeature) && tooltipPosition && (
         <div
           className="tooltip"
           style={{
@@ -82,11 +73,11 @@ const FeatureHighlight: React.FC<FeatureHighlightProps> = ({
             top: tooltipPosition.top,
           }}
         >
-          {tooltip?.source(highlightedFeature.feature)}
+          {tooltip?.source(highlightedFeature)}
         </div>
       )}
     </>
   )
 }
 
-export default FeatureHighlight;
+export default FeatureHighlight

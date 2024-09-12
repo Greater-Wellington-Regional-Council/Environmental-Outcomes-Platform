@@ -1,5 +1,5 @@
-import ComboBox, {ComboBoxProps} from '@elements/ComboBox/ComboBox';
-import addressesService from '@services/AddressesService';
+import ComboBox, {ComboBoxProps} from '@elements/ComboBox/ComboBox'
+import addressesService from '@services/AddressesService'
 
 export interface AddressSearchProps extends Omit<ComboBoxProps, 'options'> {}
 
@@ -12,7 +12,7 @@ const AddressSearch = (props: AddressSearchProps) => {
       onSelect={props.onSelect}
       directionUp={props.directionUp}
     />
-  );
-};
+  )
+}
 
-export default AddressSearch;
+export default AddressSearch

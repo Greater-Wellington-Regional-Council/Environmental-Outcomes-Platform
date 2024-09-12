@@ -1,0 +1,15 @@
+export const sharedPaths = {
+    "@components/*": ["src/components/*"],
+    "@pages/*": ["src/pages/*"],
+    "@lib/*": ["src/lib/*"],
+    "@values/*": ["src/values/*"],
+    "@images/*": ["src/images/*"],
+    "@src/*": ["src/*"],
+    "@loaders/*": ["src/loaders/*"],
+    "@assets/*": ["src/assets/*"],
+    "@shared/*": ["../sharedLib/*"],
+    "@models/*": ["src/models/*"],
+    "@pdfs/*": ["src/pdfs/*"],
+    "@services/*": ["src/services/*"],
+    "@elements/*": ["src/elements/*"],
+}

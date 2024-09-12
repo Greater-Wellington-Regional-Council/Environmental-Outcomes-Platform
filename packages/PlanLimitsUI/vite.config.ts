@@ -1,35 +1,33 @@
-/// <reference types="vitest" />
 import { defineConfig } from 'vite';
-
 import react from '@vitejs/plugin-react-swc';
 
-// // https://vitejs.dev/config/
-// export default defineConfig({
-//   resolve: {
-//     mainFields: ["module", "browser", "jsnext:main", "jsnext"],
-//   },
-//   plugins: [react(), redirectAll()],
-//   test: {
-//     globals: true,
-//     environment: 'jsdom',
-//     setupFiles: './src/setupTests.ts',
-//   },
-// });
-
-export default defineConfig((async ()=> {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+export default defineConfig(async () => {
   const redirectAll = (await import('vite-plugin-rewrite-all')).default;
+  const tsconfigPaths = (await import('vite-tsconfig-paths')).default;
+
   return {
     plugins: [
+      tsconfigPaths(),
       react(),
       redirectAll()
     ],
     build: {
       rollupOptions: {
-        external: ['vite-plugin-rewrite-all'],
+        // If you have external dependencies that should be excluded from the build, list them here
+        external: [],
       },
+    },
+    resolve: {
+      alias: {
+        // Add any custom aliases you need
+      },
+      mainFields: ["module", "browser", "jsnext:main", "jsnext"],
     },
     optimizeDeps: {
       esbuildOptions: {
+        // Ensure that .js files are correctly interpreted as JSX when needed
         loader: {
           '.js': 'jsx',
         },
@@ -41,4 +39,4 @@ export default defineConfig((async ()=> {
       setupFiles: './src/setupTests.ts',
     },
   };
-})());
+});

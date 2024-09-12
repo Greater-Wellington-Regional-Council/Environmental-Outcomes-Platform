@@ -13,7 +13,7 @@ const preview: Preview = {
 };
 
 export const parameters = {
-    actions: { argTypesRegex: '^on[A-Z].*' },
+    actions: { },
 };
 
 export default preview;
