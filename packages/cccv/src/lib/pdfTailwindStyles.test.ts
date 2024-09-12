@@ -1,5 +1,5 @@
-import {describe, expect, vi} from "vitest";
-import {tw} from "@lib/pdfTailwindStyles.ts";
+import {describe, expect, vi} from "vitest"
+import {tw} from "@lib/pdfTailwindStyles.ts"
 
 vi.mock('lodash', () => {
   return {
@@ -10,14 +10,14 @@ vi.mock('lodash', () => {
       }
     }
   }
-});
+})
 
 describe('pdfTailwindStyles', function () {
   it('st() returns correct translation of tailwind style', () => {
     expect(tw('body')).toEqual('text-normal')
-  });
+  })
 
   it('st() returns correct translation of tailwind style embedded with other tw utilities', () => {
     expect(tw('body scale-110')).toEqual('text-normal scale-110')
-  });
-});
+  })
+})

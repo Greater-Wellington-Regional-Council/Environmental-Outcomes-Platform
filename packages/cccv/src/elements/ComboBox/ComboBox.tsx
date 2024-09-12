@@ -1,7 +1,7 @@
-import "./ComboBox.scss";
-import React, { useState, useEffect, useRef, CSSProperties } from 'react';
-import _ from 'lodash';
-import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
+import "./ComboBox.scss"
+import React, { useState, useEffect, useRef, CSSProperties } from 'react'
+import _ from 'lodash'
+import { MagnifyingGlassIcon } from "@heroicons/react/16/solid"
 
 export interface ComboBoxProps {
   initialValue?: string;
@@ -30,31 +30,32 @@ const ComboBox: React.FC<ComboBoxProps> = ({
    buttonStyle = null,
    directionUp = false
  }) => {
-  const [query, setQuery] = useState(initialValue || '');
-  const [filteredOptions, setFilteredOptions] = useState<LabelAndValue[]>([]);
-  const inputContainerRef = useRef<HTMLDivElement>(null);
+  const [query, setQuery] = useState(initialValue || '')
+  const [filteredOptions, setFilteredOptions] = useState<LabelAndValue[]>([])
+  const inputContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (options instanceof Function) {
       if (query.length === 0) {
-        setFilteredOptions([]);
+        setFilteredOptions([])
       } else if (query.length > 2) {
-        options(query).then((options) => setFilteredOptions(options));
+        options(query).then((options) => setFilteredOptions(options))
       }
     } else {
       if (query.length < 3) {
-        filteredOptions?.length && setFilteredOptions([]);
+        filteredOptions?.length && setFilteredOptions([])
       } else if (query.length < 5) {
         setFilteredOptions((options as never[]).filter(option =>
-          (_.get(option, "label", option) as string).toLowerCase().includes(query.toLowerCase())));
+          (_.get(option, "label", option) as string).toLowerCase().includes(query.toLowerCase())))
       } else {
-        setFilteredOptions(filteredOptions.filter(option => option.label.toLowerCase().includes(query.toLowerCase())));
+        setFilteredOptions(filteredOptions.filter(option => option.label.toLowerCase().includes(query.toLowerCase())))
       }
     }
-  }, [query, options]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, options])
 
   const selectedOption = (o: string | null): LabelAndValue | null =>
-     filteredOptions.find(option => option.label.toLowerCase() === o?.toLowerCase()) || null;
+     filteredOptions.find(option => option.label.toLowerCase() === o?.toLowerCase()) || null
 
   return (
     <div className={`relative ${className}`} aria-label={label} >
@@ -88,9 +89,9 @@ const ComboBox: React.FC<ComboBoxProps> = ({
             <div
               key={index}
               onClick={() => {
-                setQuery("");
-                onSelect(option);
-                setFilteredOptions([option]);
+                setQuery("")
+                onSelect(option)
+                setFilteredOptions([option])
               }}
               className={`cursor-pointer p-2 bg-gray-100 shadow rounded text-textDefault hover:bg-nui hover:text-white ${option.label.toLowerCase() === query.toLowerCase() ? 'bg-nui' : ''}`}
               style={{
@@ -105,7 +106,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ComboBox;
+export default ComboBox

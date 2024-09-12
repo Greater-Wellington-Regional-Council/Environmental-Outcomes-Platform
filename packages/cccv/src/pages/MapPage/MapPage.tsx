@@ -1,103 +1,158 @@
-import './MapPage.scss';
-import InteractiveMap from "@components/InteractiveMap/InteractiveMap";
-import {useLoaderData} from "react-router-dom";
-import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
-import useEscapeKey from "@lib/useEscapeKey.tsx";
-import {useContext, useEffect, useState} from "react";
-import ErrorContext from "@components/ErrorContext/ErrorContext.ts";
-import freshwaterManagementService from "@services/FreshwaterManagementUnitService.ts";
-import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx";
-import gwrcLogo from "@images/printLogo_2000x571px.png";
-import AddressSearch from "@components/AddressSearch/AddressSearch.tsx";
-import addressesService, {Address} from "@services/AddressesService.ts";
-import {LabelAndValue} from "@elements/ComboBox/ComboBox.tsx";
+import './MapPage.scss'
+import InteractiveMap from "@components/InteractiveMap/InteractiveMap"
+import { useLoaderData } from "react-router-dom"
+import { FmuFullDetails } from "@models/FreshwaterManagementUnit.ts"
+import useEscapeKey from "@lib/useEscapeKey.tsx"
+import { useContext, useEffect, useState } from "react"
+import ErrorContext from "@components/ErrorContext/ErrorContext.ts"
+import freshwaterManagementService from "@services/FreshwaterManagementUnitService.ts"
+import gwrcLogo from "@images/printLogo_2000x571px.png"
+import AddressSearch from "@components/AddressSearch/AddressSearch.tsx"
+import addressesService from "@services/AddressesService.ts"
+import { LabelAndValue } from "@elements/ComboBox/ComboBox.tsx"
+import { ViewLocation } from "@shared/types/global"
+import { calculateCentroids } from "@lib/calculatePolygonCentoid.ts"
+import linzDataService from "@services/LinzDataService.ts"
+import { useLoading } from "@components/Spinner/LoadingProvider.tsx"
+import SlidingPanel from '@components/InfoPanel/SlidingPanel.tsx'
+import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx"
+import {useMapSnapshot} from "@lib/MapSnapshotContext.tsx";
 
-
-const ADDRESS_ZOOM = 12;
+const ADDRESS_ZOOM = 12
 
 export default function MapPage() {
+  const setError = useContext(ErrorContext).setError
+  const locationDetails = useLoaderData()
 
-  const setError = useContext(ErrorContext).setError;
+  const [selectedLocation, selectLocation] = useState<ViewLocation | null>(null)
+  const [selectedFmu, selectFmu] = useState<FmuFullDetails | null>(null)
 
-  const locationDetails = useLoaderData();
+  const [showPanel, setShowPanel] = useState(false)
+  const [fmuChanged, setFmuChanged] = useState(false)
 
-  const [selectedLocation, selectLocation] = useState<ViewLocation | null>(null);
-  const [selectedFmu, selectFmu] = useState<FmuFullDetails | null>(null);
+  const { mapSnapshot } = useMapSnapshot()
 
-  const [showPanel, setShowPanel] = useState(false);
-  const [fmuChanged, setFmuChanged] = useState(false);
+  const { setLoading } = useLoading()
+
+  const fetchFmu = async () => {
+    if (!selectedLocation) {
+      setShowPanel(false)
+      selectFmu(null)
+      return
+    }
+
+    const fmu = await freshwaterManagementService.getByLocation(selectedLocation, setError)
+
+    setFmuChanged(selectedFmu != null && fmu != null && (fmu != selectedFmu))
+    setShowPanel(fmu != null)
+    selectFmu(fmu)
+
+    fmu && setError(null)
+  }
 
   useEffect(() => {
-    const fetchFmu = async () => {
-      if (!selectedLocation) {
-        setShowPanel(false)
-        selectFmu(null);
-        return;
-      }
-      const fmu = await freshwaterManagementService.getByLocation(selectedLocation, setError);
-      setFmuChanged(selectedFmu != null && fmu != null && (fmu != selectedFmu));
-      setShowPanel(fmu != null)
-      selectFmu(fmu);
-      fmu && setError(null)
-    };
+    if (!selectedLocation?.geometry)
+      fetchFmu().then().catch((e) => setError(e))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLocation, setError, mapSnapshot])
 
-    fetchFmu().then()
-  }, [selectedLocation, setError]);
+  useEscapeKey(() => {
+    setShowPanel(false)
+    selectLocation(null)
+  })
 
-  useEscapeKey(() => setShowPanel(false))
+  const selectAddress = async (address: LabelAndValue | null = null) => {
+    if (!address) return
 
-  const revealOrHideInfoPanel = showPanel ? 'animate-in' : 'animate-out';
-  const signalUpdatedInfoPanel = fmuChanged ? 'pulsate' : '';
+    setLoading(true)
+    selectFmu(null)
+    selectLocation(null)
 
-  const selectAddress = (address: LabelAndValue | null = null) => {
-    if (!address) return;
+    const selectedAddress = await addressesService.getAddressByPxid(address.value)
 
-    addressesService.getAddress(address).then((selectedAddress: Address | null) => {
-      if (!selectedAddress) {
-        setError(new Error("Address not found"));
-        return;
-      }
+    if (!selectedAddress) {
+      setError(new Error("Address not found"))
+      setLoading(false)
+      return
+    }
 
-      selectLocation({latitude: selectedAddress.latitude, longitude: selectedAddress.longitude, description: address.label, zoom: ADDRESS_ZOOM} as ViewLocation);
-    });
+    const addressBoundary = await linzDataService.getGeometryForAddressId(selectedAddress.id)
+
+    if (!addressBoundary) {
+      setError(new Error("Failed to retrieve address data.  The LINZ service may be unavailable."))
+
+      // Default address Point if no geometry is available
+      const addressLocation = {
+        longitude: selectedAddress.location.geometry.coordinates[0],
+        latitude: selectedAddress.location.geometry.coordinates[1],
+        description: `<p>${selectedAddress.address}</p><br/><p class="tooltip-note">Boundary not available</p>`,
+        zoom: ADDRESS_ZOOM,
+      } as ViewLocation
+
+      selectLocation(addressLocation)
+
+      setLoading(false)
+      return
+    }
+
+    // We have an address and a boundary object.
+    // Use centroid of boundary as location if possible,
+    // but resort to address location is that cannot be calculated.
+    const centroid = calculateCentroids(addressBoundary!)
+
+    const desc = `<p>${selectedAddress.address}</p>`
+
+    const location = {
+      longitude: centroid[0] || selectedAddress.location.geometry.coordinates[0],
+      latitude: centroid[1] || selectedAddress.location.geometry.coordinates[1],
+      description: desc + (centroid[0] ? '' : '<p class="tooltip-note">Boundary not available</p>'),
+      zoom: ADDRESS_ZOOM,
+      geometry: addressBoundary,
+    } as ViewLocation
+
+    selectLocation(location)
+    setLoading(false)
   }
 
   return (
-    <div className="map-page bg-white">
-      <header
-        className={"header bold p-4 pl-[1.5em] bg-nui text-white grid grid-cols-12"}>
-        <div className={"header-text col-span-10"}>
-          <h1
-            className={"header-title"}>Freshwater
-            Management</h1>
-          <h2 className={"header-subtitle mb-3"}>Catchment context, challenges and values (CCCV)</h2>
-          <p className={"preamble font-light text-body"}>Find information useful for creating a Freshwater Farm Plan,
-            such as contaminant goals, sites
-            of significance, and implementation ideas for your catchment area.</p>
-        </div>
-        <div className={"header-image col-span-2 mt-2 mr-2 scale-105 ml-auto"}>
-          <img src={gwrcLogo} style={{maxHeight: "83px"}}
-               alt={"Greater Wellington Regional Council logo"}/>
-        </div>
-      </header>
-
-      <main role="application">
-        <div className={`map-panel relative`}>
-          <InteractiveMap startLocation={locationDetails as ViewLocation} selected={selectedLocation} select={(selectLocation)}/>
-          <div className={`address-box`}>
-            <AddressSearch
-              onSelect={address => selectAddress(address)}
-              placeholder={"Search for address"}
-              directionUp={true}
-            />
+      <div className="map-page bg-white">
+        <header
+            className={"header bold p-4 pl-[1.5em] bg-nui text-white grid grid-cols-12"}>
+          <div className={"header-text col-span-10"}>
+            <h1 className={"header-title"}>Freshwater Management</h1>
+            <h2 className={"header-subtitle mb-3"}>Catchment context, challenges and values (CCCV)</h2>
+            <p className={"preamble font-light text-body"}>Find information useful for creating a Freshwater Farm Plan,
+              such as contaminant goals, sites
+              of significance, and implementation ideas for your catchment area.</p>
           </div>
-        </div>
+          <div className={"header-image col-span-2 mt-2 mr-2 scale-105 ml-auto"}>
+            <img src={gwrcLogo} style={{ maxHeight: "83px" }}
+                 alt={"Greater Wellington Regional Council logo"} />
+          </div>
+        </header>
 
-        <div
-          className={`info-panel bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
-          {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} />}
-        </div>
-      </main>
-    </div>
+        <main role="application">
+          {/* Position the sliding panel relative to this map panel */}
+          <div className={`map-panel relative`}>
+            <InteractiveMap startLocation={locationDetails as ViewLocation} locationInFocus={selectedLocation} setLocationInFocus={(selectLocation)} />
+            <div className={`address-box`}>
+              <AddressSearch
+                  onSelect={selectAddress}
+                  placeholder={"Search for address"}
+                  directionUp={true}
+              />
+            </div>
+
+            {selectedFmu && (
+                <SlidingPanel
+                    showPanel={showPanel}
+                    contentChanged={fmuChanged}
+                    onClose={() => setShowPanel(false)}>
+                  <FreshwaterManagementUnit {...selectedFmu} mapImage={mapSnapshot} />
+                </SlidingPanel>
+            )}
+          </div>
+        </main>
+      </div>
   )
 }
