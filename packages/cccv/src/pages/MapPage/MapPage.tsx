@@ -13,10 +13,10 @@ import { LabelAndValue } from "@elements/ComboBox/ComboBox.tsx"
 import { ViewLocation } from "@shared/types/global"
 import { calculateCentroids } from "@lib/calculatePolygonCentoid.ts"
 import linzDataService from "@services/LinzDataService.ts"
-import { useLoading } from "@components/Spinner/LoadingProvider.tsx"
 import SlidingPanel from '@components/InfoPanel/SlidingPanel.tsx'
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx"
-import {useMapSnapshot} from "@lib/MapSnapshotContext.tsx";
+import {useMapSnapshot} from "@lib/MapSnapshotContext.tsx"
+import useLoadingContext from "@components/LoadingIndicator/useLoadingIndicator"
 
 const ADDRESS_ZOOM = 12
 
@@ -32,7 +32,7 @@ export default function MapPage() {
 
   const { mapSnapshot } = useMapSnapshot()
 
-  const { setLoading } = useLoading()
+  const { setLoading } = useLoadingContext()
 
   const fetchFmu = async () => {
     if (!selectedLocation) {

@@ -15,6 +15,6 @@ describe('FreshwaterManagementUnits service', () => {
       tangataWhenuaSites: [],
     }
     const augmentedRecord = service.augmentRecord(record as FmuFullDetails)
-    expect(augmentedRecord.freshwaterManagementUnit.implementationIdeas![0]).toContain("Consider wetlands for water quality treatment")
+    expect(augmentedRecord.freshwaterManagementUnit.implementationIdeas!).toContain("Consider wetlands for water quality treatment")
   })
 })
