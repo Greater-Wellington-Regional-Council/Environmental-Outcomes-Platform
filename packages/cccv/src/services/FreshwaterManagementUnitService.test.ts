@@ -1,10 +1,10 @@
-import service from '@services/FreshwaterManagementUnitService.ts';
-import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
+import service from '@services/FreshwaterManagementUnitService.ts'
+import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts"
 
 describe('FreshwaterManagementUnits service', () => {
   it('should return a FreshwaterManagementUnits service with required functions', () => {
-    expect(service.getByLocation).toBeDefined();
-  });
+    expect(service.getByLocation).toBeDefined()
+  })
 
   it('should return implementaion ideas for Parkvale Streams', () => {
     const record = {
@@ -13,8 +13,8 @@ describe('FreshwaterManagementUnits service', () => {
         fmuName1: 'Parkvale Stream',
       },
       tangataWhenuaSites: [],
-    };
-    const augmentedRecord = service.augmentRecord(record as FmuFullDetails);
-    expect(augmentedRecord.freshwaterManagementUnit.implementationIdeas![0]).toContain("Consider wetlands for water quality treatment");
-  });
-});
+    }
+    const augmentedRecord = service.augmentRecord(record as FmuFullDetails)
+    expect(augmentedRecord.freshwaterManagementUnit.implementationIdeas![0]).toContain("Consider wetlands for water quality treatment")
+  })
+})

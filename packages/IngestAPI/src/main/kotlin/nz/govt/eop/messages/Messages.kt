@@ -20,7 +20,8 @@ data class WaterAllocationMessage(
     val isMetered: Boolean,
     val meters: List<String>,
     val ingestId: String,
-    val receivedAt: Instant
+    val receivedAt: Instant,
+    val category: String
 ) {
   constructor(
       allocation: WaterAllocation,
@@ -38,5 +39,6 @@ data class WaterAllocationMessage(
       allocation.meters,
       ingestId,
       receivedAt,
+      allocation.category,
   ) {}
 }

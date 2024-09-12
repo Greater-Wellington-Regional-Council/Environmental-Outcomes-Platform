@@ -28,6 +28,7 @@ with plugins for Kotlin and Gradle also works (though support for running inline
 * Start two terminal sessions
 * In one session, start services required for development ```./batect --output=all runSupportServices```
 * In a second session start the application ```./gradlew bootRun```
+* Or ```./gradlew bootRun --args='--spring.profiles.active=allocations-consumer'``` to run Manager with the IngestApi allocation consumer on.
 
 ### Code Formatting
 

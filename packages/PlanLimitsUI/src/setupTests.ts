@@ -1,6 +1,7 @@
 import { beforeAll, afterEach, afterAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
+// eslint-disable-next-line import/no-unresolved
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
 
@@ -12,6 +13,9 @@ const server = setupServer(
   http.get('http://localhost:8080/:path', () => {
     return HttpResponse.json({});
   }),
+  http.get('http://localhost:8080/plan-limits/manifest', () => {
+    return HttpResponse.json({});
+  })
 );
 
 beforeAll(() => server.listen());

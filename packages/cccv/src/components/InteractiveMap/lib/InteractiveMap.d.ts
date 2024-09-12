@@ -1,31 +1,30 @@
-import React, {Dispatch, SetStateAction} from "react";
-import {MapRef} from "react-map-gl";
-import mapboxgl from "mapbox-gl";
-import {Feature} from "geojson";
+import React, {Dispatch, SetStateAction} from "react"
+import {MapRef} from "react-map-gl"
+import mapboxgl from "mapbox-gl"
+import {Feature} from "geojson"
 
-interface InteractiveMapProps {
+interface MapProps {
   startLocation: ViewLocation;
-  selected?: ViewLocation | null;
-  select?: Dispatch<SetStateAction<ViewLocation | null>>;
-  children?: React.ReactNode;
+  locationInFocus?: ViewLocation | null;
 }
 
-interface HighlightedFeature {
-  feature: Feature;
-  x: number;
-  y: number
+interface InteractiveMapProps extends MapProps {
+  setLocationInFocus?: Dispatch<SetStateAction<ViewLocation | null>>;
+  children?: React.ReactNode;
 }
 
 interface BoundaryLinesLayerProps {
   id: string;
   source: string;
   mapStyle: string;
+  fillColor?: string;
+  fillLayer: string;
 }
 
 type CombinedMapRef = MapRef & mapboxgl.Map;
 
 interface FeatureHighlightProps {
-  highlightedFeature: HighlightedFeature | null;
+  highlightedFeature: Feature;
   id?: string;
   mapRef: React.RefObject<CombinedMapRef>;
   fillColor?: string;
