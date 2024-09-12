@@ -36,8 +36,10 @@ interface MapView {
 
 interface Council {
   id: number;
+  slug: string;
   name: string;
   url: string;
   logo: string;
   defaultViewLocation: MapView;
+  [key: string]: any;
 }
