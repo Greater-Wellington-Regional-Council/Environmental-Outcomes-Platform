@@ -5,7 +5,7 @@ import Disclaimer, { saveDisclaimerAgreed } from './index';
 
 function queryDisclaimerDialog(screenToQuery: Screen<typeof queries>) {
   return screenToQuery.queryByRole('dialog', {
-    name: /natural resource plan limits/i,
+    name: /Greater Wellington Natural Resources Plan/i,
   });
 }
 

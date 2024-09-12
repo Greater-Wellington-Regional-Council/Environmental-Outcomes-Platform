@@ -3,10 +3,14 @@ import {MapRef} from "react-map-gl";
 import mapboxgl from "mapbox-gl";
 import {Feature} from "geojson";
 
-interface InteractiveMapProps {
+interface MapProps {
   startLocation: ViewLocation;
   selected?: ViewLocation | null;
+}
+
+interface InteractiveMapProps extends MapProps {
   select?: Dispatch<SetStateAction<ViewLocation | null>>;
+  setMapSnapshot?: Dispatch<SetStateAction<string | null>>;
   children?: React.ReactNode;
 }
 

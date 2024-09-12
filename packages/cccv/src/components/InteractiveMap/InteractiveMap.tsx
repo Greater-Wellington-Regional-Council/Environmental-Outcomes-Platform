@@ -25,16 +25,17 @@ import env from "@src/env.ts";
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts";
 import {useViewState} from "@components/InteractiveMap/lib/useViewState.ts";
 
-const DEFAULT_ZOOM = 8;
+const DEFAULT_ZOOM = 10;
 const DEFAULT_VIEW_WIDTH = 100;
 const DEFAULT_VIEW_HEIGHT = 150;
-const DEFAULT_PITCH = 30;
+const DEFAULT_PITCH = 0;
 
 export default function InteractiveMap({
                                          startLocation,
                                          select,
                                          selected,
-                                         children
+                                         children,
+                                         setMapSnapshot
                                        }: InteractiveMapProps) {
 
   const {viewState, handleMove} = useViewState({
@@ -90,12 +91,21 @@ export default function InteractiveMap({
 
       setMarker(newMarker)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
+
+  useEffect(() => {
+    if (marker && mapRef?.current && setMapSnapshot) {
+      const snapshot = getSnapshot(mapRef?.current);
+      setMapSnapshot(snapshot ?? null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marker]);
 
   const handleClick = (e: MapMouseEvent) => {
     select && select(null);
     const clickedFeature = mapRef?.current?.queryRenderedFeatures(e.point);
-    if (clickedFeature!.filter( f => f.layer.id == "highlighted-fmu-candidates").length > 0) {
+    if (clickedFeature!.filter(f => f?.layer?.id == "highlighted-fmu-candidates").length > 0) {
       const location = {longitude: e.lngLat.lng, latitude: e.lngLat.lat, zoom: mapRef.current!.getZoom()};
       select && select(location);
     }
@@ -105,6 +115,29 @@ export default function InteractiveMap({
     const hoveredFeatures = mapRef?.current?.getMap().queryRenderedFeatures(e.point) || [];
     hoveredFeatures?.length && highlightFeature && highlightFeature({feature: hoveredFeatures[0], x: e.point.x, y: e.point.y});
   }, 0);
+
+  function getSnapshot(mapRef: CombinedMapRef, layersToInclude: string[] = [], layersToExclude: string[] = []) {
+    const map = mapRef.getMap(); // Get the map instance
+
+    const originalVisibility: { [key: string]: unknown } = {};
+    layersToExclude.forEach((layerId) => {
+      originalVisibility[layerId] = map.getLayoutProperty(layerId, 'visibility');
+      map.setLayoutProperty(layerId, 'visibility', 'none');
+    });
+
+    layersToInclude.forEach((layerId) => {
+      originalVisibility[layerId] = map.getLayoutProperty(layerId, 'visibility');
+      map.setLayoutProperty(layerId, 'visibility', 'visible');
+    });
+
+    const dataUrl = map.getCanvas().toDataURL('image/png');
+
+    Object.keys(originalVisibility).forEach((layerId) => {
+      map.setLayoutProperty(layerId, 'visibility', originalVisibility[layerId]);
+    });
+
+    return dataUrl;
+  }
 
   return (
     <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>

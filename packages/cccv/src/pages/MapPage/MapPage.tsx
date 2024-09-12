@@ -26,6 +26,7 @@ export default function MapPage() {
 
   const [showPanel, setShowPanel] = useState(false);
   const [fmuChanged, setFmuChanged] = useState(false);
+  const [mapSnapshot, setMapSnapshot] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFmu = async () => {
@@ -42,7 +43,8 @@ export default function MapPage() {
     };
 
     fetchFmu().then()
-  }, [selectedLocation, setError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLocation, setError, mapSnapshot]);
 
   useEscapeKey(() => setShowPanel(false))
 
@@ -83,7 +85,7 @@ export default function MapPage() {
 
       <main role="application">
         <div className={`map-panel relative`}>
-          <InteractiveMap startLocation={locationDetails as ViewLocation} selected={selectedLocation} select={(selectLocation)}/>
+          <InteractiveMap startLocation={locationDetails as ViewLocation} selected={selectedLocation} select={(selectLocation)} setMapSnapshot={setMapSnapshot} />
           <div className={`address-box`}>
             <AddressSearch
               onSelect={address => selectAddress(address)}
@@ -95,7 +97,7 @@ export default function MapPage() {
 
         <div
           className={`info-panel bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500`}>
-          {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} />}
+          {selectedFmu && <FreshwaterManagementUnit {...selectedFmu} mapImage={mapSnapshot} />}
         </div>
       </main>
     </div>
