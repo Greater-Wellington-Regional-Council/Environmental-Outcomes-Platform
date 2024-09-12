@@ -10,6 +10,7 @@ import { ContaminantList, contaminants as fmuContaminants } from "@components/Fr
 import EmailLink from "@components/EmailLink/EmailLink.tsx";
 import { Contaminants } from "@components/Contaminants/Contaminants.tsx";
 import makeSafe from "@lib/makeSafe.ts";
+import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts";
 
 const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
 
@@ -42,7 +43,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
 
       <div className="overview mt-6" data-testid="catchment-desc">
         <h2>Overview</h2>
-        <div dangerouslySetInnerHTML={{ __html: purify.sanitize(makeSafe(catchmentDescription ?? '') || "<p>No overview available</p>") }} />
+        <div dangerouslySetInnerHTML={{ __html: purify.sanitize(makeSafe(catchmentDescription ?? "<p>No overview available</p>")) }} />
       </div>
 
       <div className="contaminants mt-6">
@@ -72,7 +73,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
           <h2>Implementation Ideas</h2>
           <div className="implementation-ideas">
             <ul className={"mt-2"}>
-              {implementationIdeas?.map((idea: string, index) => <li
+              {parseHtmlListToArray(implementationIdeas)?.map((idea: string, index) => <li
                 className="list-disc my-0" key={index}>{makeSafe(idea)}</li>)}
             </ul>
           </div>
