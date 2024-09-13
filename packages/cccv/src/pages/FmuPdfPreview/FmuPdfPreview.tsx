@@ -1,8 +1,8 @@
 import './FmuPdfPreview.scss'
-import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts";
-import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf.tsx";
-import {PDFViewer} from "@react-pdf/renderer";
-import {useLoaderData} from "react-router-dom";
+import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts"
+import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf.tsx"
+import {PDFViewer} from "@react-pdf/renderer"
+import {useLoaderData} from "react-router-dom"
 
 const FmuPdfPreview = () => {
   const details = useLoaderData()

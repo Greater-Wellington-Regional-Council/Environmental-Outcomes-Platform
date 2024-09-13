@@ -40,4 +40,4 @@ const fonts = { inter: {
 ],
 }}
 
-export default fonts;
+export default fonts

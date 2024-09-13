@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import { ContaminantList } from "@components/FreshwaterManagementUnit/utils.ts";
-import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid';
+import React, { useState } from "react"
+import { ContaminantList } from "@components/FreshwaterManagementUnit/utils.ts"
+import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/20/solid'
 import {
   getObjectiveDescription,
   contaminantTitle,
   byWhen
-} from "@components/Contaminants/ContaminantObjectiveDescription";
+} from "@components/Contaminants/ContaminantObjectiveDescription"
 
 export const Contaminants: React.FC<{ contaminants: ContaminantList }> = ({ contaminants }) => {
-  const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({});
+  const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>({})
 
   const handleRowClick = (title: string) => {
-    setExpandedRows(prevState => ({ ...prevState, [title]: !prevState[title] }));
-  };
+    setExpandedRows(prevState => ({ ...prevState, [title]: !prevState[title] }))
+  }
 
   return (
     <div>
@@ -50,5 +50,5 @@ export const Contaminants: React.FC<{ contaminants: ContaminantList }> = ({ cont
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
