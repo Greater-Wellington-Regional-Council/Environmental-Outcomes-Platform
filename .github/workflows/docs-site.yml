@@ -23,7 +23,7 @@ jobs:
 
       - name: Setup pages
         id: pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v5
 
       - name: Cache Batect
         uses: actions/cache@v3.2.4
