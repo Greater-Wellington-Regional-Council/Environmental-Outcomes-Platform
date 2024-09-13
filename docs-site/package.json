@@ -22,7 +22,7 @@
     "@mdx-js/react": "^3.0.1",
     "@tailwindcss/typography": "^0.5.9",
     "clsx": "^2.1.1",
-    "gatsby": "^5.13.6",
+    "gatsby": "^5.13.7",
     "gatsby-plugin-postcss": "^6.13.1",
     "gatsby-plugin-sharp": "^5.13.1",
     "gatsby-plugin-sitemap": "^6.13.1",
