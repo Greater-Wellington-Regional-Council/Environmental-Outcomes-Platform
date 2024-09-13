@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from "lodash"
 
 export const pdfTailwindStyles = {
   h1: "font-sans font-bold text-[24px] leading-6",
@@ -14,13 +14,13 @@ export const pdfTailwindStyles = {
   "button:disabled": "font-source-sans-3 text-nui font-bold text-[16px] leading-[22px]",
   ul: "list-inside ml-[-1.5em] pl-1.5 indent-[-1.5em]",
   "ul li": "list-disc ml-6 pl-6 -mt-1.5 leading-7",
-};
+}
 
 export const tw = (input: string): string => {
   Object.keys(pdfTailwindStyles).forEach((key) => {
-    const regex = new RegExp(`\\b${key}\\b`, 'g');
-    input = input.replace(regex, _.get(pdfTailwindStyles, key));
-  });
+    const regex = new RegExp(`\\b${key}\\b`, 'g')
+    input = input.replace(regex, _.get(pdfTailwindStyles, key))
+  })
 
-  return input;
-};
+  return input
+}

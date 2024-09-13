@@ -16,6 +16,7 @@ import {
     byWhen
 } from "@components/Contaminants/ContaminantObjectiveDescription";
 import makeSafe from "@lib/makeSafe.ts";
+import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts";
 
 Font.register(fonts.inter);
 
@@ -93,6 +94,18 @@ const Footer = ({ freshwaterManagementUnit  }: FmuFullDetailsWithMap) => (
     </View>
 );
 
+const MapImage: React.FC<{ src: string, width?: string }> = ({ src, width }) => {
+    return (
+        <Image
+            style={[
+                { width: width, height: '312px', marginRight: "16px" },
+                tw("object-cover")
+            ]}
+            src={src}
+        />
+    );
+};
+
 export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
 
     const {
@@ -125,38 +138,18 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
                     <Text style={tw("h1")}>{fmuName1}</Text>
                 </View>
 
-                {/* Map */}
-                <View style={tw("flex-grow mb-8 overflow-hidden flex items-center justify-center")} wrap={false}>
-                    {details.mapImage ? (
-                        <Image
-                            style={[
-                                {width: '100%', height: '612px', flexShrink: 1},
-                                tw("object-cover")
-                            ]}
-                            src={details.mapImage}
-                        />
-                    ) : (
-                        <View />
-                    )}
-                </View>
-
-                <Footer {...details} />
-            </Page>
-
-            <Page size="A4" style={tw("bg-white font-sans p-4")}>
-                {/* Description */}
-                <View style={tw("mt-0")}>
-                    {catchmentDescription ? (
-                        <>
-                            <Text style={tw("h2 mb-2")}>Overview</Text>
+                <View style={[tw("mb-6 flex-row items-start"), { width: '100%' }]} wrap={false}>
+                    {catchmentDescription && (
+                        <View style={{ flex: 1, marginRight: '12px' }}>
                             <Text style={tw("body")}>{makeSafe(catchmentDescription ?? '')}</Text>
-                        </>
-                    ) : <View />}
+                        </View>
+                    )}
+                    {details.mapImage && <MapImage width={catchmentDescription ? '42%' : '100%'} src={details.mapImage}/>}
                 </View>
 
                 {/* Contaminants */}
                 {contaminants?.length ? (
-                    <View style={tw("mt-6 mb-2")}>
+                    <View style={tw("mt-2 mb-2")}>
                         <Text style={tw("h2 mb-2")}>Contaminants</Text>
                         <Text style={tw("body")}>
                             Freshwater objectives from {fmuName1} Whaitua Implementation Plan (as at August 2018)
@@ -182,7 +175,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
                 {implementationIdeas ? (
                     <View style={tw("mt-6")} wrap={false}>
                         <Text style={tw("h2")}>Implementation Ideas</Text>
-                        <BulletList items={implementationIdeas} />
+                        <BulletList items={parseHtmlListToArray(implementationIdeas)} />
                     </View>
                 ) : <View style={tw("mt-0")} />}
 

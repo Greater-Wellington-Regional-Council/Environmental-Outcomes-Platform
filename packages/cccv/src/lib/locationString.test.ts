@@ -3,9 +3,9 @@ import {
   createPinnedLocationString, defineProjections,
   parseLocationString,
   parsePinnedLocation, targetProjection,
-} from './locationString.ts';
+} from './locationString.ts'
 import { describe, it, expect } from 'vitest'
-import * as proj4 from 'proj4';
+import * as proj4 from 'proj4'
 
 describe('parseLocationString', () => {
   it('should return null when string is invalid', () => {
@@ -115,11 +115,11 @@ describe('Can define EPSG:2193 projection', () => {
 
 describe('Can convert projections', () => {
   it('EPSG:2193 to EPSG:4326', async () => {
-    const result = await targetProjection([175.437, -40.901]);
-    expect(result).toEqual([82.92642131035626, -75.81515162566647]);
+    const result = await targetProjection([175.437, -40.901])
+    expect(result).toEqual([82.92642131035626, -75.81515162566647])
   })
   it('EPSG:4326 to EPSG:2193', async () => {
-    const result = await targetProjection([175.437, -40.901], true);
-    expect(result).toEqual([1805270.7400507138, 5469373.55043029]);
+    const result = await targetProjection([175.437, -40.901], true)
+    expect(result).toEqual([1805270.7400507138, 5469373.55043029])
   })
 })

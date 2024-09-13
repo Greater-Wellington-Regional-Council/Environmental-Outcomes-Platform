@@ -24,3 +24,12 @@
     border-radius: 0;
   }
 }
+
+.pinPopup {
+  position: absolute;
+  background: white;
+  border: 1px solid black;
+  padding: 5px;
+  z-index: 10;
+  width: 200px;
+}
