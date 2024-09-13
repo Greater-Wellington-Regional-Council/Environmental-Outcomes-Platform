@@ -1,4 +1,4 @@
-import { useEffect, useRef, MutableRefObject } from 'react';
+import { useEffect, useRef, MutableRefObject } from 'react'
 
 type IntersectionObserverCallback = (entries: IntersectionObserverEntry[]) => void;
 
@@ -6,23 +6,23 @@ const useIntersectionObserver = (
   callback: IntersectionObserverCallback,
   options?: IntersectionObserverInit
 ): MutableRefObject<HTMLDivElement | null> => {
-  const targetRef = useRef<HTMLDivElement | null>(null);
+  const targetRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (!targetRef.current) return;
+    if (!targetRef.current) return
 
     const observer = new IntersectionObserver((entries) => {
-      callback(entries);
-    }, options);
+      callback(entries)
+    }, options)
 
-    observer.observe(targetRef.current);
+    observer.observe(targetRef.current)
 
     return () => {
-      observer.disconnect();
-    };
-  }, [callback, options]);
+      observer.disconnect()
+    }
+  }, [callback, options])
 
-  return targetRef;
-};
+  return targetRef
+}
 
-export default useIntersectionObserver;
+export default useIntersectionObserver

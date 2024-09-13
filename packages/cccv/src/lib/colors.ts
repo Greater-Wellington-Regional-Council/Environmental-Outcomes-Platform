@@ -8,6 +8,6 @@ const colors = {
   textH6: '#737373',
   textCaption: '#737373',
   grey: '#9D9D9D'
-};
+}
 
-export default colors;
+export default colors

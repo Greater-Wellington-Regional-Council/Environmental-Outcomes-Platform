@@ -41,6 +41,8 @@ const findStorybookDirs = (baseDir: string): string[] => {
 };
 
 const startAllStorybooks = async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
 
@@ -54,13 +56,13 @@ const startAllStorybooks = async () => {
     for (const dir of storybookDirs) {
         const projectName = dir.split('/').pop() || dir;
         console.log(`Starting Storybook for ${projectName} on port ${port}`);
-        await startStorybook(`Storybook for ${projectName}`, `npm run storybook -- -p ${port}`, dir);
+        await startStorybook(`Storybook for ${projectName}`, `npm run storybook -- --no-open --disable-telemetry -p ${port}`, dir);
         port += 1;
     }
 
     console.log(`All sub-Storybooks started. Starting the main Storybook...`);
 
-    const mainStorybookProcess = spawn('npm', ['run', 'storybook'], { env: { ...process.env, PORT: port.toString() }, shell: true });
+    const mainStorybookProcess = spawn('npm', ['run', 'storybook -- --disable-telemetry'], { env: { ...process.env, PORT: port.toString() }, shell: true });
 
     mainStorybookProcess.stdout?.on('data', (data) => {
         console.log(`Main Storybook: ${data}`);

@@ -1,5 +1,5 @@
-import {Contaminant} from "@components/FreshwaterManagementUnit/utils.ts";
-import _ from "lodash";
+import {Contaminant} from "@components/FreshwaterManagementUnit/utils.ts"
+import _ from "lodash"
 
 export const OBJECTIVE_DESCRIPTION: { [key: string]: { [key: string]: string } } = {
   Phytoplankton: {
@@ -72,7 +72,7 @@ export const OBJECTIVE_DESCRIPTION: { [key: string]: { [key: string]: string } }
     D: "High health risks (for example, respiratory, irritation and allergy symptoms) exist from exposure to cyanobacteria (from any contact with freshwater).",
     E: "N/A"
   }
-};
+}
 
 export const CONTAMINANT_NAME: { [key: string]: string } = {
   Phytoplankton: "Phytoplankton",
@@ -85,36 +85,36 @@ export const CONTAMINANT_NAME: { [key: string]: string } = {
   Sediment: "Sediment",
   E_Coli: "E. Coli",
   Cyanobacteria: "Cyanobacteria"
-};
-
-export const contaminantTitle = (contaminant: Contaminant) => _.get(CONTAMINANT_NAME, contaminant.title, contaminant.title);
-
-export function getObjectiveDescription(contaminant: Contaminant, contaminant_level?: string) {
-  if (!contaminant_level?.trim().length) return '-';
-
-  const codes = level_codes(contaminant_level) || [];
-
-  const desc = _.map(codes, (level) => {
-    return _.get(OBJECTIVE_DESCRIPTION[contaminant.title], level, '-');
-  });
-
-  if (desc.length == 0)
-    return null;
-  else if (desc.length == 1)
-    return desc[0];
-  else
-    return desc.map((_, index) => `${codes[index]}=${desc[index]}`).join("<br><br>");
 }
 
-export const level_codes = (level: string | undefined) => (level ?? '').trim().match(/\b[A-E]\b/g)?.sort();
+export const contaminantTitle = (contaminant: Contaminant) => _.get(CONTAMINANT_NAME, contaminant.title, contaminant.title)
+
+export function getObjectiveDescription(contaminant: Contaminant, contaminant_level?: string) {
+  if (!contaminant_level?.trim().length) return '-'
+
+  const codes = level_codes(contaminant_level) || []
+
+  const desc = _.map(codes, (level) => {
+    return _.get(OBJECTIVE_DESCRIPTION[contaminant.title], level, '-')
+  })
+
+  if (desc.length == 0)
+    return null
+  else if (desc.length == 1)
+    return desc[0]
+  else
+    return desc.map((_, index) => `${codes[index]}=${desc[index]}`).join("<br><br>")
+}
+
+export const level_codes = (level: string | undefined) => (level ?? '').trim().match(/\b[A-E]\b/g)?.sort()
 
 export const byWhen = (contaminant: Contaminant) => {
-  const mciYear  = Array.from((contaminant.byWhen ?? '').matchAll(/([0-9]+) for MCI/g), match => match[1]);
+  const mciYear  = Array.from((contaminant.byWhen ?? '').matchAll(/([0-9]+) for MCI/g), match => match[1])
 
   if (contaminantTitle(contaminant).includes('MCI') && mciYear?.length)
-    return `by ${mciYear[0]}`;
+    return `by ${mciYear[0]}`
 
-  const other = (contaminant.byWhen ?? '').split('(')[0].trim();
+  const other = (contaminant.byWhen ?? '').split('(')[0].trim()
 
-  return (other.match(/^[0-9]+$/)) ? `by ${other}` : other;
+  return (other.match(/^[0-9]+$/)) ? `by ${other}` : other
 }

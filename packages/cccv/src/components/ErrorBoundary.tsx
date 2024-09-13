@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -10,16 +10,16 @@ interface ErrorBoundaryState {
 
 export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
+    super(props)
+    this.state = { hasError: false }
   }
 
   static getDerivedStateFromError(): ErrorBoundaryState {
-    return { hasError: true };
+    return { hasError: true }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("ErrorBoundary caught an error", error, errorInfo);
+    console.error("ErrorBoundary caught an error", error, errorInfo)
 
     // Example: Log the error to an external error reporting service if required
     // logErrorToMyService(error, errorInfo);
@@ -32,9 +32,9 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
           <h1>A problem has occurred within this application.</h1>
           <p>Please diagnose and address the issue, or contact application support.</p>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
