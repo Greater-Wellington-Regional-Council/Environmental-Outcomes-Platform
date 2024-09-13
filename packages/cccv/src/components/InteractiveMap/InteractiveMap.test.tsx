@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
-import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx";
-import {expect} from "vitest";
+import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx"
+import {expect} from "vitest"
 
 beforeAll(() => {
     vi.mock('mapbox-gl', () => ({
@@ -16,8 +16,8 @@ beforeAll(() => {
     return {
       __esModule: true,
       useQueryClient: vi.fn(() => null),
-    };
-  });
+    }
+  })
 })
 
 afterAll(() => {
@@ -26,11 +26,11 @@ afterAll(() => {
 
 describe('InteractiveMap component', () => {
     it('it exists', () => {
-        expect(InteractiveMap).to.be.ok;
-    });
+        expect(InteractiveMap).to.be.ok
+    })
 
     it('should render', () => {
-        render(<InteractiveMap startLocation={{ longitude: 174.7, latitude: -41.3, zoom: 10 }} select={() => {}}  selected={null}/>)
+        render(<InteractiveMap startLocation={{ longitude: 174.7, latitude: -41.3, zoom: 10 }} setLocationInFocus={() => {}} locationInFocus={null}/>)
 
         expect(screen.getByTestId('InteractiveMap')).toBeInTheDocument()
     })

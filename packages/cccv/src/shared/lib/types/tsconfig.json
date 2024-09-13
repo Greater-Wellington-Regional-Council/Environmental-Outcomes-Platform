@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "jsx": "react", // or "react-jsx" for React 17+
+    "types": ["react"],
+    "skipLibCheck": true // if errors are related to lib checks
+  }
+}

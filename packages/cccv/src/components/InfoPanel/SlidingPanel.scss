@@ -1,0 +1,38 @@
+/* For larger screens, slide in from the right */
+@media (min-width: 640px) {
+  .sliding-panel {
+    top: 0px;
+    right: 0;
+    bottom: auto;
+    max-width: 100%;
+    min-width: 33%;
+    transform: translateX(100%); /* Hidden state */
+    padding-top: 1em;
+  }
+  .sliding-panel.animate-in {
+    transform: translateX(0); /* Visible state */
+  }
+  .sliding-panel.animate-out {
+    transform: translateX(100%); /* Hidden state */
+  }
+}
+
+/* For smaller screens, slide in from the bottom */
+@media (max-width: 639px) {
+  .sliding-panel {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    width: 100%; /* Full width for small screens */
+    max-height: 60vh;
+    transform: translateY(100%); /* Hidden state */
+    overflow: auto;
+    padding-top: 1em;
+  }
+  .sliding-panel.animate-in {
+    transform: translateY(0); /* Visible state */
+  }
+  .sliding-panel.animate-out {
+    transform: translateY(100%); /* Hidden state */
+  }
+}
