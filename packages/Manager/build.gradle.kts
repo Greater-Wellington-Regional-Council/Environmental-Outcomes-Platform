@@ -5,7 +5,7 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
-  id("org.springframework.boot") version "3.2.0"
+  id("org.springframework.boot") version "3.3.0"
   id("io.spring.dependency-management") version "1.1.4"
   id("com.diffplug.spotless") version "6.23.3"
   id("org.flywaydb.flyway") version "10.6.0"
@@ -71,7 +71,7 @@ dependencies {
   testImplementation("io.kotest:kotest-assertions-core:5.8.0")
   testImplementation("io.kotest:kotest-framework-engine:5.8.0")
   testImplementation("org.springframework.kafka:spring-kafka-test")
-  testImplementation("org.awaitility:awaitility-kotlin:4.2.0")
+  testImplementation("org.awaitility:awaitility-kotlin:4.2.2")
   testImplementation("io.mockk:mockk:1.13.10")
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
   testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
