@@ -60,7 +60,7 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/dompurify": "^3.0.5",
     "@types/i18next": "^13.0.0",
-    "@types/node": "^20.11.24",
+    "@types/node": "^22.5.5",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@types/testing-library__user-event": "^4.2.0",
