@@ -67,7 +67,7 @@ export default function InteractiveMap({
 
         const map = mapRef.current.getMap()
 
-        const dataUrl = `${map.getCanvas().toDataURL('image/png')}?timestamp=${Date.now()}`;
+        const dataUrl = `${map.getCanvas().toDataURL('image/png')}?timestamp=${Date.now()}`
 
         console.log("End buildPrintSnapshot", dataUrl)
         return dataUrl
@@ -75,16 +75,16 @@ export default function InteractiveMap({
 
     function updatePrintSnapshot(location: ViewLocation | null) {
         if (!mapRef?.current) {
-            setMapSnapshot(null);
-            return;
+            setMapSnapshot(null)
+            return
         }
 
-        const map = mapRef.current.getMap();
+        const map = mapRef.current.getMap()
 
         map.once('idle', () => {
-            const snapshot = buildPrintSnapshot(location);
-            setMapSnapshot && setMapSnapshot(snapshot ?? null);
-        });
+            const snapshot = buildPrintSnapshot(location)
+            setMapSnapshot && setMapSnapshot(snapshot ?? null)
+        })
     }
 
     function fitBoundsToFeatures(featureOrCollection: Feature | FeatureCollection) {

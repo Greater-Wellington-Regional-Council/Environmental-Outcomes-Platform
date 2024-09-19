@@ -10,8 +10,8 @@ import ErrorBoundary from "@components/ErrorBoundary"
 
 import {MapSnapshotProvider} from "@lib/MapSnapshotContext"
 import {LoadingProvider} from "@components/LoadingIndicator/LoadingContext"
-import useLoadingIndicator from "@components/LoadingIndicator/useLoadingIndicator.tsx";
-import {LoadingIndicatorOverlay} from "@components/LoadingIndicator/LoadingIndicatorOverlay.tsx";
+import useLoadingIndicator from "@components/LoadingIndicator/useLoadingIndicator.tsx"
+import {LoadingIndicatorOverlay} from "@components/LoadingIndicator/LoadingIndicatorOverlay.tsx"
 
 const rootElement = document.getElementById('root')
 
@@ -24,7 +24,7 @@ const LoadingOverlayContainer: React.FC = () => {
     return <>{loading && <LoadingIndicatorOverlay />}</>
 }
 
-export default LoadingOverlayContainer;
+export default LoadingOverlayContainer
 export function App() {
 
     return (
