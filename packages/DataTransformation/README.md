@@ -25,6 +25,13 @@ Will fix any linting errors it can (for local development)
 
 * `./batect lint-fix`
 
+### Note
+
+Any new views/tables created by DBT needs to be added into
+`packages/Manager/src/main/resources/db/migration/R__dbt_temp_schema.sql`.
+
+This will allow JOOQ to generate classes before DBT has run
+
 ### Generate DBT documentation
 
 The command helps in generating your project's documentation and catelog will be created.
