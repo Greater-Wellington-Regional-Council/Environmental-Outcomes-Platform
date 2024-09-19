@@ -1,17 +1,17 @@
 import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import {createBrowserRouter, RouteObject, RouterProvider} from 'react-router-dom'
-import routes from '@src/routes.tsx'
-import {ErrorProvider} from "@components/ErrorContext/ErrorProvider.tsx"
+import routes from '@src/routes'
+import {ErrorProvider} from "@components/ErrorContext/ErrorProvider"
 import {QueryClient, QueryClientProvider} from 'react-query'
 
 import {ThemeProvider} from "@material-tailwind/react"
-import ErrorBoundary from "@components/ErrorBoundary.tsx"
+import ErrorBoundary from "@components/ErrorBoundary"
 
-import {MapSnapshotProvider} from "@lib/MapSnapshotContext.tsx"
-import {LoadingProvider} from "@components/LoadingIndicator/LoadingContext.tsx"
-import {LoadingIndicatorOverlay} from "@components/LoadingIndicator/LoadingIndicatorOverlay.tsx"
-import useLoadingIndicator from "@components/LoadingIndicator/useLoadingIndicator.tsx"
+import {MapSnapshotProvider} from "@lib/MapSnapshotContext"
+import {LoadingProvider} from "@components/LoadingIndicator/LoadingContext"
+import useLoadingIndicator from "@components/LoadingIndicator/useLoadingIndicator.tsx";
+import {LoadingIndicatorOverlay} from "@components/LoadingIndicator/LoadingIndicatorOverlay.tsx";
 
 const rootElement = document.getElementById('root')
 
@@ -30,6 +30,7 @@ export function App() {
     return (
         <StrictMode>
             <ErrorProvider>
+                <ErrorBoundary>
                 <ThemeProvider>
                     <LoadingProvider>
                         <QueryClientProvider client={queryClient}>
@@ -42,6 +43,7 @@ export function App() {
                         </QueryClientProvider>
                     </LoadingProvider>
                 </ThemeProvider>
+                </ErrorBoundary>
             </ErrorProvider>
         </StrictMode>
     )

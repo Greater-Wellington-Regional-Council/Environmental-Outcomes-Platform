@@ -80,11 +80,12 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
 
     const revealOrHideInfoPanel = isPanelVisible ? 'animate-in' : 'animate-out'
     const signalUpdatedInfoPanel = contentChanged ? 'pulsate' : ''
+    const stateClass = isPanelVisible ? 'sliding-panel-visible' : 'sliding-panel-hidden'
 
     return (
         <div
             ref={panelRef}
-            className={`sliding-panel absolute bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-10`}
+            className={`sliding-panel ${stateClass} absolute bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-10`}
             style={{
                 width: isLargeScreen ? `${panelWidth}px` : '100%', // Full width for small screens
                 maxHeight: isLargeScreen ? '100%' : '60vh', // No taller than half the screen on small screens

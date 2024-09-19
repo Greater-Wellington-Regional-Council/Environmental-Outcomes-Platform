@@ -1,22 +1,22 @@
 import './MapPage.scss'
 import InteractiveMap from "@components/InteractiveMap/InteractiveMap"
 import { useLoaderData } from "react-router-dom"
-import { FmuFullDetails } from "@models/FreshwaterManagementUnit.ts"
-import useEscapeKey from "@lib/useEscapeKey.tsx"
+import { FmuFullDetails } from "@models/FreshwaterManagementUnit"
+import useEscapeKey from "@lib/useEscapeKey"
 import { useContext, useEffect, useState } from "react"
-import ErrorContext from "@components/ErrorContext/ErrorContext.ts"
-import freshwaterManagementService from "@services/FreshwaterManagementUnitService.ts"
+import ErrorContext from "@components/ErrorContext/ErrorContext"
+import freshwaterManagementService from "@services/FreshwaterManagementUnitService"
 import gwrcLogo from "@images/printLogo_2000x571px.png"
-import AddressSearch from "@components/AddressSearch/AddressSearch.tsx"
-import addressesService from "@services/AddressesService.ts"
-import { LabelAndValue } from "@elements/ComboBox/ComboBox.tsx"
+import AddressSearch from "@components/AddressSearch/AddressSearch"
+import addressesService from "@services/AddressesService"
+import { LabelAndValue } from "@elements/ComboBox/ComboBox"
 import { ViewLocation } from "@shared/types/global"
-import { calculateCentroids } from "@lib/calculatePolygonCentoid.ts"
-import linzDataService from "@services/LinzDataService.ts"
-import SlidingPanel from '@components/InfoPanel/SlidingPanel.tsx'
-import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.tsx"
-import {useMapSnapshot} from "@lib/MapSnapshotContext.tsx"
-import useLoadingContext from "@components/LoadingIndicator/useLoadingIndicator"
+import { calculateCentroids } from "@lib/calculatePolygonCentoid"
+import linzDataService from "@services/LinzDataService"
+import SlidingPanel from '@components/InfoPanel/SlidingPanel'
+import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit"
+import {useMapSnapshot} from "@lib/MapSnapshotContext"
+import useLoadingIndicator from "@components/LoadingIndicator/useLoadingIndicator"
 
 const ADDRESS_ZOOM = 12
 
@@ -32,7 +32,7 @@ export default function MapPage() {
 
   const { mapSnapshot } = useMapSnapshot()
 
-  const { setLoading } = useLoadingContext()
+  const { setLoading } = useLoadingIndicator()
 
   const fetchFmu = async () => {
     if (!selectedLocation) {

@@ -25,7 +25,7 @@ import {debounce} from "lodash"
 import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService.ts"
 import {debounceClick} from "@lib/debounceClick.ts"
 import {removeSourceWithLayers} from "@lib/removeSourceWithLayers.ts"
-import {useMapSnapshot} from "@lib/MapSnapshotContext.tsx";
+import {useMapSnapshot} from "@lib/MapSnapshotContext"
 
 const DEFAULT_VIEW_WIDTH = 100
 const DEFAULT_VIEW_HEIGHT = 150

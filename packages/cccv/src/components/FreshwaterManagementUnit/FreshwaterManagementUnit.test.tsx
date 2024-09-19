@@ -1,7 +1,7 @@
-import FreshwaterManagementUnit from './FreshwaterManagementUnit.tsx';
+import FreshwaterManagementUnit from './FreshwaterManagementUnit'
 import {render, screen} from '@testing-library/react'
-import {describe, expect, vi} from "vitest";
-import {MutableRefObject} from "react";
+import {describe, expect, vi} from "vitest"
+import {MutableRefObject} from "react"
 
 vi.mock('@react-pdf/renderer', async () => {
   return {
@@ -17,19 +17,19 @@ vi.mock('@react-pdf/renderer', async () => {
     Font: {
       register: () => {},
     },
-  };
-});
+  }
+})
 
 vi.mock('@lib/useIntersectionObserver', () => {
   return {
     default: (): MutableRefObject<HTMLDivElement | null> => ({ current: null }),
-  };
-});
+  }
+})
 
 describe('Spec FreshwaterManagementUnit', function () {
     it('it exists', () => {
-        expect(FreshwaterManagementUnit).to.be.ok;
-    });
+        expect(FreshwaterManagementUnit).to.be.ok
+    })
 
   it('shows fmu with catchment description', () => {
     render(<FreshwaterManagementUnit freshwaterManagementUnit={{ catchmentDescription: "This is a catchment description" }} tangataWhenuaSites={[]} />)
@@ -47,7 +47,7 @@ describe('Spec FreshwaterManagementUnit', function () {
   })
 
   it('reveals meta information when About this information clicked', async () => {
-    render(<FreshwaterManagementUnit freshwaterManagementUnit={{}} tangataWhenuaSites={[]} />);
-    expect(screen.getByText('Contact us for more information')).toBeInTheDocument();
-  });
+    render(<FreshwaterManagementUnit freshwaterManagementUnit={{}} tangataWhenuaSites={[]} />)
+    expect(screen.getByText('Contact us for more information')).toBeInTheDocument()
+  })
 })

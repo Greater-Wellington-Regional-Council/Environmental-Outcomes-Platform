@@ -16,6 +16,36 @@ vi.mock('react-router-dom', async () => {
   }
 })
 
+vi.mock('@lib/MapSnapshotContext', () => {
+  return {
+    __esModule: true,
+    useMapSnapshot: vi.fn(() => ({
+          setMapSnapshot: vi.fn()
+        })
+    )
+  }
+})
+
+vi.mock('@components/Spinner/LoadingProvider', () => {
+  return {
+    __esModule: true,
+    useLoading: vi.fn(() => ({
+          setLoading: vi.fn()
+        })
+    )
+  }
+})
+
+vi.mock('@components/LoadingIndicator/useLoadingIndicator', () => {
+    return {
+        __esModule: true,
+        default: vi.fn(() => ({
+            setLoading: vi.fn()
+            })
+        )
+    }
+})
+
 describe('Map', () => {
   afterAll(() => {
     vi.restoreAllMocks()
