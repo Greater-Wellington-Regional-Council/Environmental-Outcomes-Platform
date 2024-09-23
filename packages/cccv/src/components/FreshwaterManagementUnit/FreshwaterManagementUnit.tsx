@@ -1,16 +1,16 @@
-import "./FreshwaterManagementUnit.scss";
-import purify from "dompurify";
-import {Key} from "react";
-import { FmuFullDetailsWithMap } from "@models/FreshwaterManagementUnit.ts";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { FreshwaterManagementUnitPDF } from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf";
-import formatFilename from "@lib/formatAsFilename";
-import dateTimeString from "@lib/dateTimeString";
-import { ContaminantList, contaminants as fmuContaminants } from "@components/FreshwaterManagementUnit/utils.ts";
-import EmailLink from "@components/EmailLink/EmailLink.tsx";
-import { Contaminants } from "@components/Contaminants/Contaminants.tsx";
-import makeSafe from "@lib/makeSafe.ts";
-import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts";
+import "./FreshwaterManagementUnit.scss"
+import purify from "dompurify"
+import {Key} from "react"
+import { FmuFullDetailsWithMap } from "@models/FreshwaterManagementUnit.ts"
+import {BlobProviderParams, PDFDownloadLink } from "@react-pdf/renderer"
+import { FreshwaterManagementUnitPDF } from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf"
+import formatFilename from "@lib/formatAsFilename"
+import dateTimeString from "@lib/dateTimeString"
+import { ContaminantList, contaminants as fmuContaminants } from "@components/FreshwaterManagementUnit/utils.ts"
+import EmailLink from "@components/EmailLink/EmailLink.tsx"
+import { Contaminants } from "@components/Contaminants/Contaminants.tsx"
+import makeSafe from "@lib/makeSafe.ts"
+import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 
 const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
 
@@ -37,7 +37,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
 
             <div className="absolute top-0 right-0 m-6 mt-0">
                 <PDFDownloadLink document={<FreshwaterManagementUnitPDF {...details} />} fileName={fileName}>
-                    {({loading}: { loading: boolean }) => <><button disabled={loading}>Print</button></>}
+                    {({loading}: BlobProviderParams) => <><button disabled={loading}>Print</button></>}
                 </PDFDownloadLink>
             </div>
 
