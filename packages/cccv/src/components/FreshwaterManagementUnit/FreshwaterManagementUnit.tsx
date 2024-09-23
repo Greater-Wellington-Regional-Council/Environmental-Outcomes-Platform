@@ -37,21 +37,23 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
 
             <div className="absolute top-0 right-0 m-6 mt-0">
                 <PDFDownloadLink document={<FreshwaterManagementUnitPDF {...details} />} fileName={fileName}>
-                    {({loading}: BlobProviderParams) => <><button disabled={loading}>Print</button></>}
+                    {({loading}: BlobProviderParams) => (loading ? <button disabled>Loading...</button> :
+                        <button>Print</button>)}
                 </PDFDownloadLink>
             </div>
 
-      <div className="overview mt-6" data-testid="catchment-desc">
-        <h2>Overview</h2>
-        <div dangerouslySetInnerHTML={{ __html: purify.sanitize(makeSafe(catchmentDescription ?? "<p>No overview available</p>")) }} />
-      </div>
+            <div className="overview mt-6" data-testid="catchment-desc">
+                <h2>Overview</h2>
+                <div
+                    dangerouslySetInnerHTML={{__html: purify.sanitize(makeSafe(catchmentDescription ?? "<p>No overview available</p>"))}}/>
+            </div>
 
             <div className="contaminants mt-6">
                 <h2>Contaminants</h2>
                 <p>Freshwater objectives from {fmuName1 || ""} Whaitua Implementation Plan (as at August 2018)</p>
 
                 <div className="mt-4">
-                    <Contaminants contaminants={contaminants} />
+                    <Contaminants contaminants={contaminants}/>
                 </div>
             </div>
 
@@ -68,17 +70,17 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
                 </div>
             ) : <div></div>}
 
-      {implementationIdeas ? (
-        <div className="implementation-ideas mt-6">
-          <h2>Implementation Ideas</h2>
-          <div className="implementation-ideas">
-            <ul className={"mt-2"}>
-              {parseHtmlListToArray(implementationIdeas)?.map((idea: string, index) => <li
-                className="list-disc my-0" key={index}>{makeSafe(idea)}</li>)}
-            </ul>
-          </div>
-        </div>
-      ) : <div></div>}
+            {implementationIdeas ? (
+                <div className="implementation-ideas mt-6">
+                    <h2>Implementation Ideas</h2>
+                    <div className="implementation-ideas">
+                        <ul className={"mt-2"}>
+                            {parseHtmlListToArray(implementationIdeas)?.map((idea: string, index) => <li
+                                className="list-disc my-0" key={index}>{makeSafe(idea)}</li>)}
+                        </ul>
+                    </div>
+                </div>
+            ) : <div></div>}
 
             <div className="about-this-information mt-6">
                 <h3>About this information</h3>
