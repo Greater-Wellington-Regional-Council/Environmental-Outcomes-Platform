@@ -37,7 +37,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
 
             <div className="absolute top-0 right-0 m-6 mt-0">
                 <PDFDownloadLink document={<FreshwaterManagementUnitPDF {...details} />} fileName={fileName}>
-                    {({ loading }: { loading: boolean }) => <button disabled={loading}>Print</button>}
+                    {({loading}: { loading: boolean }) => <><button disabled={loading}>Print</button></>}
                 </PDFDownloadLink>
             </div>
 
