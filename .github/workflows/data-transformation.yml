@@ -61,7 +61,7 @@ jobs:
       - name: Login to Amazon ECR
         if: ${{ github.actor != 'dependabot[bot]' }}
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and push docker image
         if: ${{ github.actor != 'dependabot[bot]' }}
