@@ -43,8 +43,7 @@
     "src",
     "src/types/*.d.ts",
     "node_modules/vitest/globals.d.ts",
-    "node_modules/@types/node/globals.global.d.ts",
-    "../RainfallViewer/src/app/global.d.ts"
+    "node_modules/@types/node/globals.global.d.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
