@@ -61,16 +61,12 @@ export default function InteractiveMap({
 
     const clickTimeoutRef = useRef<number | null>(null)
 
-    function buildPrintSnapshot(location: ViewLocation | null, layersToInclude: string[] = []) {
-        console.log("buildPrintSnapshot", location, layersToInclude)
+    function buildPrintSnapshot(location: ViewLocation | null) {
         if (!mapRef?.current || !location) return null
 
         const map = mapRef.current.getMap()
 
-        const dataUrl = `${map.getCanvas().toDataURL('image/png')}?timestamp=${Date.now()}`
-
-        console.log("End buildPrintSnapshot", dataUrl)
-        return dataUrl
+        return `${map.getCanvas().toDataURL('image/png')}?timestamp=${Date.now()}`
     }
 
     function updatePrintSnapshot(location: ViewLocation | null) {
@@ -88,8 +84,6 @@ export default function InteractiveMap({
     }
 
     function fitBoundsToFeatures(featureOrCollection: Feature | FeatureCollection) {
-        console.log("fitBoundsToFeatures", featureOrCollection)
-
         if (!mapRef?.current) return
 
         const bounds = new mapboxgl.LngLatBounds()
@@ -127,7 +121,6 @@ export default function InteractiveMap({
             })
         }
 
-        console.log("fitBounds", bounds)
         if (bounds && !bounds.isEmpty())
             mapRef.current.getMap().fitBounds(bounds, {
                 padding: DEFAULT_CLOSEUP_PADDING,
@@ -146,8 +139,6 @@ export default function InteractiveMap({
     }
 
     function drawFeaturesInFocus(location: ViewLocation, id: string = 'focusView'): string | null {
-        console.log('drawFeaturesInFocus', location, id)
-
         if (!mapRef?.current || !location?.geometry) return id
 
         const map = mapRef.current.getMap()
@@ -176,8 +167,6 @@ export default function InteractiveMap({
     }
 
     function highlightShapes(sourceId: string, options: HighlightShapesOptions) {
-        console.log('highlightShapes', sourceId, options)
-
         const defaultOptions: HighlightShapesOptions = { location: undefined, fillColor: 'darkgreen', outlineColor: '#000', fillOpacity: 0.5, remove: false}
         const opts: HighlightShapesOptions = { ...defaultOptions, ...options }
 
@@ -261,8 +250,6 @@ export default function InteractiveMap({
     }
 
     function placeFocusPin(location: ViewLocation) {
-        console.log('placeFocusPin', location, focusPin)
-
         if (!mapRef?.current) return
 
         if (!location || !isValidLngLat([location.longitude, location.latitude])) {
@@ -310,8 +297,6 @@ export default function InteractiveMap({
     }
 
     useEffect(() => {
-        console.log("updatePrintSnapshot", locationInFocus)
-
         if (locationInFocus) {
             placeFocusPin(locationInFocus)
             drawFeaturesInFocus(locationInFocus, 'focus')
@@ -329,7 +314,6 @@ export default function InteractiveMap({
 
     const handleClick = (e: MapMouseEvent) => {
         debounceClick(clickTimeoutRef, 200, () => {
-            console.log("handleClick", e)
             setLocationInFocus && setLocationInFocus(null)
             const clickedFeature = getFeatureUnderMouse(e, CLICK_LAYER)
             if (clickedFeature) {
@@ -345,7 +329,6 @@ export default function InteractiveMap({
         if (!map) return null
 
         const features = map?.queryRenderedFeatures(e.point)
-        console.log("getFeatureUnderMouse", features)
         if (!features) return null
 
         if (!layer) return features[0]
@@ -353,14 +336,12 @@ export default function InteractiveMap({
         if (typeof layer === 'number') return features[layer]
 
         return features.find(f => {
-            console.log("f.layer", f.layer?.id, layer, f.layer?.id === layer)
             return f.layer?.id === layer })
     }
 
     const handleHover = debounce((e) => {
         if (locationInFocus) return
         const feature = getFeatureUnderMouse(e, HOVER_LAYER)
-        console.log("handleHover", featureBeingRolledOver)
         if (feature) {
             setFeatureBeingRolledOver(feature)
         } else {

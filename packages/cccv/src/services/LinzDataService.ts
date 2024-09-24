@@ -88,13 +88,11 @@ const service = {
     getUnitOfPropertyIdForAddressId: async (addressId: AddressId, setError: null | ((error: Error | null) => void) = null): Promise<UnitOfPropertyId | null> => {
         const response = await get(URL_LDS_UOP_ID_FOR_ADDRESS_ID(addressId))
         if (!response) return handleError(`Failed to retrieve address data for address ${addressId}.  The LINZ data service may be unavailable.`, setError) as null
-        console.log('UOP, address', response)
         return _.get(response, "features[0].properties.unit_of_property_id")
     },
     getGeometryForUnitOfProperty: async (unitOfPropertyId: UnitOfPropertyId, projection = DEFAULT_PROJECTION, setError: null | ((error: Error | null) => void) = null): Promise<UnitsOfProperty | null> => {
         const response = await get(URL_LDS_GET_UOP_GEOMETRY(unitOfPropertyId, projection), { timeout: LDS_ADDRESS_BOUNDARY_TIMEOUT } )
         if (!response) return handleError(`Failed to retrieve geometry data for address ${unitOfPropertyId}.  The LINZ Data service may be unavailable.`, setError) as null
-        console.log('geometryForUOP', response)
         return response
     },
     getGeometryForAddressId: async (addressId: AddressId, projection = 'EPSG:4326', setError: null | ((error: Error | null) => void) = null): Promise<FeatureCollection | null> => {
