@@ -32,7 +32,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
     useEffect(() => {
         if (panelRef.current && isLargeScreen) {
             const parentWidth = panelRef.current.parentElement?.getBoundingClientRect().width || 0
-            const initialWidth = parentWidth * 0.3
+            const initialWidth = parentWidth * 0.35
             setPanelWidth(initialWidth)
             onResize && onResize(initialWidth)
         }

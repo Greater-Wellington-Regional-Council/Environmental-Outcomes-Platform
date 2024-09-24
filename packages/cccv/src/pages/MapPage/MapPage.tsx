@@ -134,7 +134,8 @@ export default function MapPage() {
         <main role="application">
           {/* Position the sliding panel relative to this map panel */}
           <div className={`map-panel relative`}>
-            <InteractiveMap startLocation={locationDetails as ViewLocation} locationInFocus={selectedLocation} setLocationInFocus={(selectLocation)} />
+            <InteractiveMap startLocation={locationDetails as ViewLocation} locationInFocus={selectedLocation}
+                            setLocationInFocus={(selectLocation)}/>
             <div className={`address-box`}>
               <AddressSearch
                   onSelect={selectAddress}
