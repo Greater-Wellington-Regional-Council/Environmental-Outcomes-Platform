@@ -10,26 +10,46 @@ import { ContaminantList, contaminants as fmuContaminants } from "@components/Fr
 import EmailLink from "@components/EmailLink/EmailLink.tsx"
 import { Contaminants } from "@components/Contaminants/Contaminants.tsx"
 import makeSafe from "@lib/makeSafe.ts"
-import { parseHtmlListToArray } from "@lib/parseHtmlListToArray.ts"
-import { Spinner } from "@components/LoadingIndicator/LoadingIndicatorOverlay"
+import { Spinner as DownloadSpinner } from "@components/LoadingIndicator/LoadingIndicatorOverlay"
+import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
+
+const DownloadLink: React.FC<DownloadLinkProps> = ({ instance, fileName }) => {
+    const [downloading, setDownloading] = useState(false)
+
+    const handleDownload = async () => {
+        if (instance && instance.url) {
+            setDownloading(true)
+
+            try {
+                const response = await fetch(instance.url)
+                const blob = await response.blob()
+
+                const link = document.createElement('a')
+                link.href = URL.createObjectURL(blob)
+                link.download = fileName
+
+                document.body.appendChild(link)
+                link.click()
+
+                document.body.removeChild(link)
+                URL.revokeObjectURL(link.href)
+            } catch (error) {
+                console.error("Download failed:", error)
+            } finally {
+                setDownloading(false)
+            }
+        }
+    }
+
+    return downloading ? <DownloadSpinner width={3} height={5} /> :
+        <button className="button-style" onClick={handleDownload} disabled={downloading}>Print</button>
+}
 
 interface DownloadLinkProps {
     pdfLoading: boolean;
     instance: UsePDFInstance;
     fileName: string;
     hasError?: boolean;
-}
-
-const DownloadLink: React.FC<DownloadLinkProps> = ({ pdfLoading, instance, fileName, hasError }) => {
-    if (hasError) {
-        return <span>Error loading PDF</span>
-    }
-
-    if (pdfLoading) {
-        return <Spinner width={3} height={5} /> // Replace this with your preferred spinner component
-    }
-
-    return <a className="button-style" href={instance.url!} download={fileName}>Print</a>
 }
 
 const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
