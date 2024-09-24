@@ -60,7 +60,7 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
         <div className="FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidden" id={`fmu_${id || ''}`}>
             <h1 className="w-[80%]">{fmuName1 || ""}</h1>
 
-            <div className="absolute top-0 right-0 m-6 mt-3">
+            <div className="absolute top-0 right-0 m-6 mt-0">
                 <DownloadLink pdfLoading={pdfLoading} instance={instance} fileName={fileName} hasError={hasError} />
             </div>
 
