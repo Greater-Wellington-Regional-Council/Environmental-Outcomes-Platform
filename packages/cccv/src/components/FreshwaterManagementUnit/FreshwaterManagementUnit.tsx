@@ -54,13 +54,18 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
 
     useEffect(() => {
         if (instance) {
-            setPdfLoading(instance.loading)
-            if (instance.error) {
-                setHasError(true)
-                setPdfLoading(false)
+            const isLoading = instance.loading
+            const hasErrorOccurred = !!instance.error
+
+            if (isLoading !== pdfLoading) {
+                setPdfLoading(isLoading)
+            }
+
+            if (hasErrorOccurred !== hasError) {
+                setHasError(hasErrorOccurred)
             }
         }
-    }, [instance])
+    }, [instance, pdfLoading, hasError])
 
     useEffect(() => {
         updateInstance(pdfDocument)
