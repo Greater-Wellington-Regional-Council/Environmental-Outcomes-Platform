@@ -1,56 +1,17 @@
 import "./FreshwaterManagementUnit.scss"
 import purify from "dompurify"
-import { Key, useEffect, useState, useMemo } from "react"
-import { FmuFullDetailsWithMap } from "@models/FreshwaterManagementUnit.ts"
-import {usePDF, UsePDFInstance} from "@react-pdf/renderer"
-import { FreshwaterManagementUnitPDF } from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf"
+import {Key, useEffect, useMemo, useState} from "react"
+import {FmuFullDetailsWithMap} from "@models/FreshwaterManagementUnit.ts"
+import {usePDF} from "@react-pdf/renderer"
+import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf"
 import formatFilename from "@lib/formatAsFilename"
 import dateTimeString from "@lib/dateTimeString"
-import { ContaminantList, contaminants as fmuContaminants } from "@components/FreshwaterManagementUnit/utils.ts"
+import {ContaminantList, contaminants as fmuContaminants} from "@components/FreshwaterManagementUnit/utils.ts"
 import EmailLink from "@components/EmailLink/EmailLink.tsx"
-import { Contaminants } from "@components/Contaminants/Contaminants.tsx"
+import {Contaminants} from "@components/Contaminants/Contaminants.tsx"
 import makeSafe from "@lib/makeSafe.ts"
-import { Spinner as DownloadSpinner } from "@components/LoadingIndicator/LoadingIndicatorOverlay"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
-
-const DownloadLink: React.FC<DownloadLinkProps> = ({ instance, fileName }) => {
-    const [downloading, setDownloading] = useState(false)
-
-    const handleDownload = async () => {
-        if (instance && instance.url) {
-            setDownloading(true)
-
-            try {
-                const response = await fetch(instance.url)
-                const blob = await response.blob()
-
-                const link = document.createElement('a')
-                link.href = URL.createObjectURL(blob)
-                link.download = fileName
-
-                document.body.appendChild(link)
-                link.click()
-
-                document.body.removeChild(link)
-                URL.revokeObjectURL(link.href)
-            } catch (error) {
-                console.error("Download failed:", error)
-            } finally {
-                setDownloading(false)
-            }
-        }
-    }
-
-    return downloading ? <DownloadSpinner width={3} height={5} /> :
-        <button className="button-style" onClick={handleDownload} disabled={downloading}>Print</button>
-}
-
-interface DownloadLinkProps {
-    pdfLoading: boolean;
-    instance: UsePDFInstance;
-    fileName: string;
-    hasError?: boolean;
-}
+import {DownloadLink} from "@elements/DownloadLink.tsx"
 
 const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
     const {
