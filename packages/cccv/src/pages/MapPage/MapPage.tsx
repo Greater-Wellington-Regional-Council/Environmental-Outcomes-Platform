@@ -180,7 +180,7 @@ export default function MapPage() {
                 options: {
                     'fill-color': 'yellow',
                     'fill-outline-color': 'purple',
-                    'text-color': 'red',
+                    'text-color': 'black',
                     'fill-opacity': 0.5,
                     'font-weight': 'normal',
                 },

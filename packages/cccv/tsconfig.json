@@ -40,7 +40,6 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "@shared/types/*.d.ts",
     "src",
     "src/types/*.d.ts",
     "node_modules/vitest/globals.d.ts",

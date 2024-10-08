@@ -49,7 +49,7 @@ interface Council {
         surfaceWaterLimit: React.Element | string;
     }[];
     usageDisplayGroups: UsageDisplayGroup[];
-    [key: string]: string;
+    [key: string]: unknown;
 }
 
 interface UsageDisplayGroup {
