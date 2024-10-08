@@ -95,7 +95,6 @@ function applyOffset(
     const mapWidth = map.getCanvas().width
     const mapHeight = map.getCanvas().height
 
-    // Adjust offset as a percentage of the bounds' width and height
     const offsetLng = (offset[0] / mapWidth) * (bounds.getEast() - bounds.getWest()) * 0.1 // Reduced by 10% to prevent over-shifting
     const offsetLat = (offset[1] / mapHeight) * (bounds.getNorth() - bounds.getSouth()) * 0.1
 

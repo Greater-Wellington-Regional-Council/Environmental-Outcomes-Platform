@@ -39,7 +39,7 @@ export const MapSnapshotProvider = ({ children }: { children: ReactNode }) => {
         }
 
         const map = mapRef!.current!.getMap()
-        map.once('idle', () => {
+            map.once('idle', () => {
             const snapshot = buildPrintSnapshot(mapRef, location)
             setMapSnapshot(snapshot ?? null)
         })

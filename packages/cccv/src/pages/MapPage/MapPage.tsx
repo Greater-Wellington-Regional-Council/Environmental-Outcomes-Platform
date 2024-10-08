@@ -156,7 +156,7 @@ export default function MapPage() {
                 layer: TTW_HIGHLIGHT_LAYER,
                 property: 'properties.fmuName1',
                 options: {
-                    'fill-color': 'orange',
+                    'fill-color': 'white',
                     'fill-outline-color': 'black',
                     'text-color': 'black',
                     'fill-opacity': 0.5,
@@ -167,7 +167,7 @@ export default function MapPage() {
                 layer: 'focusView-layer',
                 property: 'properties.location',
                 options: {
-                    'fill-color': 'yellow',
+                    'fill-color': 'white',
                     'fill-outline-color': 'blue',
                     'text-color': 'black',
                     'fill-opacity': 0.7,
@@ -178,7 +178,7 @@ export default function MapPage() {
                 layer: HOVER_LAYER,
                 property: 'properties.description',
                 options: {
-                    'fill-color': 'yellow',
+                    'fill-color': 'white',
                     'fill-outline-color': 'purple',
                     'text-color': 'black',
                     'fill-opacity': 0.5,

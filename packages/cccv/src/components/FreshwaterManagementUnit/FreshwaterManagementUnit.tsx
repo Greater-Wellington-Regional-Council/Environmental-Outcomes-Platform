@@ -93,13 +93,13 @@ const FreshwaterManagementUnit = (
             {tangataWhenuaSites?.features.length ? (
                 <div className="tangata-whenua mt-6">
                     <h2>Tangata Whenua</h2>
-                    <p className="italic">This area contains sites of significance to Tangata Whenua including:</p>
+                    <p className="">This area contains sites of significance to Tangata Whenua including:</p>
                     <div className="tangata-whenua-sites">
-                        <ul className="mt-2 list-disc">
+                        <ul className="mt-2 list-disc cursor-pointer">
                             {tangataWhenuaSites?.features.map((site: Feature, index: index) => (
                                 <li className="my-0" key={index} onClick={() => gotoTangataWhenua(index)}>
                                     {site?.properties?.location}
-                                    <ul className="flex flex-wrap gap-4 list-none p-0 m-0 mt-3 mb-4">
+                                    <ul className="flex flex-wrap gap-4 list-none p-0 m-0 mt-4 mb-6">
                                         {site?.properties?.locationValues?.map((siteName: string, index: Key | null | undefined) => (
                                             <li className="list-none ml-0 inset-0 bg-gray-300 indent-0 px-2"
                                                 key={index}>{siteName}</li>

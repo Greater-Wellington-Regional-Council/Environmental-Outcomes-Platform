@@ -1,8 +1,8 @@
 export const MAP_PROPERTIES = {
     'tangataWhenua': {
         'fill': {
-            'fill-color': 'green',
-            'fill-opacity': 0.4,
+            'fill-color': 'yellow',
+            'fill-opacity': 0.6,
             "fill-outline-color": "black",
         }
     },
@@ -15,8 +15,8 @@ export const MAP_PROPERTIES = {
     },
     'defaultSelect': {
         'fill': {
-            'fill-color': 'orange',
-            'fill-opacity': 0.6,
+            'fill-color': 'green',
+            'fill-opacity': 0.4,
             "fill-outline-color": "black",
         }
     }

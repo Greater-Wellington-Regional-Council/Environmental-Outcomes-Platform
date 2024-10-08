@@ -143,8 +143,8 @@ export default function InteractiveMap({
 
         drawFeaturesInFocus(locationInFocus)
         placeFocusPin(locationInFocus)
-        focusMap()
         updatePrintSnapshot(mapRef, locationInFocus)
+        focusMap()
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [locationInFocus])
@@ -217,8 +217,6 @@ export default function InteractiveMap({
 
                 <MapControls/>
 
-                {children}
-
                 <Source
                     id={HIGHLIGHTS_SOURCE_ID}
                     type="geojson"
@@ -245,6 +243,8 @@ export default function InteractiveMap({
                                                                   source: (f) => f.properties!.fmuName1,
                                                               }}/>}
                 </Source>
+
+                {children}
             </Map>
         </div>
     )
