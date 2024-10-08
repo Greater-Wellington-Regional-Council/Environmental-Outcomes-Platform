@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jakarta.persistence.*
 import java.io.IOException
 import kotlin.jvm.Transient
+import org.geojson.FeatureCollection
 import org.hibernate.annotations.Formula
 
 class GeoJsonSerializer : JsonSerializer<String>() {
@@ -106,13 +107,8 @@ data class FmuCccvDetails(
     val tangataWhenuaSites: List<TangataWhenuaSiteSummary>,
 ) {
   companion object {
-    fun fromFmuAndTws(
-        fmu: FreshwaterManagementUnit,
-        tws: Set<TangataWhenuaSite>,
-    ): FmuCccvDetails =
+    fun fromFmuAndTws(fmu: FreshwaterManagementUnit, tws: List<TangataWhenuaSite>): FmuCccvDetails =
         FmuCccvDetails(
-            freshwaterManagementUnit = fmu,
-            tangataWhenuaSites = tws.map { TangataWhenuaSiteSummary(it.location!!) },
-        )
+            freshwaterManagementUnit = fmu, tangataWhenuaSites = tws.toFeatureCollection())
   }
 }
