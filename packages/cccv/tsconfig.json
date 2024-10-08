@@ -36,7 +36,8 @@
       "@services/*": ["src/services/*"],
       "@elements/*": ["src/elements/*"],
       "@shared/*": ["src/shared/lib/*"]
-    }
+    },
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "@shared/types/*.d.ts",

@@ -1,6 +1,8 @@
 import {render, screen} from '@testing-library/react'
 import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx"
 import {expect} from "vitest"
+import {MutableRefObject} from "react"
+import {CombinedMapRef} from "@components/InteractiveMap/lib/InteractiveMap"
 
 beforeAll(() => {
     vi.mock('mapbox-gl', () => ({
@@ -40,8 +42,9 @@ describe('InteractiveMap component', () => {
     })
 
     it('should render', () => {
-        render(<InteractiveMap startLocation={{longitude: 174.7, latitude: -41.3, zoom: 10}} setLocationInFocus={() => {
-        }} locationInFocus={null}/>)
+        const mapRef = {current: {getMap: () => {}, flyTo: () => {}}} as unknown as CombinedMapRef
+        render(<InteractiveMap mapRef={mapRef as unknown as MutableRefObject<CombinedMapRef>} startLocation={{longitude: 174.7, latitude: -41.3, zoom: 10}} setLocationInFocus={() => {
+        }} locationInFocus={null} highlights_source_url={"whatever"}/>)
 
         expect(screen.getByTestId('InteractiveMap')).toBeInTheDocument()
     })

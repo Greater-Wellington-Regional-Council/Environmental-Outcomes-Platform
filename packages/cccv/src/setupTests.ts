@@ -1,3 +1,4 @@
 import '@testing-library/jest-dom';
 
-vi.mock('react-map-gl');
+vi.mock('react-map-gl')
+

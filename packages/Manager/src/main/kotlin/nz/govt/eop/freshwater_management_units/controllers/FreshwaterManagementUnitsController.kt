@@ -32,7 +32,7 @@ class FreshwaterManagementUnitsController(
     return if (fmu == null) {
       ResponseEntity.notFound().build()
     } else {
-      ResponseEntity.ok().body(FmuCccvDetails.fromFmuAndTws(fmu, tws ?: emptySet()))
+      ResponseEntity.ok().body(FmuCccvDetails.fromFmuAndTws(fmu, tws ?: listOf()))
     }
   }
 
@@ -45,7 +45,7 @@ class FreshwaterManagementUnitsController(
     return if (fmu == null) {
       ResponseEntity.notFound().build()
     } else {
-      ResponseEntity.ok().body(FmuCccvDetails.fromFmuAndTws(fmu, tws ?: emptySet()))
+      ResponseEntity.ok().body(FmuCccvDetails.fromFmuAndTws(fmu, tws ?: listOf()))
     }
   }
 

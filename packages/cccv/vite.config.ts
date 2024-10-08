@@ -36,7 +36,7 @@ const config: UserConfig = defineConfig({
     alias: {
       '@lib': path.resolve(__dirname, 'src/lib'),
     },
-  },
+  }
 })
 
 export default config

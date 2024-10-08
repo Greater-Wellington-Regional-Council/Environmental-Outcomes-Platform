@@ -7,6 +7,8 @@ import nz.govt.eop.freshwater_management_units.repositories.TangataWhenuaSiteRep
 import org.geojson.Feature
 import org.geojson.FeatureCollection
 import org.geojson.Point
+import org.mockito.ArgumentMatchers.anyList
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.*
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -18,7 +20,7 @@ import org.springframework.web.client.RestTemplate
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-class TangataWhenuaSiteServiceTest :
+class TangataWhenuaSiteServiceGetsAndSavesSitesTest :
     BehaviorSpec({
       given("TangataWhenuaSiteServiceGetsAndSavesSitesTest") {
         val restTemplateMock = mock<RestTemplate>()

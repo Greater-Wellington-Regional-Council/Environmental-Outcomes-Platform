@@ -12,8 +12,12 @@ import {Contaminants} from "@components/Contaminants/Contaminants.tsx"
 import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 import {DownloadLink} from "@elements/DownloadLink.tsx"
+import {Feature} from "geojson"
+import {index} from "@material-tailwind/react/types/components/select"
 
-const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
+const FreshwaterManagementUnit = (
+    details: FmuFullDetailsWithMap) => {
+
     const {
         id,
         fmuName1,
@@ -27,6 +31,8 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
 
     const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit)
 
+    const links = details.links
+
     const pdfDocument = useMemo(() => <FreshwaterManagementUnitPDF {...details} />, [details])
 
     const [instance, updateInstance] = usePDF({ document: pdfDocument })
@@ -38,13 +44,11 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
             const isLoading = instance.loading
             const hasErrorOccurred = !!instance.error
 
-            if (isLoading !== pdfLoading) {
+            if (isLoading !== pdfLoading)
                 setPdfLoading(isLoading)
-            }
 
-            if (hasErrorOccurred !== hasError) {
+            if (hasErrorOccurred !== hasError)
                 setHasError(hasErrorOccurred)
-            }
         }
     }, [instance, pdfLoading, hasError])
 
@@ -54,6 +58,10 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
 
     if (!details?.freshwaterManagementUnit) {
         return <div>No data found.</div>
+    }
+
+    const gotoTangataWhenua = (i: number) => {
+        links?.gotoLink(tangataWhenuaSites.features[i])
     }
 
     return (
@@ -82,15 +90,21 @@ const FreshwaterManagementUnit = (details: FmuFullDetailsWithMap) => {
                 </div>
             </div>
 
-            {tangataWhenuaSites?.length ? (
+            {tangataWhenuaSites?.features.length ? (
                 <div className="tangata-whenua mt-6">
                     <h2>Tangata Whenua</h2>
                     <p className="italic">This area contains sites of significance to Tangata Whenua including:</p>
                     <div className="tangata-whenua-sites">
                         <ul className="mt-2 list-disc">
-                            {tangataWhenuaSites?.map((site: { location: string }, index: Key | null | undefined) => (
-                                <li className="my-0" key={index}>
-                                    {site?.location}
+                            {tangataWhenuaSites?.features.map((site: Feature, index: index) => (
+                                <li className="my-0" key={index} onClick={() => gotoTangataWhenua(index)}>
+                                    {site?.properties?.location}
+                                    <ul className="flex flex-wrap gap-4 list-none p-0 m-0 mt-3 mb-4">
+                                        {site?.properties?.locationValues?.map((siteName: string, index: Key | null | undefined) => (
+                                            <li className="list-none ml-0 inset-0 bg-gray-300 indent-0 px-2"
+                                                key={index}>{siteName}</li>
+                                        ))}
+                                    </ul>
                                 </li>
                             ))}
                         </ul>

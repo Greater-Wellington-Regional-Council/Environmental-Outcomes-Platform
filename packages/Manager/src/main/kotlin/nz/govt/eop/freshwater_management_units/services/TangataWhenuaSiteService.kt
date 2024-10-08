@@ -1,14 +1,15 @@
 package nz.govt.eop.freshwater_management_units.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.annotation.PostConstruct
 import java.net.URI
 import mu.KotlinLogging
+import nz.govt.eop.TangataWhenuaSitesSource
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.models.TangataWhenuaSite
 import nz.govt.eop.freshwater_management_units.repositories.TangataWhenuaSiteRepository
 import nz.govt.eop.utils.GeoJsonFetcher
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate

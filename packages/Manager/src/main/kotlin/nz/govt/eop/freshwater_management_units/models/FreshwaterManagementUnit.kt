@@ -104,7 +104,7 @@ data class FreshwaterManagementUnit(
 
 data class FmuCccvDetails(
     val freshwaterManagementUnit: FreshwaterManagementUnit,
-    val tangataWhenuaSites: List<TangataWhenuaSiteSummary>,
+    val tangataWhenuaSites: FeatureCollection
 ) {
   companion object {
     fun fromFmuAndTws(fmu: FreshwaterManagementUnit, tws: List<TangataWhenuaSite>): FmuCccvDetails =

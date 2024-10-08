@@ -1,15 +1,14 @@
 import {
     Map,
-    MapMouseEvent, Source,
+    MapMouseEvent, MapRef, Source,
 } from "react-map-gl"
-import {useEffect, useRef, useState} from 'react'
+import {MutableRefObject, useEffect, useRef, useState} from 'react'
 import mapboxgl, {Marker} from "mapbox-gl"
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './InteractiveMap.scss'
 import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
 
 import {
-    CombinedMapRef,
     InteractiveMapProps,
 } from "@components/InteractiveMap/lib/InteractiveMap"
 import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx"
@@ -18,30 +17,33 @@ import RolloverHighlight from "@components/InteractiveMap/lib/FeatureHighlight/F
 import MapControls from "@components/InteractiveMap/lib/MapControls/MapControls.tsx"
 import env from "@src/env.ts"
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts"
-import {Feature, FeatureCollection, Geometry} from "geojson"
-import {ViewLocation} from "@shared/types/global"
+import {Feature, FeatureCollection} from "geojson"
+import {IMViewLocation} from "@shared/types/global"
 import {useViewState} from "@components/InteractiveMap/lib/useViewState.ts"
 import {debounce} from "lodash"
-import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService.ts"
 import {debounceClick} from "@lib/debounceClick.ts"
-import {removeSourceWithLayers} from "@lib/removeSourceWithLayers.ts"
 import {useMapSnapshot} from "@lib/MapSnapshotContext"
+import useMapHighlight from "@lib/useMapHighlight"
+import zoomIntoFeatures from "@lib/zoomIntoFeatures.ts"
+import mapboxFeature2GeoJSON from "@lib/mapboxFeature2GeoJSON.ts"
+import mapProperties from "@values/mapProperties.ts"
 
 const DEFAULT_VIEW_WIDTH = 100
 const DEFAULT_VIEW_HEIGHT = 150
-const DEFAULT_CLOSEUP_ZOOM = 20
-const DEFAULT_CLOSEUP_PADDING = {top: 60, bottom: 60, left: 60, right: 500}
-const MAX_WIDE_ZOOM = 10
 
-const HOVER_LAYER = "freshwater-management-units-candidates"
+export const HOVER_LAYER = "freshwater-management-units-candidates"
 const CLICK_LAYER = HOVER_LAYER
-const HOVER_HIGHLIGHT_LAYER = "fmu-highlight"
-const FMU_BOUNDARIES_SOURCE = "freshwater-management-units"
+export const HIGHLIGHT_HOVER_LAYER = "fmu-highlight"
+export const HIGHLIGHT_SELECT_LAYER = "fmu-highlight-click"
+
+const HIGHLIGHTS_SOURCE_ID = "highlight-source"
 
 export default function InteractiveMap({
                                            startLocation,
                                            locationInFocus,
                                            setLocationInFocus,
+                                           highlights_source_url,
+                                           mapRef,
                                            children
                                        }: InteractiveMapProps) {
 
@@ -51,205 +53,60 @@ export default function InteractiveMap({
     })
 
     const mapContainerRef = useRef<HTMLDivElement>(null)
-    const mapRef = useRef<CombinedMapRef | null>(null)
 
     const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
-    const [featureBeingRolledOver, setFeatureBeingRolledOver] = useState<Feature | null>(null)
+
+    const [featureBeingRolledOver, setFeatureBeingRolledOver] = useState<Feature | FeatureCollection | null>(null)
+    const [highlightedFeature, setHighlightedFeature] = useState<Feature | FeatureCollection | null>(null)
+
     const [focusPin, setFocusPin] = useState<Marker | null>(null)
 
-    const { setMapSnapshot } = useMapSnapshot()
+    const {highlightShapes} = useMapHighlight(mapRef, locationInFocus, 'focusView')
+
+    const {updatePrintSnapshot} = useMapSnapshot()
 
     const clickTimeoutRef = useRef<number | null>(null)
 
-    function buildPrintSnapshot(location: ViewLocation | null) {
-        if (!mapRef?.current || !location) return null
-
-        const map = mapRef.current.getMap()
-
-        return `${map.getCanvas().toDataURL('image/png')}?timestamp=${Date.now()}`
+    function focusMap() {
+        if (locationInFocus?.featuresInFocus)
+            zoomIntoFeatures(mapRef, locationInFocus.featuresInFocus)
+        else if (highlightedFeature)
+            zoomIntoFeatures(mapRef, highlightedFeature)
+        else
+            mapRef.current?.flyTo({center: [startLocation.longitude, startLocation.latitude], zoom: DEFAULT_ZOOM})
     }
 
-    function updatePrintSnapshot(location: ViewLocation | null) {
-        if (!mapRef?.current) {
-            setMapSnapshot(null)
-            return
-        }
-
-        const map = mapRef.current.getMap()
-
-        map.once('idle', () => {
-            const snapshot = buildPrintSnapshot(location)
-            setMapSnapshot && setMapSnapshot(snapshot ?? null)
-        })
-    }
-
-    function fitBoundsToFeatures(featureOrCollection: Feature | FeatureCollection) {
-        if (!mapRef?.current) return
-
-        const bounds = new mapboxgl.LngLatBounds()
-
-        const extendBounds = (coordinates: [number, number][]) => {
-            coordinates.forEach((coordinate) => {
-                bounds.extend(coordinate)
-            })
-        }
-
-        const extendByGeometry = (geometry: Geometry) => {
-            if (!geometry) return
-
-            if (geometry.type === 'Polygon') {
-                const coords = geometry.coordinates[0] as [number, number][]
-                extendBounds(coords)
-            } else if (geometry.type === 'MultiPolygon') {
-                geometry.coordinates.forEach((polygon) => {
-                    const coords = polygon[0] as [number, number][]
-                    extendBounds(coords)
-                })
-            } else if (geometry.type === 'Point') {
-                bounds.extend(geometry.coordinates as [number, number])
-            } else if (geometry.type === 'LineString') {
-                const coords = geometry.coordinates as [number, number][]
-                extendBounds(coords)
-            }
-        }
-
-        if (featureOrCollection.type === 'Feature') {
-            extendByGeometry(featureOrCollection.geometry)
-        } else if (featureOrCollection.type === 'FeatureCollection') {
-            featureOrCollection.features.forEach((feature) => {
-                extendByGeometry(feature.geometry)
-            })
-        }
-
-        if (bounds && !bounds.isEmpty())
-            mapRef.current.getMap().fitBounds(bounds, {
-                padding: DEFAULT_CLOSEUP_PADDING,
-                maxZoom: DEFAULT_CLOSEUP_ZOOM,
-            })
-    }
-
-    function isValidLngLat(coord: [number, number]): boolean {
-        const [lng, lat] = coord
-        return (
-            lng !== undefined && lat !== undefined &&
-            !Number.isNaN(lng) && !Number.isNaN(lat) &&
-            lng >= -180 && lng <= 180 &&
-            lat >= -90 && lat <= 90
-        )
-    }
-
-    function drawFeaturesInFocus(location: ViewLocation, id: string = 'focusView'): string | null {
-        if (!mapRef?.current || !location?.geometry) return id
+    function drawFeaturesInFocus(location: IMViewLocation, id: string = 'focusView'): string | null {
+        if (!mapRef?.current || !location?.featuresInFocus) return id
 
         const map = mapRef.current.getMap()
         const source = map.getSource(id)
 
-        if (source)
-            (source as mapboxgl.GeoJSONSource).setData(location.geometry)
-        else {
+        if (source) {
+            (source as mapboxgl.GeoJSONSource).setData(location.featuresInFocus)
+        } else {
             map.addSource(id, {
                 type: 'geojson',
-                data: location.geometry,
+                data: location.featuresInFocus,
             })
 
-            highlightShapes(id, { location })
+            highlightShapes(id, {location})
         }
 
         return id
     }
 
-    interface HighlightShapesOptions {
-        fillColor?: string;
-        outlineColor?: string;
-        fillOpacity?: number;
-        remove?: boolean;
-        location?: ViewLocation;
-    }
-
-    function highlightShapes(sourceId: string, options: HighlightShapesOptions) {
-        const defaultOptions: HighlightShapesOptions = { location: undefined, fillColor: 'darkgreen', outlineColor: '#000', fillOpacity: 0.5, remove: false}
-        const opts: HighlightShapesOptions = { ...defaultOptions, ...options }
-
-        const map = mapRef.current!.getMap()
-
-        if (options.remove || !map.getSource(sourceId)) return
-
-        function clearPreviousLayers(sourceId: string, auxLayerId: string = "features") {
-            const outlineLayerId = `${sourceId}-${auxLayerId}-outline`
-            const fillLayerId = `${sourceId}-${auxLayerId}-layer`
-
-            if (map.getLayer(fillLayerId))
-                map.removeLayer(fillLayerId)
-
-            if (map.getLayer(outlineLayerId))
-                map.removeLayer(outlineLayerId)
-
-            return { fillLayerId, outlineLayerId }
+    function placeFocusPin(location: IMViewLocation) {
+        function isValidLngLat(coord: [number | undefined, number | undefined]): boolean {
+            const [lng, lat] = coord
+            return (
+                lng !== undefined && lat !== undefined &&
+                !Number.isNaN(lng) && !Number.isNaN(lat) &&
+                lng >= -180 && lng <= 180 &&
+                lat >= -90 && lat <= 90
+            )
         }
 
-        function addFocusFeatureHighlightLayers(sourceId: string, opts: HighlightShapesOptions) {
-            const layers = clearPreviousLayers(sourceId)
-
-            map.addLayer({
-                id: layers.fillLayerId,
-                type: 'fill',
-                source: sourceId,
-                layout: {},
-                paint: {
-                    'fill-color': opts.fillColor,
-                    'fill-opacity': opts.fillOpacity,
-                },
-            })
-
-            map.addLayer({
-                id: layers.outlineLayerId,
-                type: 'line',
-                source: sourceId,
-                layout: {},
-                paint: {
-                    'line-color': opts.outlineColor,
-                    'line-width': 2,
-                },
-            })
-        }
-
-        function addRolloverRegionHighlightLayers(sourceId: string, opts: HighlightShapesOptions) {
-            const layers = clearPreviousLayers(sourceId, 'hover')
-
-            map.addLayer({
-                id: layers.fillLayerId,
-                type: 'fill',
-                source: sourceId,
-                layout: {},
-                paint: {
-                    'fill-color': opts.fillColor,
-                    'fill-opacity': opts.fillOpacity,
-                },
-            })
-
-            map.addLayer({
-                id: layers.outlineLayerId,
-                type: 'line',
-                source: sourceId,
-                layout: {},
-                paint: {
-                    'line-color': opts.outlineColor,
-                    'line-width': 2,
-                },
-            })
-        }
-
-        if (opts.remove) {
-            clearPreviousLayers(sourceId)
-            clearPreviousLayers(sourceId, 'hover')
-            return
-        }
-
-        addFocusFeatureHighlightLayers(sourceId, opts)
-        addRolloverRegionHighlightLayers(sourceId, opts)
-    }
-
-    function placeFocusPin(location: ViewLocation) {
         if (!mapRef?.current) return
 
         if (!location || !isValidLngLat([location.longitude, location.latitude])) {
@@ -259,12 +116,12 @@ export default function InteractiveMap({
         }
 
         const pin = (focusPin ?? new mapboxgl.Marker())
-            .setLngLat([location.longitude, location.latitude])
+            .setLngLat([location.longitude!, location.latitude!])
             .addTo(mapRef.current!.getMap())
 
         if (location.description) {
             const popup = new mapboxgl.Popup({closeButton: false})
-                .setLngLat([location.longitude, location.latitude])
+                .setLngLat([location.longitude!, location.latitude!])
                 .setHTML(location.description ?? '<></>')
                 .addTo(mapRef.current!.getMap())
 
@@ -274,52 +131,35 @@ export default function InteractiveMap({
         setFocusPin(pin)
     }
 
-    function focusMapView(location: ViewLocation | null = null) {
-        if (location?.geometry)
-            fitBoundsToFeatures(location.geometry)
-        else if (location)
-            if (!location.description)
-                mapRef.current?.getMap().setZoom(location.zoom)
-            else
-                mapRef.current?.getMap().flyTo({
-                    center: [location.longitude, location.latitude],
-                    zoom: location.zoom,
-                    essential: true,
-                })
-        else {
-            mapRef.current?.getMap().flyTo({
-                center: [startLocation.longitude, startLocation.latitude],
-                zoom: DEFAULT_ZOOM,
-                essential: true,
-            })
-            setFeatureBeingRolledOver(null)
-        }
-    }
-
     useEffect(() => {
-        if (locationInFocus) {
-            placeFocusPin(locationInFocus)
-            drawFeaturesInFocus(locationInFocus, 'focus')
-        } else {
+        if (!locationInFocus) {
+            setHighlightedFeature(null)
+            setFeatureBeingRolledOver(null)
             focusPin?.remove()
-            const map = mapRef?.current?.getMap()
-            map && removeSourceWithLayers(map, 'focus')
+            setFocusPin(null)
+            focusMap()
+            return
         }
 
-        focusMapView(locationInFocus)
+        drawFeaturesInFocus(locationInFocus)
+        placeFocusPin(locationInFocus)
+        focusMap()
+        updatePrintSnapshot(mapRef, locationInFocus)
 
-        updatePrintSnapshot(locationInFocus)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [locationInFocus])
 
     const handleClick = (e: MapMouseEvent) => {
         debounceClick(clickTimeoutRef, 200, () => {
-            setLocationInFocus && setLocationInFocus(null)
             const clickedFeature = getFeatureUnderMouse(e, CLICK_LAYER)
             if (clickedFeature) {
-                setFeatureBeingRolledOver(clickedFeature)
-                const location = {longitude: e.lngLat.lng, latitude: e.lngLat.lat, zoom: Math.min(mapRef.current!.getZoom(), MAX_WIDE_ZOOM) }
-                setLocationInFocus && setLocationInFocus(location)
+                setFeatureBeingRolledOver(mapboxFeature2GeoJSON(clickedFeature as never))
+                const location = {
+                    longitude: e.lngLat.lng, latitude: e.lngLat.lat,
+                    highlight: {fillColor: 'orange', outlineColor: 'rgba(74,119,149,0.44)', fillOpacity: 0.5}
+                }
+                setLocationInFocus?.(location)
+                setHighlightedFeature(mapboxFeature2GeoJSON(clickedFeature as never))
             }
         })
     }
@@ -336,7 +176,8 @@ export default function InteractiveMap({
         if (typeof layer === 'number') return features[layer]
 
         return features.find(f => {
-            return f.layer?.id === layer })
+            return f.layer?.id === layer
+        })
     }
 
     const handleHover = debounce((e) => {
@@ -353,7 +194,7 @@ export default function InteractiveMap({
         <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>
             <MapStyleSelector onStyleChange={setMapStyle}/>
             <Map
-                ref={mapRef}
+                ref={mapRef as MutableRefObject<MapRef>}
                 data-Testid="map"
                 mapStyle={mapStyle}
                 style={{width: '100%', height: '100vh', aspectRatio: '24/9'}}
@@ -379,20 +220,30 @@ export default function InteractiveMap({
                 {children}
 
                 <Source
-                    id={FMU_BOUNDARIES_SOURCE}
+                    id={HIGHLIGHTS_SOURCE_ID}
                     type="geojson"
-                    data={freshwaterManagementUnitService.urlToGetFmuBoundaries()}>
+                    data={highlights_source_url}>
 
-                    <FmuBoundariesLayer id="freshwater-management-units" fillLayer={HOVER_LAYER}
-                                        source="freshwater-management-units" mapStyle={mapStyle}/>
+                    <FmuBoundariesLayer id={HIGHLIGHTS_SOURCE_ID} fillLayer={HOVER_LAYER}
+                                        source={HIGHLIGHTS_SOURCE_ID} mapStyle={mapStyle}/>
 
-                    {featureBeingRolledOver && <RolloverHighlight id={HOVER_HIGHLIGHT_LAYER}
-                                      mapRef={mapRef}
-                                      source="freshwater-management-units"
-                                      highlightedFeature={featureBeingRolledOver}
-                                      tooltip={{
-                                          source: (f) => f.properties!.fmuName1,
-                                      }}/>}
+                    {featureBeingRolledOver && <RolloverHighlight id={HIGHLIGHT_HOVER_LAYER}
+                                                                  mapRef={mapRef}
+                                                                  source={HIGHLIGHTS_SOURCE_ID}
+                                                                  highlightedFeature={featureBeingRolledOver}
+                                                                  paint={mapProperties.defaultHover.fill}
+                                                                  tooltip={{
+                                                                      source: (f) => f.properties!.fmuName1,
+                                                                  }}/>}
+
+                    {highlightedFeature && <RolloverHighlight id={HIGHLIGHT_SELECT_LAYER}
+                                                              mapRef={mapRef}
+                                                              source={HIGHLIGHTS_SOURCE_ID}
+                                                              highlightedFeature={highlightedFeature}
+                                                              paint={mapProperties.defaultSelect.fill}
+                                                              tooltip={{
+                                                                  source: (f) => f.properties!.fmuName1,
+                                                              }}/>}
                 </Source>
             </Map>
         </div>
