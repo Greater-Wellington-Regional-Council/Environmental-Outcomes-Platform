@@ -52,14 +52,23 @@ containers:
       - local: 5432
         container: 5432
     volumes:
-      - local: .volumes/postgres
+      - type: cache
+        name: postgres-data
         container: /var/lib/postgresql/data
+    run_as_current_user:
+      enabled: false
 
   # This container runs when building / testing the app without clashing with the `database` container which may also be running at the same time.
   test-database:
     build_directory: .batect/database
     environment:
       POSTGRES_PASSWORD: password
+    volumes:
+      - type: cache
+        name: postgres-test-data
+        container: /var/lib/postgresql/data
+    run_as_current_user:
+      enabled: false
 
   tileserver:
     image: pramsey/pg_tileserv:20221019
