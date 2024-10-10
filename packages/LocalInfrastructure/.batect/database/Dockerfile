@@ -1,4 +1,4 @@
-FROM postgis/postgis:13-3.3
+FROM postgis/postgis:15-3.4
 
 RUN mkdir -p /tools
 COPY health-check.sh /tools/

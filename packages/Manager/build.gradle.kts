@@ -74,7 +74,7 @@ dependencies {
   testImplementation("org.awaitility:awaitility-kotlin:4.2.2")
   testImplementation("io.mockk:mockk:1.13.10")
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }

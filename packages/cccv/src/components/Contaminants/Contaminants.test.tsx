@@ -2,7 +2,7 @@ import {render, screen, waitFor} from '@testing-library/react'
 import '@testing-library/jest-dom'
 import {describe, it, expect} from 'vitest'
 import {Contaminants} from './Contaminants.tsx'
-import {userEvent} from "@storybook/test"
+import {userEvent} from "@testing-library/user-event"
 
 const contaminants = [
   {title: 'Nitrogen', base: 'A', objective: 'B', byWhen: '2040 (2080 for MCI)'},

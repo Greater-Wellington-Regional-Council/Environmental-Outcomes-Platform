@@ -21,4 +21,6 @@ logging:
 
 arcgis:
   tangata_whenua_sites:
-    url: "http://test.url"
+    urls:
+      - "http://test1.url"
+      - "http://test2.url"

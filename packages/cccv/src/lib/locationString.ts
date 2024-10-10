@@ -1,9 +1,10 @@
 import proj4 from '@lib/proj4'
-import {PinnedLocation, ViewLocation} from "@shared/types/global";
+import {PinnedLocation, IMViewLocation} from "@shared/types/global"
+import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
 
 export function parseLocationString(
   locationString: string
-): ViewLocation | null {
+): IMViewLocation | null {
   // e.g. -00.000,000.000,1Z
   const match = locationString.match(
     /^@(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?),(\d\d?)z$/
@@ -41,10 +42,10 @@ export function createLocationString({
   latitude,
   longitude,
   zoom
-}: ViewLocation) {
-  return `@${roundToThreeDecimals(latitude)},${roundToThreeDecimals(
-    longitude
-  )},${Math.round(zoom)}z`
+}: IMViewLocation) {
+  return `@${roundToThreeDecimals(latitude ?? 0)},${roundToThreeDecimals(
+    longitude ?? 0
+  )},${Math.round(zoom ?? DEFAULT_ZOOM)}z`
 }
 
 export function createPinnedLocationString({

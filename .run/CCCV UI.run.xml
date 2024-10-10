@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="CCCV UI" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/packages/cccv/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="dev" />
+    </scripts>
+    <node-interpreter value="project" />
+    <envs>
+      <env name="SASS_SILENCE_DEPRECATIONS" value="legacy-js-api" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>
