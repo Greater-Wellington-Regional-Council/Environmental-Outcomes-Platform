@@ -63,12 +63,6 @@ containers:
     build_directory: .batect/database
     environment:
       POSTGRES_PASSWORD: password
-    volumes:
-      - type: cache
-        name: postgres-test-data
-        container: /var/lib/postgresql/data
-    run_as_current_user:
-      enabled: false
 
   tileserver:
     image: pramsey/pg_tileserv:20221019
