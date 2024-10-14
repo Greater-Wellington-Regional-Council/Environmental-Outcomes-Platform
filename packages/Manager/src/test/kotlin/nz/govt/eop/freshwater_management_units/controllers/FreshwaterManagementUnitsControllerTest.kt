@@ -1,6 +1,5 @@
 package nz.govt.eop.freshwater_management_units.controllers
 
-import io.kotest.core.spec.style.FunSpec
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.models.TangataWhenuaSite
 import nz.govt.eop.freshwater_management_units.repositories.TEMPLATE_FMU
@@ -22,9 +21,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-class FreshwaterManagementUnitsControllerTest(
-    @Autowired val mvc: MockMvc,
-) : FunSpec() {
+class FreshwaterManagementUnitsControllerTest {
+
+  @Autowired private lateinit var mvc: MockMvc
+
   @MockBean private lateinit var fmuService: FreshwaterManagementUnitService
 
   @MockBean private lateinit var twService: TangataWhenuaSiteService
@@ -32,26 +32,50 @@ class FreshwaterManagementUnitsControllerTest(
   @Test
   fun `Get freshwater-management-units-lng-lat`() {
     val fmu = FreshwaterManagementUnit(id = 1, fmuGroup = "Western hill rivers")
+    val ttwLocationValues = listOf("site1", "site2", "site3")
+
     Mockito.`when`(
             fmuService.findFreshwaterManagementUnitByLatAndLng(
                 ArgumentMatchers.anyDouble(),
                 ArgumentMatchers.anyDouble(),
                 ArgumentMatchers.anyInt(),
-            ),
-        )
+            ))
         .thenReturn(fmu)
+
     Mockito.`when`(twService.findTangataWhenuaInterestSitesForFMU(fmu))
-        .thenReturn(setOf(TangataWhenuaSite(id = 1, location = "Tangata Whenua site 1")))
+        .thenReturn(
+            listOf(
+                TangataWhenuaSite(
+                    id = 1,
+                    location = "Tangata Whenua site 1",
+                    locationValues = ttwLocationValues,
+                    geomGeoJson =
+                        "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}")))
 
     mvc.perform(
             MockMvcRequestBuilders.get("/freshwater-management-units?lng=175.34&lat=-41")
                 .contentType(MediaType.APPLICATION_JSON),
         )
         .andExpect(MockMvcResultMatchers.status().isOk)
-        .andExpect(MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites").isNotEmpty())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites").isNotEmpty)
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites[0].location")
+            MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.location")
                 .value("Tangata Whenua site 1"),
+        )
+        .andExpect(
+            MockMvcResultMatchers.jsonPath(
+                    "$.tangataWhenuaSites.features[0].properties.locationValues[0]")
+                .value("site1"),
+        )
+        .andExpect(
+            MockMvcResultMatchers.jsonPath(
+                    "$.tangataWhenuaSites.features[0].properties.locationValues[1]")
+                .value("site2"),
+        )
+        .andExpect(
+            MockMvcResultMatchers.jsonPath(
+                    "$.tangataWhenuaSites.features[0].properties.locationValues[2]")
+                .value("site3"),
         )
         .andReturn()
   }

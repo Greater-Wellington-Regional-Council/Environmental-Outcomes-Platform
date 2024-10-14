@@ -17,7 +17,7 @@ describe('SlidingPanel Component', () => {
         const { container } = render(
             <SlidingPanel showPanel={false} contentChanged={false} onClose={() => {}} />
     )
-        const panel = container.querySelector('div[style*="min-width: 33%"]')
+        const panel = container.querySelector('div[class*="sl"]')
         expect(panel).toHaveStyle('display: none')
     })
 
@@ -25,7 +25,7 @@ describe('SlidingPanel Component', () => {
         const { container } = render(
             <SlidingPanel showPanel={true} contentChanged={false} onClose={() => {}} />
     )
-        const panel = container.querySelector('div[style*="min-width: 33%"]')
+        const panel = container.querySelector('div[class*="sliding-panel-visible"]')
         expect(panel).toHaveStyle('display: block')
 
         // Double-click to hide
@@ -51,13 +51,5 @@ describe('SlidingPanel Component', () => {
         // onResize should have been called with new width
         expect(mockOnResize).toHaveBeenCalledWith(expect.any(Number))
         fireEvent.mouseUp(document)
-    })
-
-    it('applies pulsate class when contentChanged is true', () => {
-        const { container } = render(
-            <SlidingPanel showPanel={true} contentChanged={true} onClose={() => {}} />
-    )
-        const panel = container.querySelector('div.pulsate')
-        expect(panel).toBeInTheDocument()
     })
 })

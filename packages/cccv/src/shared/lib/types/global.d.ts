@@ -1,4 +1,4 @@
-import {Feature, FeatureCollection} from "geojson";
+import {Feature, FeatureCollection} from "geojson"
 
 interface Dictionary<T> {
     [index: string]: T;
@@ -20,7 +20,7 @@ interface Council {
     name: string;
     url: string;
     logo: string;
-    defaultViewLocation: ViewLocation;
+    defaultViewLocation: IMViewLocation;
     footerLinks: links[];
     hasGroundwaterCategories: boolean;
     unitTypes: {
@@ -49,7 +49,7 @@ interface Council {
         surfaceWaterLimit: React.Element | string;
     }[];
     usageDisplayGroups: UsageDisplayGroup[];
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 interface UsageDisplayGroup {
@@ -128,16 +128,15 @@ interface PinnedLocation {
     latitude: number;
 }
 
-interface ViewLocation {
-    longitude: number;
-    latitude: number;
-    zoom: number;
+interface IMViewLocation extends ViewLocation {
+    longitude?: number;
+    latitude?: number;
+    zoom?: number;
     srid?: number | null;
     description?: string;
-    geometry?: Feature | FeatureCollection;
+    featuresInFocus?: Feature | FeatureCollection;
+    highlight?: { fillColor: string, outlineColor: string, fillOpacity: number };
 }
-
-type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
 
 interface AllPlanData {
     plan: Plan;

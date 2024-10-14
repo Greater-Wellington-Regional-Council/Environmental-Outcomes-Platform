@@ -32,7 +32,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
     useEffect(() => {
         if (panelRef.current && isLargeScreen) {
             const parentWidth = panelRef.current.parentElement?.getBoundingClientRect().width || 0
-            const initialWidth = parentWidth * 0.3
+            const initialWidth = parentWidth * 0.35
             setPanelWidth(initialWidth)
             onResize && onResize(initialWidth)
         }
@@ -79,15 +79,16 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
 
     const revealOrHideInfoPanel = isPanelVisible ? 'animate-in' : 'animate-out'
     const signalUpdatedInfoPanel = contentChanged ? 'pulsate' : ''
+    const stateClass = isPanelVisible ? 'sliding-panel-visible' : 'sliding-panel-hidden'
 
     return (
         <div
             ref={panelRef}
-            className={`sliding-panel absolute bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-10`}
+            className={`sliding-panel ${stateClass} absolute bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-10`}
             style={{
                 width: isLargeScreen ? `${panelWidth}px` : '100%', // Full width for small screens
-                maxHeight: isLargeScreen ? '100vh' : '60vh', // No taller than half the screen on small screens
-                height: isPanelVisible ? 'auto' : '0',
+                height: '100vh', // Full height of the viewport
+                maxHeight: '100vh', // Full height of the viewport
                 display: isPanelVisible ? 'block' : 'none',
             }}
             data-testid="sliding-panel"

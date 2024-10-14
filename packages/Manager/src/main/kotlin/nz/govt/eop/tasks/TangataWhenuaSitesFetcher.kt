@@ -15,18 +15,18 @@ class TangataWhenuaSitesFetcher(
   private val logger = KotlinLogging.logger {}
 
   @Transactional
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
-  @SchedulerLock(name = "geoJsonPlanDataUpdate")
-  fun updateGeoJsonPlanData() {
+  @Scheduled(fixedDelay = 14, timeUnit = TimeUnit.DAYS)
+  @SchedulerLock(name = "tangataWhenuaSitesUpdate")
+  fun updateTangataWhenuaSites() {
     processDataRefresh(
         logger,
         "fetchTangataWhenuaSites",
         { true },
-        ::updateTangataWhenuaSites,
+        ::fetchTangataWhenuaSites,
     )
   }
 
-  private fun updateTangataWhenuaSites() {
+  private fun fetchTangataWhenuaSites() {
     twService.loadFromArcGIS()
   }
 }

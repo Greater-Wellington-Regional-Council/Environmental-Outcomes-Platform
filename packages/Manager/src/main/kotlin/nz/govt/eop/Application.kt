@@ -7,10 +7,13 @@ import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.kafka.annotation.EnableKafka
@@ -19,9 +22,16 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 
+@Configuration
+@ConfigurationProperties(prefix = "arcgis.tangata-whenua-sites")
+class TangataWhenuaSitesSource {
+  lateinit var urls: Array<String>
+}
+
 @EnableKafka
 @EnableCaching
 @SpringBootApplication
+@EnableConfigurationProperties(TangataWhenuaSitesSource::class)
 class Application {
   @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
 }

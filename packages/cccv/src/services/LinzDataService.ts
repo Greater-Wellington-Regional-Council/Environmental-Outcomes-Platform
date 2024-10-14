@@ -8,6 +8,11 @@ import {handleError} from "@lib/HandleError.ts"
 
 type UnitOfPropertyId = number | string;
 
+export const ERROR_MESSAGES = {
+    FAILED_TO_RETRIEVE_ADDRESS_DATA: (addressId: AddressId) => `Failed to retrieve address data for address ${addressId}.  The LINZ data service may be unavailable.`,
+    FAILED_TO_RETRIEVE_GEOMETRY_DATA: (addressId: UnitOfPropertyId) => `Failed to retrieve geometry data for address ${addressId}.  The LINZ Data service may be unavailable.`
+}
+
 export const URL_LDS_UOP_ID_FOR_ADDRESS_ID = (addressId: AddressId) => `https://data.linz.govt.nz/services;key=${env.LINZ_KOORDINATES_API_KEY}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=table-115638&cql_filter=address_id=${addressId}&PropertyName=(id,unit_of_property_id,address_id)&outputFormat=json`
 export const URL_LDS_GET_UOP_GEOMETRY = (unitOfPropertyId: UnitOfPropertyId, projection: string) => `https://data.linz.govt.nz/services;key=${env.LINZ_KOORDINATES_API_KEY}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=layer-113968&cql_filter=unit_of_property_id='${unitOfPropertyId}'&PropertyName=(unit_of_property_id,geom)&SRSName=${projection}&outputFormat=json`
 
@@ -70,6 +75,8 @@ export const DUMMY_UNIT_OF_PROPERTY_LOCATION = {
     }
 }
 
+export const LDS_ADDRESS_BOUNDARY_TIMEOUT = 10000
+
 interface UnitsOfProperty extends FeatureCollection {
     "totalFeatures": string | number,
     "numberReturned": number,
@@ -81,13 +88,11 @@ const service = {
     getUnitOfPropertyIdForAddressId: async (addressId: AddressId, setError: null | ((error: Error | null) => void) = null): Promise<UnitOfPropertyId | null> => {
         const response = await get(URL_LDS_UOP_ID_FOR_ADDRESS_ID(addressId))
         if (!response) return handleError(`Failed to retrieve address data for address ${addressId}.  The LINZ data service may be unavailable.`, setError) as null
-        console.log('UOP, address', response)
         return _.get(response, "features[0].properties.unit_of_property_id")
     },
     getGeometryForUnitOfProperty: async (unitOfPropertyId: UnitOfPropertyId, projection = DEFAULT_PROJECTION, setError: null | ((error: Error | null) => void) = null): Promise<UnitsOfProperty | null> => {
-        const response = await get(URL_LDS_GET_UOP_GEOMETRY(unitOfPropertyId, projection), { timeout: 10000 } )
+        const response = await get(URL_LDS_GET_UOP_GEOMETRY(unitOfPropertyId, projection), { timeout: LDS_ADDRESS_BOUNDARY_TIMEOUT } )
         if (!response) return handleError(`Failed to retrieve geometry data for address ${unitOfPropertyId}.  The LINZ Data service may be unavailable.`, setError) as null
-        console.log('geometryForUOP', response)
         return response
     },
     getGeometryForAddressId: async (addressId: AddressId, projection = 'EPSG:4326', setError: null | ((error: Error | null) => void) = null): Promise<FeatureCollection | null> => {
