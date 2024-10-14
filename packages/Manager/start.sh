@@ -8,6 +8,7 @@ show_usage () {
   echo "-x: stop and delete everything, but don't restart"
   echo "-r: stop and delete everything and restart"
   echo "-i: check container health"
+  echo "-p: prepare to deploy"
 }
 
 container_health () {
@@ -72,6 +73,23 @@ start_all () {
   ./batect --output=all run
 }
 
+prepare_to_deploy () {
+  reset_all
+  if [ $? -ne 0 ]; then
+    echo "Failed to reset all"
+    exit 1
+  fi
+  if [ -d "./.gradle" ]; then
+    rm -rf ./.gradle
+  fi
+  ./gradlew spotlessApply
+  if [ $? -ne 0 ]; then
+    echo "Failed to apply spotless formatting"
+    exit 1
+  fi
+  ./batect check
+}
+
 # Do the stuff
 main () {
   if [ "$#" -eq 0 ]; then
@@ -79,7 +97,7 @@ main () {
     exit 0
   fi
 
-  while getopts ":xirh" opt; do
+  while getopts ":xirhp" opt; do
     case $opt in
       h)
         show_usage
@@ -94,6 +112,10 @@ main () {
         ;;
       i)
         inspect_all
+        exit 0
+        ;;
+      p)
+        prepare_to_deploy
         exit 0
         ;;
       \?)
