@@ -54,3 +54,5 @@ out/
 ### Misc ###
 .DS_Store
 .volumes/
+
+qodana.yaml
