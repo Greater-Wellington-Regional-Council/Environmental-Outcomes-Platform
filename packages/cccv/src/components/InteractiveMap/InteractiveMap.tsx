@@ -25,7 +25,6 @@ import {debounceClick} from "@lib/debounceClick.ts"
 import {useMapSnapshot} from "@lib/MapSnapshotContext"
 import useMapHighlight from "@lib/useMapHighlight"
 import zoomIntoFeatures from "@lib/zoomIntoFeatures.ts"
-import mapboxFeature2GeoJSON from "@lib/mapboxFeature2GeoJSON.ts"
 import mapProperties from "@values/mapProperties.ts"
 
 const DEFAULT_VIEW_WIDTH = 100
@@ -141,25 +140,27 @@ export default function InteractiveMap({
             return
         }
 
+        focusMap()
+        updatePrintSnapshot(mapRef, locationInFocus)
+
         drawFeaturesInFocus(locationInFocus)
         placeFocusPin(locationInFocus)
-        updatePrintSnapshot(mapRef, locationInFocus)
         focusMap()
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [locationInFocus])
+    }, [locationInFocus, highlightedFeature])
 
     const handleClick = (e: MapMouseEvent) => {
         debounceClick(clickTimeoutRef, 200, () => {
             const clickedFeature = getFeatureUnderMouse(e, CLICK_LAYER)
             if (clickedFeature) {
-                setFeatureBeingRolledOver(mapboxFeature2GeoJSON(clickedFeature as never))
+                setFeatureBeingRolledOver(clickedFeature as never)
                 const location = {
                     longitude: e.lngLat.lng, latitude: e.lngLat.lat,
                     highlight: {fillColor: 'orange', outlineColor: 'rgba(74,119,149,0.44)', fillOpacity: 0.5}
                 }
                 setLocationInFocus?.(location)
-                setHighlightedFeature(mapboxFeature2GeoJSON(clickedFeature as never))
+                // setHighlightedFeature(mapboxFeature2GeoJSON(clickedFeature as never))
             }
         })
     }
@@ -184,8 +185,10 @@ export default function InteractiveMap({
         if (locationInFocus) return
         const feature = getFeatureUnderMouse(e, HOVER_LAYER)
         if (feature) {
+            console.log('feature', feature)
             setFeatureBeingRolledOver(feature)
         } else {
+            console.log('feature', "null")
             setFeatureBeingRolledOver(null)
         }
     }, 0.5)
@@ -205,7 +208,7 @@ export default function InteractiveMap({
                 cursor={featureBeingRolledOver ? 'pointer' : 'grab'}
                 dragPan={true}
                 zoom-={DEFAULT_ZOOM}
-                minZoom={5}
+                minZoom={8}
                 interactive={true}
                 onClick={handleClick}
                 onMouseMove={handleHover}

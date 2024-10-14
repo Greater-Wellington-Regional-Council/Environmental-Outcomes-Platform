@@ -26,7 +26,7 @@ const config: UserConfig = defineConfig({
       VITE_MAPBOX_TOKEN: 'mock_mapbox_token'
     }
   },
-  base: './',
+  base: '/',
   server: {
     hmr: {
       overlay: false

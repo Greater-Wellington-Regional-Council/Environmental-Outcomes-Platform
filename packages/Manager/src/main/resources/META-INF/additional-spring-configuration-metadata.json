@@ -7,7 +7,7 @@
     },
     {
       "name": "arcgis.tangata_whenua_sites.urls",
-      "type": "scala.Array",
+      "type": "java.util.List<java.lang.String>",
       "description": "Tangata Whenua Site sources."
     }
 ] }

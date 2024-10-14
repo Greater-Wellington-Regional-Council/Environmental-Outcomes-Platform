@@ -154,29 +154,29 @@ export default function MapPage() {
         source: [
             {
                 layer: TTW_HIGHLIGHT_LAYER,
-                property: 'properties.fmuName1',
-                options: {
-                    'fill-color': 'white',
-                    'fill-outline-color': 'black',
-                    'text-color': 'black',
-                    'fill-opacity': 0.5,
-                    'font-weight': 'normal',
-                },
-            },
-            {
-                layer: 'focusView-layer',
                 property: 'properties.location',
                 options: {
-                    'fill-color': 'white',
-                    'fill-outline-color': 'blue',
-                    'text-color': 'black',
-                    'fill-opacity': 0.7,
-                    'font-weight': 'normal',
+                    'fill-color': 'black',
+                    'fill-outline-color': 'black',
+                    'text-color': 'white',
+                    'fill-opacity': 0.5,
+                    'font-weight': 'bold',
                 },
             },
+            // {
+            //     layer: 'focusView-layer',
+            //     property: 'properties.location',
+            //     options: {
+            //         'fill-color': 'white',
+            //         'fill-outline-color': 'blue',
+            //         'text-color': 'black',
+            //         'fill-opacity': 0.7,
+            //         'font-weight': 'normal',
+            //     },
+            // },
             {
                 layer: HOVER_LAYER,
-                property: 'properties.description',
+                property: 'properties.fmuName1',
                 options: {
                     'fill-color': 'white',
                     'fill-outline-color': 'purple',
@@ -215,6 +215,7 @@ export default function MapPage() {
                             </Source>
                         )}
                     </InteractiveMap>
+
                     <div className={`address-box`}>
                         <AddressSearch
                             onSelect={selectAddress}

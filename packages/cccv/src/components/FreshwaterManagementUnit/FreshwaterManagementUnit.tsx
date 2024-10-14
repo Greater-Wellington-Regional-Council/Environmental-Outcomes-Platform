@@ -1,6 +1,6 @@
 import "./FreshwaterManagementUnit.scss"
 import purify from "dompurify"
-import {Key, useEffect, useMemo, useState} from "react"
+import {useEffect, useMemo, useState} from "react"
 import {FmuFullDetailsWithMap} from "@models/FreshwaterManagementUnit.ts"
 import {usePDF} from "@react-pdf/renderer"
 import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf"
@@ -12,8 +12,7 @@ import {Contaminants} from "@components/Contaminants/Contaminants.tsx"
 import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 import {DownloadLink} from "@elements/DownloadLink.tsx"
-import {Feature} from "geojson"
-import {index} from "@material-tailwind/react/types/components/select"
+import TangataWhenuaSites from "@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx"
 
 const FreshwaterManagementUnit = (
     details: FmuFullDetailsWithMap) => {
@@ -35,7 +34,7 @@ const FreshwaterManagementUnit = (
 
     const pdfDocument = useMemo(() => <FreshwaterManagementUnitPDF {...details} />, [details])
 
-    const [instance, updateInstance] = usePDF({ document: pdfDocument })
+    const [instance, updateInstance] = usePDF({document: pdfDocument})
     const [pdfLoading, setPdfLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
 
@@ -69,7 +68,7 @@ const FreshwaterManagementUnit = (
             <h1 className="w-[80%]">{fmuName1 || ""}</h1>
 
             <div className="absolute top-0 right-0 m-6 mt-0">
-                <DownloadLink pdfLoading={pdfLoading} instance={instance} fileName={fileName} hasError={hasError} />
+                <DownloadLink pdfLoading={pdfLoading} instance={instance} fileName={fileName} hasError={hasError}/>
             </div>
 
             <div className="overview mt-6" data-testid="catchment-desc">
@@ -86,29 +85,13 @@ const FreshwaterManagementUnit = (
                 <p>Freshwater objectives from {fmuName1 || ""} Whaitua Implementation Plan (as at August 2018)</p>
 
                 <div className="mt-4">
-                    <Contaminants contaminants={contaminants} />
+                    <Contaminants contaminants={contaminants}/>
                 </div>
             </div>
 
             {tangataWhenuaSites?.features.length ? (
                 <div className="tangata-whenua mt-6">
-                    <h2>Tangata Whenua</h2>
-                    <p className="">This area contains sites of significance to Tangata Whenua including:</p>
-                    <div className="tangata-whenua-sites">
-                        <ul className="mt-2 list-disc cursor-pointer">
-                            {tangataWhenuaSites?.features.map((site: Feature, index: index) => (
-                                <li className="my-0" key={index} onClick={() => gotoTangataWhenua(index)}>
-                                    {site?.properties?.location}
-                                    <ul className="flex flex-wrap gap-4 list-none p-0 m-0 mt-4 mb-6">
-                                        {site?.properties?.locationValues?.map((siteName: string, index: Key | null | undefined) => (
-                                            <li className="list-none ml-0 inset-0 bg-gray-300 indent-0 px-2"
-                                                key={index}>{siteName}</li>
-                                        ))}
-                                    </ul>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    <TangataWhenuaSites tangataWhenuaSites={tangataWhenuaSites} gotoTangataWhenua={gotoTangataWhenua} />
                 </div>
             ) : (
                 <div></div>
