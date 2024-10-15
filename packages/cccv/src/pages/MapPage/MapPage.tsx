@@ -3,12 +3,12 @@ import InteractiveMap, {HOVER_LAYER} from "@components/InteractiveMap/Interactiv
 import {useLoaderData} from "react-router-dom"
 import {FmuFullDetails} from "@models/FreshwaterManagementUnit"
 import useEscapeKey from "@lib/useEscapeKey"
-import {useContext, useEffect, useRef, useState} from "react"
+import React, {useContext, useEffect, useRef, useState} from "react"
 import ErrorContext from "@components/ErrorContext/ErrorContext"
 import freshwaterManagementService from "@services/FreshwaterManagementUnitService"
 import gwrcLogo from "@images/printLogo_2000x571px.png"
 import AddressSearch from "@components/AddressSearch/AddressSearch"
-import addressesService from "@services/AddressesService"
+import addressesService, {Address} from "@services/AddressesService"
 import {LabelAndValue} from "@elements/ComboBox/ComboBox"
 import {IMViewLocation} from "@shared/types/global"
 import {calculateCentroids} from "@lib/calculatePolygonCentoid"
@@ -42,6 +42,19 @@ function GWHeader() {
     </header>
 }
 
+const PhysicalAddress: React.FC<{ address: Address }> = ({address}) => {
+    return (
+        <div className="FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidde flex" id={`physical_address_${address?.id || ''}`}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+                <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
+            </svg>
+            <div className="w-[80%]">
+                {address.address.split(',').map((line, i) => <p key={i} className="w-[80%] font-bold text-lg">{line}</p>)}
+            </div>
+        </div>
+    )
+}
+
 export default function MapPage() {
     const setError = useContext(ErrorContext).setError
     const locationDetails = useLoaderData()
@@ -58,6 +71,8 @@ export default function MapPage() {
     const {mapSnapshot} = useMapSnapshot()
 
     const {setLoading} = useLoadingIndicator()
+
+    const [selectedAddress, setSelectedAddress] = useState<Address | null>(null)
 
     const mapRef = useRef<CombinedMapRef | null>(null)
 
@@ -95,24 +110,24 @@ export default function MapPage() {
         selectFmu(null)
         selectLocation(null)
 
-        const selectedAddress = await addressesService.getAddressByPxid(address.value)
+        const physicalAddress = await addressesService.getAddressByPxid(address.value)
 
-        if (!selectedAddress) {
+        if (!physicalAddress) {
             setError(new Error("Address not found"))
             setLoading(false)
             return
         }
 
-        const addressBoundary = await linzDataService.getGeometryForAddressId(selectedAddress.id)
+        const addressBoundary = await linzDataService.getGeometryForAddressId(physicalAddress.id)
 
         if (!addressBoundary) {
             setError(new Error("Failed to retrieve address data.  The LINZ service may be unavailable."))
 
             // Default address Point if no geometry is available
             const addressLocation = {
-                longitude: selectedAddress.location.geometry.coordinates[0],
-                latitude: selectedAddress.location.geometry.coordinates[1],
-                description: `<p>${selectedAddress.address}</p><br/><p class="tooltip-note">Boundary not available</p>`,
+                longitude: physicalAddress.location.geometry.coordinates[0],
+                latitude: physicalAddress.location.geometry.coordinates[1],
+                description: `<p>${physicalAddress.address}</p><br/><p class="tooltip-note">Boundary not available</p>`,
                 zoom: ADDRESS_ZOOM,
             } as IMViewLocation
 
@@ -121,24 +136,23 @@ export default function MapPage() {
             setLoading(false)
             return
         }
+        setLoading(false)
 
-        // We have an address and a boundary object.
-        // Use centroid of boundary as location if possible,
-        // but resort to address location is that cannot be calculated.
+        setSelectedAddress(physicalAddress)
+
         const centroid = calculateCentroids(addressBoundary!)
 
-        const desc = `<p>${selectedAddress.address}</p>`
+        const desc = `<p>${physicalAddress.address}</p>`
 
         const location = {
-            longitude: centroid[0] || selectedAddress.location.geometry.coordinates[0],
-            latitude: centroid[1] || selectedAddress.location.geometry.coordinates[1],
+            longitude: centroid[0] || physicalAddress.location.geometry.coordinates[0],
+            latitude: centroid[1] || physicalAddress.location.geometry.coordinates[1],
             description: desc + (centroid[0] ? '' : '<p class="tooltip-note">Boundary not available</p>'),
             zoom: ADDRESS_ZOOM,
-            featuresInFocus: addPropertiesToGeoJSON(addressBoundary, { location: selectedAddress.address }),
+            featuresInFocus: addPropertiesToGeoJSON(addressBoundary, {location: physicalAddress.address}),
         } as IMViewLocation
 
         selectLocation(location)
-        setLoading(false)
     }
 
     useEffect(() => {
@@ -150,7 +164,7 @@ export default function MapPage() {
     const TANGATA_WHENUA_SOURCE = 'freshwater-management-ttw-sites'
     const TTW_HIGHLIGHT_LAYER = 'ttw-highlight'
 
-    const { Tooltip } = useMapTooltip({
+    const {Tooltip} = useMapTooltip({
         mapRef,
         source: [
             {
@@ -212,7 +226,7 @@ export default function MapPage() {
                                         paint={mapProperties.tangataWhenua.fill}
                                         source={TANGATA_WHENUA_SOURCE}
                                     />)}
-                                {Tooltip && <Tooltip />}
+                                {Tooltip && <Tooltip/>}
                             </Source>
                         )}
                     </InteractiveMap>
@@ -230,9 +244,13 @@ export default function MapPage() {
                             showPanel={showPanel}
                             contentChanged={fmuChanged}
                             onClose={() => setShowPanel(false)}>
+                            {selectedAddress && <PhysicalAddress address={selectedAddress}/>}
                             <FreshwaterManagementUnit {...selectedFmu} mapImage={mapSnapshot} links={{
                                 tangataWhenuaSites: TANGATA_WHENUA_SOURCE,
-                                gotoLink: (f: Feature | FeatureCollection) => selectLocation({...selectedLocation, featuresInFocus: f})
+                                gotoLink: (f: Feature | FeatureCollection) => selectLocation({
+                                    ...selectedLocation,
+                                    featuresInFocus: f
+                                })
                             }}/>
                         </SlidingPanel>
                     )}
