@@ -72,8 +72,6 @@ export default function MapPage() {
 
     const {setLoading} = useLoadingIndicator()
 
-    const [selectedAddress, setSelectedAddress] = useState<Address | null>(null)
-
     const mapRef = useRef<CombinedMapRef | null>(null)
 
     const fetchFmu = async () => {
@@ -123,7 +121,6 @@ export default function MapPage() {
         if (!addressBoundary) {
             setError(new Error("Failed to retrieve address data.  The LINZ service may be unavailable."))
 
-            // Default address Point if no geometry is available
             const addressLocation = {
                 longitude: physicalAddress.location.geometry.coordinates[0],
                 latitude: physicalAddress.location.geometry.coordinates[1],
@@ -138,8 +135,6 @@ export default function MapPage() {
         }
         setLoading(false)
 
-        setSelectedAddress(physicalAddress)
-
         const centroid = calculateCentroids(addressBoundary!)
 
         const desc = `<p>${physicalAddress.address}</p>`
@@ -150,6 +145,7 @@ export default function MapPage() {
             description: desc + (centroid[0] ? '' : '<p class="tooltip-note">Boundary not available</p>'),
             zoom: ADDRESS_ZOOM,
             featuresInFocus: addPropertiesToGeoJSON(addressBoundary, {location: physicalAddress.address}),
+            address: physicalAddress,
         } as IMViewLocation
 
         selectLocation(location)
@@ -244,11 +240,11 @@ export default function MapPage() {
                             showPanel={showPanel}
                             contentChanged={fmuChanged}
                             onClose={() => setShowPanel(false)}>
-                            {selectedAddress && <PhysicalAddress address={selectedAddress}/>}
+                            {selectedLocation?.address && <PhysicalAddress address={selectedLocation?.address}/>}
                             <FreshwaterManagementUnit {...selectedFmu} mapImage={mapSnapshot} links={{
                                 tangataWhenuaSites: TANGATA_WHENUA_SOURCE,
                                 gotoLink: (f: Feature | FeatureCollection) => selectLocation({
-                                    ...selectedLocation,
+                                    ...{ ...selectedLocation, address: undefined },
                                     featuresInFocus: f
                                 })
                             }}/>

@@ -72,6 +72,16 @@ export default function InteractiveMap({
             zoomIntoFeatures(mapRef, locationInFocus.featuresInFocus)
         else if (highlightedFeature)
             zoomIntoFeatures(mapRef, highlightedFeature)
+        else if (locationInFocus?.longitude && featureBeingRolledOver)
+            mapRef?.current?.getMap()?.flyTo({
+                center: [locationInFocus.longitude, locationInFocus.latitude],
+                zoom: locationInFocus.zoom ?? MIDDLE_ZOOM,
+            })
+        else if (locationInFocus?.longitude && locationInFocus?.latitude)
+            mapRef?.current?.getMap()?.flyTo({
+                center: [locationInFocus.longitude, locationInFocus.latitude],
+                zoom: locationInFocus.zoom ?? DEFAULT_ZOOM,
+            })
     }
 
     function drawFeaturesInFocus(location: IMViewLocation, id: string = 'focusView'): string | null {
@@ -169,6 +179,19 @@ export default function InteractiveMap({
         })
     }
 
+    const handleDoubleClick = (e: MapMouseEvent) => {
+        const clickedFeature = getFeatureUnderMouse(e, CLICK_LAYER)
+        if (clickedFeature) {
+            setFeatureBeingRolledOver(clickedFeature as never)
+            const location = {
+                longitude: e.lngLat.lng, latitude: e.lngLat.lat,
+                highlight: {fillColor: 'orange', outlineColor: 'rgba(74,119,149,0.44)', fillOpacity: 0.5},
+                zoom: DEFAULT_ZOOM
+            }
+            setLocationInFocus?.(location)
+        }
+    }
+
     const getFeatureUnderMouse = (e: MapMouseEvent, layer?: number | string) => {
         const map = mapRef?.current
         if (!map) return null
@@ -212,6 +235,7 @@ export default function InteractiveMap({
                 zoom-={DEFAULT_ZOOM}
                 minZoom={8}
                 interactive={true}
+                onDblClick={handleDoubleClick}
                 onClick={handleClick}
                 onMouseMove={handleHover}
                 onMove={handleMove}

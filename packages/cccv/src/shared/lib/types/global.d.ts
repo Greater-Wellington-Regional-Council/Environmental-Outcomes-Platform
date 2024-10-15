@@ -1,4 +1,5 @@
 import {Feature, FeatureCollection} from "geojson"
+import {Address} from "../../../services/AddressesService"
 
 interface Dictionary<T> {
     [index: string]: T;
@@ -136,6 +137,7 @@ interface IMViewLocation extends ViewLocation {
     description?: string;
     featuresInFocus?: Feature | FeatureCollection;
     highlight?: { fillColor: string, outlineColor: string, fillOpacity: number };
+    address?: Address;
 }
 
 interface AllPlanData {
