@@ -11,7 +11,7 @@ import EmailLink from "@components/EmailLink/EmailLink.tsx"
 import {Contaminants} from "@components/Contaminants/Contaminants.tsx"
 import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
-import {DownloadLink} from "@elements/DownloadLink.tsx"
+import {DownloadLink} from "@elements/DownloadLink/DownloadLink.tsx"
 import TangataWhenuaSites from "@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx"
 
 const FreshwaterManagementUnit = (

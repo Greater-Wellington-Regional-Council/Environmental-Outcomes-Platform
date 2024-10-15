@@ -34,6 +34,7 @@ export const HOVER_LAYER = "freshwater-management-units-candidates"
 const CLICK_LAYER = HOVER_LAYER
 export const HIGHLIGHT_HOVER_LAYER = "fmu-highlight"
 export const HIGHLIGHT_SELECT_LAYER = "fmu-highlight-click"
+export const MIDDLE_ZOOM = 12
 
 const HIGHLIGHTS_SOURCE_ID = "highlight-source"
 
@@ -71,8 +72,16 @@ export default function InteractiveMap({
             zoomIntoFeatures(mapRef, locationInFocus.featuresInFocus)
         else if (highlightedFeature)
             zoomIntoFeatures(mapRef, highlightedFeature)
-        else
-            mapRef.current?.flyTo({center: [startLocation.longitude, startLocation.latitude], zoom: DEFAULT_ZOOM})
+        else if (locationInFocus?.longitude && featureBeingRolledOver)
+            mapRef?.current?.getMap()?.flyTo({
+                center: [locationInFocus.longitude, locationInFocus.latitude],
+                zoom: locationInFocus.zoom ?? MIDDLE_ZOOM,
+            })
+        else if (locationInFocus?.longitude && locationInFocus?.latitude)
+            mapRef?.current?.getMap()?.flyTo({
+                center: [locationInFocus.longitude, locationInFocus.latitude],
+                zoom: locationInFocus.zoom ?? DEFAULT_ZOOM,
+            })
     }
 
     function drawFeaturesInFocus(location: IMViewLocation, id: string = 'focusView'): string | null {
@@ -140,12 +149,17 @@ export default function InteractiveMap({
             return
         }
 
-        focusMap()
-        updatePrintSnapshot(mapRef, locationInFocus)
+        if (locationInFocus.featuresInFocus) {
+            drawFeaturesInFocus(locationInFocus)
+            console.log('drawFeaturesInFocus')
+        }
 
-        drawFeaturesInFocus(locationInFocus)
         placeFocusPin(locationInFocus)
+
         focusMap()
+
+        if (mapRef?.current?.getMap()?.getZoom() == DEFAULT_ZOOM)
+            updatePrintSnapshot(mapRef, locationInFocus)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [locationInFocus, highlightedFeature])
@@ -163,6 +177,19 @@ export default function InteractiveMap({
                 // setHighlightedFeature(mapboxFeature2GeoJSON(clickedFeature as never))
             }
         })
+    }
+
+    const handleDoubleClick = (e: MapMouseEvent) => {
+        const clickedFeature = getFeatureUnderMouse(e, CLICK_LAYER)
+        if (clickedFeature) {
+            setFeatureBeingRolledOver(clickedFeature as never)
+            const location = {
+                longitude: e.lngLat.lng, latitude: e.lngLat.lat,
+                highlight: {fillColor: 'orange', outlineColor: 'rgba(74,119,149,0.44)', fillOpacity: 0.5},
+                zoom: DEFAULT_ZOOM
+            }
+            setLocationInFocus?.(location)
+        }
     }
 
     const getFeatureUnderMouse = (e: MapMouseEvent, layer?: number | string) => {
@@ -185,10 +212,8 @@ export default function InteractiveMap({
         if (locationInFocus) return
         const feature = getFeatureUnderMouse(e, HOVER_LAYER)
         if (feature) {
-            console.log('feature', feature)
             setFeatureBeingRolledOver(feature)
         } else {
-            console.log('feature', "null")
             setFeatureBeingRolledOver(null)
         }
     }, 0.5)
@@ -210,6 +235,7 @@ export default function InteractiveMap({
                 zoom-={DEFAULT_ZOOM}
                 minZoom={8}
                 interactive={true}
+                onDblClick={handleDoubleClick}
                 onClick={handleClick}
                 onMouseMove={handleHover}
                 onMove={handleMove}
@@ -233,7 +259,7 @@ export default function InteractiveMap({
                                                                   source={HIGHLIGHTS_SOURCE_ID}
                                                                   highlightedFeature={featureBeingRolledOver}
                                                                   paint={mapProperties.defaultHover.fill}
-                                                                  tooltip={{
+                                                                  tooltip={highlightedFeature ? undefined : {
                                                                       source: (f) => f.properties!.fmuName1,
                                                                   }}/>}
 
@@ -242,9 +268,7 @@ export default function InteractiveMap({
                                                               source={HIGHLIGHTS_SOURCE_ID}
                                                               highlightedFeature={highlightedFeature}
                                                               paint={mapProperties.defaultSelect.fill}
-                                                              tooltip={{
-                                                                  source: (f) => f.properties!.fmuName1,
-                                                              }}/>}
+                                                                 />}
                 </Source>
 
                 {children}
