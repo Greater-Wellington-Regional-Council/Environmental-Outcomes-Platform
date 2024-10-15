@@ -37,7 +37,7 @@ export const siteNames: Array<{ id: number; siteName: string; aliases: string[];
     {id: 26, siteName: "Nohoanga", aliases: [], explanation: "Sitting place"},
     {id: 27, siteName: "Pā", aliases: [], explanation: "Fortified village"},
     {id: 28, siteName: "Pā harakeke", aliases: [], explanation: "Flax bush, metaphor for whānau"},
-    {id: 29, siteName: "Pā tuna", aliases: [], explanation: "Eel weir"},
+    {id: 29, siteName: "Pā tuna", aliases: ["pā tuna (kohekutu)"], explanation: "Eel weir"},
     {id: 30, siteName: "Papa kāinga", aliases: [], explanation: "Original home"},
     {id: 31, siteName: "Pātaka kai", aliases: [], explanation: "Pantry, food storage"},
     {id: 32, siteName: "Pūkengatanga", aliases: [], explanation: "Knowledge"},

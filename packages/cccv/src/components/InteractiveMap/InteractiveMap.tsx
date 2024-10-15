@@ -34,6 +34,7 @@ export const HOVER_LAYER = "freshwater-management-units-candidates"
 const CLICK_LAYER = HOVER_LAYER
 export const HIGHLIGHT_HOVER_LAYER = "fmu-highlight"
 export const HIGHLIGHT_SELECT_LAYER = "fmu-highlight-click"
+export const MIDDLE_ZOOM = 12
 
 const HIGHLIGHTS_SOURCE_ID = "highlight-source"
 
@@ -71,8 +72,9 @@ export default function InteractiveMap({
             zoomIntoFeatures(mapRef, locationInFocus.featuresInFocus)
         else if (highlightedFeature)
             zoomIntoFeatures(mapRef, highlightedFeature)
-        else
-            mapRef.current?.flyTo({center: [startLocation.longitude, startLocation.latitude], zoom: DEFAULT_ZOOM})
+
+        if (locationInFocus?.zoom)
+            mapRef?.current?.zoomTo(locationInFocus.zoom)
     }
 
     function drawFeaturesInFocus(location: IMViewLocation, id: string = 'focusView'): string | null {
@@ -140,12 +142,15 @@ export default function InteractiveMap({
             return
         }
 
-        focusMap()
-        updatePrintSnapshot(mapRef, locationInFocus)
+        if (locationInFocus.featuresInFocus)
+            drawFeaturesInFocus(locationInFocus)
 
-        drawFeaturesInFocus(locationInFocus)
         placeFocusPin(locationInFocus)
+
         focusMap()
+
+        if (mapRef?.current?.getMap()?.getZoom() == DEFAULT_ZOOM)
+            updatePrintSnapshot(mapRef, locationInFocus)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [locationInFocus, highlightedFeature])
@@ -185,10 +190,8 @@ export default function InteractiveMap({
         if (locationInFocus) return
         const feature = getFeatureUnderMouse(e, HOVER_LAYER)
         if (feature) {
-            console.log('feature', feature)
             setFeatureBeingRolledOver(feature)
         } else {
-            console.log('feature', "null")
             setFeatureBeingRolledOver(null)
         }
     }, 0.5)

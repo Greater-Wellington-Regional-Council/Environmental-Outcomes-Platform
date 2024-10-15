@@ -35,7 +35,8 @@
       "@pdfs/*": ["src/pdfs/*"],
       "@services/*": ["src/services/*"],
       "@elements/*": ["src/elements/*"],
-      "@shared/*": ["src/shared/lib/*"]
+      "@shared/*": ["src/shared/lib/*"],
+      "@context/*": ["src/lib/*"],
     },
     "allowSyntheticDefaultImports": true
   },

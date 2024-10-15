@@ -24,6 +24,7 @@ import mapProperties from "@values/mapProperties.ts"
 import {CombinedMapRef} from "@components/InteractiveMap/lib/InteractiveMap"
 import useMapTooltip from '@lib/useMapTooltip'
 import addPropertiesToGeoJSON from "@lib/addPropertiesToGeoJSON.ts"
+import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
 
 const ADDRESS_ZOOM = 12
 
@@ -83,8 +84,8 @@ export default function MapPage() {
     }, [selectedLocation, setError, mapSnapshot])
 
     useEscapeKey(() => {
-        setShowPanel(false)
         selectLocation(null)
+        mapRef.current?.getMap().zoomTo(DEFAULT_ZOOM)
     })
 
     const selectAddress = async (address: LabelAndValue | null = null) => {
@@ -159,7 +160,7 @@ export default function MapPage() {
                     'fill-color': 'black',
                     'fill-outline-color': 'black',
                     'text-color': 'white',
-                    'fill-opacity': 0.5,
+                    'fill-opacity': 0.8,
                     'font-weight': 'bold',
                 },
             },
@@ -181,7 +182,7 @@ export default function MapPage() {
                     'fill-color': 'white',
                     'fill-outline-color': 'purple',
                     'text-color': 'black',
-                    'fill-opacity': 0.5,
+                    'fill-opacity': 0.8,
                     'font-weight': 'normal',
                 },
             },

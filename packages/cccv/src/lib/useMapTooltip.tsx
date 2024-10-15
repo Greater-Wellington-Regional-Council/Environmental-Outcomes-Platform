@@ -73,8 +73,6 @@ const useMapTooltip = ({ mapRef, source, tooltipClassName }: UseMapTooltipProps)
             return
         }
 
-        console.log('selectedSource:', selectedSource)
-
         const content = get(validFeature, selectedSource.property)
 
         if (content) {
