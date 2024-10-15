@@ -306,3 +306,58 @@ models:
       - name: daily_usage
         description: The daily usage
 
+  - name: groundwater_allocation_limits_by_area_and_category
+    description: "Information on ground water allocation per area and category"
+    columns:
+      - name: area_id
+        data_type: varchar
+        description: "Unique identifier for each area"
+
+      - name: category_C
+        description: "Allocation amount for category C"
+
+      - name: category_B
+        description: "Allocation amount for category B"
+
+      - name: category_B/C
+        description: "Allocation amount for category B/C"
+
+      - name: total_allocation
+        data_type: numeric
+        description: "Consolidated allocation amount for each area"
+
+      - name: allocation_limit
+        data_type: numeric
+        description: "PNRP allocation limit for each area"
+
+      - name: pnrp_allocation_percentage
+        data_type: numeric
+        description: "PNRP allocation limit for each area"
+
+  - name: surfacewater_allocation_limits_by_area_and_category
+    description: "Information on surface water allocation per area and category"
+    columns:
+      - name: area_id
+        data_type: varchar
+        description: "Unique identifier for each area"
+
+      - name: category_A
+        description: "Allocation amount for category A"
+
+      - name: category_B
+        description: "Allocation amount for category B"
+
+      - name: surface_take
+        description: "Allocation amount for surface take"
+
+      - name: total_allocation
+        data_type: numeric
+        description: "Consolidated allocation amount for each area"
+
+      - name: allocation_limit
+        data_type: numeric
+        description: "PNRP allocation limit for each area"
+
+      - name: pnrp_allocation_percentage
+        data_type: numeric
+        description: "PNRP allocation limit for each area"

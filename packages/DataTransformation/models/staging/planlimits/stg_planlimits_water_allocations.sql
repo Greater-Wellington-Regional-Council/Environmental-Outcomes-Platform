@@ -16,7 +16,8 @@ WITH source AS (
     allocation_yearly,
     meters,
     effective_from,
-    effective_to
+    effective_to,
+    category
 
   FROM {{ source('public', 'water_allocations') }}
 )
