@@ -34,4 +34,8 @@ constructor(
   fun findAllFreshwaterManagementUnits(): List<FreshwaterManagementUnit> {
     return repository.findAll()
   }
+
+  fun findFreshwaterManagementUnitsByShape(geoJson: String): List<FreshwaterManagementUnit> {
+    return repository.findAllByGeoJson(geoJson)
+  }
 }

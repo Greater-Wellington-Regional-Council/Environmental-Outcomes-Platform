@@ -112,4 +112,38 @@ class FreshwaterManagementUnitsControllerTest {
         )
         .andReturn()
   }
+
+  @Test
+  fun `Search freshwater-management-units by shape`() {
+    val geoJson =
+        """
+        {
+            "type": "Polygon",
+            "coordinates": [[[175.34, -41], [175.35, -41], [175.35, -40.99], [175.34, -40.99], [175.34, -41]]]
+        }
+        """
+
+    val fmu1 =
+        FreshwaterManagementUnit(id = 1, fmuName1 = "fmu 1", boundary = TEMPLATE_FMU.boundary)
+    val fmu2 =
+        FreshwaterManagementUnit(id = 2, fmuName1 = "fmu 2", boundary = TEMPLATE_FMU.boundary)
+
+    Mockito.`when`(fmuService.findFreshwaterManagementUnitsByShape(ArgumentMatchers.anyString()))
+        .thenReturn(listOf(fmu1, fmu2))
+
+    mvc.perform(
+            MockMvcRequestBuilders.post("/freshwater-management-units/search-by-shape")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(geoJson),
+        )
+        .andExpect(MockMvcResultMatchers.status().isOk)
+        .andExpect(MockMvcResultMatchers.jsonPath("$.features.length()").value(2))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.features[0].id").value(1))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.features[0].properties.fmuName1").value("fmu 1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.features[1].id").value(2))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.features[1].properties.fmuName1").value("fmu 2"))
+        .andReturn()
+  }
 }

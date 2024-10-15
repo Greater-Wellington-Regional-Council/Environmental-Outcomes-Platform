@@ -9,11 +9,7 @@ import nz.govt.eop.freshwater_management_units.services.TangataWhenuaSiteService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/freshwater-management-units")
@@ -33,6 +29,20 @@ class FreshwaterManagementUnitsController(
       ResponseEntity.notFound().build()
     } else {
       ResponseEntity.ok().body(FmuCccvDetails.fromFmuAndTws(fmu, tws ?: listOf()))
+    }
+  }
+
+  @PostMapping("/search-by-shape", produces = [MediaType.APPLICATION_JSON_VALUE])
+  fun searchFmuByShape(
+      @RequestBody geoJson: String
+  ): ResponseEntity<FreshwaterManagementUnitFeatureCollection> {
+    // Use the service to find FMUs that intersect the shape
+    val fmUnits = fmuService.findFreshwaterManagementUnitsByShape(geoJson)
+
+    return if (fmUnits.isEmpty()) {
+      ResponseEntity.notFound().build()
+    } else {
+      ResponseEntity.ok(fmUnits.toFeatureCollection())
     }
   }
 

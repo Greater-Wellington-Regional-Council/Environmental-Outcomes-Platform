@@ -36,4 +36,15 @@ WHERE ST_Intersects(fmu.geom, ST_Transform(ST_SetSRID(ST_Point(:lng, :lat), :sri
       lat: Double,
       srid: Int = FreshwaterManagementUnit.DEFAULT_SRID,
   ): List<FreshwaterManagementUnit>
+
+  @Query(
+      value =
+          """
+        SELECT fmu.*,
+               CAST(ST_AsGeoJSON(ST_Transform(fmu.geom, 4326), 6, 2) AS jsonb) as boundary
+        FROM freshwater_management_units fmu
+        WHERE ST_Intersects(fmu.geom, ST_GeomFromGeoJSON(:geoJson))
+    """,
+      nativeQuery = true)
+  fun findAllByGeoJson(geoJson: String): List<FreshwaterManagementUnit>
 }
