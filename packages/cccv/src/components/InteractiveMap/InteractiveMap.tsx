@@ -72,9 +72,6 @@ export default function InteractiveMap({
             zoomIntoFeatures(mapRef, locationInFocus.featuresInFocus)
         else if (highlightedFeature)
             zoomIntoFeatures(mapRef, highlightedFeature)
-
-        if (locationInFocus?.zoom)
-            mapRef?.current?.zoomTo(locationInFocus.zoom)
     }
 
     function drawFeaturesInFocus(location: IMViewLocation, id: string = 'focusView'): string | null {
@@ -142,8 +139,10 @@ export default function InteractiveMap({
             return
         }
 
-        if (locationInFocus.featuresInFocus)
+        if (locationInFocus.featuresInFocus) {
             drawFeaturesInFocus(locationInFocus)
+            console.log('drawFeaturesInFocus')
+        }
 
         placeFocusPin(locationInFocus)
 
