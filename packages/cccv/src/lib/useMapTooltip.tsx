@@ -2,7 +2,6 @@ import { useState, useEffect, RefObject } from 'react'
 import { debounce, get } from 'lodash'
 import { MapRef, MapMouseEvent } from 'react-map-gl'
 import { Feature } from 'geojson'
-import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
 
 interface TooltipSource {
     layer: string;
@@ -40,10 +39,7 @@ const useMapTooltip = ({ mapRef, source, tooltipClassName }: UseMapTooltipProps)
     const moveToolTip = (event: MapMouseEvent) => {
         if (!mapRef?.current) return
 
-        if (mapRef.current.getMap().getZoom() <= DEFAULT_ZOOM) {
-            setTooltipContent(null)
-            return
-        }
+        setTooltipContent(null)
 
         const layers = source.map((s) => s.layer)
         const features = mapRef.current.queryRenderedFeatures(event.point, {

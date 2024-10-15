@@ -236,7 +236,7 @@ export default function InteractiveMap({
                                                                   source={HIGHLIGHTS_SOURCE_ID}
                                                                   highlightedFeature={featureBeingRolledOver}
                                                                   paint={mapProperties.defaultHover.fill}
-                                                                  tooltip={{
+                                                                  tooltip={highlightedFeature ? undefined : {
                                                                       source: (f) => f.properties!.fmuName1,
                                                                   }}/>}
 
@@ -245,9 +245,7 @@ export default function InteractiveMap({
                                                               source={HIGHLIGHTS_SOURCE_ID}
                                                               highlightedFeature={highlightedFeature}
                                                               paint={mapProperties.defaultSelect.fill}
-                                                              tooltip={{
-                                                                  source: (f) => f.properties!.fmuName1,
-                                                              }}/>}
+                                                                 />}
                 </Source>
 
                 {children}
