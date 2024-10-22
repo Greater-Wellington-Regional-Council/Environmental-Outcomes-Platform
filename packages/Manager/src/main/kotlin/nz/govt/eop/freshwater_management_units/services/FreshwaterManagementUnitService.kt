@@ -1,6 +1,7 @@
 package nz.govt.eop.freshwater_management_units.services
 
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
+import nz.govt.eop.freshwater_management_units.models.toFeatureCollection
 import nz.govt.eop.freshwater_management_units.repositories.FreshwaterManagementUnitRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -22,7 +23,7 @@ constructor(
 
         // Populate tangataWhenuaSites only if needed
         if (includeTangataWhenuaSites && fmu != null) {
-            fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu)
+            fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu).toFeatureCollection()
         }
 
         return fmu
@@ -32,7 +33,7 @@ constructor(
         val fmu = repository.findById(id).orElse(null)
 
         if (includeTangataWhenuaSites && fmu != null) {
-            fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu)
+            fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu).toFeatureCollection()
         }
 
         return fmu
@@ -43,7 +44,7 @@ constructor(
 
         if (includeTangataWhenuaSites) {
             fmus.forEach { fmu: FreshwaterManagementUnit ->
-                fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu)
+                fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu).toFeatureCollection()
             }
         }
 
@@ -55,7 +56,7 @@ constructor(
 
         if (includeTangataWhenuaSites) {
             fmus.forEach { fmu: FreshwaterManagementUnit ->
-                fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu)
+                fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu).toFeatureCollection()
             }
         }
 

@@ -77,3 +77,44 @@ export const get = async (
     return { error: (e as { message: string }).message }
   }
 }
+
+export const post = async (
+    url: string,
+    payload: unknown,
+    options: { timeout: number } = { timeout: 2000 }
+) => {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), options.timeout)
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    })
+
+    if (!res.ok) {
+      const errorText = `"res.ok" not true fetching from ${url}: ${res.statusText}`
+      console.error(errorText)
+      clearTimeout(timeoutId)
+      return { error: errorText }
+    }
+
+    const data = await res.json()
+    clearTimeout(timeoutId)
+    return data
+  } catch (e) {
+    clearTimeout(timeoutId)
+
+    if ((e as { name: string }).name === 'AbortError') {
+      console.error('Fetch aborted due to timeout.')
+      return { error: 'Request timed out' }
+    }
+
+    console.error('Fetch error:', e)
+    return { error: (e as { message: string }).message }
+  }
+}

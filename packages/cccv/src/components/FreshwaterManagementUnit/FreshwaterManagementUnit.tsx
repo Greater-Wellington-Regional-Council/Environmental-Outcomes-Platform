@@ -60,7 +60,7 @@ const FreshwaterManagementUnit = (
     }
 
     const gotoTangataWhenua = (i: number) => {
-        links?.gotoLink(tangataWhenuaSites.features[i])
+        if (tangataWhenuaSites) links?.gotoLink(tangataWhenuaSites.features[i])
     }
 
     return (

@@ -1,5 +1,5 @@
-import {determineBackendUri, get} from "@lib/api.tsx"
-import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts"
+import {determineBackendUri, get, post} from "@lib/api.tsx"
+import FreshwaterManagementUnit, {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts"
 import {ErrorFlag, ErrorLevel} from "@components/ErrorContext/ErrorContext.ts"
 import {IMViewLocation} from "@shared/types/global"
 
@@ -18,13 +18,21 @@ const service = {
                               srid = null
                           }: IMViewLocation, setError: null | ((error: Error | null) => void) = null): Promise<FmuFullDetails> => {
         setError && await service.checkServiceHealth(setError)
-        const response = await get(`${determineBackendUri(window.location.hostname)}/freshwater-management-units?lng=${longitude}&lat=${latitude}${srid ? "&srid=" + srid : ""}`)
+        const response = await get(`${determineBackendUri(window.location.hostname)}/freshwater-management-units/by-lng-and-lat?lng=${longitude}&lat=${latitude}${srid ? "&srid=" + srid : ""}`)
         setError && !response &&
         setError(new ErrorFlag("No Freshwater Management Unit was not found at that location, or there was an error fetching the data. Please try again.", ErrorLevel.WARNING))
-        return service.augmentRecord(response) as FmuFullDetails
+        return service.augmentRecord(response as FreshwaterManagementUnit) as FmuFullDetails
     },
 
-    urlToGetFmuBoundaries: (): string => `${determineBackendUri(window.location.hostname)}/freshwater-management-units/as-features`,
+    postSearchByShape: async (shape: string, setError: null | ((error: Error | null) => void) = null): Promise<FmuFullDetails[]> => {
+        setError && await service.checkServiceHealth(setError)
+        const response = await post(`${determineBackendUri(window.location.hostname)}/freshwater-management-units/search-for-freshwater-managements-intersecting`, shape)
+        setError && !response &&
+        setError(new ErrorFlag("No Freshwater Management Units were found in the selected area, or there was an error fetching the data. Please try again.", ErrorLevel.WARNING))
+        return response
+    },
+
+    urlToGetFmuBoundaries: (): string => `${determineBackendUri(window.location.hostname)}/freshwater-management-units?format=features`,
 
     isUp: async () => {
         const response = await get(`${determineBackendUri(window.location.hostname)}/health`)
@@ -38,14 +46,14 @@ const service = {
         }
     },
 
-    augmentRecord: (record: FmuFullDetails) => {
+    augmentRecord: (record: FreshwaterManagementUnit): FmuFullDetails | null => {
         if (!record)
-            return record
+            return null
 
-        if (record.freshwaterManagementUnit.fmuName1 == 'Parkvale Stream' && !record.freshwaterManagementUnit.implementationIdeas)
-            record.freshwaterManagementUnit.implementationIdeas = '<ul><li>Consider wetlands for water quality treatment before discharges reach the stream</li>\n<li>Setbacks from depressions and waterways should be necessary for intensive land uses including winter grazing and winter cropping</li>\n<li>Riparian planting should be undertaken in strategic spots, including to provide shade to help improve periphytn and macrophyte problems</li>\n<li>Good management of stock access to streambanks and of winter grazing may prove important in this catchment</li></ul>'
-
-        return record
+        return {
+            freshwaterManagementUnit: record,
+            tangataWhenuaSites: record.tangataWhenuaSites
+        }
     }
 }
 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, Key } from "react"
 import manaWhenuaSiteService from "@services/ManaWhenuaSiteService.ts"
 import Tooltip from "@elements/Tooltip/Tooltip.tsx"
-import { Feature, FeatureCollection, Geometry, GeoJsonProperties } from "geojson"
+import { Feature, FeatureCollection } from "geojson"
 
 interface TangataWhenuaSitesProps {
-    tangataWhenuaSites: FeatureCollection<Geometry, GeoJsonProperties>;
+    tangataWhenuaSites: FeatureCollection;
     gotoTangataWhenua: (index: number) => void;
 }
 
@@ -23,9 +23,9 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
 
         if (tangataWhenuaSites?.features) {
             tangataWhenuaSites.features.forEach((site: Feature) => {
-                site?.properties?.locationValues?.forEach((siteName: string) => {
+                site?.properties?.locationValues?.split(',').forEach((siteName: string) => {
                     if (!siteDescriptions[siteName]) {
-                        fetchDescription(siteName) // Fetch description for each siteName
+                        fetchDescription(siteName).then() // Fetch description for each siteName
                     }
                 })
             })
@@ -68,7 +68,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
                                 <li className="my-0" key={siteIndex} onClick={() => gotoTangataWhenua(siteIndex)}>
                                     {site?.properties?.location}
                                     <ul className="flex flex-wrap gap-4 list-none p-0 m-0 mt-4 mb-6">
-                                        {site?.properties?.locationValues?.map((siteName: string, index: Key | null | undefined) => (
+                                        {site?.properties?.locationValues?.split(',').map((siteName: string, index: Key | null | undefined) => (
                                             <li
                                                 className="list-none ml-0 inset-0 bg-gray-300 indent-0 px-2 hover:underline hover:decoration-dashed"
                                                 key={index}

@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.models.TangataWhenuaSite
+import nz.govt.eop.freshwater_management_units.models.toFeatureCollection
 import nz.govt.eop.freshwater_management_units.repositories.TEMPLATE_FMU
 import nz.govt.eop.freshwater_management_units.services.FreshwaterManagementUnitService
 import org.junit.jupiter.api.Test
@@ -41,7 +42,7 @@ class FreshwaterManagementUnitsControllerTest {
                 locationValues = ttwLocationValues,
                 geomGeoJson = "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}"
             )
-        ))
+        ).toFeatureCollection())
 
         // Mock the FMU service to return an FMU when querying by lng/lat
         Mockito.`when`(
@@ -72,20 +73,12 @@ class FreshwaterManagementUnitsControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites").isNotEmpty)
             .andExpect(
-                MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites[0].location")
+                MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.location")
                     .value("Tangata Whenua site 1"),
             )
             .andExpect(
-                MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites[0].locationValues[0]")
-                    .value("site1"),
-            )
-            .andExpect(
-                MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites[0].locationValues[1]")
-                    .value("site2"),
-            )
-            .andExpect(
-                MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites[0].locationValues[2]")
-                    .value("site3"),
+                MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.locationValues")
+                    .value("site1,site2,site3"),
             )
             .andReturn()
     }

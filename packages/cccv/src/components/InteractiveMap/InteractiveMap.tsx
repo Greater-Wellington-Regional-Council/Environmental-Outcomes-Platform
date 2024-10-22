@@ -70,18 +70,6 @@ export default function InteractiveMap({
     function focusMap() {
         if (locationInFocus?.featuresInFocus)
             zoomIntoFeatures(mapRef, locationInFocus.featuresInFocus)
-        else if (highlightedFeature)
-            zoomIntoFeatures(mapRef, highlightedFeature)
-        else if (locationInFocus?.longitude && featureBeingRolledOver)
-            mapRef?.current?.getMap()?.flyTo({
-                center: [locationInFocus.longitude, locationInFocus.latitude],
-                zoom: locationInFocus.zoom ?? MIDDLE_ZOOM,
-            })
-        else if (locationInFocus?.longitude && locationInFocus?.latitude)
-            mapRef?.current?.getMap()?.flyTo({
-                center: [locationInFocus.longitude, locationInFocus.latitude],
-                zoom: locationInFocus.zoom ?? DEFAULT_ZOOM,
-            })
     }
 
     function drawFeaturesInFocus(location: IMViewLocation, id: string = 'focusView'): string | null {
@@ -216,7 +204,7 @@ export default function InteractiveMap({
         } else {
             setFeatureBeingRolledOver(null)
         }
-    }, 0.5)
+    }, 0.00)
 
     return (
         <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>

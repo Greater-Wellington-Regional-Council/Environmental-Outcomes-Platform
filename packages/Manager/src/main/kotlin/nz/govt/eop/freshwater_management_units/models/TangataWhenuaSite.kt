@@ -20,20 +20,21 @@ data class TangataWhenuaSite(
 )
 
 fun List<TangataWhenuaSite>.toFeatureCollection(): FeatureCollection {
-  val mapper = ObjectMapper()
-  val featureCollection = FeatureCollection()
+    val mapper = ObjectMapper()
+    val featureCollection = FeatureCollection()
 
-  this.forEach { site ->
-    site.geomGeoJson?.let { geomString ->
-      val geometry = mapper.readValue(geomString, Geometry::class.java)
-      val feature = Feature()
-      feature.geometry = geometry
-      feature.setProperty("id", site.id)
-      feature.setProperty("location", site.location ?: "")
-      feature.setProperty("locationValues", site.locationValues)
-      featureCollection.add(feature)
+    this.forEach { site ->
+        site.geomGeoJson?.let { geomString ->
+            val geometry = mapper.readValue(geomString, Geometry::class.java)
+            val feature = Feature()
+            feature.geometry = geometry
+            feature.properties["id"] = site.id
+            feature.properties["location"] = site.location ?: ""
+            feature.properties["locationValues"] = site.locationValues.joinToString(",")
+            feature.properties["Values_"] = site.locationValues.joinToString(",")
+            featureCollection.add(feature)
+        }
     }
-  }
 
-  return featureCollection
+    return featureCollection
 }
