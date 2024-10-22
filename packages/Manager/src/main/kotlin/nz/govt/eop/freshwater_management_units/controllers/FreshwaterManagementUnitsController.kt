@@ -1,7 +1,6 @@
 package nz.govt.eop.freshwater_management_units.controllers
 
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
-import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnitFeatureCollection
 import nz.govt.eop.freshwater_management_units.models.toFeatureCollection
 import nz.govt.eop.freshwater_management_units.services.FreshwaterManagementUnitService
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,18 +33,17 @@ class FreshwaterManagementUnitsController(
     fun searchForFreshwaterManagementsIntersecting(
         @RequestBody geoJson: String,
         @RequestParam(required = false, defaultValue = "true") includeTangataWhenuaSites: Boolean
-    ): ResponseEntity<FreshwaterManagementUnitFeatureCollection> {
-        // Use the service to find FMUs that intersect the shape
-        val fmUnits = fmuService.findFreshwaterManagementUnitsByShape(geoJson, includeTangataWhenuaSites)
+    ): ResponseEntity<List<FreshwaterManagementUnit>> {
+        val fmus = fmuService.findFreshwaterManagementUnitsByShape(geoJson, includeTangataWhenuaSites)
 
-        return if (fmUnits.isEmpty()) {
+        return if (fmus.isEmpty()) {
             ResponseEntity.notFound().build()
         } else {
-            ResponseEntity.ok(fmUnits.toFeatureCollection())
+            ResponseEntity.ok(fmus)
         }
     }
 
-    @GetMapping("/{id}", "/{id}/", produces = [MediaType.APPLICATION_JSON_VALUE])
+    @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getFreshwaterManagementUnitById(
         @PathVariable id: Int,
         @RequestParam(required = false, defaultValue = "true") includeTangataWhenuaSites: Boolean

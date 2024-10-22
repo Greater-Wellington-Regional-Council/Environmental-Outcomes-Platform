@@ -139,11 +139,11 @@ class FreshwaterManagementUnitsControllerTest {
                 .content(geoJson),
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.features.length()").value(2))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.features[0].id").value(1))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.features[0].properties.fmuName1").value("fmu 1"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.features[1].id").value(2))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.features[1].properties.fmuName1").value("fmu 2"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].fmuName1").value("fmu 1"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].id").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].fmuName1").value("fmu 2"))
             .andReturn()
     }
 }

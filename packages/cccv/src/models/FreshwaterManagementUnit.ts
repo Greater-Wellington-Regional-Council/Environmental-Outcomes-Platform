@@ -50,5 +50,6 @@ export interface FmuFullDetailsWithMap extends FmuFullDetails {
     links?: {
         gotoLink: (f: Feature | FeatureCollection) => void;
         tangataWhenuaSites: string
-    }
+    },
+    showHeader?: boolean
 }

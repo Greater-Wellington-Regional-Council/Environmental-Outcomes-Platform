@@ -26,17 +26,15 @@ import {useMapSnapshot} from "@lib/MapSnapshotContext"
 import useMapHighlight from "@lib/useMapHighlight"
 import zoomIntoFeatures from "@lib/zoomIntoFeatures.ts"
 import mapProperties from "@values/mapProperties.ts"
+import {
+    CLICK_LAYER, HIGHLIGHT_HOVER_LAYER,
+    HIGHLIGHT_SELECT_LAYER,
+    HIGHLIGHTS_SOURCE_ID,
+    HOVER_LAYER
+} from "@lib/values/mapSourceAndLayerIds.ts"
 
 const DEFAULT_VIEW_WIDTH = 100
 const DEFAULT_VIEW_HEIGHT = 150
-
-export const HOVER_LAYER = "freshwater-management-units-candidates"
-const CLICK_LAYER = HOVER_LAYER
-export const HIGHLIGHT_HOVER_LAYER = "fmu-highlight"
-export const HIGHLIGHT_SELECT_LAYER = "fmu-highlight-click"
-export const MIDDLE_ZOOM = 12
-
-const HIGHLIGHTS_SOURCE_ID = "highlight-source"
 
 export default function InteractiveMap({
                                            startLocation,

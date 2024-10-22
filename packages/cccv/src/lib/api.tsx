@@ -54,7 +54,7 @@ export const get = async (
       const errorText = `"res.ok" not true fetching from ${url}: ${res.statusText}`
       console.error(errorText)
       clearTimeout(timeoutId)
-      return { error: errorText }
+      return null
     }
 
     const data = await res.json()
@@ -81,18 +81,19 @@ export const get = async (
 export const post = async (
     url: string,
     payload: unknown,
-    options: { timeout: number } = { timeout: 2000 }
+    options: { timeout: number, rawPayload: boolean } = { timeout: 2000, rawPayload: false }
 ) => {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), options.timeout)
 
   try {
+    console.log('POSTing to ', `"${url}"`, 'with payload', payload)
     const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(payload),
+      body: options.rawPayload ? payload as string: JSON.stringify(payload),
       signal: controller.signal
     })
 
@@ -100,7 +101,7 @@ export const post = async (
       const errorText = `"res.ok" not true fetching from ${url}: ${res.statusText}`
       console.error(errorText)
       clearTimeout(timeoutId)
-      return { error: errorText }
+      return null
     }
 
     const data = await res.json()

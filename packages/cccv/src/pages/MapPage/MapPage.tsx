@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { useLoaderData } from "react-router-dom"
 import { Layer, Source } from "react-map-gl"
 import { Feature, FeatureCollection } from "geojson"
@@ -11,7 +11,6 @@ import { DEFAULT_ZOOM } from "@components/InteractiveMap/lib/useViewState.ts"
 import { CombinedMapRef } from "@components/InteractiveMap/lib/InteractiveMap"
 import mapProperties from "@values/mapProperties.ts"
 
-import InteractiveMap, { HOVER_LAYER } from "@components/InteractiveMap/InteractiveMap"
 import AddressSearch from "@components/AddressSearch/AddressSearch"
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit"
 import SlidingPanel from "@components/InfoPanel/SlidingPanel"
@@ -25,10 +24,15 @@ import addPropertiesToGeoJSON from "@lib/addPropertiesToGeoJSON.ts"
 import { calculateCentroids } from "@lib/calculatePolygonCentoid"
 
 import freshwaterManagementService from "@services/FreshwaterManagementUnitService/FreshwaterManagementUnitService.ts"
-import addressesService, { Address } from "@services/AddressesService/AddressesService.ts"
+import addressesService from "@services/AddressesService/AddressesService.ts"
 import linzDataService from "@services/LinzDataService/LinzDataService.ts"
 
 import { FmuFullDetails } from "@models/FreshwaterManagementUnit"
+import PhysicalAddress from "@components/PhysicalAddress/PhysicalAddress.tsx"
+import tooltipProperties from "@lib/values/tooltips.ts"
+import {TANGATA_WHENUA_SOURCE, TTW_HIGHLIGHT_LAYER} from "@lib/values/mapSourceAndLayerIds.ts"
+import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx"
+import StringCarousel from "@components/StringCarousel/StringCarousel.tsx"
 
 const ADDRESS_ZOOM = 12
 
@@ -46,28 +50,25 @@ function GWHeader() {
     )
 }
 
-const PhysicalAddress: React.FC<{ address: Address }> = ({ address }) => {
-    return (
-        <div
-            className="FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidden flex"
-            id={`physical_address_${address.id || ""}`}
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4a5568" className="size-6">
-                <path
-                    fillRule="evenodd"
-                    d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-                    clipRule="evenodd"
-                />
-            </svg>
-            <div className="w-[80%]">
-                {address.address.split(",").map((line, i) => (
-                    <p key={i} className="w-[80%] font-bold text-lg">
-                        {line}
-                    </p>
-                ))}
-            </div>
-        </div>
-    )
+const useFMUSelection = () => {
+    const [currentFmus, setCurrentFmus] = useState<FmuFullDetails[]>([])
+    const [fmuIndex, setFmuIndex] = useState<number | null>(null)
+
+    const fmuSelected = fmuIndex !== null
+
+    const currentFmu = currentFmus && fmuIndex !== null ? currentFmus[fmuIndex] : null
+
+    const clearFmus = () => {
+        setCurrentFmus([])
+        setFmuIndex(null)
+    }
+
+    const loadFmus = (fmus: FmuFullDetails[]) => {
+        setCurrentFmus(fmus || [])
+        setFmuIndex(0)
+    }
+
+    return { fmuSelected, currentFmu, fmuIndex, currentFmus, setCurrentFmus, setFmuIndex, clearFmus, loadFmus }
 }
 
 export default function MapPage() {
@@ -75,9 +76,9 @@ export default function MapPage() {
     const locationDetails = useLoaderData()
 
     const [selectedLocation, selectLocation] = useState<IMViewLocation | null>(null)
-    const [selectedFmu, selectFmu] = useState<FmuFullDetails[] | null>(null)
 
-    const [showPanel, setShowPanel] = useState(false)
+    const { currentFmus, currentFmu, fmuIndex, setFmuIndex, clearFmus, loadFmus } = useFMUSelection()
+
     const [fmuChanged, setFmuChanged] = useState(false)
 
     const sliderRef = useRef<HTMLDivElement>(null)
@@ -89,19 +90,23 @@ export default function MapPage() {
 
     const fetchFmu = async () => {
         if (!selectedLocation) {
-            setShowPanel(false)
-            selectFmu(null)
+            clearFmus()
             return
         }
 
-        const fmuBylatLng = await freshwaterManagementService.getByLocation(selectedLocation, setError)
-        const fmuList = fmuBylatLng ? [fmuBylatLng] : null
+        const fmuList = await freshwaterManagementService.getByLocation(selectedLocation, setError)
+        console.log(fmuList)
 
-        setShowPanel(fmuList != null && fmuList.length > 0)
-        selectFmu(fmuList)
-        setFmuChanged(selectedFmu != null && fmuList != null && JSON.stringify(fmuList) !== JSON.stringify(selectedFmu))
+        if (!fmuList || fmuList.length === 0) {
+            clearFmus()
+            setError(new Error("No Freshwater Management Units were found at that location, or there was an error fetching the data. Please try again."))
+            return
+        }
 
-        fmuList && setError(null)
+        loadFmus(fmuList)
+
+        setFmuChanged(true)
+        setError(null)
     }
 
     useEffect(() => {
@@ -118,7 +123,8 @@ export default function MapPage() {
         if (!address) return
 
         setLoading(true)
-        selectFmu(null)
+
+        clearFmus()
         selectLocation(null)
 
         try {
@@ -171,45 +177,11 @@ export default function MapPage() {
         if (sliderRef.current) {
             setSliderWidth(sliderRef.current.clientWidth)
         }
-    }, [showPanel])
-
-    const TANGATA_WHENUA_SOURCE = "freshwater-management-ttw-sites"
-    const TTW_HIGHLIGHT_LAYER = "ttw-highlight"
+    }, [currentFmu])
 
     const { Tooltip } = useMapTooltip({
         mapRef,
-        source: [
-            {
-                layer: TTW_HIGHLIGHT_LAYER,
-                property: "properties.location",
-                options: {
-                    "fill-color": "black",
-                    "fill-outline-color": "black",
-                    "text-color": "white",
-                    "fill-opacity": 0.8,
-                    "font-weight": "bold",
-                },
-            },
-            {
-                layer: HOVER_LAYER,
-                property: "properties.fmuName1",
-                options: {
-                    "fill-color": "white",
-                    "fill-outline-color": "purple",
-                    "text-color": "black",
-                    "fill-opacity": 0.8,
-                    "font-weight": "normal",
-                },
-            },
-        ],
-    })
-
-    const tangataWhenuaSitesData = selectedFmu
-        ? {
-            type: "FeatureCollection",
-            features: selectedFmu.flatMap((fmu) => fmu.tangataWhenuaSites?.features || []),
-        }
-        : null
+        source: tooltipProperties})
 
     return (
         <div className="map-page bg-white">
@@ -225,8 +197,8 @@ export default function MapPage() {
                         mapRef={mapRef}
                         highlights_source_url={freshwaterManagementService.urlToGetFmuBoundaries()}
                     >
-                        {tangataWhenuaSitesData && (
-                            <Source id={TANGATA_WHENUA_SOURCE} type="geojson" data={tangataWhenuaSitesData}>
+                        {currentFmu && (
+                            <Source id={TANGATA_WHENUA_SOURCE} type="geojson" data={currentFmu.tangataWhenuaSites}>
                                 <Layer
                                     id={TTW_HIGHLIGHT_LAYER}
                                     type="fill"
@@ -242,22 +214,27 @@ export default function MapPage() {
                         <AddressSearch onSelect={selectAddress} placeholder="Search for address" directionUp={true} />
                     </div>
 
-                    {selectedFmu && selectedFmu.length > 0 && (
-                        <SlidingPanel showPanel={showPanel} contentChanged={fmuChanged} onClose={() => setShowPanel(false)}>
+                    {currentFmu && (
+                        <SlidingPanel showPanel={!!currentFmus.length} contentChanged={fmuChanged} onClose={() => clearFmus()}>
+                            {/*{currentFmus.length > 1 && (<FmuPanelHeader className={"ml-6 mb-8"} fmuName1={currentFmu.freshwaterManagementUnit.fmuName1!}/>)}*/}
                             {selectedLocation?.address && <PhysicalAddress address={selectedLocation.address} />}
+                            {currentFmus.length > 1 && (<div className={"mb-0"}>
+                                <div className={"text-sm text-center font-light mb-0"}>{`This property sits on ${currentFmus.length} catchments`}</div>
+                                <StringCarousel className={"mb-0"} displayValues={currentFmus.map((fmu) => fmu.freshwaterManagementUnit.fmuName1!)} index={fmuIndex} setIndex={setFmuIndex} />
+                                <div className="text-sm text-center font-extralight mb-2">{`Catchment ${fmuIndex!+1} of ${currentFmus.length}`}</div>
+                            </div>)}
                             <FreshwaterManagementUnit
                                 key={0}
-                                {...selectedFmu[0]}
+                                {...currentFmu}
                                 mapImage={mapSnapshot}
                                 links={{
                                     tangataWhenuaSites: TANGATA_WHENUA_SOURCE,
                                     gotoLink: (f: Feature | FeatureCollection) =>
                                         selectLocation({
-                                            ...selectedLocation,
-                                            address: undefined,
-                                            featuresInFocus: f,
+                                            featuresInFocus: f
                                         }),
                                 }}
+                                showHeader={currentFmus.length === 1}
                             />
                         </SlidingPanel>
                     )}
