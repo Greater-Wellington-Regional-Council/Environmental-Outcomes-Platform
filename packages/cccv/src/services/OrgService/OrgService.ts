@@ -1,4 +1,4 @@
-import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService.ts"
+import freshwaterManagementUnitService from "@services/FreshwaterManagementUnitService/FreshwaterManagementUnitService.ts"
 import {ErrorFlag, ErrorLevel} from "@components/ErrorContext/ErrorContext.ts"
 import {determineBackendUri, get} from "@lib/api.tsx"
 

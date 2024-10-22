@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 import AddressSearch, { AddressSearchProps } from '@components/AddressSearch/AddressSearch'
-import addressesService from '@services/AddressesService'
+import addressesService from '@services/AddressesService/AddressesService.ts'
 
 const DUMMY_ADDRESS = {
   id: '1',

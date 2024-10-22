@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Key } from "react"
-import manaWhenuaSiteService from "@services/ManaWhenuaSiteService.ts"
+import manaWhenuaSiteService from "@services/ManaWhenuaSiteService/ManaWhenuaSiteService.ts"
 import Tooltip from "@elements/Tooltip/Tooltip.tsx"
 import { Feature, FeatureCollection } from "geojson"
 

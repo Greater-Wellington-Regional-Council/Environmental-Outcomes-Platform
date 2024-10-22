@@ -1,6 +1,6 @@
 import env from "@src/env.ts"
 import {get} from "@lib/api.tsx"
-import {AddressId} from "@services/AddressesService.ts"
+import {AddressId} from "@services/AddressesService/AddressesService.ts"
 import {DEFAULT_PROJECTION} from "@lib/projections.ts"
 import {FeatureCollection} from "geojson"
 import _ from "lodash"

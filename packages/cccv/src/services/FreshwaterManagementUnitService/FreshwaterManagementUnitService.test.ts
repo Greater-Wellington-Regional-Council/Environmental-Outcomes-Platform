@@ -1,4 +1,4 @@
-import service from '@services/FreshwaterManagementUnitService.ts'
+import service from '@services/FreshwaterManagementUnitService/FreshwaterManagementUnitService.ts'
 import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts"
 
 describe('FreshwaterManagementUnits service', () => {

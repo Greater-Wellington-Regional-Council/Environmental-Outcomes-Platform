@@ -1,4 +1,4 @@
-import service from './ManaWhenuaSiteService'
+import service from './ManaWhenuaSiteService.ts'
 import ManaWhenuaSites from "@values/manaWhenuaSites.ts"
 import {describe} from "vitest"
 

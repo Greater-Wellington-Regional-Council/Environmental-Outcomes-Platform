@@ -3,8 +3,8 @@ import service, {
     ERROR_MESSAGES,
     LDS_ADDRESS_BOUNDARY_TIMEOUT,
     URL_LDS_GET_UOP_GEOMETRY,
-} from "@services/LinzDataService"
-import { get } from "@lib/api"
+} from "@services/LinzDataService/LinzDataService.ts"
+import { get } from "@lib/api.tsx"
 import env from "@src/env.ts"
 
 vi.mock("@lib/api")

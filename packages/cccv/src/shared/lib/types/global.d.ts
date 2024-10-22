@@ -1,5 +1,5 @@
 import {Feature, FeatureCollection} from "geojson"
-import {Address} from "../../../services/AddressesService"
+import {Address} from "../../../services/AddressesService/AddressesService"
 
 interface Dictionary<T> {
     [index: string]: T;

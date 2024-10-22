@@ -1,4 +1,4 @@
-import manaWhenuaSiteNames from "@values/manaWhenuaSites"
+import manaWhenuaSiteNames from "@values/manaWhenuaSites.ts"
 import { ErrorFlag, ErrorLevel } from "@components/ErrorContext/ErrorContext.ts"
 
 const normalizeString = (str: string) => {
