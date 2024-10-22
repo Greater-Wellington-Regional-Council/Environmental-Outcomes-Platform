@@ -2,6 +2,7 @@ package nz.govt.eop.freshwater_management_units.services
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.repositories.FreshwaterManagementUnitRepository
 import nz.govt.eop.freshwater_management_units.repositories.TEMPLATE_FMU
@@ -55,4 +56,21 @@ class FreshwaterManagementUnitServiceTest : FunSpec() {
     fmus.size shouldBe 2
     fmus[0].boundary?.substring(0, 5) shouldBe "{\"crs"
   }
+
+    @Test
+    fun `Get freshwater-management-units by shape`() {
+        Mockito.`when`(fmuRepository.findAllByGeoJson(ArgumentMatchers.anyString()))
+            .thenReturn(
+                listOf(
+                    FreshwaterManagementUnit(id = 1, boundary = TEMPLATE_FMU.boundary),
+                    FreshwaterManagementUnit(id = 2, boundary = TEMPLATE_FMU.boundary),
+                ),
+            )
+
+        val fmus = TEMPLATE_FMU.boundary?.let { fmuService.findFreshwaterManagementUnitsByShape(it) }
+
+        fmus.shouldNotBe(null)
+        fmus!!.size shouldBe 2
+        fmus.first()?.boundary?.substring(0, 5) shouldBe "{\"crs"
+    }
 }

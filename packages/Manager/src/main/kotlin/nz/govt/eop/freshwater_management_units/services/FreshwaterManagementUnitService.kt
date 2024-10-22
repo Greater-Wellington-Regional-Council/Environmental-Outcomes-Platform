@@ -1,6 +1,5 @@
 package nz.govt.eop.freshwater_management_units.services
 
-import mu.KotlinLogging
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.repositories.FreshwaterManagementUnitRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,31 +10,55 @@ class FreshwaterManagementUnitService
 @Autowired
 constructor(
     private val repository: FreshwaterManagementUnitRepository,
+    private val twsService: TangataWhenuaSiteService // Include this service to get tangataWhenuaSites
 ) {
-  private val logger = KotlinLogging.logger {}
+    fun findFreshwaterManagementUnitByLatAndLng(
+        lng: Double,
+        lat: Double,
+        srid: Int = FreshwaterManagementUnit.DEFAULT_SRID,
+        includeTangataWhenuaSites: Boolean = true
+    ): FreshwaterManagementUnit? {
+        val fmu = repository.findAllByLngLat(lng, lat, srid).firstOrNull()
 
-  fun findFreshwaterManagementUnitByLatAndLng(
-      lng: Double,
-      lat: Double,
-      srid: Int = FreshwaterManagementUnit.DEFAULT_SRID,
-  ): FreshwaterManagementUnit? {
-    val fmus = repository.findAllByLngLat(lng, lat, srid)
+        // Populate tangataWhenuaSites only if needed
+        if (includeTangataWhenuaSites && fmu != null) {
+            fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu)
+        }
 
-    if (fmus.count() > 1) {
-      logger.warn { "More than 1 FMUs found for lat: $lat, lng: $lng" }
+        return fmu
     }
 
-    return fmus.firstOrNull()
-  }
+    fun findFreshwaterManagementUnitById(id: Int, includeTangataWhenuaSites: Boolean = true): FreshwaterManagementUnit? {
+        val fmu = repository.findById(id).orElse(null)
 
-  fun findFreshwaterManagementUnitById(id: Int): FreshwaterManagementUnit? =
-      repository.findById(id).orElse(null)
+        if (includeTangataWhenuaSites && fmu != null) {
+            fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu)
+        }
 
-  fun findAllFreshwaterManagementUnits(): List<FreshwaterManagementUnit> {
-    return repository.findAll()
-  }
+        return fmu
+    }
 
-  fun findFreshwaterManagementUnitsByShape(geoJson: String): List<FreshwaterManagementUnit> {
-    return repository.findAllByGeoJson(geoJson)
-  }
+    fun findFreshwaterManagementUnitsByShape(geoJson: String, includeTangataWhenuaSites: Boolean = true): List<FreshwaterManagementUnit> {
+        val fmus = repository.findAllByGeoJson(geoJson)
+
+        if (includeTangataWhenuaSites) {
+            fmus.forEach { fmu: FreshwaterManagementUnit ->
+                fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu)
+            }
+        }
+
+        return fmus
+    }
+
+    fun findAllFreshwaterManagementUnits(includeTangataWhenuaSites: Boolean = true): List<FreshwaterManagementUnit> {
+        val fmus = repository.findAll()
+
+        if (includeTangataWhenuaSites) {
+            fmus.forEach { fmu: FreshwaterManagementUnit ->
+                fmu.tangataWhenuaSites = twsService.findTangataWhenuaInterestSitesForFMU(fmu)
+            }
+        }
+
+        return fmus
+    }
 }
