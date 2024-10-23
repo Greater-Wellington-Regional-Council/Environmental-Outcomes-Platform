@@ -98,23 +98,25 @@ export function getObjectiveDescription(contaminant: Contaminant, contaminant_le
     return _.get(OBJECTIVE_DESCRIPTION[contaminant.title], level, '-')
   })
 
-  if (desc.length == 0)
+  if (!desc?.length) {
     return null
-  else if (desc.length == 1)
+  } else if (desc.length === 1) {
     return desc[0]
-  else
-    return desc.map((_, index) => `${codes[index]}=${desc[index]}`).join("<br><br>")
+  } else {
+    return desc.map((_: string, index: number) => `${codes[index]}=${desc[index]}`).join("<br><br>")
+  }
 }
 
 export const level_codes = (level: string | undefined) => (level ?? '').trim().match(/\b[A-E]\b/g)?.sort()
 
 export const byWhen = (contaminant: Contaminant) => {
-  const mciYear  = Array.from((contaminant.byWhen ?? '').matchAll(/([0-9]+) for MCI/g), match => match[1])
+  const mciYear = Array.from((contaminant.byWhen ?? '').matchAll(/([0-9]+) for MCI/g), match => match[1])
 
-  if (contaminantTitle(contaminant).includes('MCI') && mciYear?.length)
+  if (contaminantTitle(contaminant).includes('MCI') && mciYear?.length) {
     return `by ${mciYear[0]}`
+  }
 
   const other = (contaminant.byWhen ?? '').split('(')[0].trim()
 
-  return (other.match(/^[0-9]+$/)) ? `by ${other}` : other
+  return /^\d+$/.test(other) ? `by ${other}` : other
 }
