@@ -28,23 +28,25 @@ class FreshwaterManagementUnitServiceTest : FunSpec() {
 
   @MockBean private lateinit var fmuRepository: FreshwaterManagementUnitRepository
 
-    @Test
-    fun `get freshwater-management-units by lng and lat`() {
-      Mockito.`when`(
-              fmuRepository.findAllByLngLat(
-                  ArgumentMatchers.anyDouble(),
-                  ArgumentMatchers.anyDouble(),
-                  ArgumentMatchers.anyInt()))
-          .thenReturn(listOf(FreshwaterManagementUnit(id = 1, fmuGroup = "Western hill rivers", boundary = TEMPLATE_FMU.boundary)))
+  @Test
+  fun `get freshwater-management-units by lng and lat`() {
+    Mockito.`when`(
+            fmuRepository.findAllByLngLat(
+                ArgumentMatchers.anyDouble(),
+                ArgumentMatchers.anyDouble(),
+                ArgumentMatchers.anyInt()))
+        .thenReturn(
+            listOf(
+                FreshwaterManagementUnit(
+                    id = 1, fmuGroup = "Western hill rivers", boundary = TEMPLATE_FMU.boundary)))
 
-      val foundFmu =
-          fmuService.findFreshwaterManagementUnitByLatAndLng(1805287.5391000006,
-   5469337.152800006)
+    val foundFmu =
+        fmuService.findFreshwaterManagementUnitByLatAndLng(1805287.5391000006, 5469337.152800006)
 
-      // Verify the expected results
-      foundFmu?.id shouldBe 1
-      foundFmu?.fmuGroup shouldBe "Western hill rivers"
-    }
+    // Verify the expected results
+    foundFmu?.id shouldBe 1
+    foundFmu?.fmuGroup shouldBe "Western hill rivers"
+  }
 
   @Test
   fun `Get all freshwater-management-units`() {

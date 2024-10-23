@@ -47,7 +47,7 @@ var TEMPLATE_FMU =
         mciObj = "Fair",
         ecoliObj = "C",
         boundary =
-        """
+            """
         {
             "type": "MultiPolygon",
             "coordinates": [
@@ -69,7 +69,7 @@ var TEMPLATE_FMU =
         }
         }
         """
-            .trimIndent(),
+                .trimIndent(),
         catchmentDescription = null,
     )
 
@@ -80,19 +80,19 @@ class FreshwaterManagementUnitRepositoryTest
 @Autowired
 constructor(private val repository: FreshwaterManagementUnitRepository) :
     StringSpec({
-        "should find freshwater management unit by lat and lng" {
-            val lng = 175.35
-            val lat = -41.175
+      "should find freshwater management unit by lat and lng" {
+        val lng = 175.35
+        val lat = -41.175
 
-            val foundFmu = repository.findAllByLngLat(lng, lat)
+        val foundFmu = repository.findAllByLngLat(lng, lat)
 
-            foundFmu.count() shouldBe 1
-            isFmuSameAs(foundFmu[0])
-        }
+        foundFmu.count() shouldBe 1
+        isFmuSameAs(foundFmu[0])
+      }
 
-        "should find freshwater management unit by GeoJSON geometry" {
-            val geoJson =
-                """
+      "should find freshwater management unit by GeoJSON geometry" {
+        val geoJson =
+            """
             {
               "type": "FeatureCollection",
               "features": [
@@ -115,17 +115,17 @@ constructor(private val repository: FreshwaterManagementUnitRepository) :
               ]
             }
         """
-                    .trimIndent()
+                .trimIndent()
 
-            val foundFmu = repository.findAllByGeoJson(geoJson)
+        val foundFmu = repository.findAllByGeoJson(geoJson)
 
-            foundFmu.count() shouldBe 1
-            isFmuSameAs(foundFmu[0])
-        }
+        foundFmu.count() shouldBe 1
+        isFmuSameAs(foundFmu[0])
+      }
 
-        "should not find freshwater management unit with non-intersecting GeoJSON geometry" {
-            val geoJson =
-                """
+      "should not find freshwater management unit with non-intersecting GeoJSON geometry" {
+        val geoJson =
+            """
                         {
                           "type": "FeatureCollection",
                           "features": [
@@ -148,14 +148,14 @@ constructor(private val repository: FreshwaterManagementUnitRepository) :
                           ]
                         }
         """
-                    .trimIndent()
+                .trimIndent()
 
-            val foundFmu = repository.findAllByGeoJson(geoJson)
+        val foundFmu = repository.findAllByGeoJson(geoJson)
 
-            foundFmu.count() shouldBe 0
-        }
+        foundFmu.count() shouldBe 0
+      }
 
-        // Any additional test cases...
+      // Any additional test cases...
     })
 
 private fun isFmuSameAs(
@@ -163,24 +163,26 @@ private fun isFmuSameAs(
     compareWith: FreshwaterManagementUnit = TEMPLATE_FMU,
     idShouldBe: Int? = null,
 ) {
-    if (idShouldBe != null) {
-        newFmu.id shouldBe idShouldBe
-    }
+  if (idShouldBe != null) {
+    newFmu.id shouldBe idShouldBe
+  }
 
-    newFmu.gid shouldBe compareWith.gid
-    newFmu.objectId shouldBe compareWith.objectId
-    newFmu.fmuNo shouldBe compareWith.fmuNo
-    newFmu.location shouldBe compareWith.location
-    newFmu.fmuName1 shouldBe compareWith.fmuName1
-    newFmu.fmuGroup shouldBe compareWith.fmuGroup
-    newFmu.shapeLeng shouldBe compareWith.shapeLeng
-    newFmu.shapeArea shouldBe compareWith.shapeArea
-    newFmu.byWhen shouldBe compareWith.byWhen
-    newFmu.fmuIssue shouldBe compareWith.fmuIssue
-    newFmu.topFmuGrp shouldBe compareWith.topFmuGrp
+  newFmu.gid shouldBe compareWith.gid
+  newFmu.objectId shouldBe compareWith.objectId
+  newFmu.fmuNo shouldBe compareWith.fmuNo
+  newFmu.location shouldBe compareWith.location
+  newFmu.fmuName1 shouldBe compareWith.fmuName1
+  newFmu.fmuGroup shouldBe compareWith.fmuGroup
+  newFmu.shapeLeng shouldBe compareWith.shapeLeng
+  newFmu.shapeArea shouldBe compareWith.shapeArea
+  newFmu.byWhen shouldBe compareWith.byWhen
+  newFmu.fmuIssue shouldBe compareWith.fmuIssue
+  newFmu.topFmuGrp shouldBe compareWith.topFmuGrp
 
-    val actualBoundaryJsonNode = newFmu.boundary?.let { objectMapper.readTree(it) as ObjectNode }
-    val expectedBoundaryJsonNode = compareWith.boundary?.let { objectMapper.readTree(it) as ObjectNode }
+  val actualBoundaryJsonNode = newFmu.boundary?.let { objectMapper.readTree(it) as ObjectNode }
+  val expectedBoundaryJsonNode =
+      compareWith.boundary?.let { objectMapper.readTree(it) as ObjectNode }
 
-    actualBoundaryJsonNode?.get("type")?.asText() shouldBe expectedBoundaryJsonNode?.get("type")?.asText()
+  actualBoundaryJsonNode?.get("type")?.asText() shouldBe
+      expectedBoundaryJsonNode?.get("type")?.asText()
 }
