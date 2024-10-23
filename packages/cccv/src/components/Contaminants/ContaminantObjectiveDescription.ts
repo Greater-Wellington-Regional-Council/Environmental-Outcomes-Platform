@@ -101,9 +101,9 @@ export function getObjectiveDescription(contaminant: Contaminant, contaminant_le
   if (!desc?.length) {
     return null
   } else if (desc.length === 1) {
-    return desc[0]
+    return desc[0] as string
   } else {
-    return desc.map((_: string, index: number) => `${codes[index]}=${desc[index]}`).join("<br><br>")
+    return desc.map((description: string, index: number) => `${codes[index]}=${description}`).join("<br><br>")
   }
 }
 
