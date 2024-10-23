@@ -95,9 +95,7 @@ data class FreshwaterManagementUnit(
     )""",
     )
     val catchmentDescription: String? = null,
-
-    @Transient
-    var tangataWhenuaSites: FeatureCollection? = null,
+    @Transient var tangataWhenuaSites: FeatureCollection? = null,
 ) {
   companion object {
     const val DEFAULT_SRID = 4326

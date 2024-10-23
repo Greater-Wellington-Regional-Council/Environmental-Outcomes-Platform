@@ -22,6 +22,7 @@ interface BoundaryLinesLayerProps {
     source: string;
     mapStyle: string;
     fillColor?: string;
+    lineColor?: string;
     fillLayer: string;
 }
 

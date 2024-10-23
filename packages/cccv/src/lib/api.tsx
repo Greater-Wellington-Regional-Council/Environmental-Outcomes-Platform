@@ -87,7 +87,6 @@ export const post = async (
   const timeoutId = setTimeout(() => controller.abort(), options.timeout)
 
   try {
-    console.log('POSTing to ', `"${url}"`, 'with payload', payload)
     const res = await fetch(url, {
       method: 'POST',
       headers: {

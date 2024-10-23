@@ -1,5 +1,5 @@
 import service from './ManaWhenuaSiteService.ts'
-import ManaWhenuaSites from "@values/manaWhenuaSites.ts"
+import ManaWhenuaSites from "@lib/values/manaWhenuaSites.ts"
 import {describe} from "vitest"
 
 describe('ManaWhenuaSiteService', () => {

@@ -57,6 +57,8 @@ class TangataWhenuaSiteService(
         }
   }
 
-  fun findTangataWhenuaInterestSitesForFMU(fmu: FreshwaterManagementUnit): List<TangataWhenuaSite> =
-      repository.findAllIntersectingWith(fmu.boundary!!)
+  fun findTangataWhenuaInterestSitesForFMU(fmu: FreshwaterManagementUnit): List<TangataWhenuaSite> {
+    println(listOf(fmu, fmu.boundary))
+    return repository.findAllIntersectingWith(fmu.boundary!!)
+  }
 }

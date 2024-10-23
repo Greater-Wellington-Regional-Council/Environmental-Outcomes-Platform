@@ -14,7 +14,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
 
     useEffect(() => {
         async function fetchDescription(siteName: string) {
-            const site = await manaWhenuaSiteService.getBySiteName(siteName, (e) => console.log(e))
+            const site = await manaWhenuaSiteService.getBySiteName(siteName)
             setSiteDescriptions((prevDescriptions) => ({
                 ...prevDescriptions,
                 [siteName]: site?.explanation,
@@ -47,8 +47,6 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
         const x = e.clientX - parentRect.left  // Calculate x relative to the parent
         const y = e.clientY - parentRect.top   // Calculate y relative to the parent
 
-        console.log('Tooltip coordinates relative to sliding panel:', { x, y })
-
         setTooltip({ description: description || "Loading...", x, y })
     }
 
@@ -66,7 +64,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
                         <ul className="mt-2 list-disc cursor-pointer">
                             {tangataWhenuaSites?.features.map((site: Feature, siteIndex: number) => (
                                 <li className="my-0" key={siteIndex} onClick={() => gotoTangataWhenua(siteIndex)}>
-                                    {site?.properties?.location}
+                                    <span className={"underline decoration-dashed decoration-1 hover:decoration-2"}>{site?.properties?.location}</span>
                                     <ul className="flex flex-wrap gap-4 list-none p-0 m-0 mt-4 mb-6">
                                         {site?.properties?.locationValues?.split(',').map((siteName: string, index: Key | null | undefined) => (
                                             <li

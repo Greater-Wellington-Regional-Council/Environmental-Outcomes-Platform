@@ -1,5 +1,5 @@
 import {determineBackendUri, get, post} from "@lib/api.tsx"
-import FreshwaterManagementUnit, {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts"
+import FreshwaterManagementUnit, {FmuFullDetails} from "@services/models/FreshwaterManagementUnit.ts"
 import {ErrorFlag, ErrorLevel} from "@components/ErrorContext/ErrorContext.ts"
 import {IMViewLocation} from "@shared/types/global"
 import {Feature, FeatureCollection} from "geojson"
@@ -72,7 +72,7 @@ const service = {
         return [response as FreshwaterManagementUnit].flat().map(fc => service.augmentRecord(fc)) as FmuFullDetails[]
     },
 
-    urlToGetFmuBoundaries: (): string => `${determineBackendUri(window.location.hostname)}/freshwater-management-units?format=features`,
+    urlToGetFmuBoundaries: (): string => `${determineBackendUri(window.location.hostname)}/freshwater-management-units?includeTangataWhenuaSites=false&format=features`,
 
     isUp: async () => {
         const response = await get(`${determineBackendUri(window.location.hostname)}/health`)
@@ -87,10 +87,11 @@ const service = {
     },
 
     augmentRecord: (record: FreshwaterManagementUnit): FmuFullDetails | null => {
-        console.log('augment', record)
-
         if (!record)
             return null
+
+        if (record.fmuName1 == 'Parkvale Stream' && !record.implementationIdeas)
+            record.implementationIdeas = '<ul><li>Consider wetlands for water quality treatment before discharges reach the stream</li>\n<li>Setbacks from depressions and waterways should be necessary for intensive land uses including winter grazing and winter cropping</li>\n<li>Riparian planting should be undertaken in strategic spots, including to provide shade to help improve periphytn and macrophyte problems</li>\n<li>Good management of stock access to streambanks and of winter grazing may prove important in this catchment</li></ul>'
 
         return {
             freshwaterManagementUnit: record,

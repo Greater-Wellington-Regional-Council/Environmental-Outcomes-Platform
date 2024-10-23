@@ -13,7 +13,7 @@ const DUMMY_ADDRESS = {
 }
 
 // Mock the addressesService
-vi.mock('@services/AddressesService', () => ({
+vi.mock('@services/AddressesService/AddressesService', () => ({
   default: {
     getAddressOptions: vi.fn().mockResolvedValue([
       { value: '1', label: '123 Example St' },

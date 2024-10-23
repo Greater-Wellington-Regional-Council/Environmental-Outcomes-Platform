@@ -9,7 +9,7 @@ import { LabelAndValue } from "@elements/ComboBox/ComboBox"
 import { IMViewLocation } from "@shared/types/global"
 import { DEFAULT_ZOOM } from "@components/InteractiveMap/lib/useViewState.ts"
 import { CombinedMapRef } from "@components/InteractiveMap/lib/InteractiveMap"
-import mapProperties from "@values/mapProperties.ts"
+import mapProperties from "@lib/values/mapProperties.ts"
 
 import AddressSearch from "@components/AddressSearch/AddressSearch"
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit"
@@ -27,7 +27,7 @@ import freshwaterManagementService from "@services/FreshwaterManagementUnitServi
 import addressesService from "@services/AddressesService/AddressesService.ts"
 import linzDataService from "@services/LinzDataService/LinzDataService.ts"
 
-import { FmuFullDetails } from "@models/FreshwaterManagementUnit"
+import { FmuFullDetails } from "@services/models/FreshwaterManagementUnit"
 import PhysicalAddress from "@components/PhysicalAddress/PhysicalAddress.tsx"
 import tooltipProperties from "@lib/values/tooltips.ts"
 import {TANGATA_WHENUA_SOURCE, TTW_HIGHLIGHT_LAYER} from "@lib/values/mapSourceAndLayerIds.ts"
@@ -95,7 +95,6 @@ export default function MapPage() {
         }
 
         const fmuList = await freshwaterManagementService.getByLocation(selectedLocation, setError)
-        console.log(fmuList)
 
         if (!fmuList || fmuList.length === 0) {
             clearFmus()
@@ -231,7 +230,8 @@ export default function MapPage() {
                                     tangataWhenuaSites: TANGATA_WHENUA_SOURCE,
                                     gotoLink: (f: Feature | FeatureCollection) =>
                                         selectLocation({
-                                            featuresInFocus: f
+                                            featuresInFocus: f,
+                                            highlight: mapProperties.tangataWhenua.fill,
                                         }),
                                 }}
                                 showHeader={currentFmus.length === 1}

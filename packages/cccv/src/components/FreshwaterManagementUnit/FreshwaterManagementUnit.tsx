@@ -1,7 +1,7 @@
 import "./FreshwaterManagementUnit.scss"
 import purify from "dompurify"
 import {useEffect, useMemo, useState} from "react"
-import {FmuFullDetailsWithMap} from "@models/FreshwaterManagementUnit.ts"
+import {FmuFullDetailsWithMap} from "@services/models/FreshwaterManagementUnit.ts"
 import {usePDF} from "@react-pdf/renderer"
 import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf"
 import formatFilename from "@lib/formatAsFilename"

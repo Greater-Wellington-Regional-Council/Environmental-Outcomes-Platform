@@ -1,27 +1,27 @@
 import {MutableRefObject, useEffect, useState} from 'react'
-import {IMViewLocation} from "@shared/types/global"
 import {CombinedMapRef} from "@components/InteractiveMap/lib/InteractiveMap"
 import mapboxFeature2GeoJSON from "@lib/mapboxFeature2GeoJSON.ts"
+import {IMViewLocation, MapPaintProperties} from "@shared/types/global"
 
 interface HighlightShapesOptions {
-    fillColor?: string;
-    outlineColor?: string;
-    fillOpacity?: number;
+    highlights?: MapPaintProperties;
     remove?: boolean;
     location?: IMViewLocation;
 }
 
 const defaultHighlightOptions: HighlightShapesOptions = {
-    fillColor: 'darkgreen',
-    outlineColor: '#000',
-    fillOpacity: 0.5,
+    highlights: {
+        'fill-color': 'orange',
+        'fill-opacity': 0.3,
+        'fill-outline-color': 'black',
+    },
     remove: false,
 }
 
 const useMapHighlight = (
     mapRef: MutableRefObject<CombinedMapRef | null>,
     location?: IMViewLocation,
-    id: string = 'focusView'
+    id: string = 'objects-in-focus-layer'
 ) => {
     const [isHighlighted, setIsHighlighted] = useState(false)
 
@@ -94,9 +94,9 @@ const useMapHighlight = (
             source: sourceId,
             layout: {},
             paint: {
-                'fill-color': opts.fillColor,
-                'fill-opacity': opts.fillOpacity,
-                'fill-outline-color': opts.outlineColor,
+                'fill-color': opts.highlights?.['fill-color'] || defaultHighlightOptions?.highlights?.['fill-color'],
+                'fill-opacity': opts.highlights?.['fill-opacity'] || defaultHighlightOptions?.highlights?.['fill-opacity'],
+                'fill-outline-color': opts.highlights?.['fill-outline-color'] || defaultHighlightOptions?.highlights?.['fill-outline-color'],
             },
         })
     }

@@ -1,5 +1,5 @@
 import service from '@services/FreshwaterManagementUnitService/FreshwaterManagementUnitService.ts'
-import {FmuFullDetails} from "@models/FreshwaterManagementUnit.ts"
+import {FmuFullDetails} from "@services/models/FreshwaterManagementUnit.ts"
 
 describe('FreshwaterManagementUnits service', () => {
   it('should return a FreshwaterManagementUnits service with required functions', () => {
@@ -37,7 +37,7 @@ describe('FreshwaterManagementUnits service', () => {
             ],
           },
     }
-    const augmentedRecord = service.augmentRecord(record as FmuFullDetails)
-    expect(augmentedRecord.freshwaterManagementUnit.implementationIdeas).toContain("Consider wetlands for water quality treatment")
+    const augmentedRecord = service.augmentRecord(record.freshwaterManagementUnit)
+    expect(augmentedRecord!.freshwaterManagementUnit.implementationIdeas).toContain("Consider wetlands for water quality treatment")
   })
 })
