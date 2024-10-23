@@ -12,6 +12,7 @@ import {MapSnapshotProvider} from "@lib/MapSnapshotContext"
 import {LoadingProvider} from "@components/LoadingIndicator/LoadingContext"
 import useLoadingIndicator from "@components/LoadingIndicator/useLoadingIndicator.tsx"
 import {LoadingIndicatorOverlay} from "@components/LoadingIndicator/LoadingIndicatorOverlay.tsx"
+import {DeviceProvider} from "@lib/DeviceContext/DeviceContext.tsx"
 
 const rootElement = document.getElementById('root')
 
@@ -36,8 +37,10 @@ export function App() {
                         <QueryClientProvider client={queryClient}>
                             <ErrorBoundary>
                                 <MapSnapshotProvider>
-                                    <LoadingOverlayContainer/>
-                                    <RouterProvider router={router}/>
+                                    <DeviceProvider>
+                                        <LoadingOverlayContainer/>
+                                        <RouterProvider router={router}/>
+                                    </DeviceProvider>
                                 </MapSnapshotProvider>
                             </ErrorBoundary>
                         </QueryClientProvider>
