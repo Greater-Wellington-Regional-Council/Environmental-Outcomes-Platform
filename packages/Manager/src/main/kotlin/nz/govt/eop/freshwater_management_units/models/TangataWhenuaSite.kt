@@ -28,9 +28,10 @@ fun List<TangataWhenuaSite>.toFeatureCollection(): FeatureCollection {
       val geometry = mapper.readValue(geomString, Geometry::class.java)
       val feature = Feature()
       feature.geometry = geometry
-      feature.setProperty("id", site.id)
-      feature.setProperty("location", site.location ?: "")
-      feature.setProperty("locationValues", site.locationValues)
+      feature.properties["id"] = site.id
+      feature.properties["location"] = site.location ?: ""
+      feature.properties["locationValues"] = site.locationValues.joinToString(",")
+      feature.properties["Values_"] = site.locationValues.joinToString(",")
       featureCollection.add(feature)
     }
   }

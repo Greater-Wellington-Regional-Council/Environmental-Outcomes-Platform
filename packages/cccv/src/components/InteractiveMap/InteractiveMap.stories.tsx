@@ -12,9 +12,10 @@ export default {
 const Template: StoryFn<InteractiveMapProps> = (args) => <MapSnapshotProvider><InteractiveMap {...args} /></MapSnapshotProvider>
 
 export const Default = Template.bind({})
+
 Default.args = {
     startLocation: {
-        latitude: -41.2865,  // Wellington, NZ coordinates
+        latitude: -41.2865,
         longitude: 174.7762,
         zoom: 10,
     },

@@ -95,20 +95,9 @@ data class FreshwaterManagementUnit(
     )""",
     )
     val catchmentDescription: String? = null,
-    @Transient var tangataWhenua: Set<TangataWhenuaSite> = emptySet(),
+    @Transient var tangataWhenuaSites: FeatureCollection? = null,
 ) {
   companion object {
     const val DEFAULT_SRID = 4326
-  }
-}
-
-data class FmuCccvDetails(
-    val freshwaterManagementUnit: FreshwaterManagementUnit,
-    val tangataWhenuaSites: FeatureCollection
-) {
-  companion object {
-    fun fromFmuAndTws(fmu: FreshwaterManagementUnit, tws: List<TangataWhenuaSite>): FmuCccvDetails =
-        FmuCccvDetails(
-            freshwaterManagementUnit = fmu, tangataWhenuaSites = tws.toFeatureCollection())
   }
 }

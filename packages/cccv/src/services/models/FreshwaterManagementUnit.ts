@@ -37,12 +37,12 @@ export default interface FreshwaterManagementUnit {
     ntoxObj?: string
     implementationIdeas?: string
     catchmentDescription?: string
-    tangataWhenua?: { iwi: string[], sites: { name: string }[] }
+    tangataWhenuaSites?: FeatureCollection
 }
 
-export interface FmuFullDetails {
-    freshwaterManagementUnit: FreshwaterManagementUnit,
-    tangataWhenuaSites: FeatureCollection
+export interface FmuFullDetails extends FreshwaterManagementUnit {
+    freshwaterManagementUnit: FreshwaterManagementUnit
+    tangataWhenuaSites?: FeatureCollection
 }
 
 export interface FmuFullDetailsWithMap extends FmuFullDetails {
@@ -50,5 +50,6 @@ export interface FmuFullDetailsWithMap extends FmuFullDetails {
     links?: {
         gotoLink: (f: Feature | FeatureCollection) => void;
         tangataWhenuaSites: string
-    }
+    },
+    showHeader?: boolean
 }

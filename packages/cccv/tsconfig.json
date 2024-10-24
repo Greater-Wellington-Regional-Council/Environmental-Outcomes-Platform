@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
@@ -23,25 +23,29 @@
     /* Source Maps */
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["src/components/*"],
-      "@pages/*": ["src/pages/*"],
-      "@lib/*": ["src/lib/*"],
-      "@values/*": ["src/values/*"],
-      "@images/*": ["src/images/*"],
-      "@src/*": ["src/*"],
-      "@loaders/*": ["src/loaders/*"],
-      "@assets/*": ["src/assets/*"],
-      "@models/*": ["src/models/*"],
-      "@pdfs/*": ["src/pdfs/*"],
-      "@services/*": ["src/services/*"],
-      "@elements/*": ["src/elements/*"],
-      "@shared/*": ["src/shared/lib/*"]
+      "@components/*": ["./src/components/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@values/*": ["./src/values/*"],
+      "@images/*": ["./src/images/*"],
+      "@src/*": ["./src/*"],
+      "@loaders/*": ["./src/loaders/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@models/*": ["./src/models/*"],
+      "@pdfs/*": ["./src/pdfs/*"],
+      "@services/*": ["./src/services/*"],
+      "@elements/*": ["./src/elements/*"],
+      "@shared/*": ["./src/lib/shared/*"],
+      "@context/*": ["./src/lib/*"],
+      "@values": ["./src/lib/values/*"],
+      "@loaders": ["./src/lib/loaders/*"],
     },
     "allowSyntheticDefaultImports": true
   },
   "include": [
     "src",
     "src/types/*.d.ts",
+    "src/lib/types/**/*.d.ts",
     "node_modules/vitest/globals.d.ts",
     "node_modules/@types/node/globals.global.d.ts"
   ],

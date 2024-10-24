@@ -21,7 +21,7 @@ interface TangataWhenuaSiteRepository : CrudRepository<TangataWhenuaSite, Int> {
   )
   fun findAllIntersectingWith(
       @Param("boundary") boundary: String,
-  ): Set<TangataWhenuaSite>
+  ): List<TangataWhenuaSite>
 
   @Modifying
   @Transactional

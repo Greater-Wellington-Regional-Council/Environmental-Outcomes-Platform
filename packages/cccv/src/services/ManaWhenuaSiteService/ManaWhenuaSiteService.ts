@@ -1,4 +1,4 @@
-import manaWhenuaSiteNames from "@values/manaWhenuaSites"
+import manaWhenuaSiteNames from "@lib/values/manaWhenuaSites.ts"
 import { ErrorFlag, ErrorLevel } from "@components/ErrorContext/ErrorContext.ts"
 
 const normalizeString = (str: string) => {
@@ -15,7 +15,7 @@ const siteService = {
 
     getBySiteName: async (
         siteName: string,
-        setError: (error: Error | null) => void,
+        setError?: (error: Error | null) => void,
         message: string | null = null
     ) => {
         try {
@@ -28,7 +28,7 @@ const siteService = {
             )
 
             if (!siteDetails) {
-                setError(
+                setError && setError(
                     new ErrorFlag(message || `Site with name or alias "${siteName}" not found`, ErrorLevel.WARNING)
                 )
                 return null
@@ -36,7 +36,7 @@ const siteService = {
 
             return siteDetails
         } catch (error) {
-            setError(new ErrorFlag(message || "Error fetching site details", ErrorLevel.ERROR))
+            setError && setError(new ErrorFlag(message || "Error fetching site details", ErrorLevel.ERROR))
             return null
         }
     }

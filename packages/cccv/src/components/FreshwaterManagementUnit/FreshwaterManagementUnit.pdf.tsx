@@ -3,7 +3,7 @@ import {
     contaminants as fmuContaminants,
     ContaminantList
 } from "@components/FreshwaterManagementUnit/utils.ts"
-import {FmuFullDetailsWithMap} from "@models/FreshwaterManagementUnit.ts"
+import {FmuFullDetailsWithMap} from "@services/models/FreshwaterManagementUnit.ts"
 import colors from '@lib/colors'
 import {createTw} from "react-pdf-tailwind"
 import gwrcLogo from "@images/printLogo_500x188px.png"
