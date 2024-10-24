@@ -94,7 +94,7 @@ export function getObjectiveDescription(contaminant: Contaminant, contaminant_le
 
   const codes = level_codes(contaminant_level) || []
 
-  const desc = _.map(codes, (level) => {
+  const desc = codes.map((level) => {
     return _.get(OBJECTIVE_DESCRIPTION[contaminant.title], level, '-')
   })
 
