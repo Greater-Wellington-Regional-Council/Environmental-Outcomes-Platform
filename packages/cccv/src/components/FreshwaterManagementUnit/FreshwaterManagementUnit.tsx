@@ -1,5 +1,4 @@
 import "./FreshwaterManagementUnit.scss"
-import purify from "dompurify"
 import {useEffect, useMemo, useState} from "react"
 import {FmuFullDetailsWithMap} from "@services/models/FreshwaterManagementUnit.ts"
 import {usePDF} from "@react-pdf/renderer"
@@ -13,6 +12,7 @@ import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 import {DownloadLink} from "@elements/DownloadLink/DownloadLink.tsx"
 import TangataWhenuaSites from "@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx"
+import ExpandableText from "@components/ExpandableText.tsx"
 
 export interface FmuPanelHeaderProps {
     fmuName1: string
@@ -92,11 +92,13 @@ const FreshwaterManagementUnit = (
 
                     <div className="overview mt-0" data-testid="catchment-desc">
                         <h2>Overview</h2>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: purify.sanitize(makeSafe(catchmentDescription ?? "<p>No overview available</p>")),
-                            }}
-                        />
+                        <div>
+                            <ExpandableText
+                                text={catchmentDescription ?? "<p>No overview available</p>"}
+                                maxChars={250}
+                                purify={true}
+                            />
+                        </div>
                     </div>
 
                     <div className="contaminants mt-6">
