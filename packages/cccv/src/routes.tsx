@@ -1,20 +1,10 @@
-import { useNavigate } from 'react-router-dom'
-import loadLocation from "@loaders/location.ts"
 import MapPage from "@pages/MapPage/MapPage.tsx"
 import Layout from "@src/Layout.tsx"
-import { useEffect } from "react"
-import loadFmuById from "@loaders/fmuById.ts"
+
 import FmuPdfPreview from "@pages/FmuPdfPreview/FmuPdfPreview.tsx"
-
-export const DefaultRedirect = () => {
-  const navigate = useNavigate()
-  useEffect(() => {
-    navigate('map/@-41,175.35,8z', { replace: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  return null
-}
+import loadFmuById from '@pages/loaders/fmuById'
+import loadLocation from '@pages/loaders/location'
+import { DefaultRedirect } from "./DefaultRedirect"
 
 const routes = [
   {

@@ -12,7 +12,7 @@ import {
     InteractiveMapProps,
 } from "@components/InteractiveMap/lib/InteractiveMap"
 import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx"
-import FmuBoundariesLayer from "@components/InteractiveMap/lib/FmuBoundariesLayer/FmuBoundariesLayer.tsx"
+import BoundariesLayer from "@components/InteractiveMap/lib/FmuBoundariesLayer/FmuBoundariesLayer.tsx"
 import RolloverHighlight from "@components/InteractiveMap/lib/FeatureHighlight/FeatureHighlight.tsx"
 import MapControls from "@components/InteractiveMap/lib/MapControls/MapControls.tsx"
 import env from "@src/env.ts"
@@ -22,21 +22,23 @@ import {IMViewLocation} from "@shared/types/global"
 import {useViewState} from "@components/InteractiveMap/lib/useViewState.ts"
 import {debounce} from "lodash"
 import {debounceClick} from "@lib/debounceClick.ts"
-import {useMapSnapshot} from "@lib/MapSnapshotContext"
-import useMapHighlight from "@lib/useMapHighlight"
+import useObjectHighlight from "@lib/useMapHighlight"
 import zoomIntoFeatures from "@lib/zoomIntoFeatures.ts"
-import mapProperties from "@values/mapProperties.ts"
+import mapProperties from "@lib/values/mapProperties.ts"
+
+import {
+    CLICK_LAYER, HIGHLIGHT_HOVER_LAYER,
+    HIGHLIGHT_SELECT_LAYER,
+    HIGHLIGHTS_SOURCE_ID,
+    HOVER_LAYER
+} from "@lib/values/mapSourceAndLayerIds.ts"
+import getFeatureUnderMouse from "@lib/getFeatureUnderMouse"
+import _ from "lodash"
 
 const DEFAULT_VIEW_WIDTH = 100
 const DEFAULT_VIEW_HEIGHT = 150
 
-export const HOVER_LAYER = "freshwater-management-units-candidates"
-const CLICK_LAYER = HOVER_LAYER
-export const HIGHLIGHT_HOVER_LAYER = "fmu-highlight"
-export const HIGHLIGHT_SELECT_LAYER = "fmu-highlight-click"
-
-const HIGHLIGHTS_SOURCE_ID = "highlight-source"
-
+const FOCUS_LAYER = 'objects-in-focus-layer'
 export default function InteractiveMap({
                                            startLocation,
                                            locationInFocus,
@@ -56,26 +58,22 @@ export default function InteractiveMap({
     const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
 
     const [featureBeingRolledOver, setFeatureBeingRolledOver] = useState<Feature | FeatureCollection | null>(null)
-    const [highlightedFeature, setHighlightedFeature] = useState<Feature | FeatureCollection | null>(null)
+    const [highlight, setHighlight] = useState<IMViewLocation | null>(null)
 
     const [focusPin, setFocusPin] = useState<Marker | null>(null)
 
-    const {highlightShapes} = useMapHighlight(mapRef, locationInFocus, 'focusView')
+    const {highlightShapes} = useObjectHighlight(mapRef, locationInFocus, FOCUS_LAYER)
 
-    const {updatePrintSnapshot} = useMapSnapshot()
+    // const {updatePrintSnapshot} = useMapSnapshot()
 
     const clickTimeoutRef = useRef<number | null>(null)
 
     function focusMap() {
         if (locationInFocus?.featuresInFocus)
             zoomIntoFeatures(mapRef, locationInFocus.featuresInFocus)
-        else if (highlightedFeature)
-            zoomIntoFeatures(mapRef, highlightedFeature)
-        else
-            mapRef.current?.flyTo({center: [startLocation.longitude, startLocation.latitude], zoom: DEFAULT_ZOOM})
     }
 
-    function drawFeaturesInFocus(location: IMViewLocation, id: string = 'focusView'): string | null {
+    function drawFeaturesInFocus(location: IMViewLocation, id: string = FOCUS_LAYER): string | null {
         if (!mapRef?.current || !location?.featuresInFocus) return id
 
         const map = mapRef.current.getMap()
@@ -131,67 +129,45 @@ export default function InteractiveMap({
     }
 
     useEffect(() => {
-        if (!locationInFocus) {
-            setHighlightedFeature(null)
-            setFeatureBeingRolledOver(null)
-            focusPin?.remove()
-            setFocusPin(null)
-            focusMap()
+        if (!locationInFocus)
             return
-        }
 
-        focusMap()
-        updatePrintSnapshot(mapRef, locationInFocus)
-
-        drawFeaturesInFocus(locationInFocus)
         placeFocusPin(locationInFocus)
+
+        if (locationInFocus.featuresInFocus) drawFeaturesInFocus(locationInFocus)
+
         focusMap()
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [locationInFocus, highlightedFeature])
+    // updatePrintSnapshot(mapRef, locationInFocus, { data: { highlight: highlight } })
+    }, [locationInFocus])
 
     const handleClick = (e: MapMouseEvent) => {
-        debounceClick(clickTimeoutRef, 200, () => {
-            const clickedFeature = getFeatureUnderMouse(e, CLICK_LAYER)
+        debounceClick(clickTimeoutRef, 20, () => {
+            const clickedFeature = getFeatureUnderMouse(mapRef, e, CLICK_LAYER)
             if (clickedFeature) {
-                setFeatureBeingRolledOver(clickedFeature as never)
-                const location = {
+                setHighlight({
                     longitude: e.lngLat.lng, latitude: e.lngLat.lat,
-                    highlight: {fillColor: 'orange', outlineColor: 'rgba(74,119,149,0.44)', fillOpacity: 0.5}
-                }
-                setLocationInFocus?.(location)
-                // setHighlightedFeature(mapboxFeature2GeoJSON(clickedFeature as never))
+                    highlight: mapProperties.defaultSelect.fill,
+                    data: { features: clickedFeature }
+                })
             }
         })
     }
 
-    const getFeatureUnderMouse = (e: MapMouseEvent, layer?: number | string) => {
-        const map = mapRef?.current
-        if (!map) return null
-
-        const features = map?.queryRenderedFeatures(e.point)
-        if (!features) return null
-
-        if (!layer) return features[0]
-
-        if (typeof layer === 'number') return features[layer]
-
-        return features.find(f => {
-            return f.layer?.id === layer
-        })
-    }
+    useEffect(() => {
+        setLocationInFocus && setLocationInFocus(highlight)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [highlight])
 
     const handleHover = debounce((e) => {
         if (locationInFocus) return
-        const feature = getFeatureUnderMouse(e, HOVER_LAYER)
+        const feature = getFeatureUnderMouse(mapRef, e, HOVER_LAYER)
         if (feature) {
-            console.log('feature', feature)
             setFeatureBeingRolledOver(feature)
         } else {
-            console.log('feature', "null")
             setFeatureBeingRolledOver(null)
         }
-    }, 0.5)
+    }, 0.0)
 
     return (
         <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>
@@ -225,26 +201,25 @@ export default function InteractiveMap({
                     type="geojson"
                     data={highlights_source_url}>
 
-                    <FmuBoundariesLayer id={HIGHLIGHTS_SOURCE_ID} fillLayer={HOVER_LAYER}
-                                        source={HIGHLIGHTS_SOURCE_ID} mapStyle={mapStyle}/>
+                    <BoundariesLayer id={HIGHLIGHTS_SOURCE_ID} fillLayer={HOVER_LAYER}
+                                     source={HIGHLIGHTS_SOURCE_ID} mapStyle={mapStyle}
+                                     lineColor={mapStyle.includes('aerial') ? 'yellow' : 'blue'}/>
 
-                    {featureBeingRolledOver && <RolloverHighlight id={HIGHLIGHT_HOVER_LAYER}
+                    {featureBeingRolledOver && !highlight && <RolloverHighlight id={HIGHLIGHT_HOVER_LAYER}
                                                                   mapRef={mapRef}
                                                                   source={HIGHLIGHTS_SOURCE_ID}
                                                                   highlightedFeature={featureBeingRolledOver}
                                                                   paint={mapProperties.defaultHover.fill}
-                                                                  tooltip={{
+                                                                  tooltip={highlight ? undefined : {
                                                                       source: (f) => f.properties!.fmuName1,
                                                                   }}/>}
 
-                    {highlightedFeature && <RolloverHighlight id={HIGHLIGHT_SELECT_LAYER}
-                                                              mapRef={mapRef}
-                                                              source={HIGHLIGHTS_SOURCE_ID}
-                                                              highlightedFeature={highlightedFeature}
-                                                              paint={mapProperties.defaultSelect.fill}
-                                                              tooltip={{
-                                                                  source: (f) => f.properties!.fmuName1,
-                                                              }}/>}
+                    {highlight && <RolloverHighlight id={HIGHLIGHT_SELECT_LAYER}
+                                                     mapRef={mapRef}
+                                                     source={HIGHLIGHTS_SOURCE_ID}
+                                                     highlightedFeature={_.get(highlight, "data.features") as unknown as FeatureCollection}
+                                                     paint={highlight.highlight}
+                                                    />}
                 </Source>
 
                 {children}

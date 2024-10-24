@@ -20,31 +20,101 @@ export const determineBackendUri = (hostname: string = window.location.hostname)
   return 'https://data.gw-eop-dev.tech'
 }
 
-export const get = async (url: string, options: { timeout: number } = { timeout: 2000 }) => {
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), options.timeout )
+const cache: Record<string, { data: unknown, expiry: number }> = {}
 
-    try {
-      const res = await fetch(url, { signal: controller.signal })
+export const expireCache = (url: string) => {
+  delete cache[url]
+}
 
-      if (!res.ok) {
-        const errorText = `"res.ok" not true fetching from ${url}: ${res.statusText}`
-        console.error(errorText)
-        clearTimeout(timeoutId)
-        return { error: errorText }
-      }
+export const get = async (
+    url: string,
+    options: { timeout: number, expiry?: number } = { timeout: 2000, expiry: 60 }
+) => {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), options.timeout)
 
-      clearTimeout(timeoutId)
-      return await res.json()
-    } catch (e) {
-      clearTimeout(timeoutId)
+  const cacheEntry = cache[url]
 
-      if ((e as { name: string }).name === 'AbortError') {
-        console.error('Fetch aborted due to timeout.')
-        return { error: 'Request timed out' }
-      }
-
-      console.error('Fetch error:', e)
-      return { error:  (e as { message: string }).message }
-    }
+  // If a cached entry exists and hasn't expired, return the cached data
+  const now = Date.now()
+  if (cacheEntry && cacheEntry.expiry > now) {
+    clearTimeout(timeoutId)
+    return cacheEntry.data
   }
+
+  // If expiry is set to 0, we bypass the cache and ensure it's expired
+  if (options.expiry === 0) {
+    expireCache(url)
+  }
+
+  try {
+    const res = await fetch(url, { signal: controller.signal })
+
+    if (!res.ok) {
+      const errorText = `"res.ok" not true fetching from ${url}: ${res.statusText}`
+      console.error(errorText)
+      clearTimeout(timeoutId)
+      return null
+    }
+
+    const data = await res.json()
+    clearTimeout(timeoutId)
+
+    // Update the cache with the new data and set the expiry time
+    const expiryTime = options.expiry ? now + options.expiry * 1000 : Infinity
+    cache[url] = { data, expiry: expiryTime }
+
+    return data
+  } catch (e) {
+    clearTimeout(timeoutId)
+
+    if ((e as { name: string }).name === 'AbortError') {
+      console.error('Fetch aborted due to timeout.')
+      return { error: 'Request timed out' }
+    }
+
+    console.error('Fetch error:', e)
+    return { error: (e as { message: string }).message }
+  }
+}
+
+export const post = async (
+    url: string,
+    payload: unknown,
+    options: { timeout: number, rawPayload: boolean } = { timeout: 2000, rawPayload: false }
+) => {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), options.timeout)
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: options.rawPayload ? payload as string: JSON.stringify(payload),
+      signal: controller.signal
+    })
+
+    if (!res.ok) {
+      const errorText = `"res.ok" not true fetching from ${url}: ${res.statusText}`
+      console.error(errorText)
+      clearTimeout(timeoutId)
+      return null
+    }
+
+    const data = await res.json()
+    clearTimeout(timeoutId)
+    return data
+  } catch (e) {
+    clearTimeout(timeoutId)
+
+    if ((e as { name: string }).name === 'AbortError') {
+      console.error('Fetch aborted due to timeout.')
+      return { error: 'Request timed out' }
+    }
+
+    console.error('Fetch error:', e)
+    return { error: (e as { message: string }).message }
+  }
+}

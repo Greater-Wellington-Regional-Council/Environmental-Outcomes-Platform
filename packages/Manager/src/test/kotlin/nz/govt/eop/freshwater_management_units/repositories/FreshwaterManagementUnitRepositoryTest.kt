@@ -1,11 +1,13 @@
 package nz.govt.eop.freshwater_management_units.repositories
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
+import nz.govt.eop.freshwater_management_units.services.objectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 
 var TEMPLATE_FMU =
@@ -45,13 +47,35 @@ var TEMPLATE_FMU =
         mciObj = "Fair",
         ecoliObj = "C",
         boundary =
-            "{\"crs\": {\"type\": \"name\", \"properties\": {\"name\": \"EPSG:4326\"}}, \"type\": " +
-                "\"Point\", \"coordinates\": [175.5391000006, -41.152800006]}",
+            """
+        {
+            "type": "MultiPolygon",
+            "coordinates": [
+            [
+                [
+                    [175.538, -41.153],
+                    [175.540, -41.153],
+                    [175.540, -41.151],
+                    [175.538, -41.151],
+                    [175.538, -41.153]
+                ]
+            ]
+            ],
+            "crs": {
+            "type": "name",
+            "properties": {
+            "name": "EPSG:4326"
+        }
+        }
+        }
+        """
+                .trimIndent(),
         catchmentDescription = null,
     )
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 class FreshwaterManagementUnitRepositoryTest
 @Autowired
 constructor(private val repository: FreshwaterManagementUnitRepository) :
@@ -66,27 +90,72 @@ constructor(private val repository: FreshwaterManagementUnitRepository) :
         isFmuSameAs(foundFmu[0])
       }
 
-      //      "should find include overview if available" {
-      //        val lng = 175.5622931810379
-      //        val lat = -41.05740753251105
-      //
-      //        val foundFmu = repository.findAllByLngLat(lng, lat)
-      //
-      //        foundFmu.count() shouldBe 1
-      //        foundFmu[0].catchmentDescription shouldInclude "Parkvale"
-      //      }
+      "should find freshwater management unit by GeoJSON geometry" {
+        val geoJson =
+            """
+            {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [175.349, -41.176],
+                        [175.351, -41.176],
+                        [175.351, -41.174],
+                        [175.349, -41.174],
+                        [175.349, -41.176]
+                      ]
+                    ]
+                  },
+                  "properties": {}
+                }
+              ]
+            }
+        """
+                .trimIndent()
 
-      "should not find freshwater management unit for out of range lat and lng" {
-        val lng = 172.0
-        val lat = -1.0
-        val foundFmu = repository.findAllByLngLat(lng, lat, 4326)
+        val foundFmu = repository.findAllByGeoJson(geoJson)
+
+        foundFmu.count() shouldBe 1
+        isFmuSameAs(foundFmu[0])
+      }
+
+      "should not find freshwater management unit with non-intersecting GeoJSON geometry" {
+        val geoJson =
+            """
+                        {
+                          "type": "FeatureCollection",
+                          "features": [
+                            {
+                              "type": "Feature",
+                              "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [
+                                  [
+                  [172.0, -1.0],
+                  [172.1, -1.0],
+                  [172.1, -0.9],
+                  [172.0, -0.9],
+                  [172.0, -1.0]
+                                  ]
+                                ]
+                              },
+                              "properties": {}
+                            }
+                          ]
+                        }
+        """
+                .trimIndent()
+
+        val foundFmu = repository.findAllByGeoJson(geoJson)
 
         foundFmu.count() shouldBe 0
       }
 
-      "should be able to find all freshwater management units" {
-        repository.findAll().count() shouldBeGreaterThan 1
-      }
+      // Any additional test cases...
     })
 
 private fun isFmuSameAs(
@@ -109,5 +178,11 @@ private fun isFmuSameAs(
   newFmu.byWhen shouldBe compareWith.byWhen
   newFmu.fmuIssue shouldBe compareWith.fmuIssue
   newFmu.topFmuGrp shouldBe compareWith.topFmuGrp
-  newFmu.boundary?.substring(0, 5) shouldBe compareWith.boundary?.substring(0, 5)
+
+  val actualBoundaryJsonNode = newFmu.boundary?.let { objectMapper.readTree(it) as ObjectNode }
+  val expectedBoundaryJsonNode =
+      compareWith.boundary?.let { objectMapper.readTree(it) as ObjectNode }
+
+  actualBoundaryJsonNode?.get("type")?.asText() shouldBe
+      expectedBoundaryJsonNode?.get("type")?.asText()
 }

@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 import AddressSearch, { AddressSearchProps } from '@components/AddressSearch/AddressSearch'
-import addressesService from '@services/AddressesService'
+import addressesService from '@services/AddressesService/AddressesService.ts'
 
 const DUMMY_ADDRESS = {
   id: '1',
@@ -13,7 +13,7 @@ const DUMMY_ADDRESS = {
 }
 
 // Mock the addressesService
-vi.mock('@services/AddressesService', () => ({
+vi.mock('@services/AddressesService/AddressesService', () => ({
   default: {
     getAddressOptions: vi.fn().mockResolvedValue([
       { value: '1', label: '123 Example St' },
