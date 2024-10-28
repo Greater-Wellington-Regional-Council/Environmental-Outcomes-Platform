@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
-    "@chromatic-com/storybook": "^1.5.0",
+    "@chromatic-com/storybook": "^3.2.0",
     "@lingui/cli": "^4.11.1",
     "@lingui/macro": "^4.11.1",
     "@playwright/test": "^1.42.1",
