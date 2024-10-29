@@ -80,3 +80,15 @@ arcgis:
 org:
   contact:
     email: "${CONFIG_ORG_CONTACT_EMAIL:org-contact-email-missing}"
+
+linz:
+  koord:
+    api:
+      key: "${CONFIG_LINZ_KOORDINATES_API_KEY:}"
+  address:
+    boundary:
+      timeout: 10000
+
+addressfinder:
+  api:
+    key: "${CONFIG_ADDRESSFINDER_API_KEY:}"
