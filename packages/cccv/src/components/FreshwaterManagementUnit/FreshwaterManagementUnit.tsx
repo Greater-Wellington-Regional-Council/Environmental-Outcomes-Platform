@@ -13,8 +13,7 @@ import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 import {DownloadLink} from "@elements/DownloadLink/DownloadLink.tsx"
 import TangataWhenuaSites from "@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx"
-import DOMPurify from "dompurify"
-import {getSystemValueForCouncil, SystemValueNames} from "@services/SystemValueService/SystemValueService.ts"
+import _ from "lodash"
 
 export interface FmuPanelHeaderProps {
     fmuName1: string
@@ -39,20 +38,11 @@ const FreshwaterManagementUnit = (
         fmuName1,
         catchmentDescription,
         implementationIdeas,
-        vpo,
-        otherInfo,
-        culturalOverview,
     } = details.freshwaterManagementUnit
 
     const showHeader = details.showHeader
 
-    const vpoSafe = vpo?.value  ? DOMPurify.sanitize(vpo.value!) : null
-
-    const otherInfoSafe = otherInfo?.value  ? DOMPurify.sanitize(otherInfo.value!) : null
-
-    const culturalOverviewSafe = culturalOverview?.value  ? DOMPurify.sanitize(culturalOverview.value!) : null
-
-    const implementationIdeasSafe = implementationIdeas?.value ? DOMPurify.sanitize(implementationIdeas.value!) : null
+    const culturalOverview = _.get(details, "culturalOverview")
 
     const tangataWhenuaSites = details.tangataWhenuaSites
 
@@ -67,19 +57,6 @@ const FreshwaterManagementUnit = (
     const [instance, updateInstance] = usePDF({document: pdfDocument})
     const [pdfLoading, setPdfLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
-
-    const [overview, setOverview] = useState<string | undefined>(catchmentDescription ?? "")
-
-    useEffect(() => {
-        if (catchmentDescription)
-            setOverview(catchmentDescription)
-        else {
-            (async () => {
-                const fetchedOverview = await getSystemValueForCouncil(SystemValueNames.RUAMAHANGA_WHAITUA_OVERVIEW) ?? null
-                setOverview(fetchedOverview || undefined)
-            })()
-        }
-    }, [catchmentDescription, fmuName1])
 
     useEffect(() => {
         if (instance) {
@@ -116,86 +93,65 @@ const FreshwaterManagementUnit = (
                     </div>
                 </FmuPanelHeader>}
 
-            <div className="overview mt-0" data-testid="catchment-desc">
-                <h2>Overview</h2>
-                <div
-                    className="space-y-4"
-                    dangerouslySetInnerHTML={{
-                        __html: purify.sanitize(makeSafe(overview!)),
-                    }}
-                />
-            </div>
+                    <div className="overview mt-0" data-testid="catchment-desc">
+                        <h2>Overview</h2>
+                        <div
+                            dangerouslySetInnerHTML={{
+                                __html: purify.sanitize(makeSafe(catchmentDescription ?? "<p>No overview available</p>")),
+                            }}
+                        />
+                    </div>
 
-            {vpoSafe && <div className="vpo mt-6" data-testid="vpo">
-                <h2>Freshwater Values, Priorities, and Outcomes</h2>
-                <div
-                    className="space-y-4"
-                    dangerouslySetInnerHTML={{
-                        __html: purify.sanitize(makeSafe(vpoSafe)),
-                    }}
-                />
-            </div>}
+                    <div className="contaminants mt-6">
+                        <h2>Contaminants</h2>
+                        <p>Freshwater objectives from {fmuName1 || ""} Whaitua Implementation Plan (as at August
+                            2018)</p>
 
-            <div className="contaminants mt-6">
-                <h2>Contaminants</h2>
-                <p>Freshwater objectives from {fmuName1 || ""} Whaitua Implementation Plan (as at August
-                    2018)</p>
+                        <div className="mt-4">
+                            <Contaminants contaminants={contaminants}/>
+                        </div>
+                    </div>
 
-                <div className="mt-4">
-                    <Contaminants contaminants={contaminants}/>
-                </div>
-            </div>
+                    {tangataWhenuaSites?.features.length ? (
+                        <div className="tangata-whenua mt-6">
+                            <TangataWhenuaSites tangataWhenuaSites={tangataWhenuaSites}
+                                                gotoTangataWhenua={gotoTangataWhenua}
+                                                culturalOverview={culturalOverview}/>
+                        </div>
+                    ) : (
+                        <div></div>
+                    )}
 
-            {tangataWhenuaSites?.features.length ? (
-                <div className="tangata-whenua mt-6">
-                    <TangataWhenuaSites tangataWhenuaSites={tangataWhenuaSites}
-                                        gotoTangataWhenua={gotoTangataWhenua}
-                                        culturalOverview={culturalOverviewSafe}/>
-                </div>
-            ) : (
-                <div></div>
-            )}
+                    {implementationIdeas ? (
+                        <div className="implementation-ideas mt-6">
+                            <h2>Implementation Ideas</h2>
+                            <div className="implementation-ideas">
+                                <ul className={"mt-2"}>
+                                    {parseHtmlListToArray(implementationIdeas)?.map((idea: string, index) => (
+                                        <li className="list-disc my-0" key={index}>
+                                            {makeSafe(idea)}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    ) : (
+                        <div></div>
+                    )}
 
-            {implementationIdeasSafe ? (
-                <div className="implementation-ideas mt-6">
-                    <h2>Implementation Ideas</h2>
-                    <div className="implementation-ideas">
-                        <ul className={"mt-2"}>
-                            {parseHtmlListToArray(implementationIdeasSafe)?.map((idea: string, index) => (
-                                <li className="list-disc my-0" key={index}>
-                                    {makeSafe(idea)}
-                                </li>
-                            ))}
-                        </ul>
+                    <div className="about-this-information mt-6">
+                        <h3>About this information</h3>
+                        <p>
+                            The content, data, and information used in this app comes from multiple sources, including
+                            Greater
+                            Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Plans.
+                        </p>
+                        <div className="mt-6 flex justify-center">
+                            <EmailLink>Contact us for more information</EmailLink>
+                        </div>
                     </div>
                 </div>
-            ) : (
-                <div></div>
-            )}
+                )
+            }
 
-            {otherInfoSafe && <div className="vpo mt-6" data-testid="vpo">
-                <h2>Other Relevant Information</h2>
-                <div
-                    className="space-y-4"
-                    dangerouslySetInnerHTML={{
-                        __html: purify.sanitize(makeSafe(otherInfoSafe)),
-                    }}
-                />
-            </div>}
-
-            <div className="about-this-information mt-6">
-                <h3>About this information</h3>
-                <p>
-                    The content, data, and information used in this app comes from multiple sources, including
-                    Greater
-                    Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Plans.
-                </p>
-                <div className="mt-6 flex justify-center">
-                    <EmailLink>Contact us for more information</EmailLink>
-                </div>
-            </div>
-        </div>
-    )
-}
-
-export default FreshwaterManagementUnit
+            export default FreshwaterManagementUnit
