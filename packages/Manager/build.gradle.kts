@@ -65,6 +65,9 @@ dependencies {
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2021.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.18.1")
+  implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
+  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.2.0")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
