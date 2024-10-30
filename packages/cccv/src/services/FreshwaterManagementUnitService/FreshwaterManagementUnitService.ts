@@ -3,6 +3,11 @@ import FreshwaterManagementUnit, {FmuFullDetails} from "@services/models/Freshwa
 import {ErrorFlag, ErrorLevel} from "@components/ErrorContext/ErrorContext.ts"
 import {IMViewLocation} from "@shared/types/global"
 import {Feature, FeatureCollection} from "geojson"
+import {
+    getSystemValueForCouncil,
+    SystemValueNames,
+    SystemValues
+} from "@services/SystemValueService/SystemValueService.ts"
 
 enum PreferredLocationSearchType {
     POINT = "POINT",
@@ -30,7 +35,7 @@ const service = {
         const response = await get(`${determineBackendUri(window.location.hostname)}/freshwater-management-units/${id}`)
         setError && !response &&
         setError(new ErrorFlag("No such Freshwater Management Unit was found.", ErrorLevel.WARNING))
-        return service.augmentRecord(response) as FmuFullDetails
+        return await service.augmentRecord(response) as FmuFullDetails
     },
 
     getByLocation: async ({
@@ -57,7 +62,7 @@ const service = {
         setError && !response &&
         setError(new ErrorFlag("No Freshwater Management Unit was not found at that location, or there was an error fetching the data. Please try again.", ErrorLevel.WARNING))
 
-        return [response as FreshwaterManagementUnit].flat().map(fc => service.augmentRecord(fc)) as FmuFullDetails[]
+        return await Promise.all([response as FreshwaterManagementUnit].flat().map(async fc => await service.augmentRecord(fc))) as FmuFullDetails[]
     },
 
     postSearchByShape: async (shape: string, setError: null | ((error: Error | null) => void) = null): Promise<FmuFullDetails[]> => {
@@ -69,7 +74,10 @@ const service = {
 
         setError && !response &&
         setError(new ErrorFlag("No Freshwater Management Units were found in the selected area, or there was an error fetching the data. Please try again.", ErrorLevel.WARNING))
-        return [response as FreshwaterManagementUnit].flat().map(fc => service.augmentRecord(fc)) as FmuFullDetails[]
+
+        return await Promise.all(
+            [response as FreshwaterManagementUnit].flat().map(fc => service.augmentRecord(fc))
+        ) as FmuFullDetails[]
     },
 
     urlToGetFmuBoundaries: (): string => `${determineBackendUri(window.location.hostname)}/freshwater-management-units?includeTangataWhenuaSites=false&format=features`,
@@ -86,16 +94,23 @@ const service = {
         }
     },
 
-    augmentRecord: (record: FreshwaterManagementUnit): FmuFullDetails | null => {
+    augmentRecord: async (record: FreshwaterManagementUnit): Promise<FmuFullDetails | null> => {
         if (!record)
             return null
 
-        if (record.fmuName1 == 'Parkvale Stream' && !record.implementationIdeas)
-            record.implementationIdeas = '<ul><li>Consider wetlands for water quality treatment before discharges reach the stream</li>\n<li>Setbacks from depressions and waterways should be necessary for intensive land uses including winter grazing and winter cropping</li>\n<li>Riparian planting should be undertaken in strategic spots, including to provide shade to help improve periphytn and macrophyte problems</li>\n<li>Good management of stock access to streambanks and of winter grazing may prove important in this catchment</li></ul>'
+        const systemValues: SystemValues = {}
 
+        if (record.fmuName1 == 'Parkvale Stream' && !record.implementationIdeas) {
+            record.implementationIdeas = '<ul><li>Consider wetlands for water quality treatment before discharges reach the stream</li>\n<li>Setbacks from depressions and waterways should be necessary for intensive land uses including winter grazing and winter cropping</li>\n<li>Riparian planting should be undertaken in strategic spots, including to provide shade to help improve periphytn and macrophyte problems</li>\n<li>Good management of stock access to streambanks and of winter grazing may prove important in this catchment</li></ul>'
+            systemValues.culturalOverview = await getSystemValueForCouncil(SystemValueNames.PARKVALE_CULTURAL_OVERVIEW)
+        }
+
+        systemValues.whaituaOverview = await getSystemValueForCouncil(SystemValueNames.RUAMAHANGA_WHAITUA_OVERVIEW)
+        console.log('augment', systemValues.culturalOverview)
         return {
             freshwaterManagementUnit: record,
-            tangataWhenuaSites: record.tangataWhenuaSites
+            tangataWhenuaSites: record.tangataWhenuaSites,
+            systemValues: systemValues
         }
     }
 }

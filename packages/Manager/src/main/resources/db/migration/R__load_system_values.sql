@@ -2,9 +2,10 @@ INSERT INTO system_values (council_id, value_name, value_as_json, created_at, up
 VALUES
     (
         9,
-        'cccv.culturalOverview.parkvale',
+        'cccv.culturalOverview.parkvaleStream',
         jsonb_build_object(
-                'value', $$<p className="mt-2">Mana whenua are Ngāti Kahugnunu ki Wairarapa, who have Hurunui marae and Pahikitea pa located
+                'value',
+                $$<p className="mt-2">Mana whenua are Ngāti Kahugnunu ki Wairarapa, who have Hurunui marae and Pahikitea pa located
              within the catchment, and Rangitāne o Wairarapa.
              Ngāti Kahugnunu at marae level (Hurunui marae), note the following:
              <ul>
@@ -25,8 +26,6 @@ ON CONFLICT (council_id, value_name)
     DO UPDATE
     SET value_as_json = excluded.value_as_json,
         updated_at = NOW();
-
--- R__insert_system_value_cccv_cultural_overview_with_html.sql
 
 INSERT INTO system_values (council_id, value_name, value_as_json, created_at, updated_at)
 VALUES
