@@ -15,19 +15,19 @@ import org.springframework.stereotype.Component
 @Configuration
 @EnableWebSecurity
 class SecurityConfig {
-  @Bean
-  fun filterChain(http: HttpSecurity): SecurityFilterChain {
-    http
-        .authorizeHttpRequests()
-        .requestMatchers("/actuator/health")
-        .permitAll()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .httpBasic()
-    http.csrf().disable()
-    return http.build()
-  }
+    @Bean
+    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .authorizeHttpRequests { auth ->
+                auth
+                    .requestMatchers("/actuator/health").permitAll()
+                    .anyRequest().authenticated()
+            }
+            .httpBasic { }
+            .csrf { }
+
+        return http.build()
+    }
 }
 
 @Component
