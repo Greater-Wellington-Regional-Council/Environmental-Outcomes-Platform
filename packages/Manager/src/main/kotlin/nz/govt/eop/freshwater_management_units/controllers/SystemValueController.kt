@@ -9,13 +9,26 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/system-values")
 class SystemValueController(private val service: SystemValueService) {
 
-  @GetMapping("/{valueName}")
+  @GetMapping("/{councilId}/{valueName}")
   @LimitRequests("Referer")
-  fun getValue(
-      @PathVariable valueName: String,
-      @RequestParam(required = false) councilId: Int?
+  fun getValueWithCouncilId(
+    @PathVariable councilId: Int,
+    @PathVariable valueName: String
   ): ResponseEntity<Map<String, Any>> {
     val value = service.getValue(valueName, councilId)
+    return if (value != null) {
+      ResponseEntity.ok(value)
+    } else {
+      ResponseEntity.notFound().build()
+    }
+  }
+
+  @GetMapping("/{valueName}")
+  @LimitRequests("Referer")
+  fun getValueWithoutCouncilId(
+    @PathVariable valueName: String
+  ): ResponseEntity<Map<String, Any>> {
+    val value = service.getValue(valueName, null)
     return if (value != null) {
       ResponseEntity.ok(value)
     } else {
