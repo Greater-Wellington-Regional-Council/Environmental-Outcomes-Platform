@@ -1,6 +1,6 @@
 import "./FreshwaterManagementUnit.scss"
 import purify from "dompurify"
-import {useEffect, useMemo, useState} from "react"
+import React, {useEffect, useMemo, useState} from "react"
 import {FmuFullDetailsWithMap} from "@services/models/FreshwaterManagementUnit.ts"
 import {usePDF} from "@react-pdf/renderer"
 import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf"
@@ -13,6 +13,7 @@ import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 import {DownloadLink} from "@elements/DownloadLink/DownloadLink.tsx"
 import TangataWhenuaSites from "@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx"
+import _ from "lodash"
 
 export interface FmuPanelHeaderProps {
     fmuName1: string
@@ -40,6 +41,8 @@ const FreshwaterManagementUnit = (
     } = details.freshwaterManagementUnit
 
     const showHeader = details.showHeader
+
+    const culturalOverview = _.get(details, "culturalOverview")
 
     const tangataWhenuaSites = details.tangataWhenuaSites
 
@@ -112,7 +115,8 @@ const FreshwaterManagementUnit = (
                     {tangataWhenuaSites?.features.length ? (
                         <div className="tangata-whenua mt-6">
                             <TangataWhenuaSites tangataWhenuaSites={tangataWhenuaSites}
-                                                gotoTangataWhenua={gotoTangataWhenua}/>
+                                                gotoTangataWhenua={gotoTangataWhenua}
+                                                culturalOverview={culturalOverview}/>
                         </div>
                     ) : (
                         <div></div>
