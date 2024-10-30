@@ -12,8 +12,8 @@ class SystemValueController(private val service: SystemValueService) {
   @GetMapping("/{councilId}/{valueName}")
   @LimitRequests("Referer")
   fun getValueWithCouncilId(
-    @PathVariable councilId: Int,
-    @PathVariable valueName: String
+      @PathVariable councilId: Int,
+      @PathVariable valueName: String
   ): ResponseEntity<Map<String, Any>> {
     val value = service.getValue(valueName, councilId)
     return if (value != null) {
@@ -25,9 +25,7 @@ class SystemValueController(private val service: SystemValueService) {
 
   @GetMapping("/{valueName}")
   @LimitRequests("Referer")
-  fun getValueWithoutCouncilId(
-    @PathVariable valueName: String
-  ): ResponseEntity<Map<String, Any>> {
+  fun getValueWithoutCouncilId(@PathVariable valueName: String): ResponseEntity<Map<String, Any>> {
     val value = service.getValue(valueName, null)
     return if (value != null) {
       ResponseEntity.ok(value)
