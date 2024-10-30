@@ -1,4 +1,5 @@
 import {Feature, FeatureCollection} from "geojson"
+import {SystemValues} from "@services/SystemValueService/SystemValueService.ts"
 
 export default interface FreshwaterManagementUnit {
     id?: number | null
@@ -43,6 +44,7 @@ export default interface FreshwaterManagementUnit {
 export interface FmuFullDetails extends FreshwaterManagementUnit {
     freshwaterManagementUnit: FreshwaterManagementUnit
     tangataWhenuaSites?: FeatureCollection
+    systemValues?: SystemValues
 }
 
 export interface FmuFullDetailsWithMap extends FmuFullDetails {
