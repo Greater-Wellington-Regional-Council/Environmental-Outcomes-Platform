@@ -25,16 +25,17 @@ class SystemValueControllerTest {
   }
 
   @Test
-  fun `should return system value when found with councilId`() {
-    val councilId = 1
+  fun `should return system value when found`() {
     val valueName = "testValue"
+    val councilId = 1
     val expectedResponse = mapOf("key" to "value")
 
     `when`(service.getValue(valueName, councilId)).thenReturn(expectedResponse)
 
     mockMvc
         .perform(
-            get("/system-values/{councilId}/{valueName}", councilId, valueName)
+            get("/system-values/{valueName}", valueName)
+                .param("councilId", councilId.toString())
                 .header("Referer", "http://test.com")
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk)
@@ -45,15 +46,16 @@ class SystemValueControllerTest {
   }
 
   @Test
-  fun `should return 404 when system value is not found with councilId`() {
-    val councilId = 1
+  fun `should return 404 when system value is not found`() {
     val valueName = "missingValue"
+    val councilId = 1
 
     `when`(service.getValue(valueName, councilId)).thenReturn(null)
 
     mockMvc
         .perform(
-            get("/system-values/{councilId}/{valueName}", councilId, valueName)
+            get("/system-values/{valueName}", valueName)
+                .param("councilId", councilId.toString())
                 .header("Referer", "http://test.com")
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isNotFound)
@@ -76,22 +78,6 @@ class SystemValueControllerTest {
         .andExpect(status().isOk)
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.key").value("value"))
-
-    verify(service, times(1)).getValue(valueName, null)
-  }
-
-  @Test
-  fun `should return 404 when system value is not found and councilId is not provided`() {
-    val valueName = "missingValue"
-
-    `when`(service.getValue(valueName, null)).thenReturn(null)
-
-    mockMvc
-        .perform(
-            get("/system-values/{valueName}", valueName)
-                .header("Referer", "http://test.com")
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNotFound)
 
     verify(service, times(1)).getValue(valueName, null)
   }
