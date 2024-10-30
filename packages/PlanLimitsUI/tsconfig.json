@@ -21,7 +21,7 @@
   },
   "include": [
     "src", "src/lib/types",
-    "src/types/global.d.ts",
+    "src/shared/lib/types/global.d.ts",
     "node_modules/vitest/globals.d.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
