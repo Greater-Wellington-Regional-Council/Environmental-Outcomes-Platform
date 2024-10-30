@@ -13,7 +13,8 @@ import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 import {DownloadLink} from "@elements/DownloadLink/DownloadLink.tsx"
 import TangataWhenuaSites from "@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx"
-import _ from "lodash"
+import DOMPurify from "dompurify"
+import {getSystemValueForCouncil, SystemValueNames} from "@services/SystemValueService/SystemValueService.ts"
 
 export interface FmuPanelHeaderProps {
     fmuName1: string
@@ -42,7 +43,7 @@ const FreshwaterManagementUnit = (
 
     const showHeader = details.showHeader
 
-    const culturalOverview = _.get(details, "culturalOverview")
+    const culturalOverview = DOMPurify.sanitize(details.systemValues?.culturalOverview || "")
 
     const tangataWhenuaSites = details.tangataWhenuaSites
 
@@ -57,6 +58,19 @@ const FreshwaterManagementUnit = (
     const [instance, updateInstance] = usePDF({document: pdfDocument})
     const [pdfLoading, setPdfLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
+
+    const [overview, setOverview] = useState<string | undefined>(catchmentDescription ?? "")
+
+    useEffect(() => {
+        if (catchmentDescription)
+            setOverview(catchmentDescription)
+        else {
+            (async () => {
+                const fetchedOverview = await getSystemValueForCouncil(SystemValueNames.RUAMAHANGA_WHAITUA_OVERVIEW) ?? null
+                setOverview(fetchedOverview || undefined)
+            })()
+        }
+    }, [catchmentDescription, fmuName1])
 
     useEffect(() => {
         if (instance) {
@@ -97,7 +111,7 @@ const FreshwaterManagementUnit = (
                         <h2>Overview</h2>
                         <div
                             dangerouslySetInnerHTML={{
-                                __html: purify.sanitize(makeSafe(catchmentDescription ?? "<p>No overview available</p>")),
+                                __html: purify.sanitize(makeSafe(overview!)),
                             }}
                         />
                     </div>

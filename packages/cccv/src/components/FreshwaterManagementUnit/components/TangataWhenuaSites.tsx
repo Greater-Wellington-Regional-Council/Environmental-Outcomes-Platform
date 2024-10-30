@@ -14,8 +14,6 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({tangataWhenuaSit
     const [siteDescriptions, setSiteDescriptions] = useState<{ [key: string]: string | undefined }>({})
     const [tooltip, setTooltip] = useState<{ description: string | null; x: number; y: number } | null>(null)
 
-    console.log(culturalOverview)
-
     useEffect(() => {
         async function fetchDescription(siteName: string) {
             const site = await manaWhenuaSiteService.getBySiteName(siteName)
@@ -63,7 +61,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({tangataWhenuaSit
             {tangataWhenuaSites?.features.length ? (
                 <div className="tangata-whenua mt-6" onClick={hideTooltip}>
                     <h2>Cultural Significance of the Catchment</h2>
-                    {culturalOverview}
+                    {culturalOverview && <div dangerouslySetInnerHTML={{__html: culturalOverview}}/>}
                     <h3 className="mt-6">Sites of Significance</h3>
                     <p className="mt-2">This area contains sites of significance to Tangata Whenua including:</p>
                     <div className="tangata-whenua-sites">
