@@ -8,8 +8,7 @@ import nz.govt.eop.utils.StringToListConverter
 import org.geojson.Feature
 import org.geojson.FeatureCollection
 import org.hibernate.annotations.Formula
-import org.geojson.Geometry
-import org.geojson.Point
+
 
 @Entity
 @Table(name = "tangata_whenua_sites")
@@ -24,35 +23,22 @@ data class TangataWhenuaSite(
     @Column(name = "properties", columnDefinition = "jsonb")
     @Convert(converter = JsonMapConverter::class)
     var properties: Map<String, Any?> = emptyMap(),
-    @Formula("ST_AsGeoJSON(ST_Transform(geom, 4326), 6, 2)") var geomGeoJson: String? = null
-
+    @Formula("ST_AsGeoJSON(ST_Transform(geom, 4326), 6, 2)") var geomGeoJson: String? = null,
 ) {
+
+    companion object {
+        private val maoriPropertyNames = listOf(
+            "Te_Mahi_Kai", "Wāhi_Mahara", "Te_Hā_o_te_Ora",
+            "Wāhi_Whakarite", "Te_Mana_o_te_Wai", "Te_Mana_o_te_Tangata",
+            "Te_Manawaroa_o_te_Wai", "Ngā_Mahi_a_ngā_Tūpuna"
+        )
+    }
+
     @get:Transient
     val significantSites: List<String>
         get() = locationValues.ifEmpty {
-            listOf(
-                "Te_Mahi_Kai", "Wāhi_Mahara", "Te_Hā_o_te_Ora",
-                "Wāhi_Whakarite", "Te_Mana_o_te_Wai", "Te_Mana_o_te_Tangata",
-                "Te_Manawaroa_o_te_Wai", "Ngā_Mahi_a_ngā_Tūpuna"
-            ).filter { properties[it] !== null }
+            maoriPropertyNames.filter { properties[it] !== null }
         }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
-
-        other as TangataWhenuaSite
-
-        return id == other.id
-    }
-
-    override fun hashCode(): Int {
-        return id?.hashCode() ?: 0
-    }
-
-    override fun toString(): String {
-        return "TangataWhenuaSite(id=$id, location=$location, locationValues=$locationValues, sourceName=$sourceName, properties=$properties, geomGeoJson=$geomGeoJson)"
-    }
 }
 
 fun List<TangataWhenuaSite>.toFeatureCollection(): FeatureCollection {
@@ -64,18 +50,13 @@ fun List<TangataWhenuaSite>.toFeatureCollection(): FeatureCollection {
             val geometryNode: JsonNode = mapper.readTree(geomString)
             val feature = Feature()
 
-            feature.geometry = when (geometryNode.get("type").asText()) {
-                "Point" -> mapper.treeToValue(geometryNode, Point::class.java)
-                else -> mapper.treeToValue(geometryNode, Geometry::class.java)
-            }
+            feature.geometry = mapper.treeToValue(geometryNode, org.geojson.Geometry::class.java)
 
             feature.properties["id"] = site.id
-            feature.properties["location"] =
-                site.location.takeUnless { it.isNullOrBlank() } ?: site.properties["Name"] ?: ""
+            feature.properties["location"] = site.location.takeUnless { it.isNullOrBlank() } ?: site.properties["Name"] ?: ""
             feature.properties["sites"] = site.significantSites
             feature.properties["source"] = site.sourceName ?: "Not given - check application.yml on backend service"
 
-            // Add other properties
             site.properties.filterValues { it !== null }.forEach { (key, value) ->
                 feature.properties[key] = value
             }

@@ -3,6 +3,7 @@ import manaWhenuaSiteService from "@services/ManaWhenuaSiteService/ManaWhenuaSit
 import Tooltip from "@elements/Tooltip/Tooltip.tsx"
 import {Feature, FeatureCollection} from "geojson"
 import { MapPinIcon } from '@heroicons/react/20/solid'
+import _ from "lodash"
 
 interface TangataWhenuaSitesProps {
     tangataWhenuaSites: FeatureCollection;
@@ -15,29 +16,29 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({tangataWhenuaSit
     const [tooltip, setTooltip] = useState<{ description: string | null; x: number; y: number } | null>(null)
 
     useEffect(() => {
-        async function fetchDescription(siteName: string) {
-            const site = await manaWhenuaSiteService.getBySiteName(siteName)
+        async function fetchDescription(siteName: string, site: Feature) {
+            const siteExplanation = _.get(site, `properties.[${siteName}]`) || (await manaWhenuaSiteService.getBySiteName(siteName))?.explanation
             setSiteDescriptions((prevDescriptions) => ({
                 ...prevDescriptions,
-                [siteName]: site?.explanation,
+                [siteName]: siteExplanation,
             }))
         }
 
         if (tangataWhenuaSites?.features) {
             tangataWhenuaSites.features.forEach((site: Feature) => {
-                site?.properties?.locationValues?.split(',').forEach((siteName: string) => {
+                site?.properties?.sites?.forEach((siteName: string) => {
                     if (!siteDescriptions[siteName]) {
-                        fetchDescription(siteName).then() // Fetch description for each siteName
+                        fetchDescription(siteName, site).then() // Fetch description for each siteName
                     }
                 })
             })
         }
-    }, [tangataWhenuaSites, siteDescriptions])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const showSiteDescription = (e: React.MouseEvent<HTMLLIElement>, description: string | undefined) => {
         e.stopPropagation()
 
-        // Get the bounding rectangle of the sliding panel (or the parent container)
         const parentRect = e.currentTarget.closest('.sliding-panel')?.getBoundingClientRect()
 
         if (!parentRect) {
@@ -45,7 +46,6 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({tangataWhenuaSit
             return
         }
 
-        // Calculate tooltip position relative to the sliding panel
         const x = e.clientX - parentRect.left  // Calculate x relative to the parent
         const y = e.clientY - parentRect.top   // Calculate y relative to the parent
 
@@ -74,7 +74,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({tangataWhenuaSit
                                             className={"underline decoration-dashed decoration-1 group-hover:text-kaitoke"}>{site?.properties?.location}</span>
                                     </div>
                                     <ul className="flex flex-wrap gap-4 list-none p-0 m-0 mt-4 mb-6">
-                                        {site?.properties?.locationValues?.split(',').map((siteName: string, index: Key | null | undefined) => (
+                                        {site?.properties?.sites?.map((siteName: string, index: Key | null | undefined) => (
                                             <li
                                                 className="list-none ml-0 mt-0 inset-0 bg-gray-300 indent-0 px-2 hover:underline hover:decoration-dashed"
                                                 key={index}

@@ -45,9 +45,11 @@ class FreshwaterManagementUnitsControllerTest {
                             locationValues = ttwLocationValues,
                             geomGeoJson =
                                 "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
-                            sourceName = "Schedule B"))
+                            source_name = source_name
+                        ))
                     .toFeatureCollection())
 
+    // Mock the FMU service to return an FMU when querying by lng/lat
     Mockito.`when`(
             fmuService.findFreshwaterManagementUnitByLatAndLng(
                 ArgumentMatchers.anyDouble(),
@@ -65,7 +67,8 @@ class FreshwaterManagementUnitsControllerTest {
                     locationValues = ttwLocationValues,
                     geomGeoJson =
                         "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
-                    sourceName = "Schedule B")))
+                    source_name = source_name
+                )))
 
     mvc.perform(
             MockMvcRequestBuilders.get(
@@ -73,21 +76,16 @@ class FreshwaterManagementUnitsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON),
         )
         .andExpect(MockMvcResultMatchers.status().isOk)
+        .andExpect(MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites").isNotEmpty)
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.location")
-                .value("Tangata Whenua site 1"))
+                .value("Tangata Whenua site 1"),
+        )
         .andExpect(
-            MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.sites")
-                .isArray())
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.sites[0]")
-                .value("site1"))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.sites[1]")
-                .value("site2"))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.sites[2]")
-                .value("site3"))
+            MockMvcResultMatchers.jsonPath(
+                    "$.tangataWhenuaSites.features[0].properties.locationValues")
+                .value("site1,site2,site3"),
+        )
         .andReturn()
   }
 

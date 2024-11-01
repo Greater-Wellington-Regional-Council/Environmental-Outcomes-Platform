@@ -18,21 +18,7 @@
     {
       "name": "org.contact.email",
       "type": "java.lang.String",
-      "description": "Email address for contacting organization."
-    },
-    {
-      "name": "linz.koord.api.key",
-      "type": "java.util.List<java.lang.String>",
-      "description": "Toitū te Whenua LINZ Data Service Koordinates API key."
-    },
-    {
-      "name": "linz.address.boundary.timeout",
-      "type": "java.util.List<java.lang.String>",
-      "description": "Seconds to wait for LINZ Address Boundary API response."
-    },
-    {
-      "name": "addressfinder.api.key",
-      "type": "java.util.List<java.lang.String>",
-      "description": "AddressFinder API key."
+      "description": "Email address for contacting the organization."
     }
-] }
+  ]
+}
