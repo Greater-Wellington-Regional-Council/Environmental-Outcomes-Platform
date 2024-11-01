@@ -1,14 +1,24 @@
 {
   "properties": [
     {
+      "name": "tangata.whenua.sites",
+      "type": "java.util.List<nz.govt.eop.TangataWhenuaSitesSources.Source>",
+      "description": "List of Tangata Whenua Site sources, each containing a name and a list of URLs."
+    },
+    {
+      "name": "tangata.whenua.sites.sources[].name",
+      "type": "java.lang.String",
+      "description": "The name of the Tangata Whenua Site source."
+    },
+    {
+      "name": "tangata.whenua.sites.sources[].urls",
+      "type": "java.util.List<java.lang.String>",
+      "description": "List of URLs for each Tangata Whenua Site source."
+    },
+    {
       "name": "org.contact.email",
       "type": "java.lang.String",
       "description": "Email address for contacting organization."
-    },
-    {
-      "name": "arcgis.tangata_whenua_sites.urls",
-      "type": "java.util.List<java.lang.String>",
-      "description": "Tangata Whenua Site sources."
     },
     {
       "name": "linz.koord.api.key",
@@ -25,5 +35,4 @@
       "type": "java.util.List<java.lang.String>",
       "description": "AddressFinder API key."
     }
-  ]
-}
+] }
