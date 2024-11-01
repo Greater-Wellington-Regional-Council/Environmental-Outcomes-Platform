@@ -1,12 +1,14 @@
 package nz.govt.eop.freshwater_management_units.models
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.persistence.*
+import nz.govt.eop.utils.JsonMapConverter
 import nz.govt.eop.utils.StringToListConverter
 import org.geojson.Feature
 import org.geojson.FeatureCollection
-import org.geojson.Geometry
 import org.hibernate.annotations.Formula
+
 
 @Entity
 @Table(name = "tangata_whenua_sites")
@@ -16,25 +18,52 @@ data class TangataWhenuaSite(
     @Convert(converter = StringToListConverter::class)
     @Column(name = "location_values")
     val locationValues: List<String> = emptyList(),
+    @Column(name = "source_name")
+    val sourceName: String? = null,
+    @Column(name = "properties", columnDefinition = "jsonb")
+    @Convert(converter = JsonMapConverter::class)
+    var properties: Map<String, Any?> = emptyMap(),
     @Formula("ST_AsGeoJSON(ST_Transform(geom, 4326), 6, 2)") var geomGeoJson: String? = null,
-)
+) {
+
+    companion object {
+        private val maoriPropertyNames = listOf(
+            "Te_Mahi_Kai", "Wāhi_Mahara", "Te_Hā_o_te_Ora",
+            "Wāhi_Whakarite", "Te_Mana_o_te_Wai", "Te_Mana_o_te_Tangata",
+            "Te_Manawaroa_o_te_Wai", "Ngā_Mahi_a_ngā_Tūpuna"
+        )
+    }
+
+    @get:Transient
+    val significantSites: List<String>
+        get() = locationValues.ifEmpty {
+            maoriPropertyNames.filter { properties[it] !== null }
+        }
+}
 
 fun List<TangataWhenuaSite>.toFeatureCollection(): FeatureCollection {
-  val mapper = ObjectMapper()
-  val featureCollection = FeatureCollection()
+    val mapper = ObjectMapper()
+    val featureCollection = FeatureCollection()
 
-  this.forEach { site ->
-    site.geomGeoJson?.let { geomString ->
-      val geometry = mapper.readValue(geomString, Geometry::class.java)
-      val feature = Feature()
-      feature.geometry = geometry
-      feature.properties["id"] = site.id
-      feature.properties["location"] = site.location ?: ""
-      feature.properties["locationValues"] = site.locationValues.joinToString(",")
-      feature.properties["Values_"] = site.locationValues.joinToString(",")
-      featureCollection.add(feature)
+    this.forEach { site ->
+        site.geomGeoJson?.let { geomString ->
+            val geometryNode: JsonNode = mapper.readTree(geomString)
+            val feature = Feature()
+
+            feature.geometry = mapper.treeToValue(geometryNode, org.geojson.Geometry::class.java)
+
+            feature.properties["id"] = site.id
+            feature.properties["location"] = site.location.takeUnless { it.isNullOrBlank() } ?: site.properties["Name"] ?: ""
+            feature.properties["sites"] = site.significantSites
+            feature.properties["source"] = site.sourceName ?: "Not given - check application.yml on backend service"
+
+            site.properties.filterValues { it !== null }.forEach { (key, value) ->
+                feature.properties[key] = value
+            }
+
+            featureCollection.add(feature)
+        }
     }
-  }
 
-  return featureCollection
+    return featureCollection
 }

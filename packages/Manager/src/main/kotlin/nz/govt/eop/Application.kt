@@ -23,15 +23,20 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 
 @Configuration
-@ConfigurationProperties(prefix = "arcgis.tangata-whenua-sites")
-class TangataWhenuaSitesSource {
-  lateinit var urls: Array<String>
+@ConfigurationProperties(prefix = "tangata.whenua.sites")
+class TangataWhenuaSitesSources {
+  lateinit var sources: List<Source>
+
+  class Source {
+    lateinit var name: String
+    lateinit var urls: List<String>
+  }
 }
 
 @EnableKafka
 @EnableCaching
 @SpringBootApplication
-@EnableConfigurationProperties(TangataWhenuaSitesSource::class)
+@EnableConfigurationProperties(TangataWhenuaSitesSources::class)
 class Application {
   @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
 }
