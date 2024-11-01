@@ -44,7 +44,9 @@ class FreshwaterManagementUnitsControllerTest {
                             location = "Tangata Whenua site 1",
                             locationValues = ttwLocationValues,
                             geomGeoJson =
-                                "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}"))
+                                "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
+                            source_name = source_name
+                        ))
                     .toFeatureCollection())
 
     // Mock the FMU service to return an FMU when querying by lng/lat
@@ -64,7 +66,9 @@ class FreshwaterManagementUnitsControllerTest {
                     location = "Tangata Whenua site 1",
                     locationValues = ttwLocationValues,
                     geomGeoJson =
-                        "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}")))
+                        "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
+                    source_name = source_name
+                )))
 
     mvc.perform(
             MockMvcRequestBuilders.get(

@@ -2,7 +2,7 @@ package nz.govt.eop.freshwater_management_units.services
 
 import io.kotest.core.spec.style.BehaviorSpec
 import java.net.URI
-import nz.govt.eop.TangataWhenuaSitesSource
+import nz.govt.eop.TangataWhenuaSitesSources
 import nz.govt.eop.freshwater_management_units.repositories.TangataWhenuaSiteRepository
 import org.geojson.Feature
 import org.geojson.FeatureCollection
@@ -40,7 +40,7 @@ class TangataWhenuaSiteServiceGetsAndSavesSitesTest :
               ReflectionTestUtils.setField(
                   this,
                   "tangataWhenuaSitesSource",
-                  TangataWhenuaSitesSource().apply { urls = arrayOf("http://test.url1") })
+                  TangataWhenuaSitesSources().apply { urls = arrayOf("http://test.url1") })
             }
 
         whenever(restTemplateMock.getForEntity(any<URI>(), eq(FeatureCollection::class.java)))
@@ -62,6 +62,8 @@ class TangataWhenuaSiteServiceGetsAndSavesSitesTest :
                     anyString(),
                     anyList(),
                     anyString(),
+                    anyString(),
+                    anyString()
                 )
           }
         }
@@ -92,7 +94,7 @@ class TangataWhenuaSiteServiceGetsAndSavesNullSitesTest :
               ReflectionTestUtils.setField(
                   this,
                   "tangataWhenuaSitesSource",
-                  TangataWhenuaSitesSource().apply { urls = arrayOf("http://test.url1") })
+                  TangataWhenuaSitesSources().apply { urls = arrayOf("http://test.url1") })
             }
 
         whenever(restTemplateMock.getForEntity(any<URI>(), eq(FeatureCollection::class.java)))
@@ -105,8 +107,10 @@ class TangataWhenuaSiteServiceGetsAndSavesNullSitesTest :
             verify(repositoryMock)
                 .saveWithGeom(
                     null,
-                    null,
+                    emptyList(),
                     """{"type":"Point","coordinates":[174.0,-41.0]}""",
+                    "Schedule C",
+                    "{}"
                 )
           }
         }
