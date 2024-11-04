@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jakarta.persistence.*
-import nz.govt.eop.utils.JsonMapConverter
 import java.io.IOException
 import kotlin.jvm.Transient
+import nz.govt.eop.utils.JsonMapConverter
 import org.geojson.FeatureCollection
 import org.hibernate.annotations.Formula
 
