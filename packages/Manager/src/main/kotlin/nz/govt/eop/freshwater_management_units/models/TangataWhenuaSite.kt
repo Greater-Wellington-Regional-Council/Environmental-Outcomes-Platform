@@ -17,28 +17,26 @@ data class TangataWhenuaSite(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Int? = null,
     @Column(name = "location") val location: String? = "",
     @Convert(converter = StringToListConverter::class)
-    @Column(name = "location_values")
+    @ElementCollection
+    @CollectionTable(name = "location_values", joinColumns = [JoinColumn(name = "tangata_whenua_site_id")])
+    @Column(name = "location_value")
     val locationValues: List<String> = emptyList(),
     @Column(name = "source_name")
     val sourceName: String? = null,
     @Column(name = "properties", columnDefinition = "jsonb")
     @Convert(converter = JsonMapConverter::class)
     var properties: Map<String, Any?> = emptyMap(),
-    @Formula("ST_AsGeoJSON(ST_Transform(geom, 4326), 6, 2)") var geomGeoJson: String? = null,
+    @Formula("ST_AsGeoJSON(ST_Transform(geom, 4326), 6, 2)") var geomGeoJson: String? = null
+
 ) {
-
-    companion object {
-        private val maoriPropertyNames = listOf(
-            "Te_Mahi_Kai", "Wāhi_Mahara", "Te_Hā_o_te_Ora",
-            "Wāhi_Whakarite", "Te_Mana_o_te_Wai", "Te_Mana_o_te_Tangata",
-            "Te_Manawaroa_o_te_Wai", "Ngā_Mahi_a_ngā_Tūpuna"
-        )
-    }
-
     @get:Transient
     val significantSites: List<String>
         get() = locationValues.ifEmpty {
-            maoriPropertyNames.filter { properties[it] !== null }
+            listOf(
+                "Te_Mahi_Kai", "Wāhi_Mahara", "Te_Hā_o_te_Ora",
+                "Wāhi_Whakarite", "Te_Mana_o_te_Wai", "Te_Mana_o_te_Tangata",
+                "Te_Manawaroa_o_te_Wai", "Ngā_Mahi_a_ngā_Tūpuna"
+            ).filter { properties[it] !== null }
         }
 }
 
