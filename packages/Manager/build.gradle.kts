@@ -7,7 +7,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils.*
 plugins {
   id("org.springframework.boot") version "3.2.0"
   id("io.spring.dependency-management") version "1.1.4"
-  id("com.diffplug.spotless") version "6.23.3"
+  id("com.diffplug.spotless") version "7.0.0.BETA4"
   id("org.flywaydb.flyway") version "10.6.0"
   id("nu.studer.jooq") version "8.0"
   id("com.adarshr.test-logger") version "4.0.0"
@@ -90,14 +90,14 @@ tasks.withType<Test> {
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
-  kotlin {
-    // We specify the target directly here to avoid having the plugin depend on
-    // generated sources, which was forcing Flyway to run before the SQL had been
-    // formatted, which then confused flyway the next time it ran.
-    target("src/main/kotlin/**/*.kt", "src/test/kotlin/**/*.kt")
-    ktfmt()
-  }
-  kotlinGradle { ktfmt() }
+//  kotlin {
+//    // We specify the target directly here to avoid having the plugin depend on
+//    // generated sources, which was forcing Flyway to run before the SQL had been
+//    // formatted, which then confused flyway the next time it ran.
+//    target("src/main/kotlin/**/*.kt", "src/test/kotlin/**/*.kt")
+//    ktfmt()
+//  }
+//  kotlinGradle { ktfmt() }
 }
 
 val dbConfig =
