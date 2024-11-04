@@ -13,7 +13,7 @@ class JsonMapConverter : AttributeConverter<Map<String, Any>, String> {
   }
 
   @Suppress("UNCHECKED_CAST")
-  override fun convertToEntityAttribute(dbData: String): Map<String, Any> {
-    return objectMapper.readValue(dbData, Map::class.java) as Map<String, Any>
+  override fun convertToEntityAttribute(dbData: String?): Map<String, Any>? {
+    return if (dbData == null) null else (objectMapper.readValue(dbData, Map::class.java) as Map<String, Any>)
   }
 }

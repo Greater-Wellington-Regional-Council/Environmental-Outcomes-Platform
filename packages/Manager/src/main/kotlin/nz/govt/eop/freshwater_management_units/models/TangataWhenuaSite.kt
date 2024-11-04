@@ -8,7 +8,8 @@ import nz.govt.eop.utils.StringToListConverter
 import org.geojson.Feature
 import org.geojson.FeatureCollection
 import org.hibernate.annotations.Formula
-
+import org.geojson.Geometry
+import org.geojson.Point
 
 @Entity
 @Table(name = "tangata_whenua_sites")
@@ -50,13 +51,17 @@ fun List<TangataWhenuaSite>.toFeatureCollection(): FeatureCollection {
             val geometryNode: JsonNode = mapper.readTree(geomString)
             val feature = Feature()
 
-            feature.geometry = mapper.treeToValue(geometryNode, org.geojson.Geometry::class.java)
+            feature.geometry = when (geometryNode.get("type").asText()) {
+                "Point" -> mapper.treeToValue(geometryNode, Point::class.java)
+                else -> mapper.treeToValue(geometryNode, Geometry::class.java)
+            }
 
             feature.properties["id"] = site.id
             feature.properties["location"] = site.location.takeUnless { it.isNullOrBlank() } ?: site.properties["Name"] ?: ""
             feature.properties["sites"] = site.significantSites
             feature.properties["source"] = site.sourceName ?: "Not given - check application.yml on backend service"
 
+            // Add other properties
             site.properties.filterValues { it !== null }.forEach { (key, value) ->
                 feature.properties[key] = value
             }
