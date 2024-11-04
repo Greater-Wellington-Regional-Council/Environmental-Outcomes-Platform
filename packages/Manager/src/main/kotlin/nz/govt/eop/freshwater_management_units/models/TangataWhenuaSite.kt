@@ -57,7 +57,8 @@ fun List<TangataWhenuaSite>.toFeatureCollection(): FeatureCollection {
             }
 
             feature.properties["id"] = site.id
-            feature.properties["location"] = site.location.takeUnless { it.isNullOrBlank() } ?: site.properties["Name"] ?: ""
+            feature.properties["location"] =
+                site.location.takeUnless { it.isNullOrBlank() } ?: site.properties["Name"] ?: ""
             feature.properties["sites"] = site.significantSites
             feature.properties["source"] = site.sourceName ?: "Not given - check application.yml on backend service"
 
