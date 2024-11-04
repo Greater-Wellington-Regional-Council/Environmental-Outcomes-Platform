@@ -1,14 +1,14 @@
-import { useContext, useEffect, useRef, useState } from "react"
-import { useLoaderData } from "react-router-dom"
-import { Layer, Source } from "react-map-gl"
-import { Feature, FeatureCollection } from "geojson"
+import {useContext, useEffect, useRef, useState} from "react"
+import {useLoaderData} from "react-router-dom"
+import {Layer, MapMouseEvent, Source} from "react-map-gl"
+import {Feature, FeatureCollection} from "geojson"
 
 import "./MapPage.scss"
 import gwrcLogo from "@images/printLogo_2000x571px.png"
-import { LabelAndValue } from "@elements/ComboBox/ComboBox"
-import { IMViewLocation } from "@shared/types/global"
-import { DEFAULT_ZOOM } from "@components/InteractiveMap/lib/useViewState.ts"
-import { CombinedMapRef } from "@components/InteractiveMap/lib/InteractiveMap"
+import {LabelAndValue} from "@elements/ComboBox/ComboBox"
+import {IMViewLocation} from "@shared/types/global"
+import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
+import {CombinedMapRef} from "@components/InteractiveMap/lib/InteractiveMap"
 import mapProperties from "@lib/values/mapProperties.ts"
 
 import AddressSearch from "@components/AddressSearch/AddressSearch"
@@ -18,21 +18,33 @@ import ErrorContext from "@components/ErrorContext/ErrorContext"
 import useLoadingIndicator from "@components/LoadingIndicator/useLoadingIndicator"
 
 import useEscapeKey from "@lib/useEscapeKey"
-import { useMapSnapshot } from "@lib/MapSnapshotContext"
+import {useMapSnapshot} from "@lib/MapSnapshotContext"
 import useMapTooltip from "@lib/useMapTooltip"
 import addPropertiesToGeoJSON from "@lib/addPropertiesToGeoJSON.ts"
-import { calculateCentroids } from "@lib/calculatePolygonCentoid"
+import {calculateCentroids} from "@lib/calculatePolygonCentoid"
 
 import freshwaterManagementService from "@services/FreshwaterManagementUnitService/FreshwaterManagementUnitService.ts"
 import addressesService from "@services/AddressesService/AddressesService.ts"
 import linzDataService from "@services/LinzDataService/LinzDataService.ts"
 
-import { FmuFullDetails } from "@services/models/FreshwaterManagementUnit"
+import {FmuFullDetails} from "@services/models/FreshwaterManagementUnit"
 import PhysicalAddress from "@components/PhysicalAddress/PhysicalAddress.tsx"
 import tooltipProperties from "@lib/values/tooltips.ts"
-import {TANGATA_WHENUA_SOURCE, TTW_HIGHLIGHT_LAYER} from "@lib/values/mapSourceAndLayerIds.ts"
+import {
+    BOUNDARY_LINES_LAYER,
+    FMU_UNDER_MOUSE_LAYER,
+    FMU_BOUNDARIES_SOURCE,
+    POTENTIAL_FMU_LAYER,
+    TANGATA_WHENUA_SHAPES_SOURCE,
+    TANGATA_WHENUA_LOCATIONS_LAYER, CURRENT_FMU_LAYER,
+} from "@lib/values/mapSourceAndLayerIds.ts"
 import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx"
 import StringCarousel from "@components/StringCarousel/StringCarousel.tsx"
+import _ from "lodash"
+import getFeaturesUnderMouse from "@lib/getFeaturesUnderMouse.ts"
+import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts"
+import env from "@src/env.ts"
+import useMapFocus from "@lib/useMapFocus.tsx"
 
 const ADDRESS_ZOOM = 12
 
@@ -44,7 +56,7 @@ function GWHeader() {
                 <h2 className="header-subtitle mb-1">Catchment context, challenges and values (CCCV)</h2>
             </div>
             <div className="header-image col-span-2 mt-2 mr-2 scale-105 ml-auto">
-                <img src={gwrcLogo} style={{ maxHeight: "83px" }} alt="Greater Wellington Regional Council logo" />
+                <img src={gwrcLogo} style={{maxHeight: "83px"}} alt="Greater Wellington Regional Council logo"/>
             </div>
         </header>
     )
@@ -68,25 +80,29 @@ const useFMUSelection = () => {
         setFmuIndex(0)
     }
 
-    return { fmuSelected, currentFmu, fmuIndex, currentFmus, setCurrentFmus, setFmuIndex, clearFmus, loadFmus }
+    return {fmuSelected, currentFmu, fmuIndex, currentFmus, setCurrentFmus, setFmuIndex, clearFmus, loadFmus}
 }
 
 export default function MapPage() {
-    const { setError } = useContext(ErrorContext)
+    const {setError} = useContext(ErrorContext)
     const locationDetails = useLoaderData()
 
     const [selectedLocation, selectLocation] = useState<IMViewLocation | null>(null)
 
-    const { currentFmus, currentFmu, fmuIndex, setFmuIndex, clearFmus, loadFmus } = useFMUSelection()
-
-    const [fmuChanged, setFmuChanged] = useState(false)
+    const {currentFmus, currentFmu, fmuIndex, setFmuIndex, clearFmus, loadFmus} = useFMUSelection()
 
     const sliderRef = useRef<HTMLDivElement>(null)
     const [sliderWidth, setSliderWidth] = useState<number>(0)
 
-    const { mapSnapshot } = useMapSnapshot()
-    const { setLoading } = useLoadingIndicator()
+    const {mapSnapshot} = useMapSnapshot()
+    const {setLoading} = useLoadingIndicator()
     const mapRef = useRef<CombinedMapRef | null>(null)
+
+    const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
+
+    const [featureBeingRolledOver, setFeatureBeingRolledOver] = useState<Feature | FeatureCollection | null>(null)
+
+    useMapFocus(mapRef, selectedLocation)
 
     const fetchFmu = async () => {
         if (!selectedLocation) {
@@ -104,7 +120,6 @@ export default function MapPage() {
 
         loadFmus(fmuList)
 
-        setFmuChanged(true)
         setError(null)
     }
 
@@ -157,7 +172,7 @@ export default function MapPage() {
                     latitude: centroid[1] || physicalAddress.location.geometry.coordinates[1],
                     description: desc + (centroid[0] ? "" : '<p class="tooltip-note">Boundary not available</p>'),
                     zoom: ADDRESS_ZOOM,
-                    featuresInFocus: addPropertiesToGeoJSON(addressBoundary, { location: physicalAddress.address }),
+                    featuresInFocus: addPropertiesToGeoJSON(addressBoundary, {location: physicalAddress.address}),
                     address: physicalAddress,
                 } as IMViewLocation
             }
@@ -178,13 +193,36 @@ export default function MapPage() {
         }
     }, [currentFmu])
 
-    const { Tooltip } = useMapTooltip({
+    const {Tooltip} = useMapTooltip({
         mapRef,
-        source: tooltipProperties})
+        source: tooltipProperties
+    })
+
+    const handleHover = (e: mapboxgl.MapMouseEvent) => {
+        const features = getFeaturesUnderMouse(mapRef, e, POTENTIAL_FMU_LAYER)
+        if (features) {
+            setFeatureBeingRolledOver(features[0]!)
+        } else {
+            setFeatureBeingRolledOver(null)
+        }
+    }
+
+    const handleClick = (e: MapMouseEvent) => {
+        const clickedFeatures = getFeaturesUnderMouse(mapRef, e, BOUNDARY_LINES_LAYER)
+        if (clickedFeatures) {
+            selectLocation({
+                longitude: e.lngLat.lng, latitude: e.lngLat.lat,
+                boundary: clickedFeatures[0]
+            })
+        }
+    }
+    
+    const OTHER_FEATURE_SHAPE_SOURCE = "focused-feature-source"
+    const FOCUSED_FEATURE_LAYER = "focused-feature-layer"
 
     return (
         <div className="map-page bg-white">
-            <GWHeader />
+            <GWHeader/>
 
             <main role="application">
                 <div className="map-panel relative">
@@ -192,42 +230,102 @@ export default function MapPage() {
                         startLocation={locationDetails as IMViewLocation}
                         locationInFocus={selectedLocation}
                         setLocationInFocus={selectLocation}
+                        onHover={handleHover}
+                        onClick={handleClick}
                         hidden={sliderWidth}
                         mapRef={mapRef}
-                        highlights_source_url={freshwaterManagementService.urlToGetFmuBoundaries()}
+                        mapStyle={mapStyle}
+                        setMapStyle={setMapStyle}
                     >
-                        {currentFmu && (
-                            <Source id={TANGATA_WHENUA_SOURCE} type="geojson" data={currentFmu.tangataWhenuaSites}>
-                                <Layer
-                                    id={TTW_HIGHLIGHT_LAYER}
-                                    type="fill"
-                                    paint={mapProperties.tangataWhenua.fill}
-                                    source={TANGATA_WHENUA_SOURCE}
-                                />
-                                {Tooltip && <Tooltip />}
-                            </Source>
+                        <Source
+                            id={FMU_BOUNDARIES_SOURCE}
+                            type="geojson"
+                            data={freshwaterManagementService.urlToGetFmuBoundaries()}>
+                        </Source>
+
+                        {currentFmu && <Source id={TANGATA_WHENUA_SHAPES_SOURCE} type="geojson" data={currentFmu?.tangataWhenuaSites} />}
+
+                        {selectedLocation?.featuresInFocus && <Source id={OTHER_FEATURE_SHAPE_SOURCE} type="geojson" data={selectedLocation?.featuresInFocus} />}
+
+                        <Layer
+                            id={BOUNDARY_LINES_LAYER}
+                            type="line"
+                            paint={{
+                                ...mapProperties.fmuBoundaries['line'],
+                                'line-color': mapStyle.includes('aerial') ? 'yellow' : 'blue'
+                            }}
+                            source={FMU_BOUNDARIES_SOURCE}
+                        />
+
+                        {currentFmu && <Layer
+                            id={TANGATA_WHENUA_LOCATIONS_LAYER}
+                            type="fill"
+                            paint={mapProperties.tangataWhenua.fill}
+                            source={TANGATA_WHENUA_SHAPES_SOURCE}
+                        />}
+
+                        <Layer
+                            id={POTENTIAL_FMU_LAYER}
+                            type="fill"
+                            paint={{'fill-opacity': 0}}
+
+                            source={FMU_BOUNDARIES_SOURCE}
+                        />
+
+                        {featureBeingRolledOver && !currentFmu && (
+                            <Layer
+                                id={FMU_UNDER_MOUSE_LAYER}
+                                type="fill"
+                                filter={['==', ['id'], _.get(featureBeingRolledOver, "properties.id")]}
+                                paint={{...mapProperties.defaultHover['fill']}}
+                                source={FMU_BOUNDARIES_SOURCE}
+                                maxzoom={DEFAULT_ZOOM+5}
+                            />
                         )}
+
+                        {currentFmu && (<Layer
+                            id={CURRENT_FMU_LAYER}
+                            type="fill"
+                            paint={mapProperties.currentFMU.fill}
+                            filter={['==', ['id'], currentFmu?.freshwaterManagementUnit?.id]}
+                            source={FMU_BOUNDARIES_SOURCE}
+                            maxzoom={DEFAULT_ZOOM+5}
+                        />)}
+
+                        {selectedLocation?.featuresInFocus && <Layer
+                            id={FOCUSED_FEATURE_LAYER}
+                            type="fill"
+                            paint={mapProperties.feature.fill}
+                            source={OTHER_FEATURE_SHAPE_SOURCE}
+                        />}
+
+                        {Tooltip && <Tooltip/>}
                     </InteractiveMap>
 
                     <div className="address-box">
-                        <AddressSearch onSelect={selectAddress} placeholder="Search for address" directionUp={true} />
+                        <AddressSearch onSelect={selectAddress} placeholder="Search for address" directionUp={true}/>
                     </div>
 
                     {currentFmu && (
-                        <SlidingPanel showPanel={!!currentFmus.length} contentChanged={fmuChanged} onClose={() => clearFmus()}>
+                        <SlidingPanel showPanel={!!currentFmus.length} contentChanged={false}
+                                      onClose={() => clearFmus()}>
                             {/*{currentFmus.length > 1 && (<FmuPanelHeader className={"ml-6 mb-8"} fmuName1={currentFmu.freshwaterManagementUnit.fmuName1!}/>)}*/}
-                            {selectedLocation?.address && <PhysicalAddress address={selectedLocation.address} />}
+                            {selectedLocation?.address && <PhysicalAddress address={selectedLocation.address}/>}
                             {currentFmus.length > 1 && (<div className={"mb-0"}>
-                                <div className={"text-sm text-center font-light mb-0"}>{`This property sits on ${currentFmus.length} catchments`}</div>
-                                <StringCarousel className={"mb-0"} displayValues={currentFmus.map((fmu) => fmu.freshwaterManagementUnit.fmuName1!)} index={fmuIndex} setIndex={setFmuIndex} />
-                                <div className="text-sm text-center font-extralight mb-2">{`Catchment ${fmuIndex!+1} of ${currentFmus.length}`}</div>
+                                <div
+                                    className={"text-sm text-center font-light mb-0"}>{`This property sits on ${currentFmus.length} catchments`}</div>
+                                <StringCarousel className={"mb-0"}
+                                                displayValues={currentFmus.map((fmu) => fmu.freshwaterManagementUnit.fmuName1!)}
+                                                index={fmuIndex} setIndex={setFmuIndex}/>
+                                <div
+                                    className="text-sm text-center font-extralight mb-2">{`Catchment ${fmuIndex! + 1} of ${currentFmus.length}`}</div>
                             </div>)}
                             <FreshwaterManagementUnit
                                 key={0}
                                 {...currentFmu}
                                 mapImage={mapSnapshot}
                                 links={{
-                                    tangataWhenuaSites: TANGATA_WHENUA_SOURCE,
+                                    tangataWhenuaSites: TANGATA_WHENUA_SHAPES_SOURCE,
                                     gotoLink: (f: Feature | FeatureCollection) =>
                                         selectLocation({
                                             featuresInFocus: f,

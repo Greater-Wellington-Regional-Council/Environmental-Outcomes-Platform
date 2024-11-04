@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface TooltipProps {
-    description: string;
+    description: string | null;
     x: number;
     y: number;
     isVisible: boolean;
@@ -10,7 +10,7 @@ interface TooltipProps {
 const Tooltip: React.FC<TooltipProps> = ({ description, x, y, isVisible }) => {
     if (!isVisible) return null
 
-    return (
+    return (description && (
         <div
             style={{
                 position: 'fixed',  // Make sure it's positioned relative to the viewport
@@ -28,7 +28,7 @@ const Tooltip: React.FC<TooltipProps> = ({ description, x, y, isVisible }) => {
         >
             {description}
         </div>
-    )
+    ) || null)
 }
 
 export default Tooltip
