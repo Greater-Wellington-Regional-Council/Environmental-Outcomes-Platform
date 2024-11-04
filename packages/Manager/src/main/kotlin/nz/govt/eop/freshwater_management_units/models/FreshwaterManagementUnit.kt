@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jakarta.persistence.*
+import nz.govt.eop.utils.JsonMapConverter
 import java.io.IOException
 import kotlin.jvm.Transient
-import nz.govt.eop.utils.JsonMapConverter
 import org.geojson.FeatureCollection
 import org.hibernate.annotations.Formula
 
@@ -84,12 +84,6 @@ data class FreshwaterManagementUnit(
     @Column(name = "culturalOverview", columnDefinition = "jsonb")
     @Convert(converter = JsonMapConverter::class)
     var culturalOverview: Map<String, Any> = emptyMap(),
-    @Column(name = "other_info", columnDefinition = "jsonb")
-    @Convert(converter = JsonMapConverter::class)
-    var otherInfo: Map<String, Any> = emptyMap(),
-    @Column(name = "vpo", columnDefinition = "jsonb")
-    @Convert(converter = JsonMapConverter::class)
-    var vpo: Map<String, Any> = emptyMap(),
     @JsonSerialize(using = GeoJsonSerializer::class)
     @JsonDeserialize(using = GeoJsonDeserializer::class)
     @Formula("CAST(ST_AsGeoJSON(ST_Transform(geom, 4326), 6 ,2) AS jsonb)")

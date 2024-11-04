@@ -16,8 +16,8 @@ interface InteractiveMapProps extends MapProps {
     children?: React.ReactNode;
     onHover?: (e) => void;
     onClick?: (e) => void;
-    mapStyle?: string;
-    setMapStyle?: Dispatch<SetStateAction<string>>;
+    mapStyle: string;
+    setMapStyle: Dispatch<SetStateAction<string>>;
 }
 
 interface BoundaryLinesLayerProps {
