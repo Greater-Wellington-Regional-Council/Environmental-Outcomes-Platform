@@ -106,7 +106,7 @@ const service = {
         }
 
         systemValues.whaituaOverview = await getSystemValueForCouncil(SystemValueNames.RUAMAHANGA_WHAITUA_OVERVIEW)
-        console.log('augment', systemValues.culturalOverview)
+
         return {
             freshwaterManagementUnit: record,
             tangataWhenuaSites: record.tangataWhenuaSites,

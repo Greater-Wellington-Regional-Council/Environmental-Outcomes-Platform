@@ -37,14 +37,13 @@ const useMapTooltip = ({ mapRef, source, tooltipClassName }: UseMapTooltipProps)
     const [tooltipStyle, setTooltipStyle] = useState<{ [key: string]: unknown }>({})
 
     const moveToolTip = (event: MapMouseEvent) => {
-        if (!mapRef?.current) return
+        const map = mapRef?.current?.getMap()
+
+        if (!map) return
 
         setTooltipContent(null)
 
-        const layers = source.map((s) => s.layer)
-        const features = mapRef.current.queryRenderedFeatures(event.point, {
-            layers,
-        })
+        const features = map.queryRenderedFeatures(event.point)
 
         if (!features || features.length === 0) {
             setTooltipContent(null)

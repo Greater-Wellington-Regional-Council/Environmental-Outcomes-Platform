@@ -46,6 +46,7 @@ stop_containers () {
   # Prune all stopped containers, dangling images, and unused volumes
   echo "Pruning stopped containers, dangling images, and unused volumes..."
   docker system prune -af --volumes
+  docker volume rm $(docker volume ls -q | grep "batect-cache")
 
   images=$(docker images $(printf -- '--filter=reference="*%s*" ' "${grep_strings[@]}") --format "{{.Repository}}:{{.Tag}}")
   echo "Images to be forcefully removed: ${images:-None}"

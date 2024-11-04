@@ -1,7 +1,10 @@
-export const TANGATA_WHENUA_SOURCE = "freshwater-management-ttw-sites"
-export const TTW_HIGHLIGHT_LAYER = "ttw-highlight"
-export const HOVER_LAYER = "freshwater-management-units-candidates"
-export const CLICK_LAYER = HOVER_LAYER
-export const HIGHLIGHT_HOVER_LAYER = "fmu-highlight"
+export const TANGATA_WHENUA_SHAPES_SOURCE = "freshwater-management-ttw-sites"
+export const TANGATA_WHENUA_LOCATIONS_LAYER = "ttw-highlight"
+export const POTENTIAL_FMU_LAYER = "freshwater-management-units-candidates"
+export const CLICK_LAYER = POTENTIAL_FMU_LAYER
+export const FMU_UNDER_MOUSE_LAYER = "fmu-highlight"
 export const HIGHLIGHT_SELECT_LAYER = "fmu-highlight-click"
-export const HIGHLIGHTS_SOURCE_ID = "highlight-source"
+export const FMU_BOUNDARIES_SOURCE = "highlight-source"
+export const CURRENT_FMU_SOURCE = "current-fmu-source"
+export const CURRENT_FMU_LAYER = "current-fmu-layer"
+export const BOUNDARY_LINES_LAYER = "boundaries-line-layer"

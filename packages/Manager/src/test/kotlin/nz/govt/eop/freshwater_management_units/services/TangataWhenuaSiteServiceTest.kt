@@ -39,8 +39,11 @@ class TangataWhenuaSiteServiceGetsAndSavesSitesTest :
             TangataWhenuaSiteService(restTemplateMock, repositoryMock).apply {
               ReflectionTestUtils.setField(
                   this,
-                  "tangataWhenuaSitesSource",
-                  TangataWhenuaSitesSources().apply { urls = arrayOf("http://test.url1") })
+                  "tangataWhenuaSitesSources",
+                  TangataWhenuaSitesSources().apply {
+                      sources = listOf(TangataWhenuaSitesSources.Source().apply { name = "Schedule B"; urls = listOf("http://test.url1") })
+                  }
+              )
             }
 
         whenever(restTemplateMock.getForEntity(any<URI>(), eq(FeatureCollection::class.java)))
@@ -91,10 +94,13 @@ class TangataWhenuaSiteServiceGetsAndSavesNullSitesTest :
 
         val service =
             TangataWhenuaSiteService(restTemplateMock, repositoryMock).apply {
-              ReflectionTestUtils.setField(
-                  this,
-                  "tangataWhenuaSitesSource",
-                  TangataWhenuaSitesSources().apply { urls = arrayOf("http://test.url1") })
+                ReflectionTestUtils.setField(
+                    this,
+                    "tangataWhenuaSitesSources",
+                    TangataWhenuaSitesSources().apply {
+                        sources = listOf(TangataWhenuaSitesSources.Source().apply { name = "Schedule B"; urls = listOf("http://test.url1") })
+                    }
+                )
             }
 
         whenever(restTemplateMock.getForEntity(any<URI>(), eq(FeatureCollection::class.java)))
@@ -109,7 +115,7 @@ class TangataWhenuaSiteServiceGetsAndSavesNullSitesTest :
                     null,
                     emptyList(),
                     """{"type":"Point","coordinates":[174.0,-41.0]}""",
-                    "Schedule C",
+                    "Schedule B",
                     "{}"
                 )
           }
