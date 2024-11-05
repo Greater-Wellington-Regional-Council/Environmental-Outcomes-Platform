@@ -39,11 +39,20 @@ const FreshwaterManagementUnit = (
         fmuName1,
         catchmentDescription,
         implementationIdeas,
+        vpo,
+        otherInfo,
+        culturalOverview,
     } = details.freshwaterManagementUnit
 
     const showHeader = details.showHeader
 
-    const culturalOverview = DOMPurify.sanitize(details.systemValues?.culturalOverview || "")
+    const vpoSafe = vpo?.value  ? DOMPurify.sanitize(vpo.value!) : null
+
+    const otherInfoSafe = otherInfo?.value  ? DOMPurify.sanitize(otherInfo.value!) : null
+
+    const culturalOverviewSafe = culturalOverview?.value  ? DOMPurify.sanitize(culturalOverview.value!) : null
+
+    const implementationIdeasSafe = implementationIdeas?.value ? DOMPurify.sanitize(implementationIdeas.value!) : null
 
     const tangataWhenuaSites = details.tangataWhenuaSites
 
@@ -110,11 +119,22 @@ const FreshwaterManagementUnit = (
             <div className="overview mt-0" data-testid="catchment-desc">
                 <h2>Overview</h2>
                 <div
+                    className="space-y-4"
                     dangerouslySetInnerHTML={{
                         __html: purify.sanitize(makeSafe(overview!)),
                     }}
                 />
             </div>
+
+            {vpoSafe && <div className="vpo mt-6" data-testid="vpo">
+                <h2>Freshwater Values, Priorities, and Outcomes</h2>
+                <div
+                    className="space-y-4"
+                    dangerouslySetInnerHTML={{
+                        __html: purify.sanitize(makeSafe(vpoSafe)),
+                    }}
+                />
+            </div>}
 
             <div className="contaminants mt-6">
                 <h2>Contaminants</h2>
@@ -130,18 +150,18 @@ const FreshwaterManagementUnit = (
                 <div className="tangata-whenua mt-6">
                     <TangataWhenuaSites tangataWhenuaSites={tangataWhenuaSites}
                                         gotoTangataWhenua={gotoTangataWhenua}
-                                        culturalOverview={culturalOverview}/>
+                                        culturalOverview={culturalOverviewSafe}/>
                 </div>
             ) : (
                 <div></div>
             )}
 
-            {implementationIdeas ? (
+            {implementationIdeasSafe ? (
                 <div className="implementation-ideas mt-6">
                     <h2>Implementation Ideas</h2>
                     <div className="implementation-ideas">
                         <ul className={"mt-2"}>
-                            {parseHtmlListToArray(implementationIdeas)?.map((idea: string, index) => (
+                            {parseHtmlListToArray(implementationIdeasSafe)?.map((idea: string, index) => (
                                 <li className="list-disc my-0" key={index}>
                                     {makeSafe(idea)}
                                 </li>
@@ -152,6 +172,16 @@ const FreshwaterManagementUnit = (
             ) : (
                 <div></div>
             )}
+
+            {otherInfoSafe && <div className="vpo mt-6" data-testid="vpo">
+                <h2>Other Relevant Information</h2>
+                <div
+                    className="space-y-4"
+                    dangerouslySetInnerHTML={{
+                        __html: purify.sanitize(makeSafe(otherInfoSafe)),
+                    }}
+                />
+            </div>}
 
             <div className="about-this-information mt-6">
                 <h3>About this information</h3>
