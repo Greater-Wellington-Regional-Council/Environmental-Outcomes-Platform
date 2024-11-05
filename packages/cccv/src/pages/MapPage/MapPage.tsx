@@ -36,7 +36,7 @@ import {
     FMU_BOUNDARIES_SOURCE,
     POTENTIAL_FMU_LAYER,
     TANGATA_WHENUA_SHAPES_SOURCE,
-    TANGATA_WHENUA_LOCATIONS_LAYER, CURRENT_FMU_LAYER,
+    TANGATA_WHENUA_LOCATIONS_LAYER, CURRENT_FMU_LAYER, OTHER_FEATURE_SHAPE_SOURCE, FOCUSED_FEATURE_LAYER,
 } from "@lib/values/mapSourceAndLayerIds.ts"
 import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx"
 import StringCarousel from "@components/StringCarousel/StringCarousel.tsx"
@@ -216,9 +216,6 @@ export default function MapPage() {
             })
         }
     }
-    
-    const OTHER_FEATURE_SHAPE_SOURCE = "focused-feature-source"
-    const FOCUSED_FEATURE_LAYER = "focused-feature-layer"
 
     return (
         <div className="map-page bg-white">
