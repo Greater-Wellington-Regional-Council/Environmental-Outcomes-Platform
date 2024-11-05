@@ -65,7 +65,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
                                                 key={index}
                                                 onClick={(e) => showSiteDescription(e, site, siteName)}
                                             >
-                                                {siteName}
+                                                {siteName.replace(/_/g, " ")}
                                             </li>
                                         ))}
                                     </ul>

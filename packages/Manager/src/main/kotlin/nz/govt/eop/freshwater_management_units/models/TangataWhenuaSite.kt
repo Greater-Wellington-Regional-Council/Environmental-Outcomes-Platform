@@ -17,9 +17,7 @@ data class TangataWhenuaSite(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) var id: Int? = null,
     @Column(name = "location") val location: String? = "",
     @Convert(converter = StringToListConverter::class)
-    @ElementCollection
-    @CollectionTable(name = "location_values", joinColumns = [JoinColumn(name = "tangata_whenua_site_id")])
-    @Column(name = "location_value")
+    @Column(name = "location_values")
     val locationValues: List<String> = emptyList(),
     @Column(name = "source_name")
     val sourceName: String? = null,
@@ -38,6 +36,23 @@ data class TangataWhenuaSite(
                 "Te_Manawaroa_o_te_Wai", "Ngā_Mahi_a_ngā_Tūpuna"
             ).filter { properties[it] !== null }
         }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+
+        other as TangataWhenuaSite
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+
+    override fun toString(): String {
+        return "TangataWhenuaSite(id=$id, location=$location, locationValues=$locationValues, sourceName=$sourceName, properties=$properties, geomGeoJson=$geomGeoJson)"
+    }
 }
 
 fun List<TangataWhenuaSite>.toFeatureCollection(): FeatureCollection {
