@@ -38,6 +38,6 @@ describe('FreshwaterManagementUnits service', () => {
           },
     }
     const augmentedRecord = await service.augmentRecord(record.freshwaterManagementUnit)
-    expect(augmentedRecord!.freshwaterManagementUnit.implementationIdeas).toContain("Consider wetlands for water quality treatment")
+    expect(augmentedRecord!.systemValues?.whaituaOverview).toContain("The Ruamāhanga is the largest")
   })
 })
