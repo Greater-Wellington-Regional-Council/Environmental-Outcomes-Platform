@@ -3,7 +3,7 @@ import {
     MapRef,
 } from "react-map-gl"
 
-import {MutableRefObject, useRef} from 'react'
+import {MutableRefObject, useRef, useState} from 'react'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './InteractiveMap.scss'
 import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
@@ -17,6 +17,7 @@ import MapControls from "@components/InteractiveMap/lib/MapControls/MapControls.
 import env from "@src/env.ts"
 import {useViewState} from "@components/InteractiveMap/lib/useViewState.ts"
 import {debounce} from "lodash"
+import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts"
 
 const DEFAULT_VIEW_WIDTH = 100
 const DEFAULT_VIEW_HEIGHT = 150
@@ -44,13 +45,15 @@ export default function InteractiveMap({
 
     const handleHover = onHover ? debounce((e) => onHover(e), 0) : undefined
 
+    const [ defaultStyle, setDefaultStyle ] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
+
     return (
         <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>
-            <MapStyleSelector onStyleChange={setMapStyle}/>
+            <MapStyleSelector onStyleChange={setMapStyle || setDefaultStyle}/>
             <Map
                 ref={mapRef as MutableRefObject<MapRef>}
                 data-Testid="map"
-                mapStyle={mapStyle}
+                mapStyle={mapStyle || defaultStyle}
                 style={{width: '100%', height: '100vh', aspectRatio: '24/9'}}
                 viewState={{...viewState, width: DEFAULT_VIEW_WIDTH, height: DEFAULT_VIEW_HEIGHT}}
                 mapboxAccessToken={env.MAPBOX_TOKEN}
