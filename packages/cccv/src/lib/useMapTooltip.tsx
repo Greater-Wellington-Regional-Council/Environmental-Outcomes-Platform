@@ -1,7 +1,7 @@
 import { useState, useEffect, RefObject } from 'react'
 import { debounce, get } from 'lodash'
 import { MapRef, MapMouseEvent } from 'react-map-gl'
-import { Feature } from 'geojson'
+import {Feature} from "geojson"
 
 interface TooltipSource {
     layer: string;
