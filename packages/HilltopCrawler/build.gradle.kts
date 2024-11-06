@@ -42,7 +42,7 @@ dependencies {
   implementation("org.flywaydb:flyway-database-postgresql:10.18.0")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("org.apache.kafka:kafka-streams")
-  implementation("com.bucket4j:bucket4j-core:8.3.0")
+  implementation("com.bucket4j:bucket4j-core:8.10.1")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
