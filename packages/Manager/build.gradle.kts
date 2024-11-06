@@ -47,7 +47,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.apache.kafka:kafka-streams")
