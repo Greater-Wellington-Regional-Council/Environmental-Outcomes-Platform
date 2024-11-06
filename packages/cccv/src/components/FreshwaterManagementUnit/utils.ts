@@ -1,4 +1,4 @@
-import FreshwaterManagementUnit from "@models/FreshwaterManagementUnit.ts"
+import FreshwaterManagementUnit from "@services/models/FreshwaterManagementUnit.ts"
 
 export interface Contaminant {
   title: string;

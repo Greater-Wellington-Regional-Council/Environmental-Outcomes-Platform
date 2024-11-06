@@ -64,17 +64,17 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.10.0")
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2024.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("org.locationtech.jts:jts-core:1.18.1")
+  implementation("org.locationtech.jts:jts-core:1.20.0")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
-  testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+  testImplementation("io.kotest:kotest-assertions-core:5.9.1")
   testImplementation("io.kotest:kotest-framework-engine:5.8.0")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.2")
   testImplementation("io.mockk:mockk:1.13.10")
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }

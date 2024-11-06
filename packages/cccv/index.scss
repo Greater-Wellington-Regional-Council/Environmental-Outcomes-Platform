@@ -36,8 +36,12 @@ caption {
   @apply font-source-sans-3 text-[16px] leading-[22px] text-textCaption;
 }
 
-button {
+.button-style {
   @apply font-source-sans-3 text-nui font-bold text-[16px] leading-[22px] border-2 rounded-3xl pl-4 border-nui pr-4 pt-2 pb-2;
+}
+
+button {
+  @apply button-style;
 }
 
 button:hover {

@@ -1,24 +1,24 @@
-import {Document, Font, Image, Page, Text, View} from '@react-pdf/renderer';
+import {Document, Font, Image, Page, Text, View} from '@react-pdf/renderer'
 import {
     contaminants as fmuContaminants,
     ContaminantList
-} from "@components/FreshwaterManagementUnit/utils.ts";
-import {FmuFullDetailsWithMap} from "@models/FreshwaterManagementUnit.ts";
-import colors from '@lib/colors';
-import {createTw} from "react-pdf-tailwind";
-import gwrcLogo from "@images/printLogo_500x188px.png";
-import {tw as predefinedTw} from "@lib/pdfTailwindStyles.ts";
-import fonts from "@src/fonts.ts";
-import React from "react";
+} from "@components/FreshwaterManagementUnit/utils.ts"
+import {FmuFullDetailsWithMap} from "@services/models/FreshwaterManagementUnit.ts"
+import colors from '@lib/colors'
+import {createTw} from "react-pdf-tailwind"
+import gwrcLogo from "@images/printLogo_500x188px.png"
+import {tw as predefinedTw} from "@lib/pdfTailwindStyles.ts"
+import fonts from "@src/fonts.ts"
+import React from "react"
 import {
     getObjectiveDescription,
     contaminantTitle,
     byWhen
-} from "@components/Contaminants/ContaminantObjectiveDescription";
-import makeSafe from "@lib/makeSafe.ts";
-import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts";
+} from "@components/Contaminants/ContaminantObjectiveDescription"
+import makeSafe from "@lib/makeSafe.ts"
+import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 
-Font.register(fonts.inter);
+Font.register(fonts.inter)
 
 const twContext = createTw({
     theme: {
@@ -60,7 +60,7 @@ const Contaminants: React.FC<{ contaminants: ContaminantList }> = ({contaminants
             </View>
         ))}
     </View>
-);
+)
 
 const BulletList = ({items}: { items: string[] }) => {
     return (
@@ -70,8 +70,8 @@ const BulletList = ({items}: { items: string[] }) => {
                 <Text style={tw('body')}>{makeSafe(item)}</Text>
             </View>
         ))}</View>
-    );
-};
+    )
+}
 
 const Footer = ({ freshwaterManagementUnit  }: FmuFullDetailsWithMap) => (
     /* Footer */
@@ -92,7 +92,7 @@ const Footer = ({ freshwaterManagementUnit  }: FmuFullDetailsWithMap) => (
             render={({pageNumber, totalPages}) => `Page ${pageNumber} of ${totalPages}`}
         />
     </View>
-);
+)
 
 const MapImage: React.FC<{ src: string, width?: string }> = ({ src, width }) => {
     return (
@@ -103,8 +103,8 @@ const MapImage: React.FC<{ src: string, width?: string }> = ({ src, width }) => 
             ]}
             src={src}
         />
-    );
-};
+    )
+}
 
 export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
 
@@ -112,11 +112,11 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
         fmuName1,
         catchmentDescription,
         implementationIdeas,
-    } = details.freshwaterManagementUnit;
+    } = details.freshwaterManagementUnit
 
-    const tangataWhenuaSites = details.tangataWhenuaSites;
+    const tangataWhenuaSites = details.tangataWhenuaSites
 
-    const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit);
+    const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit)
 
     return (
         <Document>
@@ -160,14 +160,14 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
                 ) : <View style={tw("mt-0")} />}
 
                 {/* Tangata Whenua Sites */}
-                {tangataWhenuaSites?.length ? (
+                {tangataWhenuaSites?.features.length ? (
                     <View style={tw("mt-6")} wrap={false}>
                         <Text style={tw("h2 mb-2")}>Sites of significance</Text>
                         <Text style={tw("body mb-1")}>
                             This area contains sites of significance to Tangata Whenua.
                         </Text>
 
-                        <BulletList items={tangataWhenuaSites?.map(s => s.location)} />
+                        <BulletList items={tangataWhenuaSites?.features.map(s => s.properties?.location)} />
                     </View>
                 ) : <View style={tw("mt-0")} />}
 

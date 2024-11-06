@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jakarta.persistence.*
 import java.io.IOException
 import kotlin.jvm.Transient
+import org.geojson.FeatureCollection
 import org.hibernate.annotations.Formula
 
 class GeoJsonSerializer : JsonSerializer<String>() {
@@ -94,25 +95,9 @@ data class FreshwaterManagementUnit(
     )""",
     )
     val catchmentDescription: String? = null,
-    @Transient var tangataWhenua: Set<TangataWhenuaSite> = emptySet(),
+    @Transient var tangataWhenuaSites: FeatureCollection? = null,
 ) {
   companion object {
     const val DEFAULT_SRID = 4326
-  }
-}
-
-data class FmuCccvDetails(
-    val freshwaterManagementUnit: FreshwaterManagementUnit,
-    val tangataWhenuaSites: List<TangataWhenuaSiteSummary>,
-) {
-  companion object {
-    fun fromFmuAndTws(
-        fmu: FreshwaterManagementUnit,
-        tws: Set<TangataWhenuaSite>,
-    ): FmuCccvDetails =
-        FmuCccvDetails(
-            freshwaterManagementUnit = fmu,
-            tangataWhenuaSites = tws.map { TangataWhenuaSiteSummary(it.location!!) },
-        )
   }
 }
