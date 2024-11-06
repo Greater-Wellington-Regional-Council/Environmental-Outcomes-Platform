@@ -39,7 +39,7 @@
     "@storybook/blocks": "^8.2.8",
     "@storybook/react": "^8.2.8",
     "@storybook/react-vite": "^8.3.0",
-    "@storybook/test": "^8.2.8",
+    "@storybook/test": "^8.4.2",
     "@tanstack/eslint-plugin-query": "^5.0.0",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
