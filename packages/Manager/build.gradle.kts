@@ -7,7 +7,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils.*
 plugins {
   id("org.springframework.boot") version "3.2.0"
   id("io.spring.dependency-management") version "1.1.4"
-  id("com.diffplug.spotless") version "6.23.3"
+  id("com.diffplug.spotless") version "7.0.0.BETA4"
   id("org.flywaydb.flyway") version "10.6.0"
   id("nu.studer.jooq") version "8.0"
   id("com.adarshr.test-logger") version "4.0.0"
@@ -65,6 +65,9 @@ dependencies {
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2021.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.18.1")
+  implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
+  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.2.0")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
@@ -87,14 +90,14 @@ tasks.withType<Test> {
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
-  kotlin {
-    // We specify the target directly here to avoid having the plugin depend on
-    // generated sources, which was forcing Flyway to run before the SQL had been
-    // formatted, which then confused flyway the next time it ran.
-    target("src/main/kotlin/**/*.kt", "src/test/kotlin/**/*.kt")
-    ktfmt()
-  }
-  kotlinGradle { ktfmt() }
+//  kotlin {
+//    // We specify the target directly here to avoid having the plugin depend on
+//    // generated sources, which was forcing Flyway to run before the SQL had been
+//    // formatted, which then confused flyway the next time it ran.
+//    target("src/main/kotlin/**/*.kt", "src/test/kotlin/**/*.kt")
+//    ktfmt()
+//  }
+//  kotlinGradle { ktfmt() }
 }
 
 val dbConfig =

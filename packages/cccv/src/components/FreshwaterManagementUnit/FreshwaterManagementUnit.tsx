@@ -1,6 +1,6 @@
 import "./FreshwaterManagementUnit.scss"
 import purify from "dompurify"
-import {useEffect, useMemo, useState} from "react"
+import React, {useEffect, useMemo, useState} from "react"
 import {FmuFullDetailsWithMap} from "@services/models/FreshwaterManagementUnit.ts"
 import {usePDF} from "@react-pdf/renderer"
 import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf"
@@ -13,6 +13,8 @@ import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 import {DownloadLink} from "@elements/DownloadLink/DownloadLink.tsx"
 import TangataWhenuaSites from "@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx"
+import DOMPurify from "dompurify"
+import {getSystemValueForCouncil, SystemValueNames} from "@services/SystemValueService/SystemValueService.ts"
 
 export interface FmuPanelHeaderProps {
     fmuName1: string
@@ -41,6 +43,8 @@ const FreshwaterManagementUnit = (
 
     const showHeader = details.showHeader
 
+    const culturalOverview = DOMPurify.sanitize(details.systemValues?.culturalOverview || "")
+
     const tangataWhenuaSites = details.tangataWhenuaSites
 
     const fileName = formatFilename(fmuName1 || "", `fmu_${id}`) + `_${dateTimeString()}` + ".pdf"
@@ -54,6 +58,19 @@ const FreshwaterManagementUnit = (
     const [instance, updateInstance] = usePDF({document: pdfDocument})
     const [pdfLoading, setPdfLoading] = useState(true)
     const [hasError, setHasError] = useState(false)
+
+    const [overview, setOverview] = useState<string | undefined>(catchmentDescription ?? "")
+
+    useEffect(() => {
+        if (catchmentDescription)
+            setOverview(catchmentDescription)
+        else {
+            (async () => {
+                const fetchedOverview = await getSystemValueForCouncil(SystemValueNames.RUAMAHANGA_WHAITUA_OVERVIEW) ?? null
+                setOverview(fetchedOverview || undefined)
+            })()
+        }
+    }, [catchmentDescription, fmuName1])
 
     useEffect(() => {
         if (instance) {
@@ -90,64 +107,65 @@ const FreshwaterManagementUnit = (
                     </div>
                 </FmuPanelHeader>}
 
-                    <div className="overview mt-0" data-testid="catchment-desc">
-                        <h2>Overview</h2>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: purify.sanitize(makeSafe(catchmentDescription ?? "<p>No overview available</p>")),
-                            }}
-                        />
-                    </div>
+            <div className="overview mt-0" data-testid="catchment-desc">
+                <h2>Overview</h2>
+                <div
+                    dangerouslySetInnerHTML={{
+                        __html: purify.sanitize(makeSafe(overview!)),
+                    }}
+                />
+            </div>
 
-                    <div className="contaminants mt-6">
-                        <h2>Contaminants</h2>
-                        <p>Freshwater objectives from {fmuName1 || ""} Whaitua Implementation Plan (as at August
-                            2018)</p>
+            <div className="contaminants mt-6">
+                <h2>Contaminants</h2>
+                <p>Freshwater objectives from {fmuName1 || ""} Whaitua Implementation Plan (as at August
+                    2018)</p>
 
-                        <div className="mt-4">
-                            <Contaminants contaminants={contaminants}/>
-                        </div>
-                    </div>
+                <div className="mt-4">
+                    <Contaminants contaminants={contaminants}/>
+                </div>
+            </div>
 
-                    {tangataWhenuaSites?.features.length ? (
-                        <div className="tangata-whenua mt-6">
-                            <TangataWhenuaSites tangataWhenuaSites={tangataWhenuaSites}
-                                                gotoTangataWhenua={gotoTangataWhenua}/>
-                        </div>
-                    ) : (
-                        <div></div>
-                    )}
+            {tangataWhenuaSites?.features.length ? (
+                <div className="tangata-whenua mt-6">
+                    <TangataWhenuaSites tangataWhenuaSites={tangataWhenuaSites}
+                                        gotoTangataWhenua={gotoTangataWhenua}
+                                        culturalOverview={culturalOverview}/>
+                </div>
+            ) : (
+                <div></div>
+            )}
 
-                    {implementationIdeas ? (
-                        <div className="implementation-ideas mt-6">
-                            <h2>Implementation Ideas</h2>
-                            <div className="implementation-ideas">
-                                <ul className={"mt-2"}>
-                                    {parseHtmlListToArray(implementationIdeas)?.map((idea: string, index) => (
-                                        <li className="list-disc my-0" key={index}>
-                                            {makeSafe(idea)}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    ) : (
-                        <div></div>
-                    )}
-
-                    <div className="about-this-information mt-6">
-                        <h3>About this information</h3>
-                        <p>
-                            The content, data, and information used in this app comes from multiple sources, including
-                            Greater
-                            Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Plans.
-                        </p>
-                        <div className="mt-6 flex justify-center">
-                            <EmailLink>Contact us for more information</EmailLink>
-                        </div>
+            {implementationIdeas ? (
+                <div className="implementation-ideas mt-6">
+                    <h2>Implementation Ideas</h2>
+                    <div className="implementation-ideas">
+                        <ul className={"mt-2"}>
+                            {parseHtmlListToArray(implementationIdeas)?.map((idea: string, index) => (
+                                <li className="list-disc my-0" key={index}>
+                                    {makeSafe(idea)}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
-                )
-            }
+            ) : (
+                <div></div>
+            )}
 
-            export default FreshwaterManagementUnit
+            <div className="about-this-information mt-6">
+                <h3>About this information</h3>
+                <p>
+                    The content, data, and information used in this app comes from multiple sources, including
+                    Greater
+                    Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Plans.
+                </p>
+                <div className="mt-6 flex justify-center">
+                    <EmailLink>Contact us for more information</EmailLink>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default FreshwaterManagementUnit
