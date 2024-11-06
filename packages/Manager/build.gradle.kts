@@ -64,7 +64,7 @@ dependencies {
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.10.0")
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2021.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("org.locationtech.jts:jts-core:1.18.1")
+  implementation("org.locationtech.jts:jts-core:1.20.0")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
