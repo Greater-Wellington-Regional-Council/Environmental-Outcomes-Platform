@@ -15,7 +15,6 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
     const [tooltip, setTooltip] = useState<{ description: string | null; x: number; y: number; isLoading: boolean } | null>(null)
 
     async function getSiteDescription(location: unknown, siteName: string) {
-        console.log("Fetching description for site: ", siteName, _.get(location, `properties.[${siteName}]`))
         return _.get(location, `properties.[${siteName}]`) || (await manaWhenuaSiteService.getBySiteName(siteName))?.explanation
     }
 

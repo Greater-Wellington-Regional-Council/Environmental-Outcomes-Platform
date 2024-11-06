@@ -84,6 +84,12 @@ data class FreshwaterManagementUnit(
     @Column(name = "culturalOverview", columnDefinition = "jsonb")
     @Convert(converter = JsonMapConverter::class)
     var culturalOverview: Map<String, Any> = emptyMap(),
+    @Column(name = "other_info", columnDefinition = "jsonb")
+    @Convert(converter = JsonMapConverter::class)
+    var otherInfo: Map<String, Any> = emptyMap(),
+    @Column(name = "vpo", columnDefinition = "jsonb")
+    @Convert(converter = JsonMapConverter::class)
+    var vpo: Map<String, Any> = emptyMap(),
     @JsonSerialize(using = GeoJsonSerializer::class)
     @JsonDeserialize(using = GeoJsonDeserializer::class)
     @Formula("CAST(ST_AsGeoJSON(ST_Transform(geom, 4326), 6 ,2) AS jsonb)")

@@ -100,11 +100,6 @@ const service = {
 
         const systemValues: SystemValues = {}
 
-        if (record.fmuName1 == 'Parkvale Stream') {
-            record.implementationIdeas = '<ul><li>Consider wetlands for water quality treatment before discharges reach the stream</li>\n<li>Setbacks from depressions and waterways should be necessary for intensive land uses including winter grazing and winter cropping</li>\n<li>Riparian planting should be undertaken in strategic spots, including to provide shade to help improve periphytn and macrophyte problems</li>\n<li>Good management of stock access to streambanks and of winter grazing may prove important in this catchment</li></ul>'
-            systemValues.culturalOverview = await getSystemValueForCouncil(SystemValueNames.PARKVALE_CULTURAL_OVERVIEW)
-        }
-
         systemValues.whaituaOverview = await getSystemValueForCouncil(SystemValueNames.RUAMAHANGA_WHAITUA_OVERVIEW)
 
         return {
