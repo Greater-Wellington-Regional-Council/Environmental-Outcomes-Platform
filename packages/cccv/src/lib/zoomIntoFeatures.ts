@@ -2,20 +2,34 @@ import { MutableRefObject } from "react"
 import { CombinedMapRef } from "@components/InteractiveMap/lib/InteractiveMap"
 import { Feature, FeatureCollection, Geometry } from "geojson"
 import mapboxgl from "mapbox-gl"
+import {IMViewLocation} from "@shared/types/global"
+import _ from "lodash"
+import { isFeature, isFeatureCollection } from "./geoJSONTypeGuards"
 
 export default function zoomIntoFeatures(
     mapRef: MutableRefObject<CombinedMapRef | null>,
-    featureOrCollection: Feature | FeatureCollection,
-    offset: [number, number] = [8000, -140],
-    padding: number = 300,
-    maxZoom: number = 20 // Allow for a max zoom limit
+    focus: Feature | FeatureCollection | IMViewLocation | null | undefined,
+    offset: [number, number] = [6000, -140],
+    padding: number = 200,
+    maxZoom: number = 20
 ) {
+    if (!focus) return
+
+    const featureOrCollection =
+        (isFeatureCollection(focus) || isFeature(focus)) ? focus :
+            _.get(focus, "featuresInFocus")
+
+    if (!featureOrCollection) return
+
     const map = mapRef.current?.getMap()
+
     if (!map) return
 
     const bounds = calculateBounds(featureOrCollection)
 
     if (bounds.isEmpty()) return
+
+    console.log("zoomIntoFeatures", bounds)
 
     const adjustedBounds = applyOffset(bounds, map, offset)
 

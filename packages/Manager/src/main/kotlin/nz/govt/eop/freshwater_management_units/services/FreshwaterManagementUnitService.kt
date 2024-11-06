@@ -22,7 +22,6 @@ constructor(
   ): FreshwaterManagementUnit? {
     val fmu = repository.findAllByLngLat(lng, lat, srid).firstOrNull()
 
-    // Populate tangataWhenuaSites only if needed
     if (includeTangataWhenuaSites && fmu != null) {
       fmu.tangataWhenuaSites =
           twsService.findTangataWhenuaInterestSitesForFMU(fmu).toFeatureCollection()

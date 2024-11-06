@@ -19,8 +19,9 @@ logging:
     org.jooq.Constants: OFF
     org.jooq: INFO
 
-arcgis:
-  tangata_whenua_sites:
-    urls:
-      - "http://test1.url"
-      - "http://test2.url"
+tangata.whenua.sites:
+  sources:
+    - name: "Schedule C"
+      urls:
+        - "http://test1.url"
+        - "http://test2.url"

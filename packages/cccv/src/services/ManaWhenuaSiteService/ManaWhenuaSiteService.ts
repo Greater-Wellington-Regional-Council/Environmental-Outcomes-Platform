@@ -42,4 +42,8 @@ const siteService = {
     }
 }
 
+export const getSiteDescription = async (siteName: string) => {
+    siteService.getBySiteName(siteName)
+}
+
 export default siteService

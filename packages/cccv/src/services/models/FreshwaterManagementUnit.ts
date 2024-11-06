@@ -1,4 +1,10 @@
 import {Feature, FeatureCollection} from "geojson"
+import {SystemValues} from "@services/SystemValueService/SystemValueService.ts"
+
+interface JsonContent {
+    value?: string
+    type: "html"
+}
 
 export default interface FreshwaterManagementUnit {
     id?: number | null
@@ -35,14 +41,18 @@ export default interface FreshwaterManagementUnit {
     atoxObj?: string
     ntoxBase?: string
     ntoxObj?: string
-    implementationIdeas?: string
+    implementationIdeas?: JsonContent
     catchmentDescription?: string
+    vpo?: JsonContent
+    otherInfo?: JsonContent
+    culturalOverview?: JsonContent
     tangataWhenuaSites?: FeatureCollection
 }
 
 export interface FmuFullDetails extends FreshwaterManagementUnit {
     freshwaterManagementUnit: FreshwaterManagementUnit
     tangataWhenuaSites?: FeatureCollection
+    systemValues?: SystemValues
 }
 
 export interface FmuFullDetailsWithMap extends FmuFullDetails {
