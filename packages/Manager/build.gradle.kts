@@ -8,7 +8,7 @@ plugins {
   id("org.springframework.boot") version "3.2.0"
   id("io.spring.dependency-management") version "1.1.6"
   id("com.diffplug.spotless") version "6.25.0"
-  id("org.flywaydb.flyway") version "10.6.0"
+  id("org.flywaydb.flyway") version "10.20.1"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.0.21"
