@@ -89,7 +89,8 @@ org:
 linz:
   koord:
     api:
-      key: "${CONFIG_LINZ_KOORDINATES_API_KEY:}"
+      base-url: "${CONFIG_LINZ_KOORD_BASE_URL:https://data.linz.govt.nz}"
+      key: "${CONFIG_LINZ_KOORD_API_KEY:}"
   address:
     boundary:
       timeout: 10000
@@ -97,3 +98,5 @@ linz:
 addressfinder:
   api:
     key: "${CONFIG_ADDRESSFINDER_API_KEY:}"
+    secret: "${CONFIG_ADDRESSFINDER_API_SECRET:}"
+    base-url: "${CONFIG_ADDRESSFINDER_BASE_URL:https://api.addressfinder.io/api/nz/address}"

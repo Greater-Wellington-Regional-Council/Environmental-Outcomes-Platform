@@ -1,95 +1,165 @@
 package nz.govt.eop.freshwater_management_units.services
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.junit.jupiter.api.Assertions.assertEquals
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlinx.coroutines.test.runTest
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.web.client.RestTemplate
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.web.reactive.function.client.WebClient
 
+@ActiveProfiles("test")
+@SpringBootTest
+@AutoConfigureMockMvc
 class LinzDataServiceTest {
 
-  private lateinit var restTemplate: RestTemplate
+  private lateinit var mockWebServer: MockWebServer
   private lateinit var linzDataService: LinzDataService
-  private val apiKey = "testApiKey"
 
   @BeforeEach
   fun setup() {
-    restTemplate = mockk()
-    linzDataService = LinzDataService(restTemplate, apiKey)
+    mockWebServer = MockWebServer()
+    mockWebServer.start()
+
+    val baseUrl = mockWebServer.url("/").toString()
+    val webClient = WebClient.builder().baseUrl(baseUrl).build()
+
+    linzDataService = LinzDataService(webClient, "dummy-linz-api-key")
+  }
+
+  @AfterEach
+  fun tearDown() {
+    mockWebServer.shutdown()
   }
 
   @Test
-  fun `getUnitOfPropertyIdForAddressId returns unit of property ID successfully`() {
-    val addressId = "12345"
-    val expectedUnitOfPropertyId = "54321"
-    val responseData =
+  fun `test getUnitOfPropertyIdForAddressId returns correct data`() = runTest {
+    val mockResponseBody =
+        """
+            {
+              "features": [
+                {
+                  "properties": {
+                    "unit_of_property_id": "12345"
+                  }
+                }
+              ]
+            }
+        """
+            .trimIndent()
+
+    mockWebServer.enqueue(
+        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+
+    val result = linzDataService.getUnitOfPropertyIdForAddressId("some-address-id")
+    assertEquals("12345", result)
+
+    val request = mockWebServer.takeRequest()
+    val decodedPath = URLDecoder.decode(request.path, StandardCharsets.UTF_8.toString())
+    assertEquals(
+        "/services;key=dummy-linz-api-key/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=table-115638&cql_filter=address_id=some-address-id&PropertyName=(id,unit_of_property_id,address_id)&outputFormat=json",
+        decodedPath)
+  }
+
+  @Test
+  fun `test getUnitOfPropertyIdForAddressId throws exception when features are missing`() =
+      runTest {
+        val mockResponseBody =
+            """
+            {
+              "some_other_key": []
+            }
+        """
+                .trimIndent()
+
+        mockWebServer.enqueue(
+            MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+
+        assertFailsWith<RuntimeException> {
+          linzDataService.getUnitOfPropertyIdForAddressId("some-address-id")
+        }
+
+        val request = mockWebServer.takeRequest()
+        val decodedPath = URLDecoder.decode(request.path, StandardCharsets.UTF_8.toString())
+        assertEquals(
+            "/services;key=dummy-linz-api-key/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=table-115638&cql_filter=address_id=some-address-id&PropertyName=(id,unit_of_property_id,address_id)&outputFormat=json",
+            decodedPath)
+      }
+
+  @Test
+  fun `test getGeometryForUnitOfProperty returns correct data`() = runTest {
+    val mockResponseBody =
+        """
+            {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [174.7633, -36.8485]
+                  },
+                  "properties": {
+                    "unit_of_property_id": "12345"
+                  }
+                }
+              ]
+            }
+        """
+            .trimIndent()
+
+    mockWebServer.enqueue(
+        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+
+    val result = linzDataService.getGeometryForUnitOfProperty("12345", "EPSG:4326")
+
+    val expected =
         mapOf(
+            "type" to "FeatureCollection",
             "features" to
                 listOf(
                     mapOf(
-                        "properties" to mapOf("unit_of_property_id" to expectedUnitOfPropertyId))))
+                        "type" to "Feature",
+                        "geometry" to
+                            mapOf("type" to "Point", "coordinates" to listOf(174.7633, -36.8485)),
+                        "properties" to mapOf("unit_of_property_id" to "12345"))))
 
-    every { restTemplate.getForEntity(any<String>(), Map::class.java) } returns
-        ResponseEntity(responseData, HttpStatus.OK)
+    assertEquals(expected, result)
 
-    val result = linzDataService.getUnitOfPropertyIdForAddressId(addressId)
-
-    assertEquals(expectedUnitOfPropertyId, result)
-    verify { restTemplate.getForEntity(any<String>(), Map::class.java) }
-  }
-
-  @Test
-  fun `getUnitOfPropertyIdForAddressId throws exception when API call fails`() {
-    val addressId = "12345"
-
-    every { restTemplate.getForEntity(any<String>(), Map::class.java) } returns
-        ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
-
-    val exception =
-        assertThrows<RuntimeException> {
-          linzDataService.getUnitOfPropertyIdForAddressId(addressId)
-        }
-
-    assertEquals("Failed to retrieve address data for address $addressId", exception.message)
-    verify { restTemplate.getForEntity(any<String>(), Map::class.java) }
-  }
-
-  @Test
-  fun `getGeometryForUnitOfProperty returns geometry data successfully`() {
-    val unitOfPropertyId = "54321"
-    val projection = "EPSG:4326"
-    val expectedGeometryData = mapOf("someKey" to "someValue")
-
-    every { restTemplate.getForEntity(any<String>(), Map::class.java) } returns
-        ResponseEntity(expectedGeometryData, HttpStatus.OK)
-
-    val result = linzDataService.getGeometryForUnitOfProperty(unitOfPropertyId, projection)
-
-    assertEquals(expectedGeometryData, result)
-    verify { restTemplate.getForEntity(any<String>(), Map::class.java) }
-  }
-
-  @Test
-  fun `getGeometryForUnitOfProperty throws exception when API call fails`() {
-    val unitOfPropertyId = "54321"
-    val projection = "EPSG:4326"
-
-    every { restTemplate.getForEntity(any<String>(), Map::class.java) } returns
-        ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
-
-    val exception =
-        assertThrows<RuntimeException> {
-          linzDataService.getGeometryForUnitOfProperty(unitOfPropertyId, projection)
-        }
-
+    val request = mockWebServer.takeRequest()
+    val decodedPath = URLDecoder.decode(request.path, StandardCharsets.UTF_8.toString())
     assertEquals(
-        "Failed to retrieve geometry data for unit of property $unitOfPropertyId",
-        exception.message)
-    verify { restTemplate.getForEntity(any<String>(), Map::class.java) }
+        "/services;key=dummy-linz-api-key/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=layer-113968&cql_filter=unit_of_property_id='12345'&PropertyName=(unit_of_property_id,geom)&SRSName=EPSG:4326&outputFormat=json",
+        decodedPath)
   }
+
+  @Test
+  fun `test getGeometryForUnitOfProperty throws exception when geometry data is missing`() =
+      runTest {
+        val mockResponseBody =
+            """
+            null
+        """
+                .trimIndent()
+
+        mockWebServer.enqueue(
+            MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+
+        assertFailsWith<RuntimeException> {
+          linzDataService.getGeometryForUnitOfProperty("12345", "EPSG:4326")
+        }
+
+        val request = mockWebServer.takeRequest()
+        val decodedPath = URLDecoder.decode(request.path, StandardCharsets.UTF_8.toString())
+        assertEquals(
+            "/services;key=dummy-linz-api-key/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=layer-113968&cql_filter=unit_of_property_id='12345'&PropertyName=(unit_of_property_id,geom)&SRSName=EPSG:4326&outputFormat=json",
+            decodedPath)
+      }
 }

@@ -10,15 +10,15 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
-class LinzProxyControllerTest {
+class LinzAddressDataControllerTest {
 
   private lateinit var linzDataService: LinzDataService
-  private lateinit var linzProxyController: LinzProxyController
+  private lateinit var linzAddressDataController: LinzAddressDataController
 
   @BeforeEach
   fun setup() {
     linzDataService = mockk()
-    linzProxyController = LinzProxyController(linzDataService)
+    linzAddressDataController = LinzAddressDataController(linzDataService)
   }
 
   @Test
@@ -26,19 +26,15 @@ class LinzProxyControllerTest {
     val addressId = "12345"
     val expectedUnitOfPropertyId = "54321"
 
-    // Mock the service response
     every { linzDataService.getUnitOfPropertyIdForAddressId(addressId) } returns
         expectedUnitOfPropertyId
 
-    // Call the controller method
     val response: ResponseEntity<String> =
-        linzProxyController.getUnitOfPropertyIdForAddressId(addressId)
+        linzAddressDataController.getUnitOfPropertyIdForAddressId(addressId)
 
-    // Verify the result
     assertEquals(HttpStatus.OK, response.statusCode)
     assertEquals(expectedUnitOfPropertyId, response.body)
 
-    // Verify the service was called with the correct parameter
     verify { linzDataService.getUnitOfPropertyIdForAddressId(addressId) }
   }
 
@@ -47,19 +43,15 @@ class LinzProxyControllerTest {
     val addressId = "12345"
     val errorMessage = "Failed to retrieve address data"
 
-    // Mock the service to throw an exception
     every { linzDataService.getUnitOfPropertyIdForAddressId(addressId) } throws
         RuntimeException(errorMessage)
 
-    // Call the controller method
     val response: ResponseEntity<String> =
-        linzProxyController.getUnitOfPropertyIdForAddressId(addressId)
+        linzAddressDataController.getUnitOfPropertyIdForAddressId(addressId)
 
-    // Verify the result
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
     assertEquals("Failed to retrieve address data: $errorMessage", response.body)
 
-    // Verify the service was called with the correct parameter
     verify { linzDataService.getUnitOfPropertyIdForAddressId(addressId) }
   }
 
@@ -69,19 +61,15 @@ class LinzProxyControllerTest {
     val projection = "EPSG:4326"
     val expectedGeometryData = mapOf("someKey" to "someValue")
 
-    // Mock the service response
     every { linzDataService.getGeometryForUnitOfProperty(unitOfPropertyId, projection) } returns
         expectedGeometryData
 
-    // Call the controller method
     val response: ResponseEntity<Map<String, Any>> =
-        linzProxyController.getGeometryForUnitOfProperty(unitOfPropertyId, projection)
+        linzAddressDataController.getGeometryForUnitOfProperty(unitOfPropertyId, projection)
 
-    // Verify the result
     assertEquals(HttpStatus.OK, response.statusCode)
     assertEquals(expectedGeometryData, response.body)
 
-    // Verify the service was called with the correct parameters
     verify { linzDataService.getGeometryForUnitOfProperty(unitOfPropertyId, projection) }
   }
 
@@ -91,19 +79,15 @@ class LinzProxyControllerTest {
     val projection = "EPSG:4326"
     val errorMessage = "Failed to retrieve geometry data"
 
-    // Mock the service to throw an exception
     every { linzDataService.getGeometryForUnitOfProperty(unitOfPropertyId, projection) } throws
         RuntimeException(errorMessage)
 
-    // Call the controller method
     val response: ResponseEntity<Map<String, Any>> =
-        linzProxyController.getGeometryForUnitOfProperty(unitOfPropertyId, projection)
+        linzAddressDataController.getGeometryForUnitOfProperty(unitOfPropertyId, projection)
 
-    // Verify the result
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
     assertEquals(mapOf("error" to errorMessage), response.body)
 
-    // Verify the service was called with the correct parameters
     verify { linzDataService.getGeometryForUnitOfProperty(unitOfPropertyId, projection) }
   }
 
@@ -114,20 +98,16 @@ class LinzProxyControllerTest {
     val projection = "EPSG:4326"
     val expectedGeometryData = mapOf("someKey" to "someValue")
 
-    // Mock the service responses
     every { linzDataService.getUnitOfPropertyIdForAddressId(addressId) } returns unitOfPropertyId
     every { linzDataService.getGeometryForUnitOfProperty(unitOfPropertyId, projection) } returns
         expectedGeometryData
 
-    // Call the controller method
     val response: ResponseEntity<Map<String, Any>> =
-        linzProxyController.getGeometryForAddressId(addressId, projection)
+        linzAddressDataController.getGeometryForAddressId(addressId, projection)
 
-    // Verify the result
     assertEquals(HttpStatus.OK, response.statusCode)
     assertEquals(expectedGeometryData, response.body)
 
-    // Verify the service was called with the correct parameters
     verify { linzDataService.getUnitOfPropertyIdForAddressId(addressId) }
     verify { linzDataService.getGeometryForUnitOfProperty(unitOfPropertyId, projection) }
   }
@@ -137,19 +117,15 @@ class LinzProxyControllerTest {
     val addressId = "12345"
     val errorMessage = "Failed to retrieve address data"
 
-    // Mock the service to throw an exception
     every { linzDataService.getUnitOfPropertyIdForAddressId(addressId) } throws
         RuntimeException(errorMessage)
 
-    // Call the controller method
     val response: ResponseEntity<Map<String, Any>> =
-        linzProxyController.getGeometryForAddressId(addressId, "EPSG:4326")
+        linzAddressDataController.getGeometryForAddressId(addressId, "EPSG:4326")
 
-    // Verify the result
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.statusCode)
     assertEquals(mapOf("error" to errorMessage), response.body)
 
-    // Verify the service was called with the correct parameter
     verify { linzDataService.getUnitOfPropertyIdForAddressId(addressId) }
   }
 }

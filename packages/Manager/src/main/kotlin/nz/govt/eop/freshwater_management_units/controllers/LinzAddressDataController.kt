@@ -1,15 +1,17 @@
 package nz.govt.eop.freshwater_management_units.controllers
 
 import nz.govt.eop.freshwater_management_units.services.LinzDataService
+import nz.govt.eop.utils.LimitRequests
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/linz")
-class LinzProxyController(private val linzDataService: LinzDataService) {
+@RequestMapping("/ttw")
+class LinzAddressDataController(private val linzDataService: LinzDataService) {
 
-  @GetMapping("/unitOfPropertyId")
-  fun getUnitOfPropertyIdForAddressId(@RequestParam addressId: String): ResponseEntity<String> {
+  @LimitRequests("Referer")
+  @GetMapping("/address/{addressId}/unit-of-property-id")
+  fun getUnitOfPropertyIdForAddressId(@PathVariable addressId: String): ResponseEntity<String> {
     return try {
       val unitOfPropertyId = linzDataService.getUnitOfPropertyIdForAddressId(addressId)
       ResponseEntity.ok(unitOfPropertyId)
@@ -19,9 +21,10 @@ class LinzProxyController(private val linzDataService: LinzDataService) {
     }
   }
 
-  @GetMapping("/geometry")
+  @LimitRequests("Referer")
+  @GetMapping("/unit-of-property/{unitOfPropertyId}/geometry")
   fun getGeometryForUnitOfProperty(
-      @RequestParam unitOfPropertyId: String,
+      @PathVariable unitOfPropertyId: String,
       @RequestParam(defaultValue = "EPSG:4326") projection: String
   ): ResponseEntity<Map<String, Any>> {
     return try {
@@ -33,9 +36,10 @@ class LinzProxyController(private val linzDataService: LinzDataService) {
     }
   }
 
-  @GetMapping("/geometryByAddressId")
+  @LimitRequests("Referer")
+  @GetMapping("/address/{addressId}/geometry")
   fun getGeometryForAddressId(
-      @RequestParam addressId: String,
+      @PathVariable addressId: String,
       @RequestParam(defaultValue = "EPSG:4326") projection: String
   ): ResponseEntity<Map<String, Any>> {
     return try {

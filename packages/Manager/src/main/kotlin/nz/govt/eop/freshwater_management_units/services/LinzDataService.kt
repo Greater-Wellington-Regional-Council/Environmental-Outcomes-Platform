@@ -1,63 +1,87 @@
 package nz.govt.eop.freshwater_management_units.services
 
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBody
+
+@Configuration
+class LinzDataWebClientConfig {
+
+  @Value("\${linz.koord.api.base-url}") private lateinit var baseUrl: String
+
+  @Bean
+  fun linzDataWebClient(): WebClient {
+    return WebClient.builder()
+        .baseUrl(baseUrl)
+        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        .build()
+  }
+}
 
 @Service
 class LinzDataService(
-    private val restTemplate: RestTemplate,
+    private val linzDataWebClient: WebClient,
     @Value("\${linz.koord.api.key}") private val linzApiKey: String
 ) {
 
-  @Suppress("UNCHECKED_CAST")
-  fun getUnitOfPropertyIdForAddressId(addressId: String): String {
-    val url =
-        UriComponentsBuilder.fromHttpUrl("https://data.linz.govt.nz/services;key=$linzApiKey")
-            .queryParam("service", "WFS")
-            .queryParam("version", "2.0.0")
-            .queryParam("request", "GetFeature")
-            .queryParam("typeNames", "table-115638")
-            .queryParam("cql_filter", "address_id=$addressId")
-            .queryParam("PropertyName", "(id,unit_of_property_id,address_id)")
-            .queryParam("outputFormat", "json")
-            .toUriString()
+  fun getUnitOfPropertyIdForAddressId(addressId: String): String = runBlocking {
+    val body =
+        linzDataWebClient
+            .get()
+            .uri {
+              it.path("/services;key=$linzApiKey/wfs")
+                  .queryParam("service", "WFS")
+                  .queryParam("version", "2.0.0")
+                  .queryParam("request", "GetFeature")
+                  .queryParam("typeNames", "table-115638")
+                  .queryParam("cql_filter", "address_id=$addressId")
+                  .queryParam("PropertyName", "(id,unit_of_property_id,address_id)")
+                  .queryParam("outputFormat", "json")
+                  .build()
+            }
+            .retrieve()
+            .awaitBody<Map<String, Any>>()
 
-    val response = restTemplate.getForEntity(url, Map::class.java)
-    val body = response.body as? Map<String, Any>
-    if (!response.statusCode.is2xxSuccessful || body == null) {
-      throw RuntimeException("Failed to retrieve address data for address $addressId")
-    }
-
+    @Suppress("UNCHECKED_CAST")
     val features =
         body["features"] as? List<Map<String, Any>> ?: throw RuntimeException("Features not found")
-    return features.firstOrNull()?.get("properties")?.let {
+
+    features.firstOrNull()?.get("properties")?.let {
       (it as Map<*, *>)["unit_of_property_id"] as? String
     } ?: throw RuntimeException("unit_of_property_id not found for address $addressId")
   }
 
-  @Suppress("UNCHECKED_CAST")
-  fun getGeometryForUnitOfProperty(unitOfPropertyId: String, projection: String): Map<String, Any> {
-    val url =
-        UriComponentsBuilder.fromHttpUrl("https://data.linz.govt.nz/services;key=$linzApiKey")
-            .queryParam("service", "WFS")
-            .queryParam("version", "2.0.0")
-            .queryParam("request", "GetFeature")
-            .queryParam("typeNames", "layer-113968")
-            .queryParam("cql_filter", "unit_of_property_id='$unitOfPropertyId'")
-            .queryParam("PropertyName", "(unit_of_property_id,geom)")
-            .queryParam("SRSName", projection)
-            .queryParam("outputFormat", "json")
-            .toUriString()
+  fun getGeometryForUnitOfProperty(unitOfPropertyId: String, projection: String): Map<String, Any> =
+      runBlocking {
+        val body =
+            linzDataWebClient
+                .get()
+                .uri {
+                  it.path("/services;key=$linzApiKey/wfs")
+                      .queryParam("service", "WFS")
+                      .queryParam("version", "2.0.0")
+                      .queryParam("request", "GetFeature")
+                      .queryParam("typeNames", "layer-113968")
+                      .queryParam("cql_filter", "unit_of_property_id='$unitOfPropertyId'")
+                      .queryParam("PropertyName", "(unit_of_property_id,geom)")
+                      .queryParam("SRSName", projection)
+                      .queryParam("outputFormat", "json")
+                      .build()
+                }
+                .retrieve()
+                .awaitBody<Map<String, Any>>()
 
-    val response = restTemplate.getForEntity(url, Map::class.java)
-    val body = response.body as? Map<String, Any>
-    if (!response.statusCode.is2xxSuccessful || body == null) {
-      throw RuntimeException(
-          "Failed to retrieve geometry data for unit of property $unitOfPropertyId")
-    }
+        if (body.isEmpty()) {
+          throw RuntimeException(
+              "Failed to retrieve geometry data for unit of property $unitOfPropertyId")
+        }
 
-    return body
-  }
+        body
+      }
 }
