@@ -172,10 +172,10 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
                 ) : <View style={tw("mt-0")} />}
 
                 {/* Actions */}
-                {implementationIdeas ? (
+                {implementationIdeas?.value ? (
                     <View style={tw("mt-6")} wrap={false}>
                         <Text style={tw("h2")}>Implementation Ideas</Text>
-                        <BulletList items={parseHtmlListToArray(implementationIdeas)} />
+                        <BulletList items={parseHtmlListToArray(implementationIdeas?.value)} />
                     </View>
                 ) : <View style={tw("mt-0")} />}
 

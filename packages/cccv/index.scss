@@ -9,7 +9,7 @@ h1 {
 }
 
 h2 {
-  @apply font-source-sans-3 font-bold text-[22px] leading-[34px];
+  @apply font-source-sans-3 font-bold text-[22px] leading-[32px];
 }
 
 h3 {
@@ -56,6 +56,6 @@ ul {
     @apply list-inside ml-[-1.5em] pl-1.5 indent-[-1.5em];
 
     li {
-        @apply list-disc ml-6 pl-6 -mt-1.5 leading-7;
+        @apply list-disc ml-6 mt-2 pl-6 leading-7;
     }
 }

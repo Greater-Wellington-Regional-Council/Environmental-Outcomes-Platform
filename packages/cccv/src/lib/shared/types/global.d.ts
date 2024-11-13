@@ -1,5 +1,6 @@
 import {Feature, FeatureCollection} from "geojson"
 import {Address} from "../../../services/AddressesService/AddressesService"
+import {FmuFullDetails} from "../../../services/models/FreshwaterManagementUnit"
 
 interface Dictionary<T> {
     [index: string]: T;
@@ -145,9 +146,11 @@ interface IMViewLocation extends ViewLocation {
     srid?: number | null;
     description?: string;
     featuresInFocus?: Feature | FeatureCollection;
+    boundary?: Feature | FeatureCollection;
     highlight?: MapPaintProperties;
     address?: Address;
     data?: unknown;
+    fmus?: FmuFullDetails[];
 }
 
 interface AllPlanData {

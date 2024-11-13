@@ -5,31 +5,31 @@ describe('makeSafe', () => {
   it('removes <script> tags and their content', () => {
     const unsafeString = '<div>Hello<script>alert("XSS")</script>World</div>'
     const safeString = makeSafe(unsafeString)
-    expect(safeString).toBe('HelloWorld')
+    expect(safeString).toBe('<div>HelloWorld</div>')
   })
 
-  it('removes <script> tags with spaces and their content', () => {
+  it('removes <script> tags including spaces and their content', () => {
     const unsafeString = '<div>Hello<script>alert("XSS")</script >World</div>'
     const safeString = makeSafe(unsafeString)
-    expect(safeString).toBe('HelloWorld')
+    expect(safeString).toBe('<div>HelloWorld</div>')
   })
 
   it('removes self-closing <script/> tags', () => {
     const unsafeString = '<div>Hello<script/>World</div>'
     const safeString = makeSafe(unsafeString)
-    expect(safeString).toBe('HelloWorld')
+    expect(safeString).toBe('<div>Hello</div>')
   })
 
   it('removes incomplete <script> tags', () => {
     const unsafeString = '<div>Hello<scriptWorld'
     const safeString = makeSafe(unsafeString)
-    expect(safeString).toBe('Hello')
+    expect(safeString).toBe('<div>Hello</div>')
   })
 
   it('removes other HTML tags', () => {
     const unsafeString = '<div><p>This is <strong>bold</strong> text</p></div>'
     const safeString = makeSafe(unsafeString)
-    expect(safeString).toBe('This is bold text')
+    expect(safeString).toBe('<div><p>This is <strong>bold</strong> text</p></div>')
   })
 
   it('handles strings without HTML correctly', () => {

@@ -28,14 +28,15 @@ interface TangataWhenuaSiteRepository : CrudRepository<TangataWhenuaSite, Int> {
   @Query(
       value =
           """
-            INSERT INTO tangata_whenua_sites (location, location_values, geom)
-            VALUES (:location, :location_values, ST_GeomFromGeoJSON(:geom))
-        """,
-      nativeQuery = true,
-  )
+        INSERT INTO tangata_whenua_sites (location, location_values, geom, source_name, properties)
+        VALUES (:location, :location_values, ST_GeomFromGeoJSON(:geom), :source_name, CAST(:properties AS jsonb))
+    """,
+      nativeQuery = true)
   fun saveWithGeom(
       @Param("location") location: String?,
       @Param("location_values") locationValues: List<String>?,
       @Param("geom") geom: String,
+      @Param("source_name") sourceName: String?,
+      @Param("properties") properties: String
   )
 }

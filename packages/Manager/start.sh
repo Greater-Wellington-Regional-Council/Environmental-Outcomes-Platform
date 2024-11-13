@@ -31,6 +31,7 @@ stop_containers () {
   fi
 
   declare -a grep_strings=('manager-' 'manager-database' 'confluentinc' 'provectuslabs' 'pramsey' 'temurin' 'kafka')
+  # shellcheck disable=SC2046
   containers=$(docker ps -a $(printf -- '--filter name=%s ' "${grep_strings[@]}") --format "{{.Names}}")
   echo "Containers to be stopped for patterns: ${containers:-None}"
 
@@ -38,6 +39,7 @@ stop_containers () {
     echo "Stopping containers..."
     echo "$containers" | xargs -r docker stop
     if [ "$delete_after_stop" = true ]; then
+      # shellcheck disable=SC2128
       echo "Deleting stopped containers matching: $grep_strings"
       echo "$containers" | xargs -r docker rm -v
     fi
@@ -47,7 +49,12 @@ stop_containers () {
   echo "Pruning stopped containers, dangling images, and unused volumes..."
   docker system prune -af --volumes
 
+  # shellcheck disable=SC2046
+  docker volume rm $(docker volume ls -q | grep "batect-cache")
+
+  # shellcheck disable=SC2046
   images=$(docker images $(printf -- '--filter=reference="*%s*" ' "${grep_strings[@]}") --format "{{.Repository}}:{{.Tag}}")
+
   echo "Images to be forcefully removed: ${images:-None}"
 
   if [ -n "$images" ]; then
@@ -70,6 +77,9 @@ inspect_all () {
 }
 
 start_all () {
+  # shellcheck disable=SC2046
+  export $(grep -v '^#' .env | xargs)
+
   ./batect --output=all run
 }
 
