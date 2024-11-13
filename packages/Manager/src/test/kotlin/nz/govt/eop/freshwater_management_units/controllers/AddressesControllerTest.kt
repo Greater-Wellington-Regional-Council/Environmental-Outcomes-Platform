@@ -28,6 +28,7 @@ class AddressesControllerTest {
         listOf(
             mapOf("label" to "Test Address 1", "value" to "123"),
             mapOf("label" to "Test Address 2", "value" to "456"))
+
     every { addressFinderService.getAddressOptions(query) } returns serviceResponse
 
     val response: ResponseEntity<List<Map<String, Any>>> =

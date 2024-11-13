@@ -12,7 +12,7 @@ describe('FreshwaterManagementUnits service', () => {
         id: 1,
         fmuName1: 'Parkvale Stream',
       },
-      tangataWhenuaSites: // Simple multi-polygon geojson
+      tangataWhenuaSites:
           {
             type: "FeatureCollection",
             features: [
@@ -38,6 +38,6 @@ describe('FreshwaterManagementUnits service', () => {
           },
     }
     const augmentedRecord = await service.augmentRecord(record.freshwaterManagementUnit)
-    expect(augmentedRecord!.systemValues?.whaituaOverview).toContain("The Ruamāhanga is the largest")
+    expect(augmentedRecord!.systemValues?.whaituaOverview || "").toContain("The Ruamāhanga is the largest")
   })
 })

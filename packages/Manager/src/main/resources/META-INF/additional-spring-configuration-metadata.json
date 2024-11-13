@@ -26,6 +26,11 @@
       "description": "Toitū te Whenua LINZ Data Service Koordinates API key."
     },
     {
+      "name": "linz.koord.api.base-url",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Toitū te Whenua LINZ Data Service API URL."
+    },
+    {
       "name": "linz.address.boundary.timeout",
       "type": "java.util.List<java.lang.String>",
       "description": "Seconds to wait for LINZ Address Boundary API response."
@@ -34,5 +39,16 @@
       "name": "addressfinder.api.key",
       "type": "java.util.List<java.lang.String>",
       "description": "AddressFinder API key."
+    },
+    {
+      "name": "addressfinder.api.secret",
+      "type": "java.util.List<java.lang.String>",
+      "description": "AddressFinder API secret (auth token)."
+    },
+    {
+      "name": "addressfinder.api.base-url",
+      "type": "java.util.List<java.lang.String>",
+      "description": "AddressFinder API base URL."
     }
-] }
+  ]
+}

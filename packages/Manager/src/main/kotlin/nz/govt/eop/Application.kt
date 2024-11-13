@@ -76,20 +76,6 @@ private fun storeKeystoreFromEnvironment() {
   System.setProperty(PROP_CONFIG_KEYSTORE_PATH, keyStoreFile.pathString)
 }
 
-/**
- * Check the health of the application.
- *
- * TODO: This is a placeholder for the health check endpoint. It should be replaced with a more
- *   comprehensive health check.
- */
-@RestController
-class HealthCheckController {
-  @GetMapping("/health", produces = [MediaType.APPLICATION_JSON_VALUE])
-  fun healthCheck(): ResponseEntity<Any> {
-    return ResponseEntity.ok().body(mapOf("status" to "UP"))
-  }
-}
-
 @RestController
 @RequestMapping("/org")
 class OrgController {

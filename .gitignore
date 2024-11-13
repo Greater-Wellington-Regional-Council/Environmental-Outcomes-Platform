@@ -56,3 +56,4 @@ out/
 .volumes/
 
 qodana.yaml
+/scripts/afs.main.kts
