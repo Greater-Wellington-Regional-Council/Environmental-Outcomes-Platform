@@ -32,7 +32,7 @@ class AddressesController(private val addressFinderService: AddressFinderService
     return try {
       val addressData =
           addressFinderService.getAddressByPxid(pxid).mapValues { (_, value: Any?) ->
-              (value ?: "Unknown")
+            (value ?: "Unknown")
           }
       ResponseEntity.ok(addressData)
     } catch (e: Exception) {
