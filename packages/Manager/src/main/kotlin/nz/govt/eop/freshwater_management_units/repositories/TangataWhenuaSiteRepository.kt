@@ -11,25 +11,31 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 interface TangataWhenuaSiteRepository : CrudRepository<TangataWhenuaSite, Int> {
   @Query(
-      "SELECT t.* FROM tangata_whenua_sites t WHERE ST_Intersects(t.geom, ST_Transform(ST_GeomFromGeoJSON(:boundary), 4326))",
+      """
+        SELECT t.*,
+               ST_AsGeoJSON(ST_Transform(t.geom, 4326), 6, 2) AS geomGeoJson
+        FROM tangata_whenua_sites t
+        WHERE ST_Intersects(t.geom, ST_Transform(ST_GeomFromGeoJSON(:boundary), 4326))
+        """,
       nativeQuery = true,
   )
   fun findAllIntersectingWith(
       @Param("boundary") boundary: String,
-  ): Set<TangataWhenuaSite>
+  ): List<TangataWhenuaSite>
 
   @Modifying
   @Transactional
   @Query(
       value =
           """
-            INSERT INTO tangata_whenua_sites (location, geom)
-            VALUES (:location, ST_GeomFromGeoJSON(:geom))
+            INSERT INTO tangata_whenua_sites (location, location_values, geom)
+            VALUES (:location, :location_values, ST_GeomFromGeoJSON(:geom))
         """,
       nativeQuery = true,
   )
   fun saveWithGeom(
-      @Param("location") location: String,
+      @Param("location") location: String?,
+      @Param("location_values") locationValues: List<String>?,
       @Param("geom") geom: String,
   )
 }
