@@ -11,7 +11,6 @@ const useMapFocus = (
     const [focusPin, setFocusPin] = useState<Marker | null>(null)
 
     useEffect(() => {
-        console.log("useMapFocus", locationInFocus)
         placeFocusPin(locationInFocus)
         zoomIntoFeatures(mapRef, locationInFocus)
     // eslint-disable-next-line react-hooks/exhaustive-deps

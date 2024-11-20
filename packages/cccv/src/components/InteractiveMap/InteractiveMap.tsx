@@ -30,6 +30,7 @@ export default function InteractiveMap({
                                            children,
                                            mapStyle,
                                            setMapStyle,
+                                           onLoad,
                                        }: InteractiveMapProps) {
 
     const {viewState, handleMove} = useViewState({
@@ -39,13 +40,13 @@ export default function InteractiveMap({
 
     const mapContainerRef = useRef<HTMLDivElement>(null)
 
-    // const {updatePrintSnapshot} = useMapSnapshot()
-
     const handleClick = onClick ? debounce((e) => onClick(e), 0) : undefined
 
     const handleHover = onHover ? debounce((e) => onHover(e), 0) : undefined
 
-    const [ defaultStyle, setDefaultStyle ] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
+    const onLoaded = onLoad ? (() => onLoad()) : undefined
+
+    const [defaultStyle, setDefaultStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
 
     return (
         <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>
@@ -67,6 +68,7 @@ export default function InteractiveMap({
                 onClick={handleClick}
                 onMouseMove={handleHover}
                 onMove={handleMove}
+                onLoad={onLoaded}
                 trackResize={true}
                 onError={(event: { error: Error; }) => {
                     console.error('Map error:', event.error)

@@ -1,34 +1,31 @@
 import { useState, useEffect, RefObject } from 'react'
 import { debounce, get } from 'lodash'
 import { MapRef, MapMouseEvent } from 'react-map-gl'
-import {Feature} from "geojson"
+import { Feature } from 'geojson'
 
 interface TooltipSource {
-    layer: string;
-    property: string;
+    layer: string
+    property: string
     options?: {
-        'fill-color'?: string;
-        'fill-outline-color'?: string;
-        'text-color'?: string;
-        'fill-opacity'?: number;
-        [key: string]: unknown;
-    };
+        'fill-color'?: string
+        'fill-outline-color'?: string
+        'text-color'?: string
+        'fill-opacity'?: number
+        [key: string]: unknown
+    }
 }
 
 interface UseMapTooltipProps {
-    mapRef: RefObject<MapRef>;
-    source: TooltipSource[];
-    tooltipClassName?: string;
+    mapRef: RefObject<MapRef>
+    source: TooltipSource[]
+    tooltipClassName?: string
 }
 
 interface Position {
-    left: number;
-    top: number;
+    left: number
+    top: number
 }
 
-// Default property to look for in the feature
-// if no property is specified in the source.
-// This can be set in code somewhere for a layer.
 const DEFAULT_TOOLTIP_PROPERTY = 'properties._tooltip'
 
 const useMapTooltip = ({ mapRef, source, tooltipClassName }: UseMapTooltipProps) => {
@@ -55,7 +52,7 @@ const useMapTooltip = ({ mapRef, source, tooltipClassName }: UseMapTooltipProps)
 
         for (const feature of features) {
             selectedSource = source.find((s) =>
-                s.layer == feature.layer!.id && !!get(feature, s.property) || !!get(feature, DEFAULT_TOOLTIP_PROPERTY)
+                s.layer == feature.layer?.id && !!get(feature, s.property) || !!get(feature, DEFAULT_TOOLTIP_PROPERTY)
             )
             if (selectedSource) {
                 validFeature = feature
@@ -84,17 +81,28 @@ const useMapTooltip = ({ mapRef, source, tooltipClassName }: UseMapTooltipProps)
         }
     }
 
+    const clearToolTip = () => {
+        setTooltipContent(null)
+        setTooltipPosition(null)
+    }
+
     const debouncedMoveToolTip = debounce(moveToolTip, 10)
 
     useEffect(() => {
         const map = mapRef?.current?.getMap()
         if (map) {
             map.on('mousemove', debouncedMoveToolTip)
+            map.on('zoom', clearToolTip)
+            map.on('move', clearToolTip)
+            map.on('mouseout', clearToolTip)
         }
 
         return () => {
             if (map) {
                 map.off('mousemove', debouncedMoveToolTip)
+                map.off('zoom', clearToolTip)
+                map.off('move', clearToolTip)
+                map.off('mouseout', clearToolTip)
             }
         }
     }, [mapRef, source, debouncedMoveToolTip])
@@ -109,7 +117,6 @@ const useMapTooltip = ({ mapRef, source, tooltipClassName }: UseMapTooltipProps)
                     position: 'absolute',
                     left: tooltipPosition.left,
                     top: tooltipPosition.top,
-                    // Max zindex to ensure tooltip is on top of everything
                     zIndex: 999999,
                     backgroundColor: tooltipStyle['fill-color'] as string,
                     border: `1px solid ${tooltipStyle['fill-outline-color']}`,

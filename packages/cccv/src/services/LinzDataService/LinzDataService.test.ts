@@ -20,15 +20,13 @@ describe("LinzDataService", () => {
 
     describe("getGeometryForAddressId", () => {
         it("should return geometry for a valid address ID", async () => {
-            const mockResponse = { type: "FeatureCollection", features: [] }
-
-            mockedGet.mockResolvedValueOnce({
+            const mockResponse = {
                 features: [{
                     properties: {
                         unit_of_property_id: mockUnitOfPropertyId,
                     },
                 }],
-            })
+            }
 
             mockedGet.mockResolvedValueOnce(mockResponse)
 
@@ -43,7 +41,7 @@ describe("LinzDataService", () => {
             const result = await service.getGeometryForAddressId(mockAddressId, mockProjection, mockSetError)
 
             expect(result).toBeNull()
-            expect(mockSetError).toHaveBeenCalledWith(new Error(ERROR_MESSAGES.FAILED_TO_RETRIEVE_ADDRESS_DATA(mockAddressId)))
+            expect(mockSetError).toHaveBeenCalledWith(new Error(ERROR_MESSAGES.FAILED_TO_RETRIEVE_GEOMETRY_DATA(mockAddressId)))
         })
     })
 })

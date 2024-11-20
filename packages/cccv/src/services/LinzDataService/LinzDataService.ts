@@ -72,7 +72,13 @@ export const LDS_ADDRESS_BOUNDARY_TIMEOUT = 10000
 
 const service = {
     getGeometryForAddressId: async (addressId: AddressId, projection = 'EPSG:4326', setError: null | ((error: Error | null) => void) = null): Promise<FeatureCollection | null> => {
-        return (await get(URL_LDS_GET_ADDRESS_GEOMETRY(addressId, projection))) ?? setError?.(new Error(ERROR_MESSAGES.FAILED_TO_RETRIEVE_GEOMETRY_DATA(addressId)))
+        const geom = await get(URL_LDS_GET_ADDRESS_GEOMETRY(addressId, projection)) ?? null
+
+        if (!geom && setError) {
+            setError(new Error(ERROR_MESSAGES.FAILED_TO_RETRIEVE_GEOMETRY_DATA(addressId)))
+        }
+
+        return geom
     }
 }
 
