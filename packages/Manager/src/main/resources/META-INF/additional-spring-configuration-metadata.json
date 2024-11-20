@@ -4,5 +4,10 @@
       "name": "org.contact.email",
       "type": "java.lang.String",
       "description": "Email address for contacting organization."
-  }
+    },
+    {
+      "name": "arcgis.tangata_whenua_sites.urls",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Tangata Whenua Site sources."
+    }
 ] }
