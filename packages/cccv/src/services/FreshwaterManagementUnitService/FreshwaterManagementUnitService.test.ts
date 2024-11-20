@@ -6,13 +6,13 @@ describe('FreshwaterManagementUnits service', () => {
     expect(service.getByLocation).toBeDefined()
   })
 
-  it('should return implementaion ideas for Parkvale Streams', () => {
+  it('should return implementaion ideas for Parkvale Streams', async () => {
     const record: FmuFullDetails = {
       freshwaterManagementUnit: {
         id: 1,
         fmuName1: 'Parkvale Stream',
       },
-      tangataWhenuaSites: // Simple multi-polygon geojson
+      tangataWhenuaSites:
           {
             type: "FeatureCollection",
             features: [
@@ -37,7 +37,7 @@ describe('FreshwaterManagementUnits service', () => {
             ],
           },
     }
-    const augmentedRecord = service.augmentRecord(record.freshwaterManagementUnit)
-    expect(augmentedRecord!.freshwaterManagementUnit.implementationIdeas).toContain("Consider wetlands for water quality treatment")
+    const augmentedRecord = await service.augmentRecord(record.freshwaterManagementUnit)
+    expect(augmentedRecord!.systemValues?.whaituaOverview || "").toContain("The Ruamāhanga is the largest")
   })
 })

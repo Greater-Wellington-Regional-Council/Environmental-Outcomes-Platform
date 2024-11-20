@@ -1,13 +1,13 @@
 import { UsePDFInstance } from "@react-pdf/renderer"
 import { useEffect, useState } from "react"
 import { Spinner as DownloadSpinner } from "@components/LoadingIndicator/LoadingIndicatorOverlay.tsx"
+import {makeFileNameSafe, makeUrlSafe} from "@lib/makeSafe.ts"
 
 export const DownloadLink: React.FC<DownloadLinkProps> = ({ instance, fileName }) => {
     const [downloading, setDownloading] = useState(false)
     const [pdfBlob, setPdfBlob] = useState<Blob | null>(null)
 
     useEffect(() => {
-        // Preload the blob when the instance URL is available
         const preloadBlob = async () => {
             if (instance && instance.url) {
                 try {
@@ -24,13 +24,12 @@ export const DownloadLink: React.FC<DownloadLinkProps> = ({ instance, fileName }
     }, [instance])
 
     const handleDownload = () => {
-        if (pdfBlob) {
+        if (pdfBlob && fileName) {
             setDownloading(true)
-
+            const link = document.createElement('a')
             try {
-                const link = document.createElement('a')
-                link.href = URL.createObjectURL(pdfBlob)
-                link.download = fileName
+                link.href = makeUrlSafe(URL.createObjectURL(pdfBlob))
+                link.download = makeFileNameSafe(fileName, ["pdf"])
 
                 document.body.appendChild(link)
                 link.click()
@@ -40,6 +39,8 @@ export const DownloadLink: React.FC<DownloadLinkProps> = ({ instance, fileName }
             } catch (error) {
                 console.error("Download failed:", error)
             } finally {
+                URL.revokeObjectURL(link.href)
+                document.body.removeChild(link)
                 setDownloading(false)
             }
         }

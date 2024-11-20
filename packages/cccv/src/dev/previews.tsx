@@ -11,11 +11,11 @@ interface ComponentPreviewsProps {
     startLocation: ViewLocation
 }
 
-const ComponentPreviews = ({ highlights_source_url, mapRef, startLocation }: ComponentPreviewsProps) => {
+const ComponentPreviews = ({ mapRef, startLocation }: ComponentPreviewsProps) => {
     return (
         <Previews palette={<PaletteTree/>}>
             <ComponentPreview path="/InteractiveMap">
-                <InteractiveMap highlights_source_url={highlights_source_url} mapRef={mapRef} startLocation={startLocation}/>
+                <InteractiveMap mapRef={mapRef} startLocation={startLocation} />
             </ComponentPreview>
         </Previews>
     )

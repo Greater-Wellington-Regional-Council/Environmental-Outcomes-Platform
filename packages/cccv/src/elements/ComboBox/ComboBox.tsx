@@ -48,17 +48,17 @@ const ComboBox: React.FC<ComboBoxProps> = ({
             if (query.length < 3) {
                 filteredOptions?.length && setFilteredOptions([])
             } else if (query.length < 5) {
-                setFilteredOptions((options as never[]).filter(option =>
+                setFilteredOptions((options as never[])?.filter(option =>
                     (_.get(option, "label", option) as string).toLowerCase().includes(query.toLowerCase())))
             } else {
-                setFilteredOptions(filteredOptions.filter(option => option.label.toLowerCase().includes(query.toLowerCase())))
+                setFilteredOptions(filteredOptions?.filter(option => option.label.toLowerCase().includes(query.toLowerCase())))
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [query, options])
 
     // Prepend the cached items at the top of the list
-    const combinedOptions = [...cachedItems, ...filteredOptions.filter(option => !cachedItems.find(cached => cached.label === option.label))]
+    const combinedOptions = [...cachedItems, ...filteredOptions?.filter(option => !cachedItems.find(cached => cached.label === option.label)) || []]
 
     const selectedOption = (o: string | null): LabelAndValue | null =>
         combinedOptions.find(option => option.label.toLowerCase() === o?.toLowerCase()) || null
@@ -67,7 +67,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({
         if (option) {
             // Update cache with the selected item
             setCachedItems(prevItems => {
-                const updatedItems = [option, ...prevItems.filter(item => item.label !== option.label)]
+                const updatedItems = [option, ...prevItems?.filter(item => item.label !== option.label) || []]
                 return updatedItems.slice(0, rememberItems) // Limit to the rememberItems count
             })
             setQuery("")

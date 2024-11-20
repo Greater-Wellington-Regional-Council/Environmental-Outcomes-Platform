@@ -3,7 +3,7 @@ import React from 'react'
 interface CarouselProps {
     displayValues: string[];
     index: number | null;
-    setIndex: React.Dispatch<React.SetStateAction<number | null>>;
+    setIndex: (index: number) => void;
     className?: string;
 }
 
