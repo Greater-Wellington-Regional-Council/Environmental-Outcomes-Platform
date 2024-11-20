@@ -23,7 +23,7 @@ updates:
     directory: "/packages/Manager"
     schedule:
       interval: "monthly"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 10
     labels:
       - "gradle"
       - "dependencies"      
