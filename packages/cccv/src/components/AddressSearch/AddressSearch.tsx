@@ -1,5 +1,5 @@
 import ComboBox, {ComboBoxProps} from '@elements/ComboBox/ComboBox'
-import addressesService from '@services/AddressesService'
+import addressesService from '@services/AddressesService/AddressesService.ts'
 
 export interface AddressSearchProps extends Omit<ComboBoxProps, 'options'> {}
 

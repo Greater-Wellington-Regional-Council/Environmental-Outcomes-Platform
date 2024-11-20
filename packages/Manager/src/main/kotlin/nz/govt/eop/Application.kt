@@ -85,7 +85,6 @@ class HealthCheckController {
   }
 }
 
-/** Return system values for the front end. It will be replaced with a controller as needs grow. */
 @RestController
 @RequestMapping("/org")
 class OrgController {

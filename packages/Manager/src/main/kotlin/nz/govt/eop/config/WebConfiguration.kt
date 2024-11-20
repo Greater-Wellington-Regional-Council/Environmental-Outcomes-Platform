@@ -17,6 +17,6 @@ class WebConfiguration : WebMvcConfigurer {
             "https://*.gw-eop-dev.tech",
             "https://*.gw-eop-stage.tech",
             "https://*.eop.gw.govt.nz")
-        .allowedMethods(HttpMethod.GET.toString())
+        .allowedMethods(HttpMethod.GET.toString(), HttpMethod.POST.toString())
   }
 }

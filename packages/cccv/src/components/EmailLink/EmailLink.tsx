@@ -1,5 +1,5 @@
 import React, {ReactNode, useContext} from "react"
-import orgService from "@services/OrgService.ts"
+import orgService from "@services/OrgService/OrgService.ts"
 import ErrorContext from "@components/ErrorContext/ErrorContext.ts"
 
 const EmailLink = ({children = null}: {children: ReactNode}) => {

@@ -1,5 +1,5 @@
-import gwrcLogo from '@images/gwrc-logo-header.svg'
-import horizonsLogo from '@images/horizons-logo-header.png'
+import gwrcLogo from '@assets/images/gwrc-logo-header.svg'
+import horizonsLogo from '@assets/images/horizons-logo-header.png'
 import { Council } from '@shared/types/global'
 
 const Councils: Council[] = [

@@ -42,7 +42,7 @@ const tangataWhenuaSites: FeatureCollection = {
             type: "Feature",
             properties: {
                 location: "TW site 1",
-                locationValues: ["a", "b", "c"]
+                locationValues: "a,b,c"
             },
             geometry: {
                 type: "Point",

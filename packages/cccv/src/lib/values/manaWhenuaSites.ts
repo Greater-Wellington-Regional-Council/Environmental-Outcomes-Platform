@@ -21,7 +21,7 @@ export const siteNames: Array<{ id: number; siteName: string; aliases: string[];
     {
         id: 20,
         siteName: "Mahinga kai",
-        aliases: [],
+        aliases: ["Mahinga kai (koura)"],
         explanation: "The customary gathering of food and natural materials, the food and resources themselves and the places where those resources are gathered."
     },
     {id: 21, siteName: "Mahinga mataitai", aliases: [], explanation: "Customary seafood gathering site"},
@@ -37,7 +37,7 @@ export const siteNames: Array<{ id: number; siteName: string; aliases: string[];
     {id: 26, siteName: "Nohoanga", aliases: [], explanation: "Sitting place"},
     {id: 27, siteName: "Pā", aliases: [], explanation: "Fortified village"},
     {id: 28, siteName: "Pā harakeke", aliases: [], explanation: "Flax bush, metaphor for whānau"},
-    {id: 29, siteName: "Pā tuna", aliases: [], explanation: "Eel weir"},
+    {id: 29, siteName: "Pā tuna", aliases: ["pā tuna (kohekutu)"], explanation: "Eel weir"},
     {id: 30, siteName: "Papa kāinga", aliases: [], explanation: "Original home"},
     {id: 31, siteName: "Pātaka kai", aliases: [], explanation: "Pantry, food storage"},
     {id: 32, siteName: "Pūkengatanga", aliases: [], explanation: "Knowledge"},
@@ -50,7 +50,7 @@ export const siteNames: Array<{ id: number; siteName: string; aliases: string[];
     {id: 39, siteName: "Rohenga", aliases: [], explanation: "Boundary"},
     {id: 40, siteName: "Rongoā", aliases: [], explanation: "Traditional healing plants"},
     {id: 41, siteName: "Tanga i te kawa", aliases: [], explanation: "Place of ritual"},
-    {id: 42, siteName: "Taniwha", aliases: [], explanation: "Water spirit (guardian)"},
+    {id: 42, siteName: "Taniwha", aliases: ["taniwha (koura)"], explanation: "Water spirit (guardian)"},
     {id: 43, siteName: "Tārai waka", aliases: [], explanation: "Canoe building"},
     {id: 44, siteName: "Taunga ika", aliases: [], explanation: "Fishing ground"},
     {id: 45, siteName: "Tauranga waka", aliases: [], explanation: "Canoe landing place"},
@@ -75,7 +75,7 @@ export const siteNames: Array<{ id: number; siteName: string; aliases: string[];
     {id: 64, siteName: "Wāhi Whakahaumanu", aliases: [], explanation: "Place of healing and restoration"},
     {id: 65, siteName: "Wāhi Whakarite", aliases: [], explanation: "Place of organising"},
     {id: 66, siteName: "Wai māori", aliases: [], explanation: "Fresh water"},
-    {id: 67, siteName: "Wai ora", aliases: [], explanation: "Water utilised for healing"},
+    {id: 67, siteName: "Wai ora", aliases: ["waitai"], explanation: "Water utilised for healing"},
     {id: 68, siteName: "Wai tai", aliases: [], explanation: "Sea water"},
     {id: 69, siteName: "Waka", aliases: [], explanation: "Canoe"},
     {id: 70, siteName: "Waka ama", aliases: [], explanation: "Outrigger canoe"},
@@ -86,7 +86,10 @@ export const siteNames: Array<{ id: number; siteName: string; aliases: string[];
         aliases: [],
         explanation: "To clear, free, dislodge, purge, get rid of. Māori use of water to restore spiritual and emotional well-being. Wāhi Whakawātea – places where water is utilised in this way."
     },
-    {id: 73, siteName: "Whanaungatanga", aliases: [], explanation: "Relationship"}
+    {id: 73, siteName: "Whanaungatanga", aliases: [], explanation: "Relationship"},
+    {id: 74, siteName: "pā (kaikokirikiri)", aliases: [], explanation: "Historic pā site"},
+    {id: 75, siteName: "bathing site (wahine)", aliases: [], explanation: "Bathing site (women)"},
+    {id: 76, siteName: "tohu ahurea,wāhi whakawātea", aliases: [],explanation: ""}
 ]
 
 export default siteNames

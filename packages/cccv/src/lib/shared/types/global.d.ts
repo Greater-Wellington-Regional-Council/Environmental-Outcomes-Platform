@@ -1,7 +1,17 @@
 import {Feature, FeatureCollection} from "geojson"
+import {Address} from "../../../services/AddressesService/AddressesService"
 
 interface Dictionary<T> {
     [index: string]: T;
+}
+
+interface MapPaintProperties {
+    'fill-color'?: string,
+    'fill-opacity'?: number,
+    'fill-outline-color'?: string,
+    'line-color'?: string,
+    'line-width'?: number,
+    'line-dasharray'?: number[],
 }
 
 interface link {
@@ -135,7 +145,9 @@ interface IMViewLocation extends ViewLocation {
     srid?: number | null;
     description?: string;
     featuresInFocus?: Feature | FeatureCollection;
-    highlight?: { fillColor: string, outlineColor: string, fillOpacity: number };
+    highlight?: MapPaintProperties;
+    address?: Address;
+    data?: unknown;
 }
 
 interface AllPlanData {

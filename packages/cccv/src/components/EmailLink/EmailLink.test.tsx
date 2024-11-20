@@ -3,9 +3,9 @@ import '@testing-library/jest-dom'
 import { describe, it, expect, vi } from 'vitest'
 import EmailLink from './EmailLink'
 import ErrorContext from '@components/ErrorContext/ErrorContext'
-import orgService from '@services/OrgService'
+import orgService from '@services/OrgService/OrgService.ts'
 
-vi.mock('@services/OrgService', () => ({
+vi.mock('@services/OrgService/OrgService', () => ({
   default: {
     getContactDetails: vi.fn(),
   },
