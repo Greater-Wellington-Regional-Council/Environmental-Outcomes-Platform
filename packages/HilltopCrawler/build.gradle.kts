@@ -48,7 +48,7 @@ dependencies {
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("io.kotest:kotest-assertions-core:5.9.1")
   testImplementation("io.kotest:kotest-assertions-json:5.8.0")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }
 
 // Don't repackage build in a "-plain" Jar
