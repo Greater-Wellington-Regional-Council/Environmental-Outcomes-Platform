@@ -1,11 +1,11 @@
 import {vi} from 'vitest'
-import service, { AddressFinderResponse, AddressLabelAndValue, Address } from './AddressesService.ts'
-import { get } from '@lib/api.tsx' // assuming you have this file and `get` method as an import
-import env from '@src/env.ts'
-import {mocked} from "@storybook/test" // assuming this is where you store your env variables
+import service, { AddressFinderResponse, AddressLabelAndValue } from './AddressesService.ts'
+import { get } from '@lib/api.tsx'
+import {mocked} from "@storybook/test"
 
 vi.mock('@lib/api.tsx', () => ({
     get: vi.fn(),
+    determineBackendUri: (() => '<backend>')
 }))
 
 describe('AddressFinder Service', () => {
@@ -28,8 +28,8 @@ describe('AddressFinder Service', () => {
 
             const result = await service.getAddressOptions('Test')
 
-            expect(result).toEqual([{ label: '123 Test Street', value: 'PXID1' }])
-            expect(get).toHaveBeenCalledWith(expect.stringContaining(`https://api.addressfinder.io/api/nz/address/autocomplete/?key=${env.ADDRESS_FINDER_KEY}`))
+            expect(result).toEqual(mockResponse)
+            expect(get).toHaveBeenCalledWith(expect.stringContaining(`<backend>/addresses/options?query=Test&regionCode=F&format=json`))
         })
 
         it('handles API failure gracefully and calls setError', async () => {
@@ -58,23 +58,10 @@ describe('AddressFinder Service', () => {
 
             (mocked(get)).mockResolvedValueOnce(mockResponse)
 
-            const result = await service.getAddressByPxid(selected)
+            const result = await service.getAddressByPxid(selected.value)
 
-            const expectedAddress: Address = {
-                id: 123,
-                address: '123 Test Street',
-                location: {
-                    type: 'Feature',
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [174.763336, -36.848461],
-                    },
-                    properties: {}
-                },
-            }
-
-            expect(result).toEqual(expectedAddress)
-            expect(get).toHaveBeenCalledWith(expect.stringContaining(`https://api.addressfinder.io/api/nz/address/metadata/?key=${env.ADDRESS_FINDER_KEY}`))
+            expect(result).toEqual(mockResponse)
+            expect(get).toHaveBeenCalledWith(expect.stringContaining(`<backend>/addresses/123`))
         })
 
         it('handles API failure gracefully and calls setError', async () => {

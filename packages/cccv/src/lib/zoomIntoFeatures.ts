@@ -29,8 +29,6 @@ export default function zoomIntoFeatures(
 
     if (bounds.isEmpty()) return
 
-    console.log("zoomIntoFeatures", bounds)
-
     const adjustedBounds = applyOffset(bounds, map, offset)
 
     flyToBounds(map, adjustedBounds, padding, maxZoom)
@@ -45,7 +43,9 @@ function calculateBounds(featureOrCollection: Feature | FeatureCollection): mapb
     }
 
     const extendBounds = (geometry: Geometry) => {
-        switch (geometry.type) {
+        if (!geometry) return
+
+        switch (geometry?.type) {
             case "Polygon":
                 (geometry.coordinates as number[][][]).forEach((ring) => {
                     ring.forEach((coord) => {

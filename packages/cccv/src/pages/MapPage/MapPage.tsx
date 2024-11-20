@@ -217,6 +217,12 @@ export default function MapPage() {
         }
     }
 
+    const afterMapLoaded = () => {
+        if (locationDetails) {
+            selectLocation(locationDetails as IMViewLocation)
+        }
+    }
+
     return (
         <div className="map-page bg-white">
             <GWHeader/>
@@ -229,6 +235,7 @@ export default function MapPage() {
                         setLocationInFocus={selectLocation}
                         onHover={handleHover}
                         onClick={handleClick}
+                        onLoad={afterMapLoaded}
                         hidden={sliderWidth}
                         mapRef={mapRef}
                         mapStyle={mapStyle}

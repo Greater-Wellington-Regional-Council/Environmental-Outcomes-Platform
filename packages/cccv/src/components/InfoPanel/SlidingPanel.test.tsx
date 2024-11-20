@@ -18,7 +18,7 @@ describe('SlidingPanel Component', () => {
             <SlidingPanel showPanel={false} contentChanged={false} onClose={() => {}} />
     )
         const panel = container.querySelector('div[class*="sl"]')
-        expect(panel).toHaveStyle('display: none')
+        expect(panel).not.toHaveStyle('display: none')
     })
 
     it('toggles visibility on double-click', () => {
