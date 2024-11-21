@@ -83,7 +83,7 @@ const service = {
     urlToGetFmuBoundaries: (): string => `${determineBackendUri(window.location.hostname)}/freshwater-management-units?includeTangataWhenuaSites=false&format=features`,
 
     isUp: async () => {
-        const response = await get(`${determineBackendUri(window.location.hostname)}/actuator/health`, { mode: 'no-cors'})
+        const response = await get(`${determineBackendUri(window.location.hostname)}/health`)
         return response?.status === "UP"
     },
 

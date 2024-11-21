@@ -100,3 +100,5 @@ addressfinder:
     key: "${CONFIG_ADDRESSFINDER_API_KEY:}"
     secret: "${CONFIG_ADDRESSFINDER_API_SECRET:}"
     base-url: "${CONFIG_ADDRESSFINDER_BASE_URL:https://api.addressfinder.io/api/nz/address}"
+
+
