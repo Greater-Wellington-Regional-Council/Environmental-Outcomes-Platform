@@ -12,7 +12,6 @@ import nz.govt.eop.si.jooq.tables.SurfaceWaterLimits.Companion.SURFACE_WATER_LIM
 import nz.govt.eop.si.jooq.tables.WaterAllocationAndUsageByArea.Companion.WATER_ALLOCATION_AND_USAGE_BY_AREA
 import nz.govt.eop.si.jooq.tables.WaterAllocationsByArea.Companion.WATER_ALLOCATIONS_BY_AREA
 import org.jooq.*
-import org.jooq.impl.DSL
 import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -162,7 +161,7 @@ class Queries(@Autowired val context: DSLContext) {
   }
 
   fun waterUsage(councilId: Int, from: LocalDate, to: LocalDate, areaId: String? = null): String {
-    var whereCondition = DSL.noCondition()
+    var whereCondition = noCondition()
     if (areaId != null) {
       whereCondition = whereCondition.and(WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID.eq(areaId))
     }
