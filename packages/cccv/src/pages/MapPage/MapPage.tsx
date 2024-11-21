@@ -45,6 +45,8 @@ import getFeaturesUnderMouse from "@lib/getFeaturesUnderMouse.ts"
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts"
 import env from "@src/env.ts"
 import useMapFocus from "@lib/useMapFocus.tsx"
+// import formatFilename from "@lib/formatAsFilename.ts"
+// import dateTimeString from "@lib/dateTimeString.ts"
 
 const ADDRESS_ZOOM = 12
 
@@ -83,6 +85,10 @@ const useFMUSelection = () => {
     return {fmuSelected, currentFmu, fmuIndex, currentFmus, setCurrentFmus, setFmuIndex, clearFmus, loadFmus}
 }
 
+// function getFileName(currentFmu: FmuFullDetails) {
+//     return formatFilename(currentFmu.freshwaterManagementUnit.fmuName1 || "", `fmu_${currentFmu.freshwaterManagementUnit.id}`) + `_${dateTimeString()}` + ".pdf"
+// }
+
 export default function MapPage() {
     const {setError} = useContext(ErrorContext)
     const locationDetails = useLoaderData()
@@ -94,13 +100,16 @@ export default function MapPage() {
     const sliderRef = useRef<HTMLDivElement>(null)
     const [sliderWidth, setSliderWidth] = useState<number>(0)
 
-    const {mapSnapshot} = useMapSnapshot()
     const {setLoading} = useLoadingIndicator()
     const mapRef = useRef<CombinedMapRef | null>(null)
 
     const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
 
     const [featureBeingRolledOver, setFeatureBeingRolledOver] = useState<Feature | FeatureCollection | null>(null)
+
+    const [showInfoPanel] = useState<boolean | null>(false)
+
+    const {mapSnapshot, takeMapSnapshot} = useMapSnapshot()
 
     useMapFocus(mapRef, selectedLocation)
 
@@ -124,9 +133,17 @@ export default function MapPage() {
     }
 
     useEffect(() => {
+        if (currentFmu) {
+            takeMapSnapshot(mapRef, selectedLocation)
+        //     setPdfDocument(pdf({ document: <FreshwaterManagementUnitPDF {...currentFmu} />}))
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentFmu])
+
+    useEffect(() => {
         fetchFmu().catch((e) => console.error(e))
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedLocation, setError, mapSnapshot])
+    }, [selectedLocation, setError])
 
     useEscapeKey(() => {
         selectLocation(null)
@@ -217,11 +234,7 @@ export default function MapPage() {
         }
     }
 
-    const afterMapLoaded = () => {
-        if (locationDetails) {
-            selectLocation(locationDetails as IMViewLocation)
-        }
-    }
+    const afterMapLoaded = () => {}
 
     return (
         <div className="map-page bg-white">
@@ -291,7 +304,7 @@ export default function MapPage() {
                             id={CURRENT_FMU_LAYER}
                             type="fill"
                             paint={mapProperties.currentFMU.fill}
-                            filter={['==', ['id'], currentFmu?.freshwaterManagementUnit?.id]}
+                            filter={['==', ['id'], currentFmu?.freshwaterManagementUnit?.id ?? null]}
                             source={FMU_BOUNDARIES_SOURCE}
                             maxzoom={DEFAULT_ZOOM+5}
                         />)}
@@ -311,7 +324,8 @@ export default function MapPage() {
                     </div>
 
                     {currentFmu && (
-                        <SlidingPanel showPanel={!!currentFmus.length} contentChanged={false}
+                        <SlidingPanel contentChanged={false} showPanel={showInfoPanel || true}
+                                      onResize={(width) => setSliderWidth(width)}
                                       onClose={() => clearFmus()}>
                             {/*{currentFmus.length > 1 && (<FmuPanelHeader className={"ml-6 mb-8"} fmuName1={currentFmu.freshwaterManagementUnit.fmuName1!}/>)}*/}
                             {selectedLocation?.address && <PhysicalAddress address={selectedLocation.address}/>}
@@ -324,6 +338,7 @@ export default function MapPage() {
                                 <div
                                     className="text-sm text-center font-extralight mb-2">{`Catchment ${fmuIndex! + 1} of ${currentFmus.length}`}</div>
                             </div>)}
+
                             <FreshwaterManagementUnit
                                 key={0}
                                 {...currentFmu}
