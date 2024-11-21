@@ -2,7 +2,7 @@ package nz.govt.eop
 
 import com.fasterxml.jackson.core.StreamReadConstraints
 import java.nio.file.Files
-import java.util.Base64
+import java.util.*
 import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
 import org.springframework.beans.factory.annotation.Value
@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.kafka.annotation.EnableKafka
+import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -54,6 +55,14 @@ fun main(args: Array<String>) {
   )
 
   runApplication<Application>(*args)
+}
+
+@Controller
+class HealthAliasController {
+  @GetMapping("/health")
+  fun healthAlias(): String {
+    return "forward:/actuator/health"
+  }
 }
 
 /**
