@@ -33,7 +33,7 @@ class Manifest(val queries: Queries, val context: DSLContext) {
     return mapOf(
         "updatedAt" to Instant.now().toString(),
         "/plan-limits/councils" to generateHash(queries.councils()),
-        "/plan-limits/plan" to generateHash(queries.plan(councilId)),
+        "/plan-limits/plan" to generateHash(queries.plan(councilId) ?: ""),
         "/plan-limits/plan-regions" to generateHash(queries.planRegions(councilId)),
         "/plan-limits/surface-water-limits" to generateHash(queries.surfaceWaterLimits(councilId)),
         "/plan-limits/ground-water-limits" to

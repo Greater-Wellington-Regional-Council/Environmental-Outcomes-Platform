@@ -26,7 +26,7 @@ class Queries(@Autowired val context: DSLContext) {
     return buildFeatureCollection(context, innerQuery)
   }
 
-  fun plan(councilId: Int): String {
+  fun plan(councilId: Int): String? {
     val innerQuery =
         select(
                 PLANS.ID,
@@ -43,7 +43,11 @@ class Queries(@Autowired val context: DSLContext) {
         function("to_jsonb", JSONB::class.java, field("to_jsonb(inputs)"))
 
     val result = context.select(featureCollection).from(innerQuery.asTable("inputs")).fetch()
-    return result.firstNotNullOf { it.value1().toString() }
+    return try {
+      result.firstNotNullOf { it.value1().toString() }
+    } catch (e: NoSuchElementException) {
+      return "{'type': 'FeatureCollection', 'features': []}"
+    }
   }
 
   fun planRegions(councilId: Int): String {
