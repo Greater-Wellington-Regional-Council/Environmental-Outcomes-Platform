@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef, useState} from "react"
+import {useEffect, useRef, useState} from "react"
 import {useLoaderData} from "react-router-dom"
 import {Layer, MapMouseEvent, Source} from "react-map-gl"
 import {Feature, FeatureCollection} from "geojson"
@@ -7,14 +7,13 @@ import "./MapPage.scss"
 import gwrcLogo from "@images/printLogo_2000x571px.png"
 import {LabelAndValue} from "@elements/ComboBox/ComboBox"
 import {IMViewLocation} from "@shared/types/global"
-import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
+import {DEFAULT_ZOOM, DETAILED_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
 import {CombinedMapRef} from "@components/InteractiveMap/lib/InteractiveMap"
 import mapProperties from "@lib/values/mapProperties.ts"
 
 import AddressSearch from "@components/AddressSearch/AddressSearch"
 import FreshwaterManagementUnit from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit"
 import SlidingPanel from "@components/InfoPanel/SlidingPanel"
-import ErrorContext from "@components/ErrorContext/ErrorContext"
 import useLoadingIndicator from "@components/LoadingIndicator/useLoadingIndicator"
 
 import useEscapeKey from "@lib/useEscapeKey"
@@ -32,12 +31,16 @@ import PhysicalAddress from "@components/PhysicalAddress/PhysicalAddress.tsx"
 import tooltipProperties from "@lib/values/tooltips.ts"
 import {
     BOUNDARY_LINES_LAYER,
-    FMU_UNDER_MOUSE_LAYER,
+    CURRENT_FMU_LAYER,
     FMU_BOUNDARIES_SOURCE,
+    FMU_UNDER_MOUSE_LAYER,
+    FOCUSED_FEATURE_LAYER,
+    OTHER_FEATURE_SHAPE_SOURCE,
     POTENTIAL_FMU_LAYER,
+    TANGATA_WHENUA_LOCATIONS_LAYER,
     TANGATA_WHENUA_SHAPES_SOURCE,
-    TANGATA_WHENUA_LOCATIONS_LAYER, CURRENT_FMU_LAYER, OTHER_FEATURE_SHAPE_SOURCE, FOCUSED_FEATURE_LAYER,
 } from "@lib/values/mapSourceAndLayerIds.ts"
+
 import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx"
 import StringCarousel from "@components/StringCarousel/StringCarousel.tsx"
 import _ from "lodash"
@@ -45,8 +48,9 @@ import getFeaturesUnderMouse from "@lib/getFeaturesUnderMouse.ts"
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts"
 import env from "@src/env.ts"
 import useMapFocus from "@lib/useMapFocus.tsx"
-// import formatFilename from "@lib/formatAsFilename.ts"
-// import dateTimeString from "@lib/dateTimeString.ts"
+import {announceError} from "@components/ErrorContext/announceError.ts"
+import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
+import { throttle } from "lodash"
 
 const ADDRESS_ZOOM = 12
 
@@ -90,7 +94,6 @@ const useFMUSelection = () => {
 // }
 
 export default function MapPage() {
-    const {setError} = useContext(ErrorContext)
     const locationDetails = useLoaderData()
 
     const [selectedLocation, selectLocation] = useState<IMViewLocation | null>(null)
@@ -101,6 +104,7 @@ export default function MapPage() {
     const [sliderWidth, setSliderWidth] = useState<number>(0)
 
     const {setLoading} = useLoadingIndicator()
+
     const mapRef = useRef<CombinedMapRef | null>(null)
 
     const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
@@ -119,19 +123,31 @@ export default function MapPage() {
             return
         }
 
-        const fmuList = await freshwaterManagementService.getByLocation(selectedLocation, setError)
+        const fmuList = await freshwaterManagementService.getByLocation(selectedLocation)
 
         if (!fmuList || fmuList.length === 0) {
             clearFmus()
-            setError(new Error("No Freshwater Management Units were found at that location, or there was an error fetching the data. Please try again."))
+            announceError("No Freshwater Management Units were found at that location, or there was an error fetching the data. Please try again.")
             return
         }
 
         loadFmus(fmuList)
-
-        setError(null)
     }
 
+    const currentZoom = mapRef.current?.getMap().getZoom()
+
+    useEffect(() => {
+        if (mapRef.current) {
+            const map = mapRef.current.getMap()
+            if (map.isStyleLoaded())
+                if (map.getZoom() < DETAILED_ZOOM) {
+                    map.setLayoutProperty(TANGATA_WHENUA_LOCATIONS_LAYER, "visibility", "none")
+                } else {
+                    map.setLayoutProperty(TANGATA_WHENUA_LOCATIONS_LAYER, "visibility", "visible")
+                }
+        }
+    }, [currentZoom])
+    
     useEffect(() => {
         if (currentFmu) {
             takeMapSnapshot(mapRef, selectedLocation)
@@ -143,7 +159,7 @@ export default function MapPage() {
     useEffect(() => {
         fetchFmu().catch((e) => console.error(e))
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedLocation, setError])
+    }, [selectedLocation])
 
     useEscapeKey(() => {
         selectLocation(null)
@@ -162,7 +178,7 @@ export default function MapPage() {
             const physicalAddress = await addressesService.getAddressByPxid(address.value)
 
             if (!physicalAddress) {
-                setError(new Error("Address not found"))
+                announceError("The address not found on the AddressFinder service", ErrorLevel.ERROR)
                 return
             }
 
@@ -171,7 +187,7 @@ export default function MapPage() {
             let location: IMViewLocation
 
             if (!addressBoundary) {
-                setError(new Error("Failed to retrieve address data. The LINZ service may be unavailable."))
+                announceError("Failed to retrieve address data. Either the data is not available, or the LINZ service may be available.", ErrorLevel.ERROR)
 
                 location = {
                     longitude: physicalAddress.location.geometry.coordinates[0],
@@ -195,10 +211,9 @@ export default function MapPage() {
             }
 
             selectLocation(location)
-            setError(null)
         } catch (error) {
             console.error(error)
-            setError(new Error("An error occurred while selecting the address"))
+            announceError("An error occurred while selecting the address")
         } finally {
             setLoading(false)
         }
@@ -215,14 +230,14 @@ export default function MapPage() {
         source: tooltipProperties
     })
 
-    const handleHover = (e: mapboxgl.MapMouseEvent) => {
+    const handleHover = throttle((e: mapboxgl.MapMouseEvent) => {
         const features = getFeaturesUnderMouse(mapRef, e, POTENTIAL_FMU_LAYER)
         if (features) {
             setFeatureBeingRolledOver(features[0]!)
         } else {
             setFeatureBeingRolledOver(null)
         }
-    }
+    }, 100) // Execute at most every 100ms
 
     const handleClick = (e: MapMouseEvent) => {
         const clickedFeatures = getFeaturesUnderMouse(mapRef, e, BOUNDARY_LINES_LAYER)
@@ -234,7 +249,9 @@ export default function MapPage() {
         }
     }
 
-    const afterMapLoaded = () => {}
+    const afterMapLoaded = async () => {
+        await freshwaterManagementService.checkServiceHealth()
+    }
 
     return (
         <div className="map-page bg-white">
@@ -323,7 +340,7 @@ export default function MapPage() {
                         <AddressSearch onSelect={selectAddress} placeholder="Search for address" directionUp={true}/>
                     </div>
 
-                    {currentFmu && (
+                    {currentFmu?.freshwaterManagementUnit && (
                         <SlidingPanel contentChanged={false} showPanel={showInfoPanel || true}
                                       onResize={(width) => setSliderWidth(width)}
                                       onClose={() => clearFmus()}>

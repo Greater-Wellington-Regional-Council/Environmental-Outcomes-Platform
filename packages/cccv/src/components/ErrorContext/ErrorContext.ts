@@ -1,19 +1,32 @@
-import React from 'react'
+import React, {Dispatch, useContext} from 'react'
+import {ErrorFlagAndOrMessage} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 
-export enum ErrorLevel {
-  INFO = 0,
-  WARNING = 1,
-  ERROR = 2,
-}
-
-export class ErrorFlag extends Error {
-  level: ErrorLevel
-  constructor(message = '', level = ErrorLevel.ERROR) {
-    super(message)
-    this.level = level
+export interface Errors {
+  errors: {
+    all: Array<ErrorFlagAndOrMessage>
+    add: Dispatch<ErrorFlagAndOrMessage>
+    clear: () => void
+    toString: (e: ErrorFlagAndOrMessage) => string
+    errorLevel: (e: ErrorFlagAndOrMessage) => number | undefined
   }
 }
 
-export const ErrorContext = React.createContext<{ error: Error | null, setError: (e: Error | null | ErrorFlag) => void }>({error: null, setError: () => {}})
+export const ErrorContext = React.createContext<Errors>({
+    errors: {
+      all: [],
+      add: () => {},
+      clear: () => {},
+      toString: () => "",
+      errorLevel: () => undefined
+    }
+})
+
+export const useErrors = (): Errors => {
+  const context = useContext(ErrorContext)
+  if (!context) {
+    throw new Error('useErrors must be used within an ErrorProvider')
+  }
+  return context
+}
 
 export default ErrorContext

@@ -1,21 +1,20 @@
-import React, {ReactNode, useContext} from "react"
+import React, {ReactNode} from "react"
 import orgService from "@services/OrgService/OrgService.ts"
-import ErrorContext from "@components/ErrorContext/ErrorContext.ts"
+import {announceError} from "@components/ErrorContext/announceError.ts"
+import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 
 const EmailLink = ({children = null}: {children: ReactNode}) => {
-  const setError = useContext(ErrorContext).setError
-
   const handleEmailClick = (e: React.MouseEvent) => {
     e.preventDefault()
 
-    orgService.getContactDetails(setError).then((contactDetails) => {
+    orgService.getContactDetails().then((contactDetails) => {
       const email = contactDetails?.email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
       if (email && emailRegex.test(email)) {
         window.location.href = `mailto:${email}`
       } else {
-        console.error('Invalid or undefined email address')
+        announceError('Invalid or undefined email address', ErrorLevel.WARNING)
       }
     })
   }

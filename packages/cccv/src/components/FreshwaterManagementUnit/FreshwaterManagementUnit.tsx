@@ -1,17 +1,13 @@
 import "./FreshwaterManagementUnit.scss"
 import purify from "dompurify"
-import React, {useEffect, useMemo, useState} from "react"
+import React, {useEffect, useState} from "react"
 import {FmuFullDetailsWithMap} from "@services/models/FreshwaterManagementUnit.ts"
-import {usePDF} from "@react-pdf/renderer"
-import {FreshwaterManagementUnitPDF} from "@components/FreshwaterManagementUnit/FreshwaterManagementUnit.pdf"
-import formatFilename from "@lib/formatAsFilename"
-import dateTimeString from "@lib/dateTimeString"
+
 import {ContaminantList, contaminants as fmuContaminants} from "@components/FreshwaterManagementUnit/utils.ts"
 import EmailLink from "@components/EmailLink/EmailLink.tsx"
 import {Contaminants} from "@components/Contaminants/Contaminants.tsx"
 import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
-import {DownloadLink} from "@elements/DownloadLink/DownloadLink.tsx"
 import TangataWhenuaSites from "@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx"
 import DOMPurify from "dompurify"
 import {getSystemValueForCouncil, SystemValueNames} from "@services/SystemValueService/SystemValueService.ts"
@@ -46,27 +42,19 @@ const FreshwaterManagementUnit = (
 
     const showHeader = details.showHeader
 
-    const vpoSafe = vpo?.value  ? DOMPurify.sanitize(vpo.value!) : null
+    const vpoSafe = vpo?.value ? DOMPurify.sanitize(vpo.value!) : null
 
-    const otherInfoSafe = otherInfo?.value  ? DOMPurify.sanitize(otherInfo.value!) : null
+    const otherInfoSafe = otherInfo?.value ? DOMPurify.sanitize(otherInfo.value!) : null
 
-    const culturalOverviewSafe = culturalOverview?.value  ? DOMPurify.sanitize(culturalOverview.value!) : null
+    const culturalOverviewSafe = culturalOverview?.value ? DOMPurify.sanitize(culturalOverview.value!) : null
 
     const implementationIdeasSafe = implementationIdeas?.value ? DOMPurify.sanitize(implementationIdeas.value!) : null
 
     const tangataWhenuaSites = details.tangataWhenuaSites
 
-    const fileName = formatFilename(fmuName1 || "", `fmu_${id}`) + `_${dateTimeString()}` + ".pdf"
-
     const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit)
 
     const links = details.links
-
-    const pdfDocument = useMemo(() => <FreshwaterManagementUnitPDF {...details} />, [details])
-
-    const [instance, updateInstance] = usePDF({document: pdfDocument})
-    const [pdfLoading, setPdfLoading] = useState(true)
-    const [hasError, setHasError] = useState(false)
 
     const [overview, setOverview] = useState<string | undefined>(catchmentDescription ?? "")
 
@@ -81,23 +69,6 @@ const FreshwaterManagementUnit = (
         }
     }, [catchmentDescription, fmuName1])
 
-    useEffect(() => {
-        if (instance) {
-            const isLoading = instance.loading
-            const hasErrorOccurred = !!instance.error
-
-            if (isLoading !== pdfLoading)
-                setPdfLoading(isLoading)
-
-            if (hasErrorOccurred !== hasError)
-                setHasError(hasErrorOccurred)
-        }
-    }, [instance, pdfLoading, hasError])
-
-    useEffect(() => {
-        updateInstance(pdfDocument)
-    }, [fileName, pdfDocument, updateInstance])
-
     if (!details?.freshwaterManagementUnit) {
         return <div>No data found.</div>
     }
@@ -108,13 +79,7 @@ const FreshwaterManagementUnit = (
 
     return (
         <div className="FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidden" id={`fmu_${id || ''}`}>
-            {showHeader &&
-                <FmuPanelHeader className={"mb-6"} fmuName1={fmuName1!}>
-                    <div className="absolute top-0 right-0 m-6 mt-0">
-                        <DownloadLink pdfLoading={pdfLoading} instance={instance} fileName={fileName}
-                                      hasError={hasError}/>
-                    </div>
-                </FmuPanelHeader>}
+            {showHeader && <FmuPanelHeader className={"mb-6"} fmuName1={fmuName1!}/>}
 
             <div className="overview mt-0" data-testid="catchment-desc">
                 <h2>Overview</h2>

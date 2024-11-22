@@ -25,16 +25,27 @@ export const useMapSnapshot = () => {
 export const MapSnapshotProvider = ({ children }: { children: ReactNode }) => {
     const [mapSnapshot, setMapSnapshot] = useState<string | null>(null)
 
+    const debugSetMapSnapshot = (value: string | null) => {
+        // console.log("setMapSnapshot called with:", value)
+        setMapSnapshot(value)
+    }
+
     const takeMapSnapshot = (mapRef: MapSnapshotMapRef | null): void => {
         if (!mapRef?.current) {
-            setMapSnapshot(null)
+            console.warn("Map reference is null when attempting to take a snapshot.")
+            debugSetMapSnapshot(null)
             return
         }
 
-        const map = mapRef!.current!.getMap()
-            map.once('idle', () => {
-            const snapshot = `${map!.getCanvas().toDataURL('image/png')}?timestamp=${Date.now()}`
-            setMapSnapshot(snapshot ?? null)
+        const map = mapRef.current.getMap()
+        map.once('idle', () => {
+            try {
+                const snapshot = `${map.getCanvas().toDataURL('image/png')}?timestamp=${Date.now()}`
+                debugSetMapSnapshot(snapshot || null)
+            } catch (error) {
+                console.error("Error taking map snapshot:", error)
+                debugSetMapSnapshot(null)
+            }
         })
     }
 
