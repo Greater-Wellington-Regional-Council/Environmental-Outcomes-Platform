@@ -70,7 +70,6 @@ export default function InteractiveMap({
                 trackResize={true}
                 onError={(event: { error: Error; }) => {
                     announceError(event.error, ErrorLevel.WARNING)
-                    announceError("There was a problem rendering the map", ErrorLevel.ERROR)
                 }}>
 
                 <MapControls/>
