@@ -43,14 +43,14 @@ import {
 
 import InteractiveMap from "@components/InteractiveMap/InteractiveMap.tsx"
 import StringCarousel from "@components/StringCarousel/StringCarousel.tsx"
-import _ from "lodash"
+import _, {throttle} from "lodash"
 import getFeaturesUnderMouse from "@lib/getFeaturesUnderMouse.ts"
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts"
 import env from "@src/env.ts"
 import useMapFocus from "@lib/useMapFocus.tsx"
-import {announceError} from "@components/ErrorContext/announceError.ts"
+import {announceError, clearErrors} from "@components/ErrorContext/announceError.ts"
 import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
-import { throttle } from "lodash"
+import useIdleTimer from "@lib/useIdleTimer.ts"
 
 const ADDRESS_ZOOM = 12
 
@@ -127,7 +127,7 @@ export default function MapPage() {
 
         if (!fmuList || fmuList.length === 0) {
             clearFmus()
-            announceError("No Freshwater Management Units were found at that location, or there was an error fetching the data. Please try again.")
+            announceError("No Freshwater Management Units were found at that location, or there was an error fetching the data. Please try again.", ErrorLevel.WARNING)
             return
         }
 
@@ -147,7 +147,11 @@ export default function MapPage() {
                 }
         }
     }, [currentZoom])
-    
+
+    useIdleTimer(() => {
+        clearErrors()
+    })
+
     useEffect(() => {
         if (currentFmu) {
             takeMapSnapshot(mapRef, selectedLocation)
@@ -163,6 +167,7 @@ export default function MapPage() {
 
     useEscapeKey(() => {
         selectLocation(null)
+        clearErrors()
         mapRef.current?.getMap().zoomTo(DEFAULT_ZOOM)
     })
 
@@ -187,7 +192,7 @@ export default function MapPage() {
             let location: IMViewLocation
 
             if (!addressBoundary) {
-                announceError("Failed to retrieve address data. Either the data is not available, or the LINZ service may be available.", ErrorLevel.ERROR)
+                announceError("Failed to retrieve address data. Either the data is not available, or the LINZ service may be available.", ErrorLevel.INFO)
 
                 location = {
                     longitude: physicalAddress.location.geometry.coordinates[0],
@@ -240,6 +245,7 @@ export default function MapPage() {
     }, 100) // Execute at most every 100ms
 
     const handleClick = (e: MapMouseEvent) => {
+        clearErrors()
         const clickedFeatures = getFeaturesUnderMouse(mapRef, e, BOUNDARY_LINES_LAYER)
         if (clickedFeatures) {
             selectLocation({

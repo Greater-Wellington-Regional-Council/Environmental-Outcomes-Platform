@@ -26,3 +26,12 @@ export const announceError = (e: ErrorFlagAndOrMessage, level?: ErrorLevel) => {
         .filter((err) => [ErrorLevel.WARNING, ErrorLevel.ERROR].includes(errorLevel(err)))
         .forEach((err) => notifyError(err))
 }
+
+export const clearErrors = () => {
+    if (!globalErrorList) {
+        console.error("Global error list is not set")
+        return
+    }
+
+    globalErrorList.errors.clear()
+}
