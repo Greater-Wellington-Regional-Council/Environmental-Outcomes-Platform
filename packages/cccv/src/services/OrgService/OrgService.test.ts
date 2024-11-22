@@ -1,15 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import service from "@services/OrgService/OrgService.ts"
 import { get } from "@lib/api.tsx"
-import { ErrorFlag, ErrorLevel } from "@components/ErrorContext/ErrorContext.ts"
+import {announceError} from "@components/ErrorContext/announceError.ts"
 
 vi.mock("@lib/api")
+
+vi.mock('@components/ErrorContext/announceError.ts', () => ({
+    announceError: vi.fn()
+}))
 
 const mockedGet = get as unknown as ReturnType<typeof vi.fn>
 
 describe("OrgService", () => {
-    const mockSetError = vi.fn()
-
     beforeEach(() => {
         vi.clearAllMocks()
     })
@@ -19,20 +21,21 @@ describe("OrgService", () => {
             const mockResponse = { name: "Organization", email: "contact@org.com" }
             mockedGet.mockResolvedValueOnce(mockResponse)
 
-            const result = await service.getContactDetails(mockSetError)
+            const result = await service.getContactDetails()
 
             expect(result).toEqual(mockResponse)
             expect(mockedGet).toHaveBeenCalledWith(expect.stringContaining("/org/contact-details"))
         })
 
-        it("should call setError and return null on failure", async () => {
+        it("should call announceError and return null on failure", async () => {
             mockedGet.mockResolvedValueOnce(null)
 
-            const result = await service.getContactDetails(mockSetError, "Contact details unavailable")
+            const result = await service.getContactDetails()
 
             expect(result).toBeNull()
-            expect(mockSetError).toHaveBeenCalledWith(
-                new ErrorFlag("Contact details unavailable", ErrorLevel.WARNING)
+            expect(announceError).toHaveBeenCalledWith(
+                expect.any(String),
+                expect.anything()
             )
         })
     })

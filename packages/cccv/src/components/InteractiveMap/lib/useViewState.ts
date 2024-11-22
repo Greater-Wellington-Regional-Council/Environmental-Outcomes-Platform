@@ -6,6 +6,7 @@ export const DEFAULT_ZOOM = 8
 export const DEFAULT_PITCH = 0
 export const DEFAULT_PADDING = { top: 0, right: 0, bottom: 0, left: 0 }
 export const DEFAULT_BEARING = 0
+export const DETAILED_ZOOM = 10
 
 export const useViewState = (initialLocation: Partial<ViewState>) => {
   const [viewState, setViewState] = useState<ViewState>({

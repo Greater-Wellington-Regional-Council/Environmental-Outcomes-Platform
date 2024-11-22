@@ -1,6 +1,8 @@
 import {LabelAndValue} from "@elements/ComboBox/ComboBox.tsx"
 import {determineBackendUri, get} from "@lib/api.tsx"
 import {Feature, Point} from "geojson"
+import {announceError} from "@components/ErrorContext/announceError.ts"
+import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 
 export type AddressId = number | string;
 
@@ -54,22 +56,22 @@ export interface AddressLabelAndValue extends LabelAndValue {
 }
 
 const service = {
-    getAddressOptions: async (query: string | null = null, setError: null | ((error: Error | null) => void) = null): Promise<AddressLabelAndValue[]> => {
+    getAddressOptions: async (query: string | null = null): Promise<AddressLabelAndValue[]> => {
         const regionCode = regionCodes["Wellington"]
         const url = `${determineBackendUri(window.location.hostname)}/addresses/options?query=${encodeURIComponent(query || "")}&regionCode=${regionCode}&format=json`
         const response = await get(url)
-        if (!response && setError) {
-            setError(new Error("Failed to get matching addresses.  The AddressFinder service may be unavailable."))
+        if (!response) {
+            announceError("Failed to get matching addresses.  The AddressFinder service may be unavailable.", ErrorLevel.WARNING)
             return []
         }
         return response
     },
-    getAddressByPxid: async (id: unknown, setError: null | ((error: Error | null) => void) = null): Promise<Address | null> => {
+    getAddressByPxid: async (id: unknown): Promise<Address | null> => {
         // Retrieves address Toitu Te Whenua LINZ AIMS address id and other metadata from AddressFinder
         const url = `${determineBackendUri(window.location.hostname)}/addresses/${id}`
         const response = await get(url)
-        if (!response && setError) {
-            setError(new Error("Failed to retrieve address data.  The AddressFinder service may be unavailable."))
+        if (!response) {
+            announceError("Failed to retrieve address data.  If this continues to fail, the AddressFinder service may be unavailable.", ErrorLevel.WARNING)
             return null
         }
         return response

@@ -1,23 +1,19 @@
-import {
-    Map,
-    MapRef,
-} from "react-map-gl"
+import {Map, MapRef,} from "react-map-gl"
 
 import {MutableRefObject, useRef, useState} from 'react'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './InteractiveMap.scss'
-import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
+import {DEFAULT_ZOOM, useViewState} from "@components/InteractiveMap/lib/useViewState.ts"
 
-import {
-    InteractiveMapProps,
-} from "@components/InteractiveMap/lib/InteractiveMap"
+import {InteractiveMapProps,} from "@components/InteractiveMap/lib/InteractiveMap"
 
 import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx"
 import MapControls from "@components/InteractiveMap/lib/MapControls/MapControls.tsx"
 import env from "@src/env.ts"
-import {useViewState} from "@components/InteractiveMap/lib/useViewState.ts"
 import {debounce} from "lodash"
 import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts"
+import {announceError} from "@components/ErrorContext/announceError.ts"
+import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 
 const DEFAULT_VIEW_WIDTH = 100
 const DEFAULT_VIEW_HEIGHT = 150
@@ -44,7 +40,9 @@ export default function InteractiveMap({
 
     const handleHover = onHover ? debounce((e) => onHover(e), 0) : undefined
 
-    const onLoaded = onLoad ? (() => onLoad()) : undefined
+    const onLoaded = () => {
+        if (onLoad) onLoad()
+    }
 
     const [defaultStyle, setDefaultStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
 
@@ -71,7 +69,8 @@ export default function InteractiveMap({
                 onLoad={onLoaded}
                 trackResize={true}
                 onError={(event: { error: Error; }) => {
-                    console.error('Map error:', event.error)
+                    announceError(event.error, ErrorLevel.WARNING)
+                    announceError("There was a problem rendering the map", ErrorLevel.ERROR)
                 }}>
 
                 <MapControls/>

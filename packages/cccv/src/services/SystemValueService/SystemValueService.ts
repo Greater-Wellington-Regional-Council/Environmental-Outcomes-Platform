@@ -1,5 +1,6 @@
-import { ErrorFlag, ErrorLevel } from "@components/ErrorContext/ErrorContext.ts"
-import { determineBackendUri, get } from "@lib/api.tsx"
+import {determineBackendUri, get} from "@lib/api.tsx"
+import {announceError} from "@components/ErrorContext/announceError.ts"
+import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 
 export enum SystemValueNames {
     PARKVALE_CULTURAL_OVERVIEW = "cccv.culturalOverview.parkvaleStream",
@@ -15,9 +16,7 @@ export interface SystemValues {
 const systemValueService = {
     getSystemValue: async (
         valueName: string,
-        councilId: number | null,
-        setError: (error: Error | null) => void = (error) => console.error(error),
-        message: string | null = null
+        councilId: number | null
     ) => {
         const backendUri = determineBackendUri(window.location.hostname)
         const url = councilId !== null
@@ -27,11 +26,11 @@ const systemValueService = {
         try {
             const response = await get(url)
             if (!response) {
-                throw new Error("No response from System Value API")
+                announceError(`No response getting system value ${valueName}`, ErrorLevel.WARNING)
             }
             return response.value
-        } catch (error) {
-            setError(new ErrorFlag(message || "System Value API is unavailable", ErrorLevel.WARNING))
+        } catch {
+            announceError(`Error getting system value ${valueName}`, ErrorLevel.WARNING)
             return null
         }
     }
@@ -39,11 +38,9 @@ const systemValueService = {
 
 export const getSystemValueForCouncil = async (
     valueName: SystemValueNames,
-    councilId: number = 9,
-    setError: (error: Error | null) => void = (error) => console.error(error),
-    message: string | null = null
+    councilId: number = 9
 ): Promise<string | undefined>  => {
-    return await systemValueService.getSystemValue(valueName, councilId, setError, message)
+    return await systemValueService.getSystemValue(valueName, councilId)
 }
 
 export default systemValueService

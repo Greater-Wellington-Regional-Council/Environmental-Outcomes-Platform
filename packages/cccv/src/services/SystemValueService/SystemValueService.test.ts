@@ -1,16 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import service from "@services/SystemValueService/SystemValueService.ts"
 import { get } from "@lib/api.tsx"
-import { ErrorFlag, ErrorLevel } from "@components/ErrorContext/ErrorContext.ts"
+import { announceError } from "@components/ErrorContext/announceError.ts"
 
 vi.mock("@lib/api")
+
+vi.mock('@components/ErrorContext/announceError.ts', () => ({
+    announceError: vi.fn()
+}))
 
 const mockedGet = get as unknown as ReturnType<typeof vi.fn>
 
 describe("SystemValueService", () => {
     const mockValueName = "test.value"
     const mockCouncilId = 1
-    const mockSetError = vi.fn()
 
     beforeEach(() => {
         vi.clearAllMocks()
@@ -21,7 +24,7 @@ describe("SystemValueService", () => {
             const mockResponse = { value: "value" }
             mockedGet.mockResolvedValueOnce(mockResponse)
 
-            const result = await service.getSystemValue(mockValueName, mockCouncilId, mockSetError)
+            const result = await service.getSystemValue(mockValueName, mockCouncilId)
 
             expect(result).toEqual(mockResponse.value)
             expect(mockedGet).toHaveBeenCalledWith(expect.stringContaining(`/system-values/${mockCouncilId}/${mockValueName}`))
@@ -31,20 +34,21 @@ describe("SystemValueService", () => {
             const mockResponse = { value: "value" }
             mockedGet.mockResolvedValueOnce(mockResponse)
 
-            const result = await service.getSystemValue(mockValueName, null, mockSetError)
+            const result = await service.getSystemValue(mockValueName, null)
 
             expect(result).toEqual(mockResponse.value)
             expect(mockedGet).toHaveBeenCalledWith(expect.stringContaining(`/system-values/${mockValueName}`))
         })
 
-        it("should call setError and return null on failure", async () => {
+        it("should call announceError and return null on failure", async () => {
             mockedGet.mockResolvedValueOnce(null)
 
-            const result = await service.getSystemValue(mockValueName, mockCouncilId, mockSetError, "System value unavailable")
+            const result = await service.getSystemValue(mockValueName, mockCouncilId)
 
             expect(result).toBeNull()
-            expect(mockSetError).toHaveBeenCalledWith(
-                new ErrorFlag("System value unavailable", ErrorLevel.WARNING)
+            expect(announceError).toHaveBeenCalledWith(
+                expect.any(String),
+                expect.anything()
             )
         })
     })
