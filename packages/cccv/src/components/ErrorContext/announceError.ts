@@ -1,4 +1,5 @@
 import {
+    consoleErrorLevels,
     ErrorFlag,
     ErrorFlagAndOrMessage,
     ErrorLevel,
@@ -15,23 +16,28 @@ export const setGlobalErrorList = (errors: Errors) => {
 }
 
 export const announceError = (e: ErrorFlagAndOrMessage, level?: ErrorLevel) => {
-    console.warn("Global error level", errorLevel(e), errorMessage(e))
     if (!globalErrorList) {
         console.error("Global error list is not set")
         return
     }
 
-    globalErrorList.errors.add(new ErrorFlag(errorMessage(e), level ?? errorLevel(e)))
+    const errLevel = level || errorLevel(e)
+
+    globalErrorList.errors.add(new ErrorFlag(errorMessage(e), errLevel))
+
     globalErrorList.errors.all
-        .filter((err) => [ErrorLevel.WARNING, ErrorLevel.ERROR].includes(errorLevel(err)))
+        .filter((err) => consoleErrorLevels.includes(errorLevel(err)))
         .forEach((err) => notifyError(err))
 }
 
-export const clearErrors = () => {
+export const clearErrors = (all: boolean = false) => {
     if (!globalErrorList) {
         console.error("Global error list is not set")
         return
     }
 
-    globalErrorList.errors.clear()
+    if (all)
+        globalErrorList.errors.clear()
+    else
+        globalErrorList.errors.clearNonPersistent()
 }

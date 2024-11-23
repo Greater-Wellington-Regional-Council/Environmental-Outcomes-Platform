@@ -6,6 +6,7 @@ export interface Errors {
     all: Array<ErrorFlagAndOrMessage>
     add: Dispatch<ErrorFlagAndOrMessage>
     clear: () => void
+    clearNonPersistent: () => void
     toString: (e: ErrorFlagAndOrMessage) => string
     errorLevel: (e: ErrorFlagAndOrMessage) => number | undefined
   }
@@ -16,6 +17,7 @@ export const ErrorContext = React.createContext<Errors>({
       all: [],
       add: () => {},
       clear: () => {},
+      clearNonPersistent: () => {},
       toString: () => "",
       errorLevel: () => undefined
     }
