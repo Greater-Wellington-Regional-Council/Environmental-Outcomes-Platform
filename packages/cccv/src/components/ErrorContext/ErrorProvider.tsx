@@ -5,7 +5,7 @@ import {
     ErrorFlagAndOrMessage,
     ErrorLevel,
     errorLevel,
-    errorMessage
+    errorMessage, priorityErrors
 } from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 
 import ErrorContext from "./ErrorContext"
@@ -16,18 +16,25 @@ export const ErrorProvider = ({ children }: { children: React.ReactNode }) => {
 
     const addError = (e: ErrorFlagAndOrMessage) => setErrorList((prev) => [...prev, e])
 
-    const clearErrors = () => setErrorList([])
+    const clearNonPersistentErrors = () => {
+        const errors = errorList.filter((e) => errorLevel(e) == ErrorLevel.PERSISTENT)
+        setErrorList(errors as Array<ErrorFlagAndOrMessage>)
+    }
+
+    const clearAllErrors = () => setErrorList([])
 
     const errors = useMemo(
         () => ({
             errors: {
                 all: errorList,
                 add: addError,
-                clear: clearErrors,
+                clear: clearAllErrors,
+                clearNonPersistent: clearNonPersistentErrors,
                 toString: errorMessage,
                 errorLevel,
             },
         }),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [errorList]
     )
 
@@ -35,16 +42,13 @@ export const ErrorProvider = ({ children }: { children: React.ReactNode }) => {
 
     React.useEffect(() => {
         refErrors.current = errors
-        setGlobalErrorList(refErrors.current) // Directly update in ErrorUtils
-    }, [errors])
-
-    const priorityErrors = () =>
-        errorList.filter((e) => [ErrorLevel.ERROR].includes(errorLevel(e)))
+        setGlobalErrorList(refErrors.current)
+    }, [errors, errorList])
 
     return (
         <ErrorContext.Provider value={errors}>
             <div className="error-signal">
-                {priorityErrors().map((e, index) => (
+                {errorList.filter(e => priorityErrors.includes(errorLevel(e))).map((e, index) => (
                     <div className={`error-info error-level-${errorLevel(e)}`} key={index}>
                         {errorMessage(e)}
                     </div>

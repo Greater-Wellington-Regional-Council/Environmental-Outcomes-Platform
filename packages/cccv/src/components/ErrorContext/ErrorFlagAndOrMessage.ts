@@ -22,9 +22,14 @@ export enum ErrorLevel {
     INFO = 0,
     WARNING = 1,
     ERROR = 2,
+    PERSISTENT = 3,
 }
 
 export const DEFAULT_ERROR_LEVEL = ErrorLevel.ERROR
+
+export const priorityErrors = [ErrorLevel.ERROR, ErrorLevel.PERSISTENT]
+
+export const consoleErrorLevels = [ErrorLevel.WARNING, ErrorLevel.ERROR, ErrorLevel.PERSISTENT]
 
 export class ErrorFlag extends Error {
     level: ErrorLevel
