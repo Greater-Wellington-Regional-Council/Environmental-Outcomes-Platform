@@ -31,22 +31,13 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, onCl
     }, [])
 
     useEffect(() => {
-        if (panelRef.current && isLargeScreen) {
-            const parentWidth = panelRef.current.parentElement?.getBoundingClientRect().width || 0
-            const initialWidth = parentWidth * 0.35
-            setPanelWidth(initialWidth)
-            onResize && onResize(initialWidth)
-        }
-    }, [onResize, isLargeScreen])
-
-    useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
             if (isResizing.current && panelRef.current && isLargeScreen) {
                 const panelRightEdge = panelRef.current.getBoundingClientRect().right
                 const newWidth = panelRightEdge - e.clientX
-                if (newWidth > 100) {
+                if ((newWidth > 100)) {
                     setPanelWidth(newWidth)
-                    onResize && onResize(newWidth)
+                    onResize?.(newWidth)
                 }
             }
             e.preventDefault()
@@ -89,7 +80,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, onCl
     return (
         <div
             ref={panelRef}
-            className={`sliding-panel ${stateClass} absolute bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-10`}
+            className={`sliding-panel ${stateClass} absolute bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-[1000]`}
             style={{
                 width: isLargeScreen ? `${panelWidth}px` : '100%',
                 height: isLargeScreen ? `100vh` : '92vh',
