@@ -14,28 +14,25 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, onCl
     const isResizing = useRef(false)
     const [panelWidth, setPanelWidth] = useState(300)
     const [isPanelVisible, setIsPanelVisible] = useState(showPanel)
-    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 640)
+    const [isLargeScreen] = useState(window.innerWidth > 640)
 
     useEffect(() => {
         setIsPanelVisible(showPanel || true)
     }, [showPanel])
 
     useEffect(() => {
-        const handleResize = () => {
-            setIsLargeScreen(window.innerWidth > 640)
+        if (!isResizing.current && panelRef.current && isLargeScreen) {
+            const parentWidth = panelRef.current.parentElement?.getBoundingClientRect().width || 0
+            const initialWidth = parentWidth * 0.35
+            setPanelWidth(initialWidth)
+            onResize?.(initialWidth)
         }
-        window.addEventListener('resize', handleResize)
-        return () => {
-            window.removeEventListener('resize', handleResize)
-        }
-    }, [])
 
-    useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
             if (isResizing.current && panelRef.current && isLargeScreen) {
                 const panelRightEdge = panelRef.current.getBoundingClientRect().right
                 const newWidth = panelRightEdge - e.clientX
-                if ((newWidth > 100)) {
+                if (newWidth > 100) {
                     setPanelWidth(newWidth)
                     onResize?.(newWidth)
                 }

@@ -1,7 +1,7 @@
 import ComboBox, {ComboBoxProps} from '@elements/ComboBox/ComboBox'
 import addressesService from '@services/AddressesService/AddressesService.ts'
 
-export interface AddressSearchProps extends Omit<ComboBoxProps, 'options'> {}
+export type AddressSearchProps = Omit<ComboBoxProps, 'options'>
 
 const AddressSearch = (props: AddressSearchProps) => {
   return (
@@ -11,6 +11,7 @@ const AddressSearch = (props: AddressSearchProps) => {
       options={addressesService.getAddressOptions}
       onSelect={props.onSelect}
       directionUp={props.directionUp}
+      rememberItems={props.rememberItems}
     />
   )
 }
