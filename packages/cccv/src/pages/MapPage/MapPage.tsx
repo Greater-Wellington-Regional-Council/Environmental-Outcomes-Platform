@@ -53,6 +53,8 @@ import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 import useIdleTimer from "@lib/useIdleTimer.ts"
 
 const ADDRESS_ZOOM = 12
+const REMEMBER_HOW_MANY_ADDRESSES = 1
+
 
 function GWHeader() {
     return (
@@ -343,7 +345,7 @@ export default function MapPage() {
                     </InteractiveMap>
 
                     <div className="address-box">
-                        <AddressSearch onSelect={selectAddress} placeholder="Search for address" directionUp={true}/>
+                        <AddressSearch onSelect={selectAddress} placeholder="Search for address" directionUp={true} rememberItems={REMEMBER_HOW_MANY_ADDRESSES}/>
                     </div>
 
                     {currentFmu?.freshwaterManagementUnit && (

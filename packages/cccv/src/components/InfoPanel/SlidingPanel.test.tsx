@@ -46,7 +46,7 @@ describe('SlidingPanel Component', () => {
 
         const bezel = container.querySelector('.cursor-ew-resize')
         fireEvent.mouseDown(bezel!)
-        fireEvent.mouseMove(document, { clientX: 100 })
+        fireEvent.mouseMove(document, { clientX: 101 })
 
         // onResize should have been called with new width
         expect(mockOnResize).toHaveBeenCalledWith(expect.any(Number))
