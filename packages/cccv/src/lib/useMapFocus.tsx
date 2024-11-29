@@ -38,6 +38,7 @@ const useMapFocus = (
         if (location.description) {
             pin.setPopup(new mapboxgl.Popup({ closeButton: false }).setLngLat([location.longitude!, location.latitude!]).setHTML(location.description || '<></>'))
         }
+
         setFocusPin(pin)
     }
 

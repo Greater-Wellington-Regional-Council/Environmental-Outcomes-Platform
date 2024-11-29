@@ -237,9 +237,15 @@ export default function MapPage() {
         clearErrors()
         const clickedFeatures = getFeaturesUnderMouse(mapRef, e, BOUNDARY_LINES_LAYER)
         if (clickedFeatures) {
+            if (mapRef.current?.getMap()?.getZoom() !== DEFAULT_ZOOM)
+                mapRef.current?.getMap().flyTo({
+                    center: e.lngLat,
+                    zoom: DEFAULT_ZOOM,
+                })
             setSelectedLocation({
                 longitude: e.lngLat.lng, latitude: e.lngLat.lat,
-                boundary: clickedFeatures[0]
+                boundary: clickedFeatures[0],
+                zoom: DEFAULT_ZOOM,
             })
         }
     }
