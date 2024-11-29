@@ -1,60 +1,63 @@
+import { UsePDFInstance } from "@react-pdf/renderer"
 import React, { useState } from "react"
 import { Spinner as DownloadSpinner } from "@components/LoadingIndicator/LoadingIndicatorOverlay.tsx"
-import { makeFileNameSafe } from "@lib/makeSafe.ts"
+import {makeFileNameSafe} from "@lib/makeSafe.ts"
 
-export const DownloadLink: React.FC<DownloadLinkProps> = ({
-                                                              href,
-                                                              fileName,
-                                                              pdfLoading,
-                                                              hasError,
-                                                          }) => {
+export const DownloadLink: React.FC<DownloadLinkProps> = ({ instance, fileName, loading, error }) => {
+    // const [ready, setReady] = useState(false)
+    //
+    // useEffect(() => {
+    //     const preloadBlob = async () => {
+    //         if (instance && instance.url) {
+    //             try {
+    //                 const response = await fetch(instance.url)
+    //                 const blob = await response.blob()
+    //             } catch (error) {
+    //                 console.error("Preload failed:", error)
+    //             }
+    //         }
+    //     }
+    //
+    //     preloadBlob().then()
+    // }, [instance])
+
     const [downloading, setDownloading] = useState(false)
 
     const handleDownload = () => {
-        setDownloading(true)
+        if (instance.blob && fileName) {
+            setDownloading(true)
+            const link = document.createElement('a')
+            try {
+                link.href = instance.url!
+                link.download = makeFileNameSafe(fileName, ["pdf"])
 
-        const link = document.createElement("a")
-        link.href = href
-        link.download = makeFileNameSafe(fileName, ["pdf"])
+                document.body.appendChild(link)
+                link.click()
 
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-
-        setDownloading(false)
+                document.body.removeChild(link)
+                URL.revokeObjectURL(link.href)
+            } catch (error) {
+                console.error("Download failed:", error)
+            } finally {
+                URL.revokeObjectURL(link.href)
+                document.body.removeChild(link)
+                setDownloading(false)
+            }
+        }
     }
 
-    if (pdfLoading) {
-        return (
-            <div className="loading-state">
-                <DownloadSpinner width={3} height={5} />
-                <span>Preparing PDF...</span>
-            </div>
-        )
-    }
-
-    if (hasError) {
-        return (
-            <div className="error-state">
-                <span className="text-red-500">Error generating PDF.</span>
-            </div>
-        )
-    }
-
-    return (
-        <button
-            className="button-style"
-            onClick={handleDownload}
-            disabled={downloading || pdfLoading || hasError}
-        >
-            {downloading ? <DownloadSpinner width={3} height={5} /> : "Print"}
+    return loading ? (
+        <DownloadSpinner width={3} height={5} />
+    ) : (
+        <button className="button-style" onClick={handleDownload} disabled={loading || error || downloading || !instance.blob}>
+            Print
         </button>
     )
 }
 
 interface DownloadLinkProps {
-    pdfLoading: boolean;
-    href: string;
+    instance: UsePDFInstance;
     fileName: string;
-    hasError?: boolean;
+    loading?: boolean;
+    error?: boolean;
 }

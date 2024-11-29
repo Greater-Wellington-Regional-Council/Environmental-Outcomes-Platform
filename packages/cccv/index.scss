@@ -37,7 +37,7 @@ caption {
 }
 
 .button-style {
-  @apply font-source-sans-3 text-nui font-bold text-[16px] leading-[22px] border-2 rounded-3xl pl-4 border-nui pr-4 pt-2 pb-2;
+  @apply font-source-sans-3 hover:text-white text-nui font-bold text-[16px] leading-[22px] border-2 rounded-3xl pl-4 border-nui pr-4 pt-2 pb-2;
 }
 
 button {
@@ -49,7 +49,7 @@ button:hover {
 }
 
 button:disabled {
-  @apply font-source-sans-3 text-nui font-bold text-[16px] leading-[22px];
+  @apply font-source-sans-3 text-kapiti font-bold text-[16px] leading-[22px];
 }
 
 ul {

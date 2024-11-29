@@ -9,10 +9,13 @@ const useMapFocus = (
     locationInFocus?: IMViewLocation | null
 ) => {
     const [focusPin, setFocusPin] = useState<Marker | null>(null)
+    const [mapSnapshot, setMapSnapshot] = useState<string | null>(null)
+    const [creatingMapSnapshot, setCreatingMapSnapshot] = useState(false)
 
     useEffect(() => {
         placeFocusPin(locationInFocus)
         zoomIntoFeatures(mapRef, locationInFocus)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mapRef, locationInFocus])
 
@@ -38,7 +41,35 @@ const useMapFocus = (
         setFocusPin(pin)
     }
 
-    return
+    const takeMapSnapshot = (mapRef: MutableRefObject<CombinedMapRef | null>): void => {
+        if (!mapRef?.current) {
+            console.warn("Map reference is null when attempting to take a snapshot.")
+            setMapSnapshot(null)
+            return
+        }
+
+        setCreatingMapSnapshot(true)
+
+        const map = mapRef.current.getMap()
+
+        map.once('idle', () => {
+            try {
+                const snapshot = `${map.getCanvas().toDataURL('image/png')}?timestamp=${Date.now()}`
+                setMapSnapshot(snapshot || null)
+            } catch (error) {
+                console.error("Error taking map snapshot:", error)
+                setMapSnapshot(null)
+            } finally {
+                setCreatingMapSnapshot(false)
+            }
+        })
+    }
+
+    return {
+        takeMapSnapshot,
+        mapSnapshot,
+        creatingMapSnapshot
+    }
 }
 
 export default useMapFocus

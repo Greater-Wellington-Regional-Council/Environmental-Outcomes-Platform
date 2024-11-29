@@ -74,11 +74,15 @@ const FreshwaterManagementUnit = (
     }
 
     const gotoTangataWhenua = (i: number) => {
-        if (tangataWhenuaSites) links?.gotoLink(tangataWhenuaSites.features[i])
+        if (tangataWhenuaSites) {
+            links?.gotoLink(tangataWhenuaSites.features[i])
+        }
     }
 
+    const outerDiv = React.createRef<HTMLDivElement>()
+
     return (
-        <div className="FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidden" id={`fmu_${id || ''}`}>
+        <div ref={outerDiv} className="FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidden" id={`fmu_${id || ''}`}>
             {showHeader && <FmuPanelHeader className={"mb-6"} fmuName1={fmuName1!}/>}
 
             <div className="overview mt-0" data-testid="catchment-desc">

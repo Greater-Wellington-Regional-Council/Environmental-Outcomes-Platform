@@ -7,7 +7,7 @@ import "./MapPage.scss"
 import gwrcLogo from "@images/printLogo_2000x571px.png"
 import {LabelAndValue} from "@elements/ComboBox/ComboBox"
 import {IMViewLocation} from "@shared/types/global"
-import {DEFAULT_ZOOM, DETAILED_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
+import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
 import {CombinedMapRef} from "@components/InteractiveMap/lib/InteractiveMap"
 import mapProperties from "@lib/values/mapProperties.ts"
 
@@ -17,7 +17,6 @@ import SlidingPanel from "@components/InfoPanel/SlidingPanel"
 import useLoadingIndicator from "@components/LoadingIndicator/useLoadingIndicator"
 
 import useEscapeKey from "@lib/useEscapeKey"
-import {useMapSnapshot} from "@lib/MapSnapshotContext"
 import useMapTooltip from "@lib/useMapTooltip"
 import addPropertiesToGeoJSON from "@lib/addPropertiesToGeoJSON.ts"
 import {calculateCentroids} from "@lib/calculatePolygonCentoid"
@@ -25,6 +24,9 @@ import {calculateCentroids} from "@lib/calculatePolygonCentoid"
 import freshwaterManagementService from "@services/FreshwaterManagementUnitService/FreshwaterManagementUnitService.ts"
 import addressesService from "@services/AddressesService/AddressesService.ts"
 import linzDataService from "@services/LinzDataService/LinzDataService.ts"
+
+import formatFilename from "@lib/formatAsFilename"
+import dateTimeString from "@lib/dateTimeString"
 
 import {FmuFullDetails} from "@services/models/FreshwaterManagementUnit"
 import PhysicalAddress from "@components/PhysicalAddress/PhysicalAddress.tsx"
@@ -51,6 +53,12 @@ import useMapFocus from "@lib/useMapFocus.tsx"
 import {announceError, clearErrors} from "@components/ErrorContext/announceError.ts"
 import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 import useIdleTimer from "@lib/useIdleTimer.ts"
+
+import {saveAs} from "file-saver"
+
+import {renderPDF} from "@components/FreshwaterManagementUnit/renderPDF.ts"
+
+import {Spinner as DownloadSpinner} from "@components/LoadingIndicator/LoadingIndicatorOverlay.tsx"
 
 const ADDRESS_ZOOM = 12
 const REMEMBER_HOW_MANY_ADDRESSES = 1
@@ -83,26 +91,21 @@ const useFMUSelection = () => {
         setFmuIndex(null)
     }
 
-    const loadFmus = (fmus: FmuFullDetails[]) => {
+    const loadFmus = async (fmus: FmuFullDetails[]) => {
         setCurrentFmus(fmus || [])
-        setFmuIndex(0)
+        setFmuIndex(fmus.length ? 0 : null)
     }
 
     return {fmuSelected, currentFmu, fmuIndex, currentFmus, setCurrentFmus, setFmuIndex, clearFmus, loadFmus}
 }
 
-// function getFileName(currentFmu: FmuFullDetails) {
-//     return formatFilename(currentFmu.freshwaterManagementUnit.fmuName1 || "", `fmu_${currentFmu.freshwaterManagementUnit.id}`) + `_${dateTimeString()}` + ".pdf"
-// }
-
 export default function MapPage() {
     const locationDetails = useLoaderData()
 
-    const [selectedLocation, selectLocation] = useState<IMViewLocation | null>(null)
+    const [selectedLocation, setSelectedLocation] = useState<IMViewLocation | null>(null)
 
     const {currentFmus, currentFmu, fmuIndex, setFmuIndex, clearFmus, loadFmus} = useFMUSelection()
 
-    const sliderRef = useRef<HTMLDivElement>(null)
     const [sliderWidth, setSliderWidth] = useState<number>(0)
 
     const {setLoading} = useLoadingIndicator()
@@ -115,9 +118,21 @@ export default function MapPage() {
 
     const [showInfoPanel] = useState<boolean | null>(false)
 
-    const {mapSnapshot, takeMapSnapshot} = useMapSnapshot()
+    const setPDF = useState<Blob | null>(null)[1]
 
-    useMapFocus(mapRef, selectedLocation)
+    const [printing, setPrinting] = useState(false)
+
+    const getFileName = () => {
+        return formatFilename(currentFmu?.freshwaterManagementUnit.fmuName1 || "fmu_ccv", `fmu_${currentFmu?.freshwaterManagementUnit.id}`) + `_${dateTimeString()}` + ".pdf"
+    }
+
+    useEffect(() => {
+        takeMapSnapshot(mapRef)
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentFmu])
+
+    const { takeMapSnapshot, mapSnapshot } = useMapFocus(mapRef, selectedLocation)
 
     const fetchFmu = async () => {
         if (!selectedLocation) {
@@ -133,34 +148,12 @@ export default function MapPage() {
             return
         }
 
-        loadFmus(fmuList)
+        await loadFmus(fmuList)
     }
-
-    const currentZoom = mapRef.current?.getMap().getZoom()
-
-    useEffect(() => {
-        if (mapRef.current) {
-            const map = mapRef.current.getMap()
-            if (map.isStyleLoaded())
-                if (map.getZoom() < DETAILED_ZOOM) {
-                    map.setLayoutProperty(TANGATA_WHENUA_LOCATIONS_LAYER, "visibility", "none")
-                } else {
-                    map.setLayoutProperty(TANGATA_WHENUA_LOCATIONS_LAYER, "visibility", "visible")
-                }
-        }
-    }, [currentZoom])
 
     useIdleTimer(() => {
         clearErrors()
     })
-
-    useEffect(() => {
-        if (currentFmu) {
-            takeMapSnapshot(mapRef, selectedLocation)
-        //     setPdfDocument(pdf({ document: <FreshwaterManagementUnitPDF {...currentFmu} />}))
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentFmu])
 
     useEffect(() => {
         fetchFmu().catch((e) => console.error(e))
@@ -168,7 +161,7 @@ export default function MapPage() {
     }, [selectedLocation])
 
     useEscapeKey(() => {
-        selectLocation(null)
+        setSelectedLocation(null)
         clearErrors()
         mapRef.current?.getMap().zoomTo(DEFAULT_ZOOM)
     })
@@ -179,7 +172,7 @@ export default function MapPage() {
         setLoading(true)
 
         clearFmus()
-        selectLocation(null)
+        setSelectedLocation(null)
 
         try {
             const physicalAddress = await addressesService.getAddressByPxid(address.value)
@@ -217,7 +210,7 @@ export default function MapPage() {
                 } as IMViewLocation
             }
 
-            selectLocation(location)
+            setSelectedLocation(location)
         } catch (error) {
             console.error(error)
             announceError("An error occurred while selecting the address")
@@ -225,12 +218,6 @@ export default function MapPage() {
             setLoading(false)
         }
     }
-
-    useEffect(() => {
-        if (sliderRef.current) {
-            setSliderWidth(sliderRef.current.clientWidth)
-        }
-    }, [currentFmu])
 
     const {Tooltip} = useMapTooltip({
         mapRef,
@@ -250,7 +237,7 @@ export default function MapPage() {
         clearErrors()
         const clickedFeatures = getFeaturesUnderMouse(mapRef, e, BOUNDARY_LINES_LAYER)
         if (clickedFeatures) {
-            selectLocation({
+            setSelectedLocation({
                 longitude: e.lngLat.lng, latitude: e.lngLat.lat,
                 boundary: clickedFeatures[0]
             })
@@ -270,7 +257,7 @@ export default function MapPage() {
                     <InteractiveMap
                         startLocation={locationDetails as IMViewLocation}
                         locationInFocus={selectedLocation}
-                        setLocationInFocus={selectLocation}
+                        setLocationInFocus={setSelectedLocation}
                         onHover={handleHover}
                         onClick={handleClick}
                         onLoad={afterMapLoaded}
@@ -285,9 +272,11 @@ export default function MapPage() {
                             data={freshwaterManagementService.urlToGetFmuBoundaries()}>
                         </Source>
 
-                        {currentFmu && <Source id={TANGATA_WHENUA_SHAPES_SOURCE} type="geojson" data={currentFmu?.tangataWhenuaSites} />}
+                        {currentFmu && <Source id={TANGATA_WHENUA_SHAPES_SOURCE} type="geojson"
+                                               data={currentFmu?.tangataWhenuaSites}/>}
 
-                        {selectedLocation?.featuresInFocus && <Source id={OTHER_FEATURE_SHAPE_SOURCE} type="geojson" data={selectedLocation?.featuresInFocus} />}
+                        {selectedLocation?.featuresInFocus && <Source id={OTHER_FEATURE_SHAPE_SOURCE} type="geojson"
+                                                                      data={selectedLocation?.featuresInFocus}/>}
 
                         <Layer
                             id={BOUNDARY_LINES_LAYER}
@@ -321,7 +310,6 @@ export default function MapPage() {
                                 filter={['==', ['id'], _.get(featureBeingRolledOver, "properties.id")]}
                                 paint={{...mapProperties.defaultHover['fill']}}
                                 source={FMU_BOUNDARIES_SOURCE}
-                                maxzoom={DEFAULT_ZOOM+5}
                             />
                         )}
 
@@ -331,7 +319,6 @@ export default function MapPage() {
                             paint={mapProperties.currentFMU.fill}
                             filter={['==', ['id'], currentFmu?.freshwaterManagementUnit?.id ?? null]}
                             source={FMU_BOUNDARIES_SOURCE}
-                            maxzoom={DEFAULT_ZOOM+5}
                         />)}
 
                         {selectedLocation?.featuresInFocus && <Layer
@@ -345,15 +332,34 @@ export default function MapPage() {
                     </InteractiveMap>
 
                     <div className="address-box">
-                        <AddressSearch onSelect={selectAddress} placeholder="Search for address" directionUp={true} rememberItems={REMEMBER_HOW_MANY_ADDRESSES}/>
+                        <AddressSearch onSelect={selectAddress} placeholder="Search for address" directionUp={true}
+                                       rememberItems={REMEMBER_HOW_MANY_ADDRESSES}/>
                     </div>
+
+                    {currentFmu?.freshwaterManagementUnit && (
+                        <div className={`absolute right-6 z-[1100] top-0 bg-transparent bg-opacity-1 print-button`}>
+                            <button
+                                onClick={async () => {
+                                    setPrinting(true)
+                                    takeMapSnapshot(mapRef)
+                                    renderPDF({...currentFmu!, mapImage: mapSnapshot}).then((PDF) => {
+                                        setPDF(PDF)
+                                        saveAs(PDF!, getFileName())
+                                    }).finally(() => setPrinting(false))
+                                }}
+                            >
+                                {printing ? <DownloadSpinner width={5} height={5}/> : "Print"}
+                            </button>
+                        </div>
+                    )}
 
                     {currentFmu?.freshwaterManagementUnit && (
                         <SlidingPanel contentChanged={false} showPanel={showInfoPanel || true}
                                       onResize={(width) => setSliderWidth(width)}
                                       onClose={() => clearFmus()}>
-                            {/*{currentFmus.length > 1 && (<FmuPanelHeader className={"ml-6 mb-8"} fmuName1={currentFmu.freshwaterManagementUnit.fmuName1!}/>)}*/}
+
                             {selectedLocation?.address && <PhysicalAddress address={selectedLocation.address}/>}
+
                             {currentFmus.length > 1 && (<div className={"mb-0"}>
                                 <div
                                     className={"text-sm text-center font-light mb-0"}>{`This property sits on ${currentFmus.length} catchments`}</div>
@@ -371,7 +377,7 @@ export default function MapPage() {
                                 links={{
                                     tangataWhenuaSites: TANGATA_WHENUA_SHAPES_SOURCE,
                                     gotoLink: (f: Feature | FeatureCollection) =>
-                                        selectLocation({
+                                        setSelectedLocation({
                                             featuresInFocus: f,
                                             highlight: mapProperties.tangataWhenua.fill,
                                         }),
