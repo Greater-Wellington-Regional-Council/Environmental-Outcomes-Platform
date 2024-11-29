@@ -13,7 +13,8 @@ export default function zoomIntoFeatures(
     padding: number = 200,
     maxZoom: number = 20
 ) {
-    if (!focus) return
+    if (!focus)
+        return
 
     const featureOrCollection =
         (isFeatureCollection(focus) || isFeature(focus)) ? focus :
