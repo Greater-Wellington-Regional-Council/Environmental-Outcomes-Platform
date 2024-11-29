@@ -17,6 +17,7 @@ import {
 } from "@components/Contaminants/ContaminantObjectiveDescription"
 import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
+import _ from "lodash"
 
 Font.register(fonts.inter)
 
@@ -106,7 +107,9 @@ const MapImage: React.FC<{ src: string, width?: string }> = ({ src, width }) => 
     )
 }
 
-export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
+export type FreshwaterManagementUnitPDFProps = FmuFullDetailsWithMap
+
+export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDFProps) => {
 
     const {
         fmuName1,
@@ -119,7 +122,7 @@ export const FreshwaterManagementUnitPDF = (details: FmuFullDetailsWithMap) => {
     const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit)
 
     return (
-        <Document>
+        <Document key={_.get(details, "key")}>
             <Page size="A4" style={tw("bg-white font-sans p-4 flex flex-col")}>
 
                 {/* Header */}

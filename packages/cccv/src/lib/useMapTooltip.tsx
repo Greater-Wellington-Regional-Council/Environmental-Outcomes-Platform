@@ -106,7 +106,7 @@ const useMapTooltip = ({ mapRef, source, tooltipClassName }: UseMapTooltipProps)
             }
         }
     }, [mapRef, source, debouncedMoveToolTip])
-
+    
     const Tooltip = () => {
         if (!tooltipPosition || !tooltipContent) return null
 
@@ -117,7 +117,7 @@ const useMapTooltip = ({ mapRef, source, tooltipClassName }: UseMapTooltipProps)
                     position: 'absolute',
                     left: tooltipPosition.left,
                     top: tooltipPosition.top,
-                    zIndex: 999999,
+                    zIndex: 50,
                     backgroundColor: tooltipStyle['fill-color'] as string,
                     border: `1px solid ${tooltipStyle['fill-outline-color']}`,
                     opacity: tooltipStyle['fill-opacity'] as number,

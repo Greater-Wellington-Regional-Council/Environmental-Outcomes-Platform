@@ -29,8 +29,8 @@ const router = createBrowserRouter(routes as RouteObject[], {
 })
 
 const LoadingOverlayContainer: React.FC = () => {
-    const { loading } = useLoadingIndicator()
-    return <>{loading && <LoadingIndicatorOverlay />}</>
+    const { addressLoading } = useLoadingIndicator()
+    return <>{addressLoading && <LoadingIndicatorOverlay />}</>
 }
 
 export default LoadingOverlayContainer

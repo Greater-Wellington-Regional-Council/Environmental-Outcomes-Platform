@@ -7,9 +7,10 @@ interface InfoPanelProps {
     onClose: () => void;
     onResize?: (width: number) => void;
     children?: React.ReactNode;
+    className?: string;
 }
 
-export default function SlidingPanel({ showPanel, contentChanged, onResize, onClose, children }: InfoPanelProps) {
+export default function SlidingPanel({ showPanel, contentChanged, onResize, onClose, children, className }: InfoPanelProps) {
     const panelRef = useRef<HTMLDivElement>(null)
     const isResizing = useRef(false)
     const [panelWidth, setPanelWidth] = useState(300)
@@ -77,7 +78,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, onCl
     return (
         <div
             ref={panelRef}
-            className={`sliding-panel ${stateClass} absolute bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-[1000]`}
+            className={`sliding-panel ${stateClass} absolute bg-white font-mono shadow-black ${signalUpdatedInfoPanel} ${revealOrHideInfoPanel} transition ease-in-out duration-500 z-[1000] ${className}`}
             style={{
                 width: isLargeScreen ? `${panelWidth}px` : '100%',
                 height: isLargeScreen ? `100vh` : '92vh',
@@ -87,7 +88,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, onCl
             data-testid="sliding-panel"
         >
             <div
-                className="absolute top-0 m-0 p-0 text-gray-400 cursor-pointer leading-none z-50"
+                className={`absolute top-0 m-0 p-0 text-gray-400 bg-transparent cursor-pointer leading-none`}
                 onClick={handleClose}
                 role="button"
                 aria-label="Close Panel"
@@ -100,12 +101,12 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, onCl
             </div>
             {isLargeScreen && (
                 <div
-                    className="absolute left-[-6px] top-0 bottom-0 w-[6px] cursor-ew-resize z-20 bg-gray-100"
+                    className="absolute left-[-6px] top-0 bottom-0 w-[6px] cursor-ew-resize bg-gray-100"
                     onMouseDown={handleMouseDown}
                     onDoubleClick={handleDoubleClick}
                 />
             )}
-            <div className="relative z-30 overflow-auto h-full">
+            <div className="relative z-30 mt-10 overflow-auto h-full">
                 {children}
             </div>
         </div>
