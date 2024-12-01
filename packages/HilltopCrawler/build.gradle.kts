@@ -38,7 +38,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.kafka:spring-kafka")
-  implementation("org.flywaydb:flyway-core:10.21.0")
+  implementation("org.flywaydb:flyway-core:11.0.0")
   implementation("org.flywaydb:flyway-database-postgresql:10.21.0")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("org.apache.kafka:kafka-streams")
