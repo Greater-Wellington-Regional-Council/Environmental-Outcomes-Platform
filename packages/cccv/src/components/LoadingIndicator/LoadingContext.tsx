@@ -1,7 +1,7 @@
 import React, { createContext, useState } from 'react'
 
 interface LoadingContextType {
-    addressLoading: boolean;
+    loading: boolean;
     setLoading: (value: boolean) => void;
 }
 
