@@ -40,6 +40,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-map-gl": "^7.1.7",
+    "react-pdf-html": "^2.1.2",
     "react-pdf-tailwind": "^2.3.0",
     "react-query": "^3.39.3",
     "react-refresh": "^0.14.2",
@@ -47,6 +48,7 @@
     "react-use": "^17.5.1",
     "storybook": "^8.4.5",
     "styled-components": "^6.1.13",
+    "tw-to-css": "0.0.12",
     "uninstall": "^0.0.0"
   },
   "devDependencies": {
