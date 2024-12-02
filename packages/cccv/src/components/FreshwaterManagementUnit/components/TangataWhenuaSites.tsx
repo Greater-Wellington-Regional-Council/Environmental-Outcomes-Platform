@@ -23,7 +23,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
 
         const parentRect = e.currentTarget.closest('.sliding-panel')?.getBoundingClientRect()
         if (!parentRect) {
-            console.error("Could not find sliding panel element.")
+            console.error("Could not find parent element.")
             return
         }
 

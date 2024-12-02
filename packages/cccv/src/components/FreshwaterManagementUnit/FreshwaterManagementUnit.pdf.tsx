@@ -18,6 +18,8 @@ import {
 import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
 import _ from "lodash"
+import DOMPurify from "dompurify"
+import Html from "react-pdf-html"
 
 Font.register(fonts.inter)
 
@@ -109,17 +111,28 @@ const MapImage: React.FC<{ src: string, width?: string }> = ({ src, width }) => 
 
 export type FreshwaterManagementUnitPDFProps = FmuFullDetailsWithMap
 
+const rPDFMarkup = (s: string, twStyle?: string) => <Html style={tw(twStyle || "body list")}>{s}</Html>
+
 export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDFProps) => {
 
     const {
         fmuName1,
         catchmentDescription,
         implementationIdeas,
+        vpo,
+        otherInfo,
+        culturalOverview,
     } = details.freshwaterManagementUnit
 
     const tangataWhenuaSites = details.tangataWhenuaSites
 
     const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit)
+
+    const vpoSafe = vpo?.value ? DOMPurify.sanitize(vpo.value!) : null
+
+    const otherInfoSafe = otherInfo?.value ? DOMPurify.sanitize(otherInfo.value!) : null
+
+    const culturalOverviewSafe = culturalOverview?.value ? DOMPurify.sanitize(culturalOverview.value!) : null
 
     return (
         <Document key={_.get(details, "key")}>
@@ -141,14 +154,21 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
                     <Text style={tw("h1")}>{fmuName1}</Text>
                 </View>
 
+                {/* Overview */}
                 <View style={[tw("mb-6 flex-row items-start"), { width: '100%' }]} wrap={false}>
                     {catchmentDescription && (
                         <View style={{ flex: 1, marginRight: '12px' }}>
-                            <Text style={tw("body")}>{makeSafe(catchmentDescription ?? '')}</Text>
+                            <Text style={tw("body")}>{rPDFMarkup(makeSafe(catchmentDescription ?? ''))}</Text>
                         </View>
                     )}
                     {details.mapImage && <MapImage width={catchmentDescription ? '42%' : '100%'} src={details.mapImage}/>}
                 </View>
+
+                {/* VPO */}
+                {vpoSafe && <View style={[tw("mb-6"), { width: '100%' }]} wrap={false}>
+                    <Text style={tw("h2 mb-2")}>Freshwater Values, Priorities, and Outcomes</Text>
+                    <Text style={tw("body")}>{rPDFMarkup(makeSafe(vpoSafe ?? ''))}</Text>
+                </View>}
 
                 {/* Contaminants */}
                 {contaminants?.length ? (
@@ -164,8 +184,14 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
 
                 {/* Tangata Whenua Sites */}
                 {tangataWhenuaSites?.features.length ? (
-                    <View style={tw("mt-6")} wrap={false}>
-                        <Text style={tw("h2 mb-2")}>Sites of significance</Text>
+                    <View style={tw("mt-6 body")} wrap={false}>
+                        {culturalOverviewSafe && <View style={tw("h2 mb-2")}>
+                            <Text style={tw("h2 mb-2")}>Cultural Significance of the Catchment</Text>
+                            <Text style={tw("body")}>{rPDFMarkup(makeSafe(culturalOverviewSafe ?? ''))}</Text>
+                        </View>}
+
+                        <Text style={tw("h3 mb-2")}>Sites of Significance</Text>
+
                         <Text style={tw("body mb-1")}>
                             This area contains sites of significance to Tangata Whenua.
                         </Text>
@@ -181,6 +207,12 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
                         <BulletList items={parseHtmlListToArray(implementationIdeas?.value)} />
                     </View>
                 ) : <View style={tw("mt-0")} />}
+
+                {/* Other info */}
+                {otherInfoSafe && <View style={[tw("mb-6"), { width: '100%' }]} wrap={false}>
+                    <Text style={tw("h2 mb-2")}>Other Relevant Information</Text>
+                    <Text style={tw("body")}>{rPDFMarkup(makeSafe(otherInfoSafe ?? ''))}</Text>
+                </View>}
 
                 {/* Disclaimer */}
                 <View style={tw("mt-6")} wrap={false}>

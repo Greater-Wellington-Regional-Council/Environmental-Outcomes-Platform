@@ -85,6 +85,7 @@ const FreshwaterManagementUnit = (
         <div ref={outerDiv} className="FreshwaterManagementUnit bg-white p-6 pt-0 relative overflow-hidden" id={`fmu_${id || ''}`}>
             {showHeader && <FmuPanelHeader className={"mb-6"} fmuName1={fmuName1!}/>}
 
+            {/* Overview */}
             <div className="overview mt-0" data-testid="catchment-desc">
                 <h2>Overview</h2>
                 <div
@@ -95,6 +96,7 @@ const FreshwaterManagementUnit = (
                 />
             </div>
 
+            {/* VPO */}
             {vpoSafe && <div className="vpo mt-6" data-testid="vpo">
                 <h2>Freshwater Values, Priorities, and Outcomes</h2>
                 <div
@@ -105,6 +107,7 @@ const FreshwaterManagementUnit = (
                 />
             </div>}
 
+            {/* Contaminants */}
             <div className="contaminants mt-6">
                 <h2>Contaminants</h2>
                 <p>Freshwater objectives from {fmuName1 || ""} Whaitua Implementation Plan (as at August

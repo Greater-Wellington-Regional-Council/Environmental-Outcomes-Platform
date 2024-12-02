@@ -50,7 +50,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
-  implementation("org.springframework.kafka:spring-kafka")
+  implementation("org.springframework.kafka:spring-kafka")  
   implementation("org.apache.kafka:kafka-streams")
   implementation("io.micrometer:micrometer-tracing-bridge-brave")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
