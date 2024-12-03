@@ -3,7 +3,7 @@ import { councilAtom } from '@lib/loader';
 
 import GWHeader from '@components/GWHeader/GWHeader';
 import Navigation from '@components/Navigation/Navigation';
-import DataTable from '@components/DataTable';
+import DataTable from '@components/DataTable/DataTable';
 
 
 export default function Allocation() {

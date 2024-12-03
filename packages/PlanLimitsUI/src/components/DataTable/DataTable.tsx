@@ -1,3 +1,4 @@
+import './DataTable.scss';
 import React, { useState } from 'react';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
@@ -144,6 +145,8 @@ const DataTable: React.FC = () => {
   const filteredData = () => {
     let filtered = data;
 
+    if (filterColumn1 === SELECT_ALL) setFilterColumn1(null);
+
     if (filterColumn1 && filterColumn1 !== SELECT_ALL) {
       filtered = filtered.filter((row) => row.catchment === filterColumn1);
     }
@@ -152,7 +155,7 @@ const DataTable: React.FC = () => {
       filtered = filtered.filter(
         (row) =>
           row.date.getMonth() === month.getMonth() &&
-          row.date.getFullYear() === month.getFullYear()
+          row.date.getFullYear() === month.getFullYear(),
       );
     }
 
@@ -197,8 +200,8 @@ const DataTable: React.FC = () => {
     doc.save('filtered_data.pdf');
   };
 
-  const tdClass = 'text-right p-2 text-sm';
-  const thClass = 'bg-kapiti text-right text-white p-2 text-sm';
+  const tdClass = 'text-right p-2 text';
+  const thClass = 'bg-kapiti text-right text-white p-2 font-medium';
 
   return (
     <div className="">
@@ -206,25 +209,25 @@ const DataTable: React.FC = () => {
       <label className="text-gray-700 font-bold w-[30%] pt-3">Show data for:</label>
       <div className="flex justify-between items-center mt-2 mb-6">
         <div className="flex space-x-4 w-[100%]">
-            <Dropdown
-              options={['Surface water', 'Groundwater']}
-              onChange={(e) => setWaterType(e.value)}
-              value={waterType || ''}
-              placeholder="Water type"
-              className="text-nui w-[60%] text-sm font-bold"
-              controlClassName={"h-[100%] border-nui border rounded-xl"}
-            />
+          <Dropdown
+            options={['Surface water', 'Groundwater']}
+            onChange={(e) => setWaterType(e.value)}
+            value={waterType || ''}
+            placeholder="Water type"
+            className="text-nui w-[60%] font-bold"
+            controlClassName={'h-[100%] border-nui border rounded-xl'}
+          />
           {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label className="text-gray-700 font-bold w-[10%] pt-3">From:</label>
-            <MonthYearPicker
-              className="text-nui text-sm font-bold border-nui border-2 rounded"
-              onChange={(date) => setMonth(date as Date)}
-              current={month || undefined}
-            />
-            <button
-              className="hover:border-none hover:bg-transparent hover:text-kapiti border-none b-none text-nui relative h-[1rem] w-full text-sm align-middle pt-3 pl-0"
-              onClick={() => {
-                setMonth(null);
+          <MonthYearPicker
+            controlClassName="text-nui font-bold border-nui border-1 rounded"
+            onChange={(date) => setMonth(date as Date)}
+            current={month || undefined}
+          />
+          <button
+            className="hover:border-none hover:bg-transparent hover:text-kapiti border-none b-none text-nui relative h-[1rem] w-full text-sm align-middle pt-3 pl-0"
+            onClick={() => {
+              setMonth(null);
             }}>{xIcon}</button>
         </div>
 
@@ -246,11 +249,13 @@ const DataTable: React.FC = () => {
       </div>
 
       <Dropdown
-        options={[SELECT_ALL, 'BoothsSW', 'HuangaruaSW', 'Hutt_LowerSW', 'Hutt_UpperSW', 'Ruamahanga_LowerSW', 'Ruamahanga_MiddleSW', 'Ruamahanga_UpperSW', 'Grand Total']}
+        options={[SELECT_ALL, 'BoothsSW', 'HuangaruaSW', 'Hutt_LowerSW', 'Hutt_UpperSW', 'Ruamahanga_LowerSW', 'Ruamahanga_MiddleSW', 'Ruamahanga_UpperSW']}
         onChange={(e) => setFilterColumn1(e.value)}
         value={filterColumn1 || ''}
-        placeholder="Filter"
-        className="absolute w-[12%] m-4 top-18 left-4 border-none display-block text-sm font-bold rounded-2 border-nui"
+        placeholder="Filter catchments"
+        controlClassName="absolute p-2 m-4 pr-8 top-18 left-1 border-nui font-bold rounded-xl border-nui"
+        className={'text-nui w-[30%] font-bold mr-10'}
+        arrowClassName="custom-arrow"
       />
 
       <table className="table-auto border-collapse w-full text-left">
@@ -261,7 +266,8 @@ const DataTable: React.FC = () => {
           <th colSpan={4} className="text-center bg-kapiti pt-2">
             Allocated amount - litres per second (L/sec)
           </th>
-          <th colSpan={2} className="text-center bg-kapiti" />
+          <th colSpan={1} className="text-center bg-kapiti border-white border-r-2 border-l-2" />
+          <th colSpan={1} className="text-center bg-kapiti" />
           <th></th>
         </tr>
 
@@ -271,9 +277,9 @@ const DataTable: React.FC = () => {
           <th className={thClass}>Category B</th>
           <th className={thClass}>Surface Take</th>
           <th className={thClass}>Total Allocated</th>
-          <th className={thClass}>Allocation Limit</th>
+          <th className={thClass + ' border-white border-r-2 border-l-2'}>Allocation Limit</th>
           <th className={thClass}>Percent Allocated</th>
-          <th className={"text-left"} >Notes</th>
+          <th className={'text-left'}>Notes</th>
         </tr>
 
         </thead>
@@ -281,15 +287,15 @@ const DataTable: React.FC = () => {
         <tbody>
 
         {filteredData().map((row, index) => (
-          <tr key={row.id} className={"p-1 " + (index % 2 === 0 ? 'bg-gray-200' : '')}>
-            <td className="font-bold pl-2">{row.catchment}</td>
+          <tr key={row.id} className={'p-1 ' + (index % 2 === 0 ? 'bg-gray-100' : '')}>
+            <td className="font-semibold pl-2 w-[18%]">{row.catchment}</td>
             <td className={tdClass}>{row.categoryA}</td>
             <td className={tdClass}>{row.categoryB}</td>
             <td className={tdClass}>{row.surfaceTake}</td>
             <td className={tdClass}>{row.totalAllocated}</td>
-            <td className={tdClass}>{row.allocationLimit}</td>
+            <td className={tdClass + ' border-r-2 border-l-2 border-gray-300'}>{row.allocationLimit}</td>
             <td className={tdClass}>{row.percentAllocated}</td>
-            <td className={"text-left"}>{row.notes}</td>
+            <td className={'text-left font-normal text-sm w-[25%]'}>{row.notes}</td>
           </tr>
         ))}
 
@@ -297,13 +303,13 @@ const DataTable: React.FC = () => {
 
         {/* Grand Total */}
         <tfoot>
-        <tr className="font-medium bg-gray-600 text-white">
-          <td className={"text-left pl-2"}>Grand Total</td>
+        <tr className="font-medium bg-nui text-white">
+          <td className={'text-left pl-2'}>Grand Total</td>
           <td className={tdClass}>{grandTotal('categoryA')}</td>
           <td className={tdClass}>{grandTotal('categoryB')}</td>
           <td className={tdClass}>{grandTotal('surfaceTake')}</td>
           <td className={tdClass}>{grandTotal('totalAllocated')}</td>
-          <td className={tdClass}>{grandTotal('allocationLimit')}</td>
+          <td className={tdClass + 'border-white border-r-2 border-l-2'}>{grandTotal('allocationLimit')}</td>
           <td className={tdClass}>{grandTotal('percentAllocated')}</td>
           <td className={tdClass}>{}</td>
         </tr>

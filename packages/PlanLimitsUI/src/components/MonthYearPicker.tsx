@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const MonthYearPicker = ({
                            current,
                            onChange,
                            limitToLastMonths = 24,
+                           className,
+                           controlClassName,
                          }: {
-  className: string;
+  className?: string;
+  controlClassName?: string;
   onChange: (date: unknown) => void;
   current?: Date;
   limitToLastMonths?: number;
@@ -17,8 +20,12 @@ const MonthYearPicker = ({
   startDate.setMonth(startDate.getMonth() - limitToLastMonths + 1);
 
   const years = Array.from({ length: now.getFullYear() - startDate.getFullYear() + 1 }, (_, i) =>
-    startDate.getFullYear() + i
+    startDate.getFullYear() + i,
   );
+
+  useEffect(() => {
+    setSelectedOption(current ? { month: current.getMonth(), year: current.getFullYear() } : null)
+  }, [current]);
 
   const months = [
     { label: 'January', value: 0 },
@@ -45,7 +52,7 @@ const MonthYearPicker = ({
       .filter((option) => {
         const optionDate = new Date(option.year, option.month, 1);
         return optionDate >= startDate && optionDate <= now;
-      })
+      }),
   );
 
   const [selectedOption, setSelectedOption] = useState<{ year?: number; month?: number } | null>(
@@ -54,7 +61,7 @@ const MonthYearPicker = ({
         year: current?.getFullYear(),
         month: current?.getMonth(),
       }
-      : null
+      : null,
   );
 
   const handleSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -67,9 +74,9 @@ const MonthYearPicker = ({
   };
 
   return (
-    <div className="flex space-x-4 items-center text-sm font-bold">
+    <div className={`flex space-x-4 items-center ${className}`}>
       <select
-        className="border-nui border rounded-xl p-2"
+        className={`border-nui border rounded-xl p-2 ${controlClassName} ${selectedOption ? '' : 'text-gray-300'}`}
         value={selectedOption ? `${selectedOption.month}-${selectedOption.year}` : ''}
         onChange={handleSelection}
       >
