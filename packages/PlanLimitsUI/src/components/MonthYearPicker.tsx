@@ -1,9 +1,25 @@
 import React, { useState } from 'react';
 
-const MonthYearPicker = ({current, onChange} : { className: string, onChange: (date: unknown) => void, current?: Date} ) => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+const MonthYearPicker = ({
+                           current,
+                           onChange,
+                           limitToLastMonths = 24,
+                         }: {
+  className: string;
+  onChange: (date: unknown) => void;
+  current?: Date;
+  limitToLastMonths?: number;
+}) => {
+  const setSelectedDate = useState<Date | null>(null)[1];
 
-  const years = Array.from({ length: 20 }, (_, i) => new Date().getFullYear() - i);
+  const now = new Date();
+  const startDate = new Date();
+  startDate.setMonth(startDate.getMonth() - limitToLastMonths + 1);
+
+  const years = Array.from({ length: now.getFullYear() - startDate.getFullYear() + 1 }, (_, i) =>
+    startDate.getFullYear() + i
+  );
+
   const months = [
     { label: 'January', value: 0 },
     { label: 'February', value: 1 },
@@ -20,25 +36,34 @@ const MonthYearPicker = ({current, onChange} : { className: string, onChange: (d
   ];
 
   const options = years.flatMap((year) =>
-    months.map((month) => ({
-      label: `${month.label} ${year}`,
-      year,
-      month: month.value,
-    }))
+    months
+      .map((month) => ({
+        label: `${month.label} ${year}`,
+        year,
+        month: month.value,
+      }))
+      .filter((option) => {
+        const optionDate = new Date(option.year, option.month, 1);
+        return optionDate >= startDate && optionDate <= now;
+      })
   );
 
-  const [selectedOption, setSelectedOption] = useState<{ year?: number; month?: number } | null>(current ? {
-    year: current?.getFullYear(),
-    month: current?.getMonth(),
-  } : null);
+  const [selectedOption, setSelectedOption] = useState<{ year?: number; month?: number } | null>(
+    current
+      ? {
+        year: current?.getFullYear(),
+        month: current?.getMonth(),
+      }
+      : null
+  );
 
   const handleSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const [month, year] = event.target.value.split('-').map(Number);
     const selected = { month, year };
     setSelectedOption(selected);
-    setSelectedDate(new Date(year, month, 1));
-    console.log('Selected Date:', new Date(year, month, 1));
-    onChange?.(selectedDate)
+    const date = new Date(year, month, 1);
+    setSelectedDate(date);
+    onChange?.(date);
   };
 
   return (
@@ -48,14 +73,16 @@ const MonthYearPicker = ({current, onChange} : { className: string, onChange: (d
         value={selectedOption ? `${selectedOption.month}-${selectedOption.year}` : ''}
         onChange={handleSelection}
       >
-        <option value="" disabled>Select Month and Year</option>
+        <option value="" disabled>
+          Select Month and Year
+        </option>
         {options.map((option) => (
           <option key={`${option.month}-${option.year}`} value={`${option.month}-${option.year}`}>
             {option.label}
           </option>
         ))}
       </select>
-   </div>
+    </div>
   );
 };
 

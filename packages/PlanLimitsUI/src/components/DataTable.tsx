@@ -203,19 +203,19 @@ const DataTable: React.FC = () => {
   return (
     <div className="">
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-      <label className="text-gray-700 font-bold w-[30vh] pt-3">Show data for:</label>
-      <div className="flex justify-between items-center mt-2 mb-6 w-[100vh]">
-        <div className="flex space-x-4 w-[100vh]">
+      <label className="text-gray-700 font-bold w-[30%] pt-3">Show data for:</label>
+      <div className="flex justify-between items-center mt-2 mb-6">
+        <div className="flex space-x-4 w-[100%]">
             <Dropdown
               options={['Surface water', 'Groundwater']}
               onChange={(e) => setWaterType(e.value)}
               value={waterType || ''}
               placeholder="Water type"
-              className="text-nui w-[60vh] text-sm font-bold"
+              className="text-nui w-[60%] text-sm font-bold"
               controlClassName={"h-[100%] border-nui border rounded-xl"}
             />
           {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label className="text-gray-700 font-bold w-[10vh] pt-3">From:</label>
+          <label className="text-gray-700 font-bold w-[10%] pt-3">From:</label>
             <MonthYearPicker
               className="text-nui text-sm font-bold border-nui border-2 rounded"
               onChange={(date) => setMonth(date as Date)}
