@@ -56,3 +56,9 @@ out/
 .volumes/
 
 qodana.yaml
+
+/**/*.js
+!src/workers/**/*.js
+
+/**/*.js
+!src/workers/**/*.js

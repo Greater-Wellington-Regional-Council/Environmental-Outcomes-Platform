@@ -11,7 +11,7 @@ export default defineConfig(async () => {
     plugins: [
       tsconfigPaths(),
       react(),
-      redirectAll()
+      redirectAll(),
     ],
     build: {
       rollupOptions: {

@@ -183,7 +183,7 @@ export default function MapPage() {
         source: tooltipProperties})
 
     return (
-        <div className="map-page bg-white">
+        <div className="base-page bg-white">
             <GWHeader />
 
             <main role="application">
@@ -243,3 +243,4 @@ export default function MapPage() {
         </div>
     )
 }
+

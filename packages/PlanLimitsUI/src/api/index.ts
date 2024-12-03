@@ -1,6 +1,13 @@
 import type { FeatureCollection, Geometry } from 'geojson';
 import { useQuery } from '@tanstack/react-query';
 import { camelCase, mapKeys } from 'lodash';
+import {
+  FlowLimit,
+  FlowMeasurementSite,
+  GroundWaterLimit, Plan,
+  PlanRegion,
+  SurfaceWaterLimit, Usage,
+} from '@src/shared/lib/types/global';
 
 const REVIEW_HOST_REGEX = /.*\.amplifyapp\.com$/;
 const DEV_HOST_REGEX = /.*\.gw-eop-dev\.tech$/;

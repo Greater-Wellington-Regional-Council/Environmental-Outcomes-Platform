@@ -1,12 +1,13 @@
 import { useAtom } from 'jotai';
-import { councilAtom } from '../../lib/loader';
+import { councilAtom } from '@lib/loader';
 import useDetailedWaterUseData, {
   type DetailedWaterUseQuery,
 } from '../../lib/useDetailedWaterUseData';
 import WeeklyResults from './WeeklyResults';
 import DailyResults from './DailyResults';
-import Header from '../../pages/Limits/Sidebar/Header';
-import { ErrorIndicator, LoadingIndicator } from '../../components/Indicators';
+import { ErrorIndicator, LoadingIndicator } from '@components/Indicators';
+import GWHeader from '@components/GWHeader/GWHeader';
+import Navigation from '@components/Navigation/Navigation';
 
 export default function Usage() {
   const [council] = useAtom(councilAtom);
@@ -17,35 +18,37 @@ export default function Usage() {
 
   return (
     <>
-      <div className="flex justify-between items-end border-b">
-        <div className="px-4 py-2">
-          <a href={`/limits/${council.slug}`} className="text-xs underline">
-            Back to allocations viewer
-          </a>
-          <h1 className="text-xl font-light uppercase mt-2">
-            Detailed Water Usage
-          </h1>
+      <GWHeader
+        title={`Water Allocations and Usage`}
+        subtitle="Detailed Water Usage"
+        council={council}
+        backTo={{ href: `/limits/${council.slug}`, text: 'Back to Water Allocation' }}
+      />
+
+      <nav style={{ zIndex: '9999', height: '50px' }}>
+        <Navigation />
+      </nav>
+
+      <main role="application">
+        <div className="p-4 map-panel">
+          <p className="mb-2">
+            The data below <strong>is not all Water Use data</strong> supplied to
+            Greater Wellington. It only includes data provided using timely
+            automated telemetered systems.
+          </p>
+          <Results waterUseData={waterUseData} />
         </div>
-        <div className="w-[36rem]">
-          <Header council={council} />
-        </div>
-      </div>
-      <main className="p-4">
-        <p className="mb-2">
-          The data below <strong>is not all Water Use data</strong> supplied to
-          Greater Wellington. It only includes data provided using timely
-          automated telemetered systems.
-        </p>
-        <Results waterUseData={waterUseData} />
       </main>
     </>
   );
 }
 
 function Results({ waterUseData }: { waterUseData: DetailedWaterUseQuery }) {
+
   if (waterUseData.isLoading) {
     return <LoadingIndicator>Loading data</LoadingIndicator>;
   }
+
   if (waterUseData.isError || !waterUseData.data || !waterUseData.data.usage) {
     return <ErrorIndicator>Error loading data</ErrorIndicator>;
   }
@@ -63,5 +66,7 @@ function Results({ waterUseData }: { waterUseData: DetailedWaterUseQuery }) {
         to={waterUseData.data.formattedTo}
       />
     </>
-  );
+  )
+    ;
 }
+

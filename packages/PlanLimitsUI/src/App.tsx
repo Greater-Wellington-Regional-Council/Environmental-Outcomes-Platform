@@ -10,6 +10,7 @@ import { loader, councilLoader, defaultAppPath } from './lib/loader';
 import Layout from './Layout';
 import Limits from './pages/Limits';
 import Usage from './pages/Usage';
+import Allocation from '@pages/Allocation';
 
 export const routes: RouteObject[] = [
   {
@@ -25,6 +26,11 @@ export const routes: RouteObject[] = [
         path: '/limits/:council/usage',
         loader: councilLoader,
         element: <Usage />,
+      },
+      {
+        path: '/limits/:council/allocation',
+        loader: councilLoader,
+        element: <Allocation />,
       },
       {
         path: '/limits/:council/:location?',

@@ -14,7 +14,8 @@ import Button from '../../../components/Button';
 import {
   LoadingIndicator,
   ErrorIndicator,
-} from '../../../components/Indicators';
+} from '@components/Indicators';
+import { AppState, DailyUsageHeatmapDataItem, HeatmapData, WaterTakeFilter } from '@src/shared/lib/types/global';
 
 const MIN_OFFSET = -52;
 const MAX_OFFSET = 0;

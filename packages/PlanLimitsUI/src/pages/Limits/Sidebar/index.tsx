@@ -6,6 +6,7 @@ import Overview from './Overview';
 import LimitsTable from './LimitsTable';
 import UsageTable from './UsageTable';
 import Button from '../../../components/RoundedButton';
+import { AppState, WaterTakeFilter } from '@src/shared/lib/types/global';
 
 export default function Sidebar({
   appState,
@@ -20,9 +21,7 @@ export default function Sidebar({
 
   return (
     <>
-      <Header council={council} />
-
-      <div className="border-t border-gray-200 px-6 py-4">
+      <div className="px-6">
         <div className="pb-4 flex flex-row justify-around">
           <Button
             text="Surface water view"
