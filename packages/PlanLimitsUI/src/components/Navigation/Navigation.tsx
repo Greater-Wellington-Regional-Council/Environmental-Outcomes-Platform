@@ -17,22 +17,18 @@ const Navigation = () => {
       link: initialViewLocation ? `/limits/${council.slug}/${createLocationString(initialViewLocation)}` : `/limits/${council.slug}`,
     },
     {
-      title: "Allocations",
-      link: `/limits/${council.slug}/usage`,
-    },
-    {
-      title: "Water allocations",
+      title: "Allocations table",
       link: `/limits/${council.slug}/allocation`,
     }
   ];
 
   return (
-    <div className="flex space-x-4 h-[100px] border-solid border-b-2-kapiti h-[1.25rem]">
+    <div className="flex space-x-4 border-b-2 border-nui-2 display-block h-10">
       <p className="text-xl font-bold m-2">View:</p>
       <ul className="flex space-x-4 list-none m-0">
         {pages.map((page, index) => (
-          <li key={index} className="mb-2 list-none text-lg font-bold m-2">
-            <Link className="hover:underline hover:decoration-color:kapiti hover:text-decoration-[3px]" to={page.link}>
+          <li key={index} className="h-8 list-none text-lg font-bold mt-2 ml-2 mr-2 mb-0 pb-0 hover:border-b-4 hover:border-kapiti">
+            <Link className="" to={page.link}>
               {page.title}
             </Link>
           </li>

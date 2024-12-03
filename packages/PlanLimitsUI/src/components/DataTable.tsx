@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import MonthYearPicker from '@components/MonthYearPicker';
-import { filter } from 'lodash';
 
 const xIcon = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                    stroke="currentColor"
@@ -144,23 +142,18 @@ const DataTable: React.FC = () => {
   const SELECT_ALL = '(All)';
 
   const filteredData = () => {
-
-    const filterByCatchment = (data: TableRow[]) =>
-      data.filter((row) => row.catchment === filterColumn1);
-
-    const filterByMonth = (data: TableRow[]) =>
-      data.filter((row) =>
-        row.date.getMonth() == month?.getMonth() && row.date.getFullYear() == month?.getFullYear()
-    );
-
     let filtered = data;
 
-    if (filterColumn1 !== SELECT_ALL) {
-      filtered = filterByCatchment(filtered);
+    if (filterColumn1 && filterColumn1 !== SELECT_ALL) {
+      filtered = filtered.filter((row) => row.catchment === filterColumn1);
     }
 
     if (month) {
-      filtered = filterByMonth(filtered);
+      filtered = filtered.filter(
+        (row) =>
+          row.date.getMonth() === month.getMonth() &&
+          row.date.getFullYear() === month.getFullYear()
+      );
     }
 
     return filtered;
@@ -204,26 +197,29 @@ const DataTable: React.FC = () => {
     doc.save('filtered_data.pdf');
   };
 
-  const tdClass = 'text-right p-2';
-  const thClass = 'bg-kapiti text-white p-2';
+  const tdClass = 'text-right p-2 text-sm';
+  const thClass = 'bg-kapiti text-right text-white p-2 text-sm';
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        {/* Date Pickers (Left-Aligned) */}
-        <div className="flex space-x-4">
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label className="text-gray-700 font-bold w-[30vh] pt-3">Show data for:</label>
+    <div className="">
+      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+      <label className="text-gray-700 font-bold w-[30vh] pt-3">Show data for:</label>
+      <div className="flex justify-between items-center mb-6 w-[100vh]">
+        <div className="flex space-x-4 w-[100vh]">
             <Dropdown
               options={['Surface water', 'Groundwater']}
               onChange={(e) => setWaterType(e.value)}
               value={waterType || ''}
               placeholder="Water type"
-              className="text-nui w-fit text-sm font-bold border-nui border-2 rounded"
+              className="text-nui w-[60vh] text-sm font-bold"
+              controlClassName={"h-[100%] border-nui border rounded-xl"}
             />
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+          <label className="text-gray-700 font-bold w-[10vh] pt-3">From:</label>
             <MonthYearPicker
               className="text-nui text-sm font-bold border-nui border-2 rounded"
               onChange={(date) => setMonth(date as Date)}
+              current={month || undefined}
             />
             <button
               className="hover:border-none hover:bg-transparent hover:text-kapiti border-none b-none text-nui relative h-[1rem] w-full text-sm align-middle pt-3 pl-0"
@@ -277,7 +273,7 @@ const DataTable: React.FC = () => {
           <th className={thClass}>Total Allocated</th>
           <th className={thClass}>Allocation Limit</th>
           <th className={thClass}>Percent Allocated</th>
-          <th className={thClass} >Notes</th>
+          <th className={"text-left"} >Notes</th>
         </tr>
 
         </thead>

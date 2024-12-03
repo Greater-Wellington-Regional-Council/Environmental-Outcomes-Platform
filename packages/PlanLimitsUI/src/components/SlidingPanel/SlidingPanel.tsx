@@ -93,12 +93,12 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
             }}
             data-testid="sliding-panel"
         >
-            {/* Conditionally render the bezel only for large screens */}
             {isLargeScreen && (
+              // eslint-disable-next-line jsx-a11y/no-static-element-interactions
                 <div
                     className="absolute left-[-6px] top-0 bottom-0 w-[6px] cursor-ew-resize z-20 bg-gray-100"
                     onMouseDown={handleMouseDown}
-                    onDoubleClick={handleDoubleClick} // Added double-click event
+                    onDoubleClick={handleDoubleClick}
                 />
             )}
 

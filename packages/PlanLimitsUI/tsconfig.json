@@ -15,7 +15,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["jspdf", "node"],
     "typeRoots": ["node_modules/@types", "src/lib/types", "src/types"],
     "baseUrl": ".",
     "paths": {

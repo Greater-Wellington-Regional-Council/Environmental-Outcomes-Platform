@@ -1,6 +1,5 @@
 import { useAtom } from 'jotai';
-import { councilAtom } from '../../../lib/loader';
-import Header from './Header';
+import { councilAtom } from '@lib/loader';
 import Footer from './Footer';
 import Overview from './Overview';
 import LimitsTable from './LimitsTable';

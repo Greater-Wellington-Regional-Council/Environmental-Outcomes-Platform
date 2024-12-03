@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const MonthYearPicker = ({ className, onChange} : { className: string, onChange: (date: unknown) => void } ) => {
+const MonthYearPicker = ({current, onChange} : { className: string, onChange: (date: unknown) => void, current?: Date} ) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const years = Array.from({ length: 20 }, (_, i) => new Date().getFullYear() - i);
@@ -27,10 +27,10 @@ const MonthYearPicker = ({ className, onChange} : { className: string, onChange:
     }))
   );
 
-  const [selectedOption, setSelectedOption] = useState<{ year: number; month: number } | null>({
-    year: new Date().getFullYear(),
-    month: new Date().getMonth(),
-  });
+  const [selectedOption, setSelectedOption] = useState<{ year?: number; month?: number } | null>(current ? {
+    year: current?.getFullYear(),
+    month: current?.getMonth(),
+  } : null);
 
   const handleSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const [month, year] = event.target.value.split('-').map(Number);
@@ -42,9 +42,9 @@ const MonthYearPicker = ({ className, onChange} : { className: string, onChange:
   };
 
   return (
-    <div className="flex space-x-4 items-center">
+    <div className="flex space-x-4 items-center text-sm font-bold">
       <select
-        className="border rounded border-nui border-2 p-2"
+        className="border-nui border rounded-xl p-2"
         value={selectedOption ? `${selectedOption.month}-${selectedOption.year}` : ''}
         onChange={handleSelection}
       >

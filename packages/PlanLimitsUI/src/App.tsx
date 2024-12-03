@@ -6,7 +6,7 @@ import {
   useRouteError,
   isRouteErrorResponse,
 } from 'react-router-dom';
-import { loader, councilLoader, defaultAppPath } from './lib/loader';
+import { loader, councilLoader, defaultAppPath } from '@lib/loader';
 import Layout from './Layout';
 import Limits from './pages/Limits';
 import Usage from './pages/Usage';

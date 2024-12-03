@@ -70,10 +70,6 @@ $gapSize: 12px;
 }
 
 .base-page {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: auto;
-  gap: 12px;
   padding: 12px;
 }
 

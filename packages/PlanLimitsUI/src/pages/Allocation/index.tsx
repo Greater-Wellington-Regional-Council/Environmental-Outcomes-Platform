@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useAtom } from 'jotai';
 import { councilAtom } from '@lib/loader';
 
@@ -11,7 +10,7 @@ export default function Allocation() {
   const [council] = useAtom(councilAtom);
 
   return (
-    <>
+    <div className={"base-page"}>
       <GWHeader
         title="Natural Resource Plan"
         subtitle="Water Allocations"
@@ -19,7 +18,7 @@ export default function Allocation() {
         backTo={{ href: `/limits/${council.slug}`, text: 'Back to Water Allocation' }}
       />
 
-      <nav style={{ zIndex: "9999", height: "50px" }}>
+      <nav className="mb-6">
         <Navigation />
       </nav>
 
@@ -28,6 +27,6 @@ export default function Allocation() {
           <DataTable />
         </div>
       </main>
-    </>
+    </div>
   );
 }
