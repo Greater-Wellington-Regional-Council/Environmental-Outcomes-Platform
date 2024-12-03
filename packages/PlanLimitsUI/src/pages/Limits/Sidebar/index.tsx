@@ -23,14 +23,14 @@ export default function Sidebar({
       <div className="px-6">
         <div className="pb-4 flex flex-row justify-around">
           <Button
-            text="Surface water view"
+            text="Surface water"
             onClick={() => {
               setWaterTakeFilter('Surface');
             }}
             active={waterTakeFilter === 'Surface'}
           />
           <Button
-            text="Groundwater view"
+            text="Groundwater"
             onClick={() => {
               setWaterTakeFilter('Ground');
             }}

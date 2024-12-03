@@ -25,7 +25,7 @@ export default function Usage() {
         backTo={{ href: `/limits/${council.slug}`, text: 'Back to Water Allocation' }}
       />
 
-      <nav style={{ zIndex: '9999', height: '50px' }}>
+      <nav className="mb-4">
         <Navigation />
       </nav>
 

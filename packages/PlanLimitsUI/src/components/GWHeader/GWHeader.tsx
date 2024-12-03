@@ -1,6 +1,6 @@
 export default function GWHeader({title, subtitle, council, backTo}: { title: string, subtitle: string, council: Council, backTo?: { href: string, text: string } }) {
   return (
-    <header className="header bold p-3 pl-[1.5em] bg-nui text-white grid grid-cols-12">
+    <header className="header bold p-3 pl-[1.5em] bg-nui text-white grid grid-cols-12 mb-4">
       <div className="header-text col-span-10">
         {backTo && (
           <a href={backTo.href} className="text-xs underline">{backTo.text || "<Back"}</a>)}

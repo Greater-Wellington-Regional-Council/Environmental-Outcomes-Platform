@@ -23,7 +23,7 @@ const Navigation = () => {
   ];
 
   return (
-    <div className="flex space-x-4 border-b-2 border-nui-2 display-block h-10">
+    <div className="flex space-x-4 border-b-2 border-nui-2 display-block h-10 mb-4">
       <p className="text-xl font-bold m-2">View:</p>
       <ul className="flex space-x-4 list-none m-0">
         {pages.map((page, index) => (

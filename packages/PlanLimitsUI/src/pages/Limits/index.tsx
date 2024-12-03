@@ -70,14 +70,14 @@ export default function Limits() {
   const [ showPanel, setShowPanel ] = useState(true)
 
   return (
-    <>
+    <div className={"base-page"}>
       <GWHeader
         title="Natural Resource Plan"
         subtitle="Water Allocations and Usage"
         council={council}
       />
 
-      <nav style={{ zIndex: "9999", height: "50px" }}>
+      <nav className="mb-4">
         <Navigation />
       </nav>
 
@@ -105,6 +105,6 @@ export default function Limits() {
           </SlidingPanel>
         </div>
       </main>
-    </>
+    </div>
   );
 }

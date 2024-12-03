@@ -18,7 +18,7 @@ export default function Allocation() {
         backTo={{ href: `/limits/${council.slug}`, text: 'Back to Water Allocation' }}
       />
 
-      <nav className="mb-6">
+      <nav className="mb-4">
         <Navigation />
       </nav>
 

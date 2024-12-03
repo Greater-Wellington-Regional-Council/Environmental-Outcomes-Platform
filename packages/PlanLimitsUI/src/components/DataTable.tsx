@@ -204,7 +204,7 @@ const DataTable: React.FC = () => {
     <div className="">
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label className="text-gray-700 font-bold w-[30vh] pt-3">Show data for:</label>
-      <div className="flex justify-between items-center mb-6 w-[100vh]">
+      <div className="flex justify-between items-center mt-2 mb-6 w-[100vh]">
         <div className="flex space-x-4 w-[100vh]">
             <Dropdown
               options={['Surface water', 'Groundwater']}
