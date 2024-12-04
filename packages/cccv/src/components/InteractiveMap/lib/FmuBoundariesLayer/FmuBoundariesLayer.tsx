@@ -1,21 +1,23 @@
-import React from 'react';
-import { Layer } from 'react-map-gl';
-import {BoundaryLinesLayerProps} from "@components/InteractiveMap/lib/InteractiveMap";
+import React from 'react'
+import {Layer} from 'react-map-gl'
+import {BoundaryLinesLayerProps} from "@components/InteractiveMap/lib/InteractiveMap"
+import mapProperties from "@lib/values/mapProperties.ts"
 
-const FmuBoundariesLayer: React.FC<BoundaryLinesLayerProps> = ({ id, source, mapStyle }) => {
-  const lineColor = mapStyle.includes('aerial') ? 'yellow' : 'blue';
-  return (
-    <Layer
-      id={id}
-      type="line"
-      paint={{
-        'line-color': lineColor,
-        'line-width': 2,
-        'line-dasharray': [2, 2],
-      }}
-      source={source}
-    />
-  );
-};
+const FmuBoundariesLayer: React.FC<BoundaryLinesLayerProps> = ({id, source, fillColor = 'orange', lineColor, fillLayer}) => {
+    return (<>
+        <Layer
+            id={id}
+            type="line"
+            paint={{ ...mapProperties.fmuBoundaries['line'], 'line-color': lineColor }}
+            source={source}
+        />
+        {fillLayer && <Layer
+            id={fillLayer}
+            type="fill"
+            paint={{ ...mapProperties.fmuBoundaries['fill'], 'fill-color': fillColor, 'fill-opacity': 0 }}
+            source={source}
+        />}
+    </>)
+}
 
-export default FmuBoundariesLayer;
+export default FmuBoundariesLayer

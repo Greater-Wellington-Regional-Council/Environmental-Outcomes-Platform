@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 export enum ErrorLevel {
   INFO = 0,
@@ -7,13 +7,13 @@ export enum ErrorLevel {
 }
 
 export class ErrorFlag extends Error {
-  level: ErrorLevel;
+  level: ErrorLevel
   constructor(message = '', level = ErrorLevel.ERROR) {
-    super(message);
-    this.level = level;
+    super(message)
+    this.level = level
   }
 }
 
-export const ErrorContext = React.createContext<{ error: Error | null, setError: (e: Error | null | ErrorFlag) => void }>({error: null, setError: () => {}});
+export const ErrorContext = React.createContext<{ error: Error | null, setError: (e: Error | null | ErrorFlag) => void }>({error: null, setError: () => {}})
 
-export default ErrorContext;
+export default ErrorContext

@@ -16,7 +16,7 @@ jobs:
         working-directory: ./packages/PlanLimitsUI
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build app
         run: ./batect --config-var git_sha=${GITHUB_SHA} --config-var linz_api_key=${{ secrets.LINZ_API_KEY }} build

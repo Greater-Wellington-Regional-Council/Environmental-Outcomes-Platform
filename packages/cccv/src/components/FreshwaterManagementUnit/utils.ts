@@ -1,4 +1,4 @@
-import FreshwaterManagementUnit from "@models/FreshwaterManagementUnit.ts";
+import FreshwaterManagementUnit from "@services/models/FreshwaterManagementUnit.ts"
 
 export interface Contaminant {
   title: string;
@@ -41,4 +41,4 @@ export const contaminants = (fmu: FreshwaterManagementUnit): ContaminantList => 
     objective: fmu.mciObj,
     byWhen: fmu.byWhen,
   },
-]);
+])

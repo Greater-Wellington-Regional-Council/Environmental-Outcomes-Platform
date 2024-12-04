@@ -1,8 +1,10 @@
-import proj4 from '@lib/proj4';
+import proj4 from '@lib/proj4'
+import {PinnedLocation, IMViewLocation} from "@shared/types/global"
+import {DEFAULT_ZOOM} from "@components/InteractiveMap/lib/useViewState.ts"
 
 export function parseLocationString(
   locationString: string
-): ViewLocation | null {
+): IMViewLocation | null {
   // e.g. -00.000,000.000,1Z
   const match = locationString.match(
     /^@(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?),(\d\d?)z$/
@@ -40,10 +42,10 @@ export function createLocationString({
   latitude,
   longitude,
   zoom
-}: ViewLocation) {
-  return `@${roundToThreeDecimals(latitude)},${roundToThreeDecimals(
-    longitude
-  )},${Math.round(zoom)}z`
+}: IMViewLocation) {
+  return `@${roundToThreeDecimals(latitude ?? 0)},${roundToThreeDecimals(
+    longitude ?? 0
+  )},${Math.round(zoom ?? DEFAULT_ZOOM)}z`
 }
 
 export function createPinnedLocationString({
@@ -66,34 +68,34 @@ export function defineProjections() {
       'EPSG:2193',
       '+proj=tmerc +lat_0=0 +lon_0=173 +k=0.9996 +x_0=1600000 +y_0=10000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs',
     ]
-  ]);
+  ])
 }
 
 export function toEpsg4326(lng: number, lat: number, from= "EPSG:2193") {
   const to = "EPSG:4326"
 
   if (!projectionsDefined(from, to))
-    return;
+    return
 
   return proj4(from, to, [lng, lat])
 }
 
 function projectionsDefined(from: string, to: string) {
   if (!proj4.defs(from) || !proj4.defs(to))
-    defineProjections();
+    defineProjections()
 
   if (!proj4.defs(from))
-    throw new Error(`Projection ${from} is not defined`);
+    throw new Error(`Projection ${from} is not defined`)
 
   if (!proj4.defs(to))
-    throw new Error(`Projection ${to} is not defined`);
+    throw new Error(`Projection ${to} is not defined`)
 
-  return true;
+  return true
 }
 
 export function targetProjection(lngLat: number[], reverse = false, from= "EPSG:2193", to = "EPSG:4326") {
   if (!projectionsDefined(from, to))
-    return undefined;
+    return undefined
 
   return proj4(reverse ? to : from, reverse ? from : to, [lngLat[0], lngLat[1]])
 }
