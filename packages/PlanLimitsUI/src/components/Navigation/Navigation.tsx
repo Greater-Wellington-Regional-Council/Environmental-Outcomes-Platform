@@ -1,20 +1,20 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { councilAtom } from '@lib/loader';
-import { ViewLocation } from '@src/shared/lib/types/global';
+import { ViewLocation } from '@shared/types/global';
 import { createLocationString } from '@lib/locationString';
 
 const Navigation = () => {
   const [council] = useAtom(councilAtom);
 
   const {
-    locationString: initialViewLocation,
-  } = useLoaderData() as { locationString: ViewLocation; pinnedLocation: ViewLocation };
+    locationString,
+  } = useLoaderData() as { locationString: ViewLocation };
 
   const pages = [
     {
       title: "Allocations and usage map",
-      link: initialViewLocation ? `/limits/${council.slug}/${createLocationString(initialViewLocation)}` : `/limits/${council.slug}`,
+      link: locationString ? `/limits/${council.slug}/${locationString}` : `/limits/${council.slug}`,
     },
     {
       title: "Allocations table",

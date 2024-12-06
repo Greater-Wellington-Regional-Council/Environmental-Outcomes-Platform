@@ -8,7 +8,7 @@ import {
 } from './locationString';
 
 import { Councils, DefaultCouncil } from './councilData';
-import { PinnedLocation, ViewLocation } from '@src/shared/lib/types/global';
+import { PinnedLocation, ViewLocation } from '@shared/types/global';
 
 export let councilAtom: Atom<Council>;
 

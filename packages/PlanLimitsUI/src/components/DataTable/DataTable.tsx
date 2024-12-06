@@ -1,6 +1,6 @@
 import './DataTable.scss';
 import React, { useState } from 'react';
-import Dropdown from 'react-dropdown';
+import Dropdown from '@components/Dropdown/Dropdown';
 import 'react-dropdown/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
@@ -8,12 +8,20 @@ import 'jspdf-autotable';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import MonthYearPicker from '@components/MonthYearPicker';
+import XToClose from '@components/XToClose/XToClose';
 
-const xIcon = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
-                   stroke="currentColor"
-                   className="size-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-</svg>;
+const DropdownArrow: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={2}
+    stroke="currentColor"
+    className={`w-4 h-4 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+  </svg>
+);
 
 type TableRow = {
   id: number;
@@ -48,6 +56,7 @@ declare module 'jspdf' {
     }) => jsPDF;
   }
 }
+
 const DataTable: React.FC = () => {
   const [data] = useState<TableRow[]>([
     {
@@ -138,7 +147,7 @@ const DataTable: React.FC = () => {
 
   const [month, setMonth] = useState<Date | null>(null);
   const [filterColumn1, setFilterColumn1] = useState<string | null>(null);
-  const [waterType, setWaterType] = useState<string | null>(null);
+  const [waterType, setWaterType] = useState<string | null>("Surface water");
 
   const SELECT_ALL = '(All)';
 
@@ -204,35 +213,31 @@ const DataTable: React.FC = () => {
   const thClass = 'bg-kapiti text-right text-white p-2 font-medium';
 
   return (
-    <div className="">
+    <div>
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-      <label className="text-gray-700 font-bold w-[30%] pt-3">Show data for:</label>
+      <label className="text-gray-700 font-bold w-full pt-3 pb-1">Show data for:</label>
+
+      {/* High level filters - left aligned */}
       <div className="flex justify-between items-center mt-2 mb-6">
-        <div className="flex space-x-4 w-[100%]">
+        <div className="space-x-4">
           <Dropdown
             options={['Surface water', 'Groundwater']}
-            onChange={(e) => setWaterType(e.value)}
+            onChange={(e) => setWaterType(e)}
             value={waterType || ''}
             placeholder="Water type"
-            className="text-nui w-[60%] font-bold"
-            controlClassName={'h-[100%] border-nui border rounded-xl'}
+            dataTestid={'dropdown-water-types'}
           />
           {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label className="text-gray-700 font-bold w-[10%] pt-3">From:</label>
+          <label className="text-gray-700 font-bold pt-3">From:</label>
           <MonthYearPicker
-            controlClassName="text-nui font-bold border-nui border-1 rounded"
             onChange={(date) => setMonth(date as Date)}
             current={month || undefined}
           />
-          <button
-            className="hover:border-none hover:bg-transparent hover:text-kapiti border-none b-none text-nui relative h-[1rem] w-full text-sm align-middle pt-3 pl-0"
-            onClick={() => {
-              setMonth(null);
-            }}>{xIcon}</button>
+          <XToClose onClick={() => setMonth(null)} />
         </div>
 
         {/* Buttons (Right-Aligned) */}
-        <div className="flex space-x-4">
+        <div className="space-x-4">
           <button
             onClick={downloadCSV}
             className=""
@@ -250,12 +255,11 @@ const DataTable: React.FC = () => {
 
       <Dropdown
         options={[SELECT_ALL, 'BoothsSW', 'HuangaruaSW', 'Hutt_LowerSW', 'Hutt_UpperSW', 'Ruamahanga_LowerSW', 'Ruamahanga_MiddleSW', 'Ruamahanga_UpperSW']}
-        onChange={(e) => setFilterColumn1(e.value)}
+        onChange={(e) => setFilterColumn1(e)}
         value={filterColumn1 || ''}
         placeholder="Filter catchments"
-        controlClassName="absolute p-2 m-4 pr-8 top-18 left-1 border-nui font-bold rounded-xl border-nui"
-        className={'text-nui w-[30%] font-bold mr-10'}
-        arrowClassName="custom-arrow"
+        controlClassName="absolute"
+        className={''}
       />
 
       <table className="table-auto border-collapse w-full text-left">

@@ -2,12 +2,13 @@ import type { FeatureCollection, Geometry } from 'geojson';
 import { useQuery } from '@tanstack/react-query';
 import { camelCase, mapKeys } from 'lodash';
 import {
+  Dictionary,
   FlowLimit,
   FlowMeasurementSite,
   GroundWaterLimit, Plan,
   PlanRegion,
   SurfaceWaterLimit, Usage,
-} from '@src/shared/lib/types/global';
+} from '@shared/types/global';
 
 const REVIEW_HOST_REGEX = /.*\.amplifyapp\.com$/;
 const DEV_HOST_REGEX = /.*\.gw-eop-dev\.tech$/;
@@ -133,7 +134,7 @@ export function usePlanLimitsData(councilId: number) {
   const flowLimits = useFeatureQueryWith<FlowLimit>('/plan-limits/flow-limits');
 
   // TODO: can we re-use useFeatureQueryWith here?
-  const plan = useQuery({
+  const plan = useQuery<Plan>({
     enabled: Boolean(manifest),
     queryKey: ['/plan-limits/plan', councilId, manifest],
     refetchOnWindowFocus: false,
@@ -166,7 +167,7 @@ export function usePlanLimitsData(councilId: number) {
         groundWaterLimits: groundWaterLimits.data,
         flowMeasurementSites: flowMeasurementSites.data,
         flowLimits: flowLimits.data,
-        plan: plan.data,
+        plan: plan.data as Plan | Dictionary<string | null>,
       }
     : undefined;
 

@@ -12,7 +12,7 @@ import { usePlanLimitsData } from '@src/api';
 import Map from './map';
 import Sidebar from './Sidebar';
 
-import { ViewLocation, WaterTakeFilter } from '@src/shared/lib/types/global';
+import { ViewLocation, WaterTakeFilter } from '@shared/types/global';
 import GWHeader from '@components/GWHeader/GWHeader';
 import SlidingPanel from '@components/SlidingPanel/SlidingPanel';
 import Navigation from '@components/Navigation/Navigation';

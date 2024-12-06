@@ -5,7 +5,7 @@ import Overview from './Overview';
 import LimitsTable from './LimitsTable';
 import UsageTable from './UsageTable';
 import Button from '../../../components/RoundedButton';
-import { AppState, WaterTakeFilter } from '@src/shared/lib/types/global';
+import { AppState, WaterTakeFilter } from '@shared/types/global';
 
 export default function Sidebar({
   appState,

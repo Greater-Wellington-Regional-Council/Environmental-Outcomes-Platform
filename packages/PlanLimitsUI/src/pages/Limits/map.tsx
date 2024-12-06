@@ -11,11 +11,21 @@ import Map, {
   type ViewStateChangeEvent,
   type MapLayerMouseEvent,
 } from 'react-map-gl/maplibre';
-import type { PlanLimitsData } from '../../api';
+import type { PlanLimitsData } from '@src/api';
 import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/RoundedButton';
 import RiverTilesSource from './RiverTilesSource';
 import flowMarkerImage from '../../images/marker_flow.svg';
+
+import { MapboxGeoJSONFeature } from 'react-map-gl';
+import {
+  ActiveLimits,
+  AllPlanData, AppState,
+  FlowLimit,
+  GroundWaterLimit, PinnedLocation,
+  PlanRegion,
+  SurfaceWaterLimit, WaterTakeFilter,
+} from '@shared/types/global';
 
 const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
@@ -130,12 +140,13 @@ export default function LimitsMap({
           pinnedLocation.latitude,
         ]),
       );
-      const activeLimits = mapAllFeatures(activeFeatures, allPlanData!);
-      setAppState(activeLimits, allPlanData!);
+      const activeLimits = mapAllFeatures(activeFeatures as MapboxGeoJSONFeature[], allPlanData! as unknown as AllPlanData);
+      setAppState(activeLimits, allPlanData! as unknown as AllPlanData);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLoaded, isLoaded, pinnedLocation, setAppState]);
 
-  const handleLoad = (evt) => {
+  const handleLoad = (evt: { target: { addImage: (arg0: string, arg1: HTMLImageElement) => void; }; }) => {
     setMapLoaded(true);
 
     const img = new Image(20, 20);
@@ -154,8 +165,8 @@ export default function LimitsMap({
     if (pinnedLocation || !allPlanData) return;
 
     const activeFeatures = evt.target.queryRenderedFeatures(evt.point);
-    const activeLimits = mapAllFeatures(activeFeatures, allPlanData);
-    setAppState(activeLimits, allPlanData);
+    const activeLimits = mapAllFeatures(activeFeatures as MapboxGeoJSONFeature[], allPlanData as unknown as AllPlanData);
+    setAppState(activeLimits, allPlanData as unknown as AllPlanData);
   };
 
   const handleClick = (evt: MapLayerMouseEvent) => {
@@ -236,7 +247,7 @@ export default function LimitsMap({
         />
         <Layer
           id="planRegionsHighlight"
-          filter={['==', ['id'], appState.planRegion && appState.planRegion.id]}
+          filter={['==', ['id'], appState!.planRegion?.id ?? -1]}
           type="fill"
           paint={{
             'fill-outline-color': '#484896',
@@ -304,7 +315,7 @@ export default function LimitsMap({
           <Layer
             id="surfaceWaterUnitLimitHighlight"
             type="fill"
-            filter={['==', ['id'], appState.surfaceWaterUnitLimit?.id || null]}
+            filter={['==', ['id'], appState.surfaceWaterUnitLimit?.id ?? -1]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -336,7 +347,7 @@ export default function LimitsMap({
             filter={[
               '==',
               ['id'],
-              appState.surfaceWaterSubUnitLimit?.id || null,
+              appState.surfaceWaterSubUnitLimit?.id || -1,
             ]}
             paint={{
               'fill-outline-color': '#484896',
@@ -368,7 +379,7 @@ export default function LimitsMap({
           <Layer
             id="flowLimitsHighlight"
             type="fill"
-            filter={['==', ['id'], appState.flowLimit && appState.flowLimit.id]}
+            filter={['==', ['id'], appState.flowLimit?.id || -1]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -399,7 +410,7 @@ export default function LimitsMap({
               [
                 '==',
                 ['id'],
-                appState.flowLimit ? appState.flowLimit.measuredAtSiteId : null,
+                appState?.flowLimit?.measuredAtSiteId ?? -1,
               ],
               1,
               0.5,

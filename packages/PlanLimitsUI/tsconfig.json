@@ -16,6 +16,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "typeRoots": ["node_modules/@types", "src/lib/types", "src/types"],
+    "types": ["vitest"],
     "baseUrl": ".",
     "paths": {
       "@components/*": ["./src/components/*"],
@@ -34,15 +35,16 @@
       "@context/*": ["./src/lib/*"],
       "@values": ["./src/lib/values/*"],
       "@loaders": ["./src/lib/loaders/*"],
-      "@types": ["./src/lib/types/*"],
+      "@types": ["./src/lib/types/*"]
     }
   },
   "include": [
     "src",
     "src/lib/types",
-    "../shared/lib/types/global.d.ts",
+    "src/lib/shared/types/global.d.ts",
     "node_modules/vitest/globals.d.ts",
+    ,
     "../RainfallViewer/src/app/global.d.ts"
   ],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

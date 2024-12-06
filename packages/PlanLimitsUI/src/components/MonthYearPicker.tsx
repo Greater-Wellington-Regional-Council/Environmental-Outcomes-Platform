@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import Dropdown from '@components/Dropdown/Dropdown';
 
 const MonthYearPicker = ({
                            current,
@@ -9,12 +10,10 @@ const MonthYearPicker = ({
                          }: {
   className?: string;
   controlClassName?: string;
-  onChange: (date: unknown) => void;
+  onChange: (date: Date) => void;
   current?: Date;
   limitToLastMonths?: number;
 }) => {
-  const setSelectedDate = useState<Date | null>(null)[1];
-
   const now = new Date();
   const startDate = new Date();
   startDate.setMonth(startDate.getMonth() - limitToLastMonths + 1);
@@ -22,10 +21,6 @@ const MonthYearPicker = ({
   const years = Array.from({ length: now.getFullYear() - startDate.getFullYear() + 1 }, (_, i) =>
     startDate.getFullYear() + i,
   );
-
-  useEffect(() => {
-    setSelectedOption(current ? { month: current.getMonth(), year: current.getFullYear() } : null)
-  }, [current]);
 
   const months = [
     { label: 'January', value: 0 },
@@ -48,6 +43,7 @@ const MonthYearPicker = ({
         label: `${month.label} ${year}`,
         year,
         month: month.value,
+        value: `${month.value}-${year}`,
       }))
       .filter((option) => {
         const optionDate = new Date(option.year, option.month, 1);
@@ -55,40 +51,30 @@ const MonthYearPicker = ({
       }),
   );
 
-  const [selectedOption, setSelectedOption] = useState<{ year?: number; month?: number } | null>(
-    current
-      ? {
-        year: current?.getFullYear(),
-        month: current?.getMonth(),
-      }
-      : null,
+  const [selectedOption, setSelectedOption] = useState<{ month: number; year: number } | null>(
+    current ? { month: current.getMonth(), year: current.getFullYear() } : null,
   );
 
-  const handleSelection = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const [month, year] = event.target.value.split('-').map(Number);
+  useEffect(() => {
+    setSelectedOption(current ? { month: current.getMonth(), year: current.getFullYear() } : null);
+  }, [current]);
+
+  const handleSelection = (value: string) => {
+    const [month, year] = value.split('-').map(Number);
     const selected = { month, year };
     setSelectedOption(selected);
     const date = new Date(year, month, 1);
-    setSelectedDate(date);
     onChange?.(date);
   };
 
   return (
-    <div className={`flex space-x-4 items-center ${className}`}>
-      <select
-        className={`border-nui border rounded-xl p-2 ${controlClassName} ${selectedOption ? '' : 'text-gray-300'}`}
-        value={selectedOption ? `${selectedOption.month}-${selectedOption.year}` : ''}
+    <div className={`space-x-4 items-center ${className}`}>
+      <Dropdown
+        options={options.reverse()}
+        placeholder="Select Month and Year"
+        value={selectedOption ? `${selectedOption.month}-${selectedOption.year}` : null}
         onChange={handleSelection}
-      >
-        <option value="" disabled>
-          Select Month and Year
-        </option>
-        {options.map((option) => (
-          <option key={`${option.month}-${option.year}`} value={`${option.month}-${option.year}`}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      />
     </div>
   );
 };

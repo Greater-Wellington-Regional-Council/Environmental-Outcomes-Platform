@@ -24,6 +24,7 @@
     }
   },
   "rules": {
-    // Add your own rules here to override ones from the extended configs.
+    "jsx-a11y/no-noninteractive-element-interactions": "off",
+    "jsx-a11y/click-events-have-key-events": "off"
   }
 }
