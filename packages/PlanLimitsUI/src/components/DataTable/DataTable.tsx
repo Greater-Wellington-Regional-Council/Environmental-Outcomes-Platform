@@ -166,7 +166,7 @@ const DataTable: React.FC = () => {
     filteredData().reduce(
       (total, row) => total + (isNumber(row[column]) ? (row[column] as number) : 0),
       0,
-    ).toFixed(3);
+    ).toFixed(2);
 
   const downloadCSV = () => {
     const csv = Papa.unparse(filteredData());
@@ -245,8 +245,8 @@ const DataTable: React.FC = () => {
         onChange={(e) => setFilterColumn1(e)}
         value={filterColumn1 || ''}
         placeholder="Filter catchments"
-        controlClassName="absolute bg-white top-6 left-4 w-[180px]"
-        dropdownClassName="absolute top-16 w-[160px] ml-4"
+        controlClassName="absolute bg-white top-4 left-4 w-[192px]"
+        dropdownClassName="absolute top-16 w-[180px] ml-4"
       />
 
       <table className="table-auto border-collapse w-full text-left">
@@ -263,7 +263,7 @@ const DataTable: React.FC = () => {
         </tr>
 
         <tr className="bg-kapiti text-white">
-          <th className={thClass}></th>
+          <th className={thClass + ' w-[19%]'}></th>
           <th className={thClass}>Category A</th>
           <th className={thClass}>Category B</th>
           <th className={thClass}>Surface Take</th>
