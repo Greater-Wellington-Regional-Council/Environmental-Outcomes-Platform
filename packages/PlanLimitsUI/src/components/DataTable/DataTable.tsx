@@ -245,8 +245,9 @@ const DataTable: React.FC = () => {
         onChange={(e) => setFilterColumn1(e)}
         value={filterColumn1 || ''}
         placeholder="Filter catchments"
-        controlClassName="absolute bg-white top-4 left-4 w-[192px]"
-        dropdownClassName="absolute top-16 w-[180px] ml-4"
+        controlClassName="absolute bg-white top-4 left-4 w-"
+        dropdownClassName="absolute top-16 overflow-hidden ml-4 w-[200px]"
+        optionClassName={'w-[180px]'}
       />
 
       <table className="table-auto border-collapse w-full text-left">

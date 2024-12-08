@@ -68,7 +68,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         onClick={toggleDropdown}
         data-testid={dataTestid}
       >
-        <div className="flex w-[180px] items-center space-x-2 pr-2">
+        <div className="flex items-center space-x-2 pr-2">
           {value ? (
             <span
               data-testid={`selected-${value.toString()}`}>{selectOptions.find((option) => option.value === value)?.label}</span>
@@ -82,12 +82,12 @@ const Dropdown: React.FC<DropdownProps> = ({
 
       {isOpen && (
         <ul
-          className={`absolute indent-0 z-10 pt-1 px-0 m-0 ml-0 mt-2 rounded border border-nui min-w-[210px] bg-white ${dropdownClassName}`}
+          className={`absolute indent-0 z-10 pt-1 px-0 m-0 mt-2 rounded border border-nui bg-white ${dropdownClassName}`}
         >
           {selectOptions.map((option) => (
             <li
               key={option.value}
-              className={`indent-0 ml-0 pl-2 hover:bg-nui hover:text-white cursor-pointer list-none w-[210px] text-left px-4 py-2 ${optionClassName}`}
+              className={`indent-0 m-0 pl-2 px-4 py-2 hover:bg-nui hover:text-white cursor-pointer list-none text-left ${optionClassName}`}
               onClick={() => selectOption(option.value)}
               data-testid={`option-${option.label}`}
             >
