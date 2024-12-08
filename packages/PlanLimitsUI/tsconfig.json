@@ -41,9 +41,8 @@
   "include": [
     "src",
     "src/lib/types",
-    "src/lib/shared/types/global.d.ts",
+    "global.d.ts",
     "node_modules/vitest/globals.d.ts",
-    ,
     "../RainfallViewer/src/app/global.d.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]

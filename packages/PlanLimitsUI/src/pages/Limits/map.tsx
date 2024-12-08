@@ -25,7 +25,7 @@ import {
   GroundWaterLimit, PinnedLocation,
   PlanRegion,
   SurfaceWaterLimit, WaterTakeFilter,
-} from '@shared/types/global';
+} from '../../../global';
 
 const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {

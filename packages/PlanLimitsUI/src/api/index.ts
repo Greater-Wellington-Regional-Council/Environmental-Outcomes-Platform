@@ -1,14 +1,6 @@
 import type { FeatureCollection, Geometry } from 'geojson';
 import { useQuery } from '@tanstack/react-query';
 import { camelCase, mapKeys } from 'lodash';
-import {
-  Dictionary,
-  FlowLimit,
-  FlowMeasurementSite,
-  GroundWaterLimit, Plan,
-  PlanRegion,
-  SurfaceWaterLimit, Usage,
-} from '@shared/types/global';
 
 const REVIEW_HOST_REGEX = /.*\.amplifyapp\.com$/;
 const DEV_HOST_REGEX = /.*\.gw-eop-dev\.tech$/;
@@ -200,8 +192,10 @@ export function usePlanLimitsData(councilId: number) {
   };
 }
 
+export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;
+
 export function useWaterUseQuery(councilId: number, from: string, to: string) {
-  const usage = useQuery({
+  return useQuery({
     queryKey: ['/plan-limits/water-usage', councilId, from, to],
     // These settings prevent a refetch within in the same browser session
     refetchOnWindowFocus: false,
@@ -212,7 +206,5 @@ export function useWaterUseQuery(councilId: number, from: string, to: string) {
         `/plan-limits/water-usage?councilId=${councilId}&from=${from}&to=${to}`,
       ),
   });
-  return usage;
 }
 
-export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;

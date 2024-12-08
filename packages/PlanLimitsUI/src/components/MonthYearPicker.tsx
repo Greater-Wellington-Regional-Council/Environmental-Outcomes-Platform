@@ -6,7 +6,6 @@ const MonthYearPicker = ({
                            onChange,
                            limitToLastMonths = 24,
                            className,
-                           controlClassName,
                          }: {
   className?: string;
   controlClassName?: string;

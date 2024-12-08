@@ -10,19 +10,6 @@ import { saveAs } from 'file-saver';
 import MonthYearPicker from '@components/MonthYearPicker';
 import XToClose from '@components/XToClose/XToClose';
 
-const DropdownArrow: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    className={`w-4 h-4 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-  </svg>
-);
-
 type TableRow = {
   id: number;
   catchment: string;
@@ -219,7 +206,7 @@ const DataTable: React.FC = () => {
 
       {/* High level filters - left aligned */}
       <div className="flex justify-between items-center mt-2 mb-6">
-        <div className="space-x-4">
+        <div className="flex space-x-4">
           <Dropdown
             options={['Surface water', 'Groundwater']}
             onChange={(e) => setWaterType(e)}
@@ -258,8 +245,8 @@ const DataTable: React.FC = () => {
         onChange={(e) => setFilterColumn1(e)}
         value={filterColumn1 || ''}
         placeholder="Filter catchments"
-        controlClassName="absolute"
-        className={''}
+        controlClassName="absolute bg-white top-6 left-4 w-[180px]"
+        dropdownClassName="absolute top-16 w-[160px] ml-4"
       />
 
       <table className="table-auto border-collapse w-full text-left">
