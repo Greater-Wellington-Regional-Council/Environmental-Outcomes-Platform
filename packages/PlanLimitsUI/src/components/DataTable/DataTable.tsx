@@ -9,14 +9,15 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import MonthYearPicker from '@components/MonthYearPicker';
 import XToClose from '@components/XToClose/XToClose';
+import numValue from '@lib/numValue';
 
 type TableRow = {
   id: number;
   catchment: string;
-  categoryA: string;
-  categoryB: string;
-  surfaceTake: number;
-  totalAllocated: number;
+  categoryA: number | string;
+  categoryB: number | string;
+  surfaceTake: number | string;
+  totalAllocated: number | string;
   allocationLimit: number | string;
   percentAllocated: number | string;
   notes: string;
@@ -50,7 +51,7 @@ const DataTable: React.FC = () => {
       id: 1,
       catchment: 'BoothsSW',
       categoryA: '-',
-      categoryB: '6.72',
+      categoryB: 6.72,
       surfaceTake: 77,
       totalAllocated: 83.72,
       allocationLimit: 25,
@@ -62,7 +63,7 @@ const DataTable: React.FC = () => {
       id: 2,
       catchment: 'HuangaruaSW',
       categoryA: '18.4',
-      categoryB: '23.6',
+      categoryB: 23.6,
       surfaceTake: 9,
       totalAllocated: 51,
       allocationLimit: 110,
@@ -74,7 +75,7 @@ const DataTable: React.FC = () => {
       id: 3,
       catchment: 'Hutt_LowerSW',
       categoryA: '-',
-      categoryB: '512.51',
+      categoryB: 512.51,
       surfaceTake: 66.4,
       totalAllocated: 578.91,
       allocationLimit: 2140,
@@ -97,8 +98,8 @@ const DataTable: React.FC = () => {
     {
       id: 5,
       catchment: 'Ruamahanga_LowerSW',
-      categoryA: '659.93',
-      categoryB: '176',
+      categoryA: 659.93,
+      categoryB: 176,
       surfaceTake: 1045.8,
       totalAllocated: 1881.73,
       allocationLimit: 1370,
@@ -109,7 +110,7 @@ const DataTable: React.FC = () => {
     {
       id: 6,
       catchment: 'Ruamahanga_MiddleSW',
-      categoryA: '798.23',
+      categoryA: 798.23,
       categoryB: '-',
       surfaceTake: 259.4,
       totalAllocated: 1057.63,
@@ -121,8 +122,8 @@ const DataTable: React.FC = () => {
     {
       id: 7,
       catchment: 'Ruamahanga_UpperSW',
-      categoryA: '221.01',
-      categoryB: '50.6',
+      categoryA: 221.01,
+      categoryB: 50.6,
       surfaceTake: 481.51,
       totalAllocated: 753.12,
       allocationLimit: 1200,
@@ -158,15 +159,12 @@ const DataTable: React.FC = () => {
     return filtered;
   };
 
-  function isNumber(value: unknown): boolean {
-    return typeof value === 'number' && !Number.isNaN(value);
-  }
-
-  const grandTotal = (column: keyof TableRow): string =>
-    filteredData().reduce(
-      (total, row) => total + (isNumber(row[column]) ? (row[column] as number) : 0),
+  const grandTotal = (column: keyof TableRow): string => {
+    return filteredData().reduce(
+      (total, row) => total + numValue(row[column] as string | number),
       0,
     ).toFixed(2);
+  }
 
   const downloadCSV = () => {
     const csv = Papa.unparse(filteredData());
@@ -219,6 +217,7 @@ const DataTable: React.FC = () => {
           <MonthYearPicker
             onChange={(date) => setMonth(date as Date)}
             current={month || undefined}
+            dataTestid={'dropdown-months'}
           />
           <XToClose onClick={() => setMonth(null)} />
         </div>
@@ -248,6 +247,7 @@ const DataTable: React.FC = () => {
         controlClassName="absolute bg-white top-4 left-4 w-"
         dropdownClassName="absolute top-16 overflow-hidden ml-4 w-[200px]"
         optionClassName={'w-[180px]'}
+        dataTestid={'dropdown-catchments'}
       />
 
       <table className="table-auto border-collapse w-full text-left">

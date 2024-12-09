@@ -1,5 +1,3 @@
-import { PinnedLocation, ViewLocation } from '../../global';
-
 export function parseLocationString(
   locationString: string
 ): ViewLocation | null {

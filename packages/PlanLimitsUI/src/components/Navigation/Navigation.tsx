@@ -1,8 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useAtom } from 'jotai/index';
 import { councilAtom } from '@lib/loader';
-import { ViewLocation } from '../../../global';
-import { createLocationString } from '@lib/locationString';
 
 const Navigation = () => {
   const [council] = useAtom(councilAtom);

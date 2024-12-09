@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { useDebounce } from 'usehooks-ts';
+import { useDebounceValue } from 'usehooks-ts';
 import type { ViewState } from 'react-map-gl/maplibre';
 import { useAtom } from 'jotai';
 import {
@@ -12,7 +12,6 @@ import { usePlanLimitsData } from '@src/api';
 import Map from './map';
 import Sidebar from './Sidebar';
 
-import { ViewLocation, WaterTakeFilter } from '../../../global';
 import GWHeader from '@components/GWHeader/GWHeader';
 import SlidingPanel from '@components/SlidingPanel/SlidingPanel';
 import Navigation from '@components/Navigation/Navigation';
@@ -28,20 +27,25 @@ export default function Limits() {
     pinnedLocation: initialPinnedLocation,
   } = useLoaderData() as { locationString: ViewLocation; pinnedLocation: ViewLocation };
 
-  const [pinnedLocation, setPinnedLocation] = useState(initialPinnedLocation);
+  const [pinnedLocation, setPinnedLocation] = useState<PinnedLocation | null>(initialPinnedLocation);
   const [viewLocation, setViewLocation] = useState(initialViewLocation);
 
-  const debouncedValue = useDebounce<ViewLocation>(viewLocation, 500);
+  const [ debouncedValue, updateValue ] = useDebounceValue<ViewLocation>(viewLocation, 500);
   useEffect(() => {
     const updatedLocation = {
       pathname: viewLocationUrlPath(council.slug, debouncedValue),
       search: pinnedLocation
-        ? pinnedLocationUrlParam(pinnedLocation)
+        ? pinnedLocationUrlParam(pinnedLocation!)
         : undefined,
     };
 
     navigate(updatedLocation, { replace: true });
   }, [debouncedValue, pinnedLocation, navigate, council.slug]);
+
+  useEffect(() => {
+    updateValue(viewLocation);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewLocation]);
 
   const [waterTakeFilter, setWaterTakeFilter] =
     useState<WaterTakeFilter>('Combined');

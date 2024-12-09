@@ -16,7 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "typeRoots": ["node_modules/@types", "src/lib/types", "src/types"],
-    "types": ["vitest"],
     "baseUrl": ".",
     "paths": {
       "@components/*": ["./src/components/*"],
@@ -45,5 +44,6 @@
     "node_modules/vitest/globals.d.ts",
     "../RainfallViewer/src/app/global.d.ts"
   ],
+  "exclude": [ "src/**/*.js" ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

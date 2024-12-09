@@ -6,12 +6,14 @@ const MonthYearPicker = ({
                            onChange,
                            limitToLastMonths = 24,
                            className,
+                           dataTestid,
                          }: {
   className?: string;
   controlClassName?: string;
   onChange: (date: Date) => void;
   current?: Date;
   limitToLastMonths?: number;
+  dataTestid?: string;
 }) => {
   const now = new Date();
   const startDate = new Date();
@@ -73,6 +75,7 @@ const MonthYearPicker = ({
         placeholder="Select Month and Year"
         value={selectedOption ? `${selectedOption.month}-${selectedOption.year}` : null}
         onChange={handleSelection}
+        dataTestid={dataTestid || 'dropdown-months'}
       />
     </div>
   );

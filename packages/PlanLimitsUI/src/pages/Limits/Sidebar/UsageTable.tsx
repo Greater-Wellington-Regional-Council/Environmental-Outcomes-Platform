@@ -15,7 +15,6 @@ import {
   LoadingIndicator,
   ErrorIndicator,
 } from '@components/Indicators';
-import { AppState, DailyUsageHeatmapDataItem, HeatmapData, WaterTakeFilter } from '../../../../global';
 
 const MIN_OFFSET = -52;
 const MAX_OFFSET = 0;
