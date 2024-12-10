@@ -61,10 +61,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   };
 
   return (
-    <div className={`relative font-bold ${className}`}>
+    <div className={`relative font-bold bg-transparent ${className}`}>
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
-        className={`flex p-2 top-18 font-bold rounded-xl border border-nui ${controlClassName}`}
+        className={`flex p-2 top-18 font-bold bg-white rounded-xl border border-nui ${controlClassName}`}
         onClick={toggleDropdown}
         data-testid={dataTestid}
       >

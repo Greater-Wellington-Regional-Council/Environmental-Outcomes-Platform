@@ -2,7 +2,7 @@ import { useAtom } from 'jotai';
 import { councilAtom } from '@lib/loader';
 import useDetailedWaterUseData, {
   type DetailedWaterUseQuery,
-} from '../../lib/useDetailedWaterUseData';
+} from '@lib/useDetailedWaterUseData';
 import WeeklyResults from './WeeklyResults';
 import DailyResults from './DailyResults';
 import { ErrorIndicator, LoadingIndicator } from '@components/Indicators';

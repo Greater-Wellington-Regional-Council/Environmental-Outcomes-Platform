@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, beforeEach, vi, expect } from 'vitest';
-import DataTable from './DataTable';
+import DataTable from '@components/WaterAllocationTable/WaterAllocationTable';
 import { saveAs } from 'file-saver';
 import 'jspdf-autotable';
 import { jsPDF } from 'jspdf';

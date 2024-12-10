@@ -1,6 +1,4 @@
-import './DataTable.scss';
-import React, { useState } from 'react';
-import Dropdown from '@components/Dropdown/Dropdown';
+import React, { useState, useMemo, ReactNode, useEffect } from 'react';
 import 'react-dropdown/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
@@ -10,26 +8,87 @@ import { saveAs } from 'file-saver';
 import MonthYearPicker from '@components/MonthYearPicker';
 import XToClose from '@components/XToClose/XToClose';
 import numValue from '@lib/numValue';
+import randomString from '@lib/randomeString';
+import _, { isDate } from 'lodash';
+import Dropdown from '@components/Dropdown/Dropdown';
 
-type TableRow = {
-  id: number;
-  catchment: string;
-  categoryA: number | string;
-  categoryB: number | string;
-  surfaceTake: number | string;
-  totalAllocated: number | string;
-  allocationLimit: number | string;
-  percentAllocated: number | string;
-  notes: string;
-  date: Date;
+const SELECT_ALL = '(All)';
+
+type ColumnDescriptor = {
+  name: string;
+  heading: string;
+  type: string;
+  visible: boolean;
+  width?: string;
+  [key: string]: string | number | boolean | undefined;
 };
 
+type ColumnGroup = {
+  name: string;
+  heading: string;
+  firstColumn: string;
+  lastColumn: string;
+};
+
+export type FilterDescriptor = {
+  name: string;
+  type: React.FC<{
+    filter: FilterDescriptor;
+    currentValue: unknown;
+    onChange: (filter: FilterDescriptor, value: unknown) => void;
+  }>;
+  initialValue?: unknown;
+  key?: string;
+  columns: string[];
+  valueMatchesFilter?: (value: unknown, filterValue: unknown) => boolean;
+  options?: unknown[];
+  placeholder?: string;
+};
+
+export const MonthYearFilter: React.FC<{ filter: FilterDescriptor, currentValue: unknown, onChange: (filter: FilterDescriptor, value: unknown) => void }> = ({ filter, currentValue, onChange }) => {
+  return (
+    <MonthYearPicker
+      onChange={(date) => onChange(filter, date)}
+      dataTestid={`dropdown-months-${filter.name}`}
+      current={currentValue as Date}
+    />
+  );
+}
+
+export const SimpleFilter: React.FC<{ filter: FilterDescriptor, currentValue: unknown, onChange: (filter: FilterDescriptor, value: unknown) => void }> = ({ filter, currentValue, onChange }) => {
+  const setSelectedOption = useState<unknown>(currentValue)[1];
+
+  useEffect(() => {
+    setSelectedOption(currentValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentValue]);
+
+  const handleSelection = (value: string) => {
+    const [month, year] = value.split('-').map(Number);
+    const selected = { month, year };
+    setSelectedOption(selected);
+    onChange?.(filter, value);
+  };
+
+  return (
+    <Dropdown
+      options={[SELECT_ALL, ...filter.options!]}
+      onChange={(value) => handleSelection(value)}
+      value={currentValue as string}
+      placeholder={filter.placeholder || 'Select...'}
+      dataTestid={`dropdown-${filter.name}`}
+      className={'bg-transparent p-4'}
+      dropdownClassName={'w-64'}
+      optionClassName={'p-2'}
+    />
+  );
+}
 
 declare module 'jspdf' {
   interface jsPDF {
     autoTable: (options: {
       head: Array<Array<string | { content: string; styles?: object }>>;
-      body: Array<Array<string | number>>;
+      body: Array<Array<DataValueType>>;
       foot?: Array<Array<string | number>>;
       theme?: 'striped' | 'grid' | 'plain';
       styles?: object;
@@ -45,130 +104,83 @@ declare module 'jspdf' {
   }
 }
 
-const DataTable: React.FC = () => {
-  const [data] = useState<TableRow[]>([
-    {
-      id: 1,
-      catchment: 'BoothsSW',
-      categoryA: '-',
-      categoryB: 6.72,
-      surfaceTake: 77,
-      totalAllocated: 83.72,
-      allocationLimit: 25,
-      percentAllocated: 334.9,
-      notes: '-',
-      date: new Date('2024-01-01'),
-    },
-    {
-      id: 2,
-      catchment: 'HuangaruaSW',
-      categoryA: '18.4',
-      categoryB: 23.6,
-      surfaceTake: 9,
-      totalAllocated: 51,
-      allocationLimit: 110,
-      percentAllocated: 46.4,
-      notes: '-',
-      date: new Date('2024-01-01'),
-    },
-    {
-      id: 3,
-      catchment: 'Hutt_LowerSW',
-      categoryA: '-',
-      categoryB: 512.51,
-      surfaceTake: 66.4,
-      totalAllocated: 578.91,
-      allocationLimit: 2140,
-      percentAllocated: 113.5,
-      notes: 'The PNRP limit combines Hutt (Lower) and Hutt (Upper)',
-      date: new Date('2024-01-01'),
-    },
-    {
-      id: 4,
-      catchment: 'Hutt_UpperSW',
-      categoryA: '-',
-      categoryB: '-',
-      surfaceTake: 1850,
-      totalAllocated: 1850,
-      allocationLimit: 'See above',
-      percentAllocated: 'See above',
-      notes: '-',
-      date: new Date('2024-01-01'),
-    },
-    {
-      id: 5,
-      catchment: 'Ruamahanga_LowerSW',
-      categoryA: 659.93,
-      categoryB: 176,
-      surfaceTake: 1045.8,
-      totalAllocated: 1881.73,
-      allocationLimit: 1370,
-      percentAllocated: 137.4,
-      notes: '-',
-      date: new Date('2024-01-01'),
-    },
-    {
-      id: 6,
-      catchment: 'Ruamahanga_MiddleSW',
-      categoryA: 798.23,
-      categoryB: '-',
-      surfaceTake: 259.4,
-      totalAllocated: 1057.63,
-      allocationLimit: 1240,
-      percentAllocated: 85.3,
-      notes: 'Allocation includes ____ and ____ catchment management sub-units',
-      date: new Date('2024-01-01'),
-    },
-    {
-      id: 7,
-      catchment: 'Ruamahanga_UpperSW',
-      categoryA: 221.01,
-      categoryB: 50.6,
-      surfaceTake: 481.51,
-      totalAllocated: 753.12,
-      allocationLimit: 1200,
-      percentAllocated: 62.8,
-      notes: '-',
-      date: new Date('2024-01-01'),
-    },
-  ]);
+export type DataValueType = string | number | boolean | null | Date;
 
-  const [month, setMonth] = useState<Date | null>(null);
-  const [filterColumn1, setFilterColumn1] = useState<string | null>(null);
-  const [waterType, setWaterType] = useState<string | null>("Surface water");
+export type DataTableProps = {
+  data: Array<Array<DataValueType>>;
+  columns: ColumnDescriptor[];
+  columnGroups?: ColumnGroup[];
+  innerFilters?: FilterDescriptor[];
+  outerFilters?: FilterDescriptor[];
+};
 
-  const SELECT_ALL = '(All)';
+type FilterValues = {
+  [key: string]: unknown;
+}
 
-  const filteredData = () => {
-    let filtered = data;
+const Filters: React.FC<{ filters: FilterDescriptor[], filterValue: FilterValues, setFilterValue: (value: FilterValues) => void }> = ({ filters, filterValue, setFilterValue }) => {
 
-    if (filterColumn1 === SELECT_ALL) setFilterColumn1(null);
+  return (
+    <div className="flex space-x-4">
+      {filters.map((filter: FilterDescriptor) =>
+        React.createElement(filter.type, {
+          filter,
+          onChange: (filter, value) => {
+            setFilterValue({ ...filterValue, [filter.name]: value })
+          },
+          currentValue: _.get(filterValue, filter.name),
+          key: `${filter.name}-${randomString()}`,
+        }),
+      )}
 
-    if (filterColumn1 && filterColumn1 !== SELECT_ALL) {
-      filtered = filtered.filter((row) => row.catchment === filterColumn1);
-    }
+      <XToClose onClick={() => setFilterValue({})} />
+    </div>
+  );
+}
 
-    if (month) {
-      filtered = filtered.filter(
-        (row) =>
-          row.date.getMonth() === month.getMonth() &&
-          row.date.getFullYear() === month.getFullYear(),
-      );
-    }
+const DataTable: React.FC<DataTableProps> = ({
+                                               data,
+                                               columns,
+                                               columnGroups = [],
+                                               innerFilters = [],
+                                               outerFilters = [],
+                                             }) => {
+  const [filterValue, setFilterValue] = useState<FilterValues>({});
 
-    return filtered;
+  const filtered = (data: DataValueType[][], filters: FilterDescriptor[]): DataValueType[][] => {
+    console.log('filters', filters);
+    return data.filter((row) => filters.every((filter) => {
+      const value: unknown = _.get(filterValue, filter.name);
+      console.log('value', value, filterValue, filter);
+      if (!value || value === SELECT_ALL) return true;
+      const columnIndex = columns.findIndex((col) => col.name === filter.name);
+      console.log('columnIndex', columnIndex, columns, filter.name, row[columnIndex], value, (row[columnIndex] as Date) === (value as Date) ? 'matched' : 'not matched');
+      return filter.valueMatchesFilter ? filter.valueMatchesFilter!(row[columnIndex], value) : (row[columnIndex] === value);
+    }));
+  }
+
+  const filteredData = useMemo(() =>
+     filtered(data, [ ...(outerFilters || []), ...(innerFilters || []) ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    , [data, outerFilters, innerFilters]);
+
+  const grandTotal = (columnName: string): string => {
+    const columnIndex = columns.findIndex((col) => col.name === columnName);
+    if (columnIndex === -1) return '0.00';
+
+    return filteredData
+      .reduce((total, row) => total + numValue(row[columnIndex]), 0)
+      .toFixed(2);
   };
 
-  const grandTotal = (column: keyof TableRow): string => {
-    return filteredData().reduce(
-      (total, row) => total + numValue(row[column] as string | number),
-      0,
-    ).toFixed(2);
+  const displayValue = (value: DataValueType): string => {
+    if (value === null) return '';
+    if (isDate(value)) return value.toLocaleDateString();
+    return value.toString();
   }
 
   const downloadCSV = () => {
-    const csv = Papa.unparse(filteredData());
-    console.log(csv);
+    const csv = Papa.unparse(filteredData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'filtered_data.csv');
   };
@@ -177,133 +189,76 @@ const DataTable: React.FC = () => {
     const doc = new jsPDF();
     doc.text('Filtered Data', 10, 10);
     doc.autoTable({
-      head: [
-        ['Catchment', 'Category A', 'Category B', 'Surface Take', 'Total Allocated', 'Allocation Limit', 'Percent Allocated', 'Notes'],
-      ],
-      body: filteredData().map((row) => [
-        row.catchment,
-        row.categoryA,
-        row.categoryB,
-        row.surfaceTake,
-        row.totalAllocated,
-        row.allocationLimit,
-        row.percentAllocated,
-        row.notes,
-      ]),
+      head: [columns.map((col) => col.heading)],
+      body: filteredData,
     });
     doc.save('filtered_data.pdf');
   };
 
-  const tdClass = 'text-right p-2 text';
-  const thClass = 'bg-kapiti text-right text-white p-2 font-medium';
+  const visibleColumns = columns.filter((col) => col.visible);
 
   return (
     <div>
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label className="text-gray-700 font-bold w-full pt-3 pb-1">Show data for:</label>
 
-      {/* High level filters - left aligned */}
+      {/* Outer filters & actions (eg, water type and month) */}
       <div className="flex justify-between items-center mt-2 mb-6">
-        <div className="flex space-x-4">
-          <Dropdown
-            options={['Surface water', 'Groundwater']}
-            onChange={(e) => setWaterType(e)}
-            value={waterType || ''}
-            placeholder="Water type"
-            dataTestid={'dropdown-water-types'}
-          />
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label className="text-gray-700 font-bold pt-3">From:</label>
-          <MonthYearPicker
-            onChange={(date) => setMonth(date as Date)}
-            current={month || undefined}
-            dataTestid={'dropdown-months'}
-          />
-          <XToClose onClick={() => setMonth(null)} />
-        </div>
+        <Filters filters={outerFilters} filterValue={filterValue} setFilterValue={setFilterValue} />
 
-        {/* Buttons (Right-Aligned) */}
         <div className="space-x-4">
-          <button
-            onClick={downloadCSV}
-            className=""
-          >
-            Download
-          </button>
-          <button
-            onClick={printPDF}
-            className=""
-          >
-            Print
-          </button>
+          <button onClick={downloadCSV}>Download</button>
+          <button onClick={printPDF}>Print</button>
         </div>
       </div>
 
-      <Dropdown
-        options={[SELECT_ALL, 'BoothsSW', 'HuangaruaSW', 'Hutt_LowerSW', 'Hutt_UpperSW', 'Ruamahanga_LowerSW', 'Ruamahanga_MiddleSW', 'Ruamahanga_UpperSW']}
-        onChange={(e) => setFilterColumn1(e)}
-        value={filterColumn1 || ''}
-        placeholder="Filter catchments"
-        controlClassName="absolute bg-white top-4 left-4 w-"
-        dropdownClassName="absolute top-16 overflow-hidden ml-4 w-[200px]"
-        optionClassName={'w-[180px]'}
-        dataTestid={'dropdown-catchments'}
-      />
-
       <table className="table-auto border-collapse w-full text-left">
+
         <thead>
 
-        <tr className="bg-kapiti text-white">
-          <th />
-          <th colSpan={4} className="text-center bg-kapiti pt-2">
-            Allocated amount - litres per second (L/sec)
+        {/* Column groups */}
+        <tr>
+          {<ColumnGroupHeaders columnGroups={columnGroups} columns={visibleColumns} />}
+        </tr>
+
+        {/* Column headings */}
+        <tr>
+          {visibleColumns.map((col) => (
+            <th key={col.name} className="bg-kapiti text-right text-white p-2 font-medium">
+              {col.heading}
+            </th>
+          ))}
+        </tr>
+
+        {/* Filters */}
+        <tr>
+          <th colSpan={99}>
+            <Filters filters={innerFilters} filterValue={filterValue} setFilterValue={setFilterValue} />
           </th>
-          <th colSpan={1} className="text-center bg-kapiti border-white border-r-2 border-l-2" />
-          <th colSpan={1} className="text-center bg-kapiti" />
-          <th></th>
         </tr>
-
-        <tr className="bg-kapiti text-white">
-          <th className={thClass + ' w-[19%]'}></th>
-          <th className={thClass}>Category A</th>
-          <th className={thClass}>Category B</th>
-          <th className={thClass}>Surface Take</th>
-          <th className={thClass}>Total Allocated</th>
-          <th className={thClass + ' border-white border-r-2 border-l-2'}>Allocation Limit</th>
-          <th className={thClass}>Percent Allocated</th>
-          <th className={'text-left'}>Notes</th>
-        </tr>
-
         </thead>
 
+        {/* Data */}
         <tbody>
-
-        {filteredData().map((row, index) => (
-          <tr key={row.id} className={'p-1 ' + (index % 2 === 0 ? 'bg-gray-100' : '')}>
-            <td className="font-semibold pl-2 w-[18%]">{row.catchment}</td>
-            <td className={tdClass}>{row.categoryA}</td>
-            <td className={tdClass}>{row.categoryB}</td>
-            <td className={tdClass}>{row.surfaceTake}</td>
-            <td className={tdClass}>{row.totalAllocated}</td>
-            <td className={tdClass + ' border-r-2 border-l-2 border-gray-300'}>{row.allocationLimit}</td>
-            <td className={tdClass}>{row.percentAllocated}</td>
-            <td className={'text-left font-normal text-sm w-[25%]'}>{row.notes}</td>
+        {filteredData.map((row, rowIndex) => (
+          <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-100' : ''}>
+            {visibleColumns.map((col) => (
+              <td key={col.name} className={`text-right p-2 w-[${col.width || 'auto'}]`}>
+                {displayValue(row[columns.findIndex((column) => column.name === col.name)])}
+              </td>
+            ))}
           </tr>
         ))}
-
         </tbody>
 
-        {/* Grand Total */}
+        {/* Totals in footer */}
         <tfoot>
         <tr className="font-medium bg-nui text-white">
-          <td className={'text-left pl-2'}>Grand Total</td>
-          <td className={tdClass}>{grandTotal('categoryA')}</td>
-          <td className={tdClass}>{grandTotal('categoryB')}</td>
-          <td className={tdClass}>{grandTotal('surfaceTake')}</td>
-          <td className={tdClass}>{grandTotal('totalAllocated')}</td>
-          <td className={tdClass + 'border-white border-r-2 border-l-2'}>{grandTotal('allocationLimit')}</td>
-          <td className={tdClass}>{grandTotal('percentAllocated')}</td>
-          <td className={tdClass}>{}</td>
+          {visibleColumns.map((col) => (
+            <td key={col.name} className={`text-right p-2 w-[${col.width || 'auto'}]`}>
+              {col.type === 'number' ? grandTotal(col.name) : ''}
+            </td>
+          ))}
         </tr>
         </tfoot>
       </table>
@@ -311,5 +266,31 @@ const DataTable: React.FC = () => {
   );
 };
 
-export default DataTable;
+const ColumnGroupHeaders: React.FC<{ columnGroups: ColumnGroup[], columns: ColumnDescriptor[] }> = ({ columnGroups, columns }) => {
 
+  let currentGroup: string | undefined = undefined;
+  const headers: ReactNode[] = [];
+
+  columns.forEach((col) => {
+    const atGroupStart = columnGroups.find((group) => group.firstColumn === col.name);
+    const atGroupEnd = columnGroups.find((group) => group.lastColumn === col.name);
+    if (atGroupEnd) {
+      headers.push(<th key={atGroupEnd.name} colSpan={
+        columns.findIndex((c) => c.name === atGroupEnd.lastColumn) -
+        columns.findIndex((c) => c.name === atGroupEnd.firstColumn) + 1
+      } className="bg-kapiti text-white text-center p-2 font-medium">
+        {atGroupEnd.heading}
+      </th>);
+      currentGroup = undefined;
+    }
+    else if (atGroupStart)
+      currentGroup = atGroupStart.name;
+    else if (!currentGroup || (col === columns[columns.length -1])) {
+      headers.push(<th key={col.name} className="bg-kapiti text-white p-2 font-medium" />);
+    }
+  });
+
+  return <>{headers}</>;
+  }
+
+export default DataTable;

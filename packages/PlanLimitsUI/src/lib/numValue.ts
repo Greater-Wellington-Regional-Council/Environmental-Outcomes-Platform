@@ -1,7 +1,8 @@
+
 export const isNumber = (value: unknown): boolean =>
   typeof value === 'number' && !Number.isNaN(value);
 
-export const numValue = (value: number | string): number => {
+export const numValue = (value: unknown): number => {
   if (isNumber(value))
     return value as number;
 
