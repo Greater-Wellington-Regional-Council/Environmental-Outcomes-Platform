@@ -2,14 +2,39 @@
     materialized = 'view'
 ) }}
 
+
 WITH water_allocations AS (
 
   SELECT * FROM {{ ref('stg_planlimits_water_allocations') }}
 ),
 
+generate_months AS (
+
+  SELECT
+    {{ generate_month_series('2024-01-01', 'CURRENT_DATE') }} AS month_start
+
+),
+
+water_allocations_at_month_start AS(
+
+  SELECT 
+
+    m.month_start,
+	  t.*
+  FROM 
+    generate_months m
+
+  LEFT JOIN 
+    water_allocations t
+  ON 
+    t.effective_from <= m.month_start
+    AND (t.effective_to IS NULL OR t.effective_to > m.month_start)
+
+),
+
 surface_water_limits AS (
 
-  select * from {{ ref('surface_water_limits') }}
+  SELECT * FROM {{ ref('surface_water_limits') }}
 ),
 
 surfacewater_allocations AS (
