@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS water_allocation_and_usage_by_area
   daily_usage           NUMERIC
 );
 
-CREATE TABLE council_plan_boundaries
+CREATE TABLE IF NOT EXISTS council_plan_boundaries
 (
   council_id INTEGER                                NOT NULL REFERENCES councils,
   source_id  VARCHAR                                NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE council_plan_boundaries
   PRIMARY KEY (council_id, source_id)
 );
 
-CREATE TABLE council_plan_boundary_rec2_data
+CREATE TABLE IF NOT EXISTS council_plan_boundary_rec2_data
 (
   council_id INTEGER                                NOT NULL REFERENCES councils,
   source_id  VARCHAR                                NOT NULL,
