@@ -7,7 +7,7 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import MonthYearPicker from '@components/MonthYearPicker';
 import XToClose from '@components/XToClose/XToClose';
-import numValue from '@lib/numValue';
+import numValue, { isNumber } from '@lib/numValue';
 import randomString from '@lib/randomeString';
 import _, { isDate } from 'lodash';
 import Dropdown from '@components/Dropdown/Dropdown';
@@ -24,6 +24,7 @@ export type ColumnDescriptor = {
   aggregateBy?: 'sum' | 'percent' // | 'average' | 'count' | 'min' | 'max' ;
   total?: () => number | string | null;
   [key: string]: string | number | boolean | undefined | null | (() => unknown);
+  formula?: string;
 };
 
 type ColumnType = ColumnDescriptor | string | number;
@@ -168,22 +169,22 @@ const DataTable: React.FC<DataTableProps> = ({
   }
 
   // Convenience function to get a column descriptor by name or index
-  const col = (c: ColumnType): ColumnDescriptor => {
+  const col = (c: ColumnType | undefined): ColumnDescriptor => {
 
-    const findCol = (c: ColumnType) => {
+    const findCol = (c: ColumnType | undefined) => {
       if (typeof c === 'string') return columns.find((cd) => c === cd.name)!;
       if (typeof c === 'number') return columns[c];
       return c;
     }
 
     const cd = findCol(c);
+    if (!cd) throw new Error(`Column ${c} not found`);
 
     return {
       ...cd,
 
       total: cd.total || (() => {
           if (cd.aggregateBy === 'sum') return sumColumn(cd.name);
-          if (cd.aggregateBy === 'percent') return sumPercentsColumn(cd.name);
           return null
         }),
 
@@ -206,25 +207,39 @@ const DataTable: React.FC<DataTableProps> = ({
         .toFixed(2);
   };
 
-  const sumPercentsColumn = (columnName: string): string => {
-    if (colIndex(columnName) === -1) return '0.00';
-
-    return filteredData
-      .reduce((total, row) => (total + numValue(row[colIndex(columnName)]))/2, 0)
-      .toFixed(2);
-  };
-
   const filteredData = useMemo(() =>
      filtered(data, [ ...(outerFilters || []), ...(innerFilters || []) ])
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     , [data, outerFilters, innerFilters, filterValue]);
 
-  const displayValue = (value: DataValueType | undefined, columnDetails?: ColumnType): string => {
+  const displayValue = (value: DataValueType | undefined, row?: DataValueType[], columnDetails?: ColumnType): string => {
+    const cd: ColumnDescriptor | undefined = col(columnDetails);
+    if (cd?.formula && row) value = calculate(cd, row!);
     if ((value ?? null) === null) return '';
     if (isDate(value)) return value.toLocaleDateString();
-    if (columnDetails && col(columnDetails).type === 'percent') return `${value}%`;
+    if (columnDetails && col(columnDetails).type === 'percent') return `${numValue(value).toFixed(2)}%`;
+    if (isNumber(value)) return numValue(value).toFixed(2);
     return value!.toString();
+  }
+
+  const cellFunctions: { [key: string]: ((a: number, b: number) => number) } = {
+    sum: (a: number, b: number) => a + b,
+    average: (a: number, b: number) => (a + b) / 2,
+    min: (a: number, b: number) => Math.min(a, b),
+    max: (a: number, b: number) => Math.max(a, b),
+    percent: (a: number, b: number) => a / b * 100,
+  }
+
+  const calculate = (column: ColumnType, row: DataValueType[]) => {
+    const c = col(column);
+    if (!c.formula) return row[colIndex(c)];
+
+    const fn = cellFunctions[c.formula.split('(')[0]];
+    if (!fn) return '!: ' + c.formula;
+
+    const args: DataValueType[] = c.formula.match(/\w+/g)?.slice(1).map((col: string) => row[colIndex(col)]) || [];
+    return fn!(...(args as [number, number]));
   }
 
   const downloadCSV = () => {
@@ -295,7 +310,7 @@ const DataTable: React.FC<DataTableProps> = ({
             {visibleColumns.map((col) => (
               <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}] ` +
                 `text-${col.alignment}`}>
-                {displayValue(row[colIndex(col)], col)}
+                {displayValue(row[colIndex(col)], row, col)}
               </td>
             ))}
           </tr>
@@ -312,7 +327,7 @@ const DataTable: React.FC<DataTableProps> = ({
               </td>
               :
               <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}] text-right`}>
-                {displayValue(col.total?.(), col)}
+                {displayValue(col.total?.(), undefined, col)}
               </td>
           )}
         </tr>}

@@ -16,7 +16,7 @@ export const WaterAllocationTable: React.FC = () => {
     { name: 'surfaceTake', heading: 'Surface Take', type: 'number', visible: true, aggregateBy: 'sum' },
     { name: 'totalAllocated', heading: 'Total Allocated', type: 'number', visible: true, aggregateBy: 'sum' },
     { name: 'allocationLimit', heading: 'Allocation Limit', type: 'number', visible: true, aggregateBy: 'sum' },
-    { name: 'percentAllocated', heading: 'Percent Allocated', type: 'percent', visible: true, aggregateBy: 'percent' },
+    { name: 'percentAllocated', heading: 'Percent Allocated', type: 'percent', visible: true, aggregateBy: 'percent', formula: 'percent(totalAllocated, allocationLimit)' },
     { name: 'notes', heading: 'Notes', type: 'string', visible: true },
     { name: 'date', heading: 'Date', type: 'date', visible: false },
   ];
