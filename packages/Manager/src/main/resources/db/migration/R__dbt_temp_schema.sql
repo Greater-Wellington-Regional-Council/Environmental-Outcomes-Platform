@@ -1,0 +1,1 @@
+-- No longer required, but file keep to avoid breaking existing installations
