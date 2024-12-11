@@ -248,10 +248,10 @@ const DataTable: React.FC<DataTableProps> = ({
   return (
     <div>
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-      <label className="text-gray-700 font-bold w-full pt-3 pb-1">Show data for:</label>
+      <label className="py-2 px-4 text-gray-700 font-bold w-full ">Show data for:</label>
 
       {/* Outer filters & actions (eg, water type and month) */}
-      <div className="flex justify-between items-center mt-2 mb-6">
+      <div className="flex py-2 px-4 justify-between items-center">
         <Filters filters={outerFilters} filterValue={filterValue} setFilterValue={setFilterValue} />
 
         <div className="space-x-4">
@@ -272,7 +272,7 @@ const DataTable: React.FC<DataTableProps> = ({
         {/* Column headings */}
         <tr>
           {visibleColumns.map((col) => (
-            <th key={col.name} className={`bg-kapiti `+
+            <th key={col.name} className={`py-2 px-4 bg-kapiti `+
               `text-${col.align || (col.type === 'number' ? 'right' : 'left')}`+
               `text-right text-white p-2 font-medium`}>
               {col.heading}
