@@ -22,7 +22,7 @@ export type ColumnDescriptor = {
   width?: string;
   align?: 'left' | 'right' | 'center';
   aggregateBy?: 'sum' | 'percent' // | 'average' | 'count' | 'min' | 'max' ;
-  total?: () => number | string | null;
+  total?: () => DataValueType;
   [key: string]: string | number | boolean | undefined | null | (() => unknown);
   formula?: string;
 };
@@ -185,6 +185,7 @@ const DataTable: React.FC<DataTableProps> = ({
 
       total: cd.total || (() => {
           if (cd.aggregateBy === 'sum') return sumColumn(cd.name);
+          if (cd.aggregateBy === 'percent') return sumPercent(cd.name);
           return null
         }),
 
@@ -200,12 +201,24 @@ const DataTable: React.FC<DataTableProps> = ({
     return columns.findIndex((c) => c.name === col.name);
   }
 
-  const sumColumn = (columnName: string): string => {
+  const sumColumn = (columnName: string): DataValueType => {
     return (colIndex(columnName) === -1) ? '0.00' :
       filteredData
         .reduce((total, row) => total + numValue(row[colIndex(columnName)]), 0)
         .toFixed(2);
   };
+
+  const colValues = (row: DataValueType[]): { [key: string]: DataValueType } =>
+    columns.map(c => c.name).reduce((acc, col, index) => ({ ...acc, [col]: row[index] }), {});
+
+  const formulaArgs = (column: ColumnType) =>
+    col(column).formula?.match(/\w+/g)?.slice(1) || [];
+
+  const sumPercent = (columnName: string): DataValueType => {
+    const argNames = formulaArgs(columnName);
+    const argValues  = argNames.map((arg) => sumColumn(arg));
+    return calculate(columnName, _.zipObject(argNames, argValues));
+  }
 
   const filteredData = useMemo(() =>
      filtered(data, [ ...(outerFilters || []), ...(innerFilters || []) ])
@@ -215,7 +228,7 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const displayValue = (value: DataValueType | undefined, row?: DataValueType[], columnDetails?: ColumnType): string => {
     const cd: ColumnDescriptor | undefined = col(columnDetails);
-    if (cd?.formula && row) value = calculate(cd, row!);
+    if (cd?.formula && row) value = calculate(cd, colValues(row!));
     if ((value ?? null) === null) return '';
     if (isDate(value)) return value.toLocaleDateString();
     if (columnDetails && col(columnDetails).type === 'percent') return `${numValue(value).toFixed(2)}%`;
@@ -231,14 +244,14 @@ const DataTable: React.FC<DataTableProps> = ({
     percent: (a: number, b: number) => a / b * 100,
   }
 
-  const calculate = (column: ColumnType, row: DataValueType[]) => {
+  const calculate = (column: ColumnType, argValue: { [key: string]: DataValueType }) => {
     const c = col(column);
-    if (!c.formula) return row[colIndex(c)];
+    if (!c.formula) return argValue[c.name];
 
     const fn = cellFunctions[c.formula.split('(')[0]];
     if (!fn) return '!: ' + c.formula;
 
-    const args: DataValueType[] = c.formula.match(/\w+/g)?.slice(1).map((col: string) => row[colIndex(col)]) || [];
+    const args: DataValueType[] = c.formula.match(/\w+/g)?.slice(1).map((col: string) => _.get(argValue, col)) || [];
     return fn!(...(args as [number, number]));
   }
 
