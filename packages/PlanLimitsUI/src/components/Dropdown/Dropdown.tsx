@@ -68,12 +68,12 @@ const Dropdown: React.FC<DropdownProps> = ({
         onClick={toggleDropdown}
         data-testid={dataTestid}
       >
-        <div className="flex items-center space-x-2 pr-2">
+        <div className="flex min-w-0 items-center w-full space-x-2 pr-2">
           {value ? (
-            <span
+            <span className={"w-full"}
               data-testid={`selected-${value.toString()}`}>{selectOptions.find((option) => option.value === value)?.label}</span>
           ) : (
-            <span className={`text-nui opacity-60 italic ${placeholderClassNames}`}>{placeholder}</span>
+            <span className={`w-full text-nui opacity-60 italic ${placeholderClassNames}`}>{placeholder}</span>
           )}
         </div>
 

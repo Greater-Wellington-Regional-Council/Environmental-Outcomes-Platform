@@ -14,14 +14,19 @@ import Dropdown from '@components/Dropdown/Dropdown';
 
 const SELECT_ALL = '(All)';
 
-type ColumnDescriptor = {
+export type ColumnDescriptor = {
   name: string;
   heading: string;
   type: string;
   visible: boolean;
   width?: string;
-  [key: string]: string | number | boolean | undefined;
+  align?: 'left' | 'right' | 'center';
+  aggregateBy?: 'sum' | 'percent' // | 'average' | 'count' | 'min' | 'max' ;
+  total?: () => number | string | null;
+  [key: string]: string | number | boolean | undefined | null | (() => unknown);
 };
+
+type ColumnType = ColumnDescriptor | string | number;
 
 type ColumnGroup = {
   name: string;
@@ -43,6 +48,7 @@ export type FilterDescriptor = {
   valueMatchesFilter?: (value: unknown, filterValue: unknown) => boolean;
   options?: unknown[];
   placeholder?: string;
+  className?: string;
 };
 
 export const MonthYearFilter: React.FC<{ filter: FilterDescriptor, currentValue: unknown, onChange: (filter: FilterDescriptor, value: unknown) => void }> = ({ filter, currentValue, onChange }) => {
@@ -51,6 +57,7 @@ export const MonthYearFilter: React.FC<{ filter: FilterDescriptor, currentValue:
       onChange={(date) => onChange(filter, date)}
       dataTestid={`dropdown-months-${filter.name}`}
       current={currentValue as Date}
+      className={`bg-transparent p-4 w-[250px] ${filter.className}`}
     />
   );
 }
@@ -75,11 +82,10 @@ export const SimpleFilter: React.FC<{ filter: FilterDescriptor, currentValue: un
       options={[SELECT_ALL, ...filter.options!]}
       onChange={(value) => handleSelection(value)}
       value={currentValue as string}
-      placeholder={filter.placeholder || 'Select...'}
+      placeholder={filter.placeholder || SELECT_ALL}
       dataTestid={`dropdown-${filter.name}`}
-      className={'bg-transparent p-4'}
-      dropdownClassName={'w-64'}
-      optionClassName={'p-2'}
+      className={`bg-transparent p-4 w-[250px] ${filter.className}`}
+      controlClassName={'p-2'}
     />
   );
 }
@@ -112,16 +118,20 @@ export type DataTableProps = {
   columnGroups?: ColumnGroup[];
   innerFilters?: FilterDescriptor[];
   outerFilters?: FilterDescriptor[];
+  options?: {
+    includeTotals?: boolean;
+    [key: string]: unknown;
+  }
 };
 
 type FilterValues = {
   [key: string]: unknown;
 }
 
-const Filters: React.FC<{ filters: FilterDescriptor[], filterValue: FilterValues, setFilterValue: (value: FilterValues) => void }> = ({ filters, filterValue, setFilterValue }) => {
+const Filters: React.FC<{ className?: string, filters: FilterDescriptor[], filterValue: FilterValues, setFilterValue: (value: FilterValues) => void }> = ({ filters, filterValue, setFilterValue, className }) => {
 
   return (
-    <div className="flex space-x-4">
+    <div className={`flex space-x-4 ${className}`}>
       {filters.map((filter: FilterDescriptor) =>
         React.createElement(filter.type, {
           filter,
@@ -129,7 +139,7 @@ const Filters: React.FC<{ filters: FilterDescriptor[], filterValue: FilterValues
             setFilterValue({ ...filterValue, [filter.name]: value })
           },
           currentValue: _.get(filterValue, filter.name),
-          key: `${filter.name}-${randomString()}`,
+          key: `${filter.name}-${randomString()}`
         }),
       )}
 
@@ -144,39 +154,77 @@ const DataTable: React.FC<DataTableProps> = ({
                                                columnGroups = [],
                                                innerFilters = [],
                                                outerFilters = [],
+                                               options = {},
                                              }) => {
   const [filterValue, setFilterValue] = useState<FilterValues>({});
 
   const filtered = (data: DataValueType[][], filters: FilterDescriptor[]): DataValueType[][] => {
-    console.log('filters', filters);
     return data.filter((row) => filters.every((filter) => {
       const value: unknown = _.get(filterValue, filter.name);
-      console.log('value', value, filterValue, filter);
       if (!value || value === SELECT_ALL) return true;
       const columnIndex = columns.findIndex((col) => col.name === filter.name);
-      console.log('columnIndex', columnIndex, columns, filter.name, row[columnIndex], value, (row[columnIndex] as Date) === (value as Date) ? 'matched' : 'not matched');
       return filter.valueMatchesFilter ? filter.valueMatchesFilter!(row[columnIndex], value) : (row[columnIndex] === value);
     }));
   }
 
-  const filteredData = useMemo(() =>
-     filtered(data, [ ...(outerFilters || []), ...(innerFilters || []) ])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    , [data, outerFilters, innerFilters]);
+  // Convenience function to get a column descriptor by name or index
+  const col = (c: ColumnType): ColumnDescriptor => {
 
-  const grandTotal = (columnName: string): string => {
-    const columnIndex = columns.findIndex((col) => col.name === columnName);
-    if (columnIndex === -1) return '0.00';
+    const findCol = (c: ColumnType) => {
+      if (typeof c === 'string') return columns.find((cd) => c === cd.name)!;
+      if (typeof c === 'number') return columns[c];
+      return c;
+    }
+
+    const cd = findCol(c);
+
+    return {
+      ...cd,
+
+      total: cd.total || (() => {
+          if (cd.aggregateBy === 'sum') return sumColumn(cd.name);
+          if (cd.aggregateBy === 'percent') return sumPercentsColumn(cd.name);
+          return null
+        }),
+
+      alignment: cd.alignment || (['number', 'percent'].includes(cd.type) ? 'right' : 'left'),
+    }
+  }
+
+  // Convenience function to get a column index by name or descriptor
+  // Like Array::findIndex, returns -1 if not found
+  const colIndex = (col: string | ColumnDescriptor | number): number => {
+    if (typeof col === 'string') return columns.findIndex((c) => c.name === col);
+    if (typeof col === 'number') return col;
+    return columns.findIndex((c) => c.name === col.name);
+  }
+
+  const sumColumn = (columnName: string): string => {
+    return (colIndex(columnName) === -1) ? '0.00' :
+      filteredData
+        .reduce((total, row) => total + numValue(row[colIndex(columnName)]), 0)
+        .toFixed(2);
+  };
+
+  const sumPercentsColumn = (columnName: string): string => {
+    if (colIndex(columnName) === -1) return '0.00';
 
     return filteredData
-      .reduce((total, row) => total + numValue(row[columnIndex]), 0)
+      .reduce((total, row) => (total + numValue(row[colIndex(columnName)]))/2, 0)
       .toFixed(2);
   };
 
-  const displayValue = (value: DataValueType): string => {
-    if (value === null) return '';
+  const filteredData = useMemo(() =>
+     filtered(data, [ ...(outerFilters || []), ...(innerFilters || []) ])
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    , [data, outerFilters, innerFilters, filterValue]);
+
+  const displayValue = (value: DataValueType | undefined, columnDetails?: ColumnType): string => {
+    if ((value ?? null) === null) return '';
     if (isDate(value)) return value.toLocaleDateString();
-    return value.toString();
+    if (columnDetails && col(columnDetails).type === 'percent') return `${value}%`;
+    return value!.toString();
   }
 
   const downloadCSV = () => {
@@ -195,7 +243,7 @@ const DataTable: React.FC<DataTableProps> = ({
     doc.save('filtered_data.pdf');
   };
 
-  const visibleColumns = columns.filter((col) => col.visible);
+  const visibleColumns = columns.filter((c) => c.visible).map(c => col(c));
 
   return (
     <div>
@@ -224,16 +272,18 @@ const DataTable: React.FC<DataTableProps> = ({
         {/* Column headings */}
         <tr>
           {visibleColumns.map((col) => (
-            <th key={col.name} className="bg-kapiti text-right text-white p-2 font-medium">
+            <th key={col.name} className={`bg-kapiti `+
+              `text-${col.align || (col.type === 'number' ? 'right' : 'left')}`+
+              `text-right text-white p-2 font-medium`}>
               {col.heading}
             </th>
           ))}
         </tr>
 
-        {/* Filters */}
+        {/* Inner Filters */}
         <tr>
           <th colSpan={99}>
-            <Filters filters={innerFilters} filterValue={filterValue} setFilterValue={setFilterValue} />
+            <Filters className="bg-gray-300" filters={innerFilters} filterValue={filterValue} setFilterValue={setFilterValue} />
           </th>
         </tr>
         </thead>
@@ -243,8 +293,9 @@ const DataTable: React.FC<DataTableProps> = ({
         {filteredData.map((row, rowIndex) => (
           <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-100' : ''}>
             {visibleColumns.map((col) => (
-              <td key={col.name} className={`text-right p-2 w-[${col.width || 'auto'}]`}>
-                {displayValue(row[columns.findIndex((column) => column.name === col.name)])}
+              <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}] ` +
+                `text-${col.alignment}`}>
+                {displayValue(row[colIndex(col)], col)}
               </td>
             ))}
           </tr>
@@ -253,13 +304,18 @@ const DataTable: React.FC<DataTableProps> = ({
 
         {/* Totals in footer */}
         <tfoot>
-        <tr className="font-medium bg-nui text-white">
-          {visibleColumns.map((col) => (
-            <td key={col.name} className={`text-right p-2 w-[${col.width || 'auto'}]`}>
-              {col.type === 'number' ? grandTotal(col.name) : ''}
-            </td>
-          ))}
-        </tr>
+        {options?.includeTotals && <tr className="font-medium bg-nui text-white">
+          {visibleColumns.map((col, index: number) =>
+            (index === 0) ?
+              <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}]`}>
+                {"Totals"}
+              </td>
+              :
+              <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}] text-right`}>
+                {displayValue(col.total?.(), col)}
+              </td>
+          )}
+        </tr>}
         </tfoot>
       </table>
     </div>

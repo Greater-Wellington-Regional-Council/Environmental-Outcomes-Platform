@@ -1,5 +1,6 @@
 import React from 'react';
 import DataTable, {
+  ColumnDescriptor,
   DataValueType,
   FilterDescriptor,
   MonthYearFilter,
@@ -8,14 +9,14 @@ import DataTable, {
 import { isDate } from 'lodash';
 
 export const WaterAllocationTable: React.FC = () => {
-  const columns = [
+  const columns: ColumnDescriptor[] = [
     { name: 'catchment', heading: 'Catchment', type: 'string', visible: true, width: "20%" },
-    { name: 'categoryA', heading: 'Category A', type: 'number', visible: true },
-    { name: 'categoryB', heading: 'Category B', type: 'number', visible: true },
-    { name: 'surfaceTake', heading: 'Surface Take', type: 'number', visible: true },
-    { name: 'totalAllocated', heading: 'Total Allocated', type: 'number', visible: true },
-    { name: 'allocationLimit', heading: 'Allocation Limit', type: 'number', visible: true },
-    { name: 'percentAllocated', heading: 'Percent Allocated', type: 'number', visible: true },
+    { name: 'categoryA', heading: 'Category A', type: 'number', visible: true, aggregateBy: 'sum' },
+    { name: 'categoryB', heading: 'Category B', type: 'number', visible: true, aggregateBy: 'sum' },
+    { name: 'surfaceTake', heading: 'Surface Take', type: 'number', visible: true, aggregateBy: 'sum' },
+    { name: 'totalAllocated', heading: 'Total Allocated', type: 'number', visible: true, aggregateBy: 'sum' },
+    { name: 'allocationLimit', heading: 'Allocation Limit', type: 'number', visible: true, aggregateBy: 'sum' },
+    { name: 'percentAllocated', heading: 'Percent Allocated', type: 'percent', visible: true, aggregateBy: 'percent' },
     { name: 'notes', heading: 'Notes', type: 'string', visible: true },
     { name: 'date', heading: 'Date', type: 'date', visible: false },
   ];
@@ -71,7 +72,7 @@ export const WaterAllocationTable: React.FC = () => {
     }
   ];
 
-  return <DataTable data={data} columns={columns} columnGroups={columnGroups} outerFilters={outerFilters} innerFilters={innerFilters} />;
+  return <DataTable data={data} columns={columns} columnGroups={columnGroups} outerFilters={outerFilters} innerFilters={innerFilters} options={{includeTotals: true}}/>;
 };
 
 export default WaterAllocationTable;
