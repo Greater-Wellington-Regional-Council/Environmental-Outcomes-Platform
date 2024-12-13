@@ -125,6 +125,7 @@ class Queries(@Autowired val context: DSLContext) {
   fun surfaceWaterPNRP(councilId: Int): String {
       val innerQuery =
           select(
+              SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START,
               SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.AREA_ID,
               SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID,
               SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_A,
@@ -145,12 +146,22 @@ class Queries(@Autowired val context: DSLContext) {
                           .where(PLANS.COUNCIL_ID.eq(councilId))
                   )
               )
-      return buildFeatureCollection(context, innerQuery)
+      val aggregatedJson: Field<String> =
+          DSL.field("json_agg(row_to_json(inputs))", String::class.java)
+
+      val result =
+          context
+              .select(aggregatedJson)
+              .from(innerQuery.asTable("inputs"))
+              .fetchOne(0, String::class.java)
+
+      return result ?: "[]"
   }
 
   fun groundWaterPNRP(councilId: Int): String {
       val innerQuery =
           select(
+              GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START,
               GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.AREA_ID,
               GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID,
               GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_B,
@@ -171,9 +182,18 @@ class Queries(@Autowired val context: DSLContext) {
                           .where(PLANS.COUNCIL_ID.eq(councilId))
                   )
               )
-      return buildFeatureCollection(context, innerQuery)
+      val aggregatedJson: Field<String> =
+          DSL.field("json_agg(row_to_json(inputs))", String::class.java)
+
+      val result =
+          context
+              .select(aggregatedJson)
+              .from(innerQuery.asTable("inputs"))
+              .fetchOne(0, String::class.java)
+
+      return result ?: "[]"
   }
-  
+
   fun flowMeasurementSites(councilId: Int): String {
     val innerQuery =
         select(

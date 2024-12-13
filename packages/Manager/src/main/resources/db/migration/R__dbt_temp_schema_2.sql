@@ -2,6 +2,7 @@
 -- This is just to allow JOOQ to generate classes before DBT has run
 CREATE TABLE IF NOT EXISTS groundwater_allocation_limits_by_area_and_category
 (
+  month_start                   DATE,
   area_id                       VARCHAR,
   category_B                    BIGINT,
   category_BC                    BIGINT,
@@ -16,6 +17,7 @@ CREATE TABLE IF NOT EXISTS groundwater_allocation_limits_by_area_and_category
 
 CREATE TABLE IF NOT EXISTS surfacewater_allocation_limits_by_area_and_category
 (
+  month_start                   DATE,
   area_id                       VARCHAR,
   category_A                    BIGINT,
   category_B                    BIGINT,

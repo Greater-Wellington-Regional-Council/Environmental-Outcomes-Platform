@@ -81,11 +81,11 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
         ResponseEntity.ok().cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS)).body(result)
       }
     } catch (e: Exception) {
-      logger.error("Error fetching surface water PNRP data", e)
+      logger.error("Error //fetching surface water PNRP data", e)
       // Return a generic Internal Server Error
       ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(
-              "An unexpected error occurred while processing your request. Please try again later.")
+              "An expected error occurred while processing your request. Please try again later.")
     }
   }
 

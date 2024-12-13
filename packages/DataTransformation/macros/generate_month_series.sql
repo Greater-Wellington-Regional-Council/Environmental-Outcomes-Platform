@@ -1,10 +1,9 @@
-{% macro generate_month_series(start_date, end_date, interval) %}
+{% macro generate_month_series(start_date, end_date) %}
 
-  GENERATE_SERIES
-    (
-        {{ start_date }}::DATE,   -- Starting date
-        {{ end_date }}::DATE,     -- End date
-        '1 month'::interval       -- Monthly step
-    )::DATE AS month_start
+  GENERATE_SERIES(
+    {{ start_date }}::DATE,  -- Starting date cast to DATE
+    {{ end_date }}::DATE,    -- End date cast to DATE
+    '1 month'::INTERVAL      -- Monthly step
+  )
 
 {% endmacro %}
