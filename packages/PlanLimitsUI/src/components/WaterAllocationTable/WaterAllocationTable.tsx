@@ -1,14 +1,15 @@
 import React from 'react';
 import DataTable, {
-  ColumnDescriptor,
-  DataValueType,
+  ColumnDescriptor, DataValueType,
   FilterDescriptor,
   MonthYearFilter,
   SimpleFilter,
 } from '@components/DataTable/DataTable';
 import { isDate } from 'lodash';
+import { useGroundwaterAllocationQuery } from '@src/api';
+import { data } from 'autoprefixer';
 
-export const WaterAllocationTable: React.FC = () => {
+export const WaterAllocationTable: React.FC = (councilId: number) => {
   const columns: ColumnDescriptor[] = [
     { name: 'catchment', heading: 'Catchment', type: 'string', width: "20%" },
     { name: 'categoryA', heading: 'Category A', type: 'number' },
@@ -21,29 +22,11 @@ export const WaterAllocationTable: React.FC = () => {
     { name: 'date', heading: 'Date', type: 'date', visible: false },
   ];
 
-  const data: DataValueType[][] = [
-    [
-      'BoothsSW', '-', 6.72, 77, 83.72, 25, 334.9, '-', new Date('2024-01-01')
-    ],
-    [
-      'HuangaruaSW', '18.4', 23.6, 9, 51, 110, 46.4, '-', new Date('2024-01-01')
-    ],
-    [
-      'Hutt_LowerSW', '-', 512.51, 66.4, 578.91, 2140, 113.5, 'The PNRP limit combines Hutt (Lower) and Hutt (Upper)', new Date('2024-01-01')
-    ],
-    [
-      'Hutt_UpperSW', '-', '-', 1850, 1850, 'See above', 'See above', '-', new Date('2024-01-01')
-    ],
-    [
-      'Ruamahanga_LowerSW', 659.93, 176, 1045.8, 1881.73, 1370, 137.4, '-', new Date('2024-01-01')
-    ],
-    [
-      'Ruamahanga_MiddleSW', 798.23, '-', 259.4, 1057.63, 1240, 85.3, 'Allocation includes ____ and ____ catchment management sub-units', new Date('2024-01-01')
-    ],
-    [
-      'Ruamahanga_UpperSW', 221.01, 50.6, 481.51, 753.12, 1200, 62.8, '-', new Date('2024-01-01')
-    ],
-  ];
+  function useGroundwaterAllocationData(councilId: number) {
+    return useGroundwaterAllocationQuery(councilId);
+  }
+
+  const tableData: GroundwaterAllocation[] = useGroundwaterAllocationData(councilId);
 
   const columnGroups = [
     { name: 'allocation', heading: 'Allocated amount - litres per second (L/sec)', firstColumn: 'categoryA', lastColumn: 'percentAllocated' },
@@ -73,7 +56,17 @@ export const WaterAllocationTable: React.FC = () => {
   ];
 
   return <DataTable
-    data={data}
+    data={tableData.map(gwa => [
+      gwa.name,
+      gwa.categoryA,
+      gwa.categoryB,
+      gwa.surfaceTake,
+      gwa.totalAllocated,
+      gwa.allocationLimit,
+      gwa.pnrpAllocationPercentage,
+      gwa.notes,
+      gwa.monthStart,
+    ] as DataValueType[]) as DataValueType[][]}
     columns={columns}
     columnGroups={columnGroups}
     outerFilters={outerFilters}

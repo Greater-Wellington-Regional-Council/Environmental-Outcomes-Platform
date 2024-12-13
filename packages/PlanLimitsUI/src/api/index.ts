@@ -208,3 +208,38 @@ export function useWaterUseQuery(councilId: number, from: string, to: string) {
   });
 }
 
+export function useGroundwaterAllocationQuery(councilId: number) {
+  const firstDayOfCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+  return useQuery({
+    queryKey: [`/plan-limits/ground-water-pnrp`, councilId, firstDayOfCurrentMonth],
+
+    // These settings prevent a refetch within in the same browser session
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: Infinity,
+
+    queryFn: () =>
+      fetchFromAPI<GroundwaterAllocation[]>(
+        `/plan-limits/ground-water-pnrp?councilId=${councilId}&dates=${firstDayOfCurrentMonth.toISOString().slice(0, 10)}`,
+      ),
+  });
+}
+
+export function useSurfaceWaterAllocationQuery(councilId: number) {
+  const firstDayOfCurrentMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
+  return useQuery({
+    queryKey: [`/plan-limits/surface-water-pnrp`, councilId, firstDayOfCurrentMonth],
+
+    // These settings prevent a refetch within in the same browser session
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: Infinity,
+
+    queryFn: () =>
+      fetchFromAPI<SurfaceWaterAllocation[]>(
+        `/plan-limits/surface-water-pnrp?councilId=${councilId}&dates=${firstDayOfCurrentMonth.toISOString().slice(0, 10)}`,
+      ),
+  });
+}

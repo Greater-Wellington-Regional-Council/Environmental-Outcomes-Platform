@@ -65,6 +65,21 @@ interface Usage {
     dailyUsage: number | null;
 }
 
+interface GroundwaterAllocation {
+  monthStart: Date;
+  areaId: string;
+  planRegionId: number;
+  categoryB: number;
+  categoryBc: number;
+  categoryC: number;
+  totalAllocation: number;
+  allocationLimit: number;
+  pnrpAllocationPercentage: number;
+  name: string;
+}
+
+type SurfaceWaterAllocation = GroundwaterAllocation
+
 interface Plan {
     id: number;
     councilId: number;
