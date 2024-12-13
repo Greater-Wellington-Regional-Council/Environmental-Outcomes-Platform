@@ -4,6 +4,6 @@
     {{ start_date }}::DATE,  -- Starting date cast to DATE
     {{ end_date }}::DATE,    -- End date cast to DATE
     '1 month'::INTERVAL      -- Monthly step
-  )
+  )::DATE
 
 {% endmacro %}
