@@ -70,9 +70,19 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
 
   @GetMapping("/plan-limits/surface-water-pnrp", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun surfaceWaterPNRP(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
+  fun surfaceWaterPNRP(
+      @RequestParam(name = "councilId") councilId: Int,
+      @RequestParam(name = "dates") dates: String?
+  ): ResponseEntity<String> {
     return try {
-      val result = queries.surfaceWaterPNRP(councilId)
+      val dateList =
+          dates
+              ?.split(",") // Split the dates by comma
+              ?.map { LocalDate.parse(it.trim()) } // Convert each date to LocalDate
+              ?.toList() // Convert to a List<LocalDate>
+
+      // Call the service method with the parsed list
+      val result = queries.surfaceWaterPNRP(councilId, dateList)
 
       // Check if the result is empty or null and handle it
       if (result.isEmpty()) {
@@ -81,7 +91,7 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
         ResponseEntity.ok().cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS)).body(result)
       }
     } catch (e: Exception) {
-      logger.error("Error fetching surface water PNRP data", e)
+      logger.error("Error //fetching surface water PNRP data", e)
       // Return a generic Internal Server Error
       ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(
@@ -91,10 +101,19 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
 
   @GetMapping("/plan-limits/ground-water-pnrp", produces = [MediaType.APPLICATION_JSON_VALUE])
   @ResponseBody
-  fun groundWaterPNRP(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
+  fun groundWaterPNRP(
+      @RequestParam(name = "councilId") councilId: Int,
+      @RequestParam(name = "dates") dates: String?
+  ): ResponseEntity<String> {
     return try {
-      val result = queries.groundWaterPNRP(councilId)
+      val dateList =
+          dates
+              ?.split(",") // Split the dates by comma
+              ?.map { LocalDate.parse(it.trim()) } // Convert each date to LocalDate
+              ?.toList() // Convert to a List<LocalDate>
 
+      // Call the service method with the parsed list
+      val result = queries.groundWaterPNRP(councilId, dateList)
       // Check if the result is empty or null and handle it
       if (result.isEmpty()) {
         ResponseEntity.status(HttpStatus.NOT_FOUND).body("No data found for the given council ID.")

@@ -122,9 +122,10 @@ class Queries(@Autowired val context: DSLContext) {
     return buildFeatureCollection(context, innerQuery)
   }
 
-  fun surfaceWaterPNRP(councilId: Int): String {
+  fun surfaceWaterPNRP(councilId: Int, dates: List<LocalDate>?): String {
     val innerQuery =
         select(
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START,
                 SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.AREA_ID,
                 SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID,
                 SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_A,
@@ -142,16 +143,31 @@ class Queries(@Autowired val context: DSLContext) {
                         .join(PLANS)
                         .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
                         .where(PLANS.COUNCIL_ID.eq(councilId))))
-    val featureCollection: Field<JSONB> =
-        function("to_jsonb", JSONB::class.java, field("to_jsonb(inputs)"))
+            .and(
+                if (!dates.isNullOrEmpty()) {
+                  // Filter rows by the specific dates
+                  SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START.`in`(dates)
+                } else {
+                  // Default behavior if no dates are provided (optional)
+                  DSL.trueCondition() // Or handle it differently based on your requirements
+                })
 
-    val result = context.select(featureCollection).from(innerQuery.asTable("inputs")).fetch()
-    return result.firstNotNullOf { it.value1().toString() }
+    val aggregatedJson: Field<String> =
+        DSL.field("json_agg(row_to_json(inputs))", String::class.java)
+
+    val result =
+        context
+            .select(aggregatedJson)
+            .from(innerQuery.asTable("inputs"))
+            .fetchOne(0, String::class.java)
+
+    return result ?: "[]"
   }
 
-  fun groundWaterPNRP(councilId: Int): String {
+  fun groundWaterPNRP(councilId: Int, dates: List<LocalDate>?): String {
     val innerQuery =
         select(
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START,
                 GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.AREA_ID,
                 GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID,
                 GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_B,
@@ -169,11 +185,25 @@ class Queries(@Autowired val context: DSLContext) {
                         .join(PLANS)
                         .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
                         .where(PLANS.COUNCIL_ID.eq(councilId))))
-    val featureCollection: Field<JSONB> =
-        function("to_jsonb", JSONB::class.java, field("to_jsonb(inputs)"))
+            .and(
+                if (!dates.isNullOrEmpty()) {
+                  // Filter rows by the specific dates
+                  GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START.`in`(dates)
+                } else {
+                  // Default behavior if no dates are provided (optional)
+                  DSL.trueCondition() // Or handle it differently based on your requirements
+                })
 
-    val result = context.select(featureCollection).from(innerQuery.asTable("inputs")).fetch()
-    return result.firstNotNullOf { it.value1().toString() }
+    val aggregatedJson: Field<String> =
+        DSL.field("json_agg(row_to_json(inputs))", String::class.java)
+
+    val result =
+        context
+            .select(aggregatedJson)
+            .from(innerQuery.asTable("inputs"))
+            .fetchOne(0, String::class.java)
+
+    return result ?: "[]"
   }
 
   fun flowMeasurementSites(councilId: Int): String {
