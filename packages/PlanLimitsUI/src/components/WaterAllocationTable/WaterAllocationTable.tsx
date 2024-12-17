@@ -1,78 +1,98 @@
-import React from 'react';
 import DataTable, {
-  ColumnDescriptor, DataValueType,
+  ColumnDescriptor,
   FilterDescriptor,
-  MonthYearFilter,
+  MonthYearFilter, OuterFilter,
   SimpleFilter,
 } from '@components/DataTable/DataTable';
-import { isDate } from 'lodash';
-import { useGroundwaterAllocationQuery } from '@src/api';
-import { data } from 'autoprefixer';
 
-export const WaterAllocationTable: React.FC = (councilId: number) => {
+import { useWaterAllocationQuery } from '@src/api';
+import { useState } from 'react';
+
+export const WaterAllocationTable = ({ council  } : { council: Council }) => {
+  const [ waterType, setWaterType ] = useState<string>('ground')
+  const [ monthStart, setMonthStart ] = useState(new Date(2024, 10, 1))
+
+  const tableData = (useWaterAllocationQuery(council.id, waterType, monthStart).data || []) as GroundwaterAllocation[] | SurfaceWaterAllocation[];
+
   const columns: ColumnDescriptor[] = [
-    { name: 'catchment', heading: 'Catchment', type: 'string', width: "20%" },
-    { name: 'categoryA', heading: 'Category A', type: 'number' },
-    { name: 'categoryB', heading: 'Category B', type: 'number' },
-    { name: 'surfaceTake', heading: 'Surface Take', type: 'number' },
-    { name: 'totalAllocated', heading: 'Total Allocated', type: 'number' },
-    { name: 'allocationLimit', heading: 'Allocation Limit', type: 'number' },
-    { name: 'percentAllocated', heading: 'Percent Allocated', type: 'percent', formula: 'percent(totalAllocated, allocationLimit)' },
-    { name: 'notes', heading: 'Notes', type: 'string' },
-    { name: 'date', heading: 'Date', type: 'date', visible: false },
-  ];
-
-  function useGroundwaterAllocationData(councilId: number) {
-    return useGroundwaterAllocationQuery(councilId);
-  }
-
-  const tableData: GroundwaterAllocation[] = useGroundwaterAllocationData(councilId);
-
-  const columnGroups = [
-    { name: 'allocation', heading: 'Allocated amount - litres per second (L/sec)', firstColumn: 'categoryA', lastColumn: 'percentAllocated' },
+    { name: 'plan_region_id', visible: false },
+    { name: 'pnrp_allocation_percentage', type: 'percent' },
+    { name: 'area_id', visible: false },
+    { name: 'name', heading: 'Catchment' },
+    { name: 'total_allocation', highlight: (c: string) => `border-r-2 border-l-2 border-${c}` },
   ];
 
   const outerFilters: FilterDescriptor[] = [
     {
-      name: 'date',
+      name: 'waterType',
+      type: OuterFilter,
+      initialValue: waterType,
+      options: [{ label: 'Groundwater', value: 'ground' }, {label: 'Surface water', value: 'surface' }],
+      onChange: (waterType) => setWaterType(waterType as string),
+      className: "w-100"
+    },
+    {
+      name: 'month_start',
       type: MonthYearFilter,
-      columns: ['date'],
-      valueMatchesFilter: (value: unknown, filterValue: unknown) => {
-        if (!isDate(value) || !isDate(filterValue)) {
-          return false;
-        }
-        return value.getFullYear() === filterValue.getFullYear() && value.getMonth() === filterValue.getMonth()
-      }
+      initialValue: monthStart,
+      onChange: (monthStart => setMonthStart(monthStart as Date))
     }
   ];
 
   const innerFilters: FilterDescriptor[] = [
     {
-      name: 'catchment',
+      name: 'name',
       type: SimpleFilter,
-      columns: ['catchment'],
-      options: data.map(row => row[0]),
+      columns: ['name'],
+      options: tableData.map(row => row.name)
     }
   ];
 
-  return <DataTable
-    data={tableData.map(gwa => [
-      gwa.name,
-      gwa.categoryA,
-      gwa.categoryB,
-      gwa.surfaceTake,
-      gwa.totalAllocated,
-      gwa.allocationLimit,
-      gwa.pnrpAllocationPercentage,
-      gwa.notes,
-      gwa.monthStart,
-    ] as DataValueType[]) as DataValueType[][]}
-    columns={columns}
-    columnGroups={columnGroups}
-    outerFilters={outerFilters}
-    innerFilters={innerFilters}
-    options={{includeTotals: true}}
-  />;
+  return waterType === 'ground' ? (
+    <DataTable<GroundwaterAllocation[]>
+      data={tableData as GroundwaterAllocation[]}
+      columns={columns}
+      columnGroups={[
+        { name: 'allocation', heading: 'Allocated amount - litres per second (L/sec)', firstColumn: 'category_b', lastColumn: 'pnrp_allocation_percentage' },
+      ]}
+      outerFilters={outerFilters}
+      innerFilters={innerFilters}
+      options={{
+        includeTotals: true,
+        order: [
+          "name",
+          "category_b",
+          "category_bc",
+          "category_c",
+          "total_allocation",
+          "allocation_limit",
+          "pnrp_allocation_percentage"
+        ]
+      }}
+    />
+  ) : (
+    <DataTable<SurfaceWaterAllocation[]>
+      data={tableData as SurfaceWaterAllocation[]}
+      columns={columns}
+      columnGroups={[
+        { name: 'allocation', heading: 'Allocated amount - litres per second (L/sec)', firstColumn: 'category_a', lastColumn: 'pnrp_allocation_percentage' },
+      ]}
+      outerFilters={outerFilters}
+      innerFilters={innerFilters}
+      options={{
+        includeTotals: true,
+        order: [
+          "name",
+          "category_a",
+          "category_b",
+          "surface_take",
+          "total_allocation",
+          "allocation_limit",
+          "pnrp_allocation_percentage",
+        ]
+      }}
+  />
+  );
 };
 
 export default WaterAllocationTable;

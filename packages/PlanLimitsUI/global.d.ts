@@ -65,20 +65,31 @@ interface Usage {
     dailyUsage: number | null;
 }
 
-interface GroundwaterAllocation {
-  monthStart: Date;
-  areaId: string;
-  planRegionId: number;
-  categoryB: number;
-  categoryBc: number;
-  categoryC: number;
-  totalAllocation: number;
-  allocationLimit: number;
-  pnrpAllocationPercentage: number;
+interface GroundwaterAllocation  extends Record<string, DataValueType> {
+  month_start: Date;
+  area_id: string;
+  plan_region_id: number;
+  category_b: number;
+  category_bc: number;
+  category_c: number;
+  total_allocation: number;
+  allocation_limit: number;
+  pnrp_allocation_percentage: number;
   name: string;
 }
 
-type SurfaceWaterAllocation = GroundwaterAllocation
+interface SurfaceWaterAllocation  extends Record<string, DataValueType> {
+  month_start: Date,
+  area_id: string,
+  plan_region_id: number,
+  category_a: number,
+  category_b: number,
+  surface_take: number,
+  total_allocation: number,
+  allocation_limit: number,
+  pnrp_allocation_percentage: number,
+  name: string
+}
 
 interface Plan {
     id: number;

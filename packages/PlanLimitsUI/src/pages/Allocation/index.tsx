@@ -24,7 +24,7 @@ export default function Allocation() {
 
       <main role="application">
         <div className="map-panel relative">
-          <DataTable />
+          <DataTable council={council}/>
         </div>
       </main>
     </div>
