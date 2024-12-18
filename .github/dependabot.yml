@@ -69,3 +69,12 @@ updates:
     schedule:
       interval: "monthly"
     open-pull-requests-limit: 5
+
+  - package-ecosystem: "dbt"
+    directory: "/packages/DataTransformation"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dbt"
+      - "dependencies"
