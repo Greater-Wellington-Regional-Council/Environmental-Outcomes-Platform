@@ -184,6 +184,8 @@ const Filters: React.FC<{
   );
 };
 
+
+
 function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]>(
   {
     data,
@@ -375,6 +377,14 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     return value!.toString();
   };
 
+  function DataCell(props: { col: ColumnDescriptor, s: DataValueType, children?: React.ReactNode, className?: string }): React.ReactElement {
+    const col = fullColumnDetails(props.col);
+    return <td
+      className={`py-2 px-4 text-${props.col.align} p-2 font-medium ${props.className ?? ''}`}>
+      {props.children || displayValue(props.s, undefined, col) || ''}
+    </td>;
+  }
+
   const calculate = (col: ColumnType, argValue: Row) => {
     const cellFunctions: { [key: string]: ((a: number, b: number) => number) } = {
       percent: (a: number, b: number) => a / b * 100,
@@ -427,7 +437,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         </div>}
       </div>
 
-      {data[0] ? <table className="table-auto border-collapse w-full text-left">
+      {data[0] ? <table className="table-auto border-collapse w-full">
 
         <thead>
         {/* Column groups */}
@@ -438,7 +448,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         {/* Column headings */}
         <tr>
           {visibleColumns.map((col) => (
-            <th key={col.name} className={`py-2 px-4 bg-kapiti text-${col.align} text-white p-2 font-medium ${col.highlight?.('white')}`}>
+            <th key={col.name} className={`py-2 px-4 bg-kapiti ${'text-'+(col.align ?? 'left')} text-white p-2 font-medium ${col.highlight?.('white')}`}>
               {col.heading}
             </th>
           ))}
@@ -462,11 +472,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         <tbody>
         {filteredData.map((row, rowIndex) => (
           <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-100' : ''}>
-            {visibleColumns.map((col) => (
-              <td key={col.name} className={`border=2 border-r-white py-2 px-4 w-[${col.width || 'auto'}] text-${col.align} ${col.highlight?.('gray')}`}>
-                {displayValue(row[col.name], row, col)}
-              </td>
-            ))}
+            {visibleColumns.map((col) => <DataCell key={col.name} className={`data ${col.highlight?.('gray') ?? ''}`} col={col} s={row[col.name]} />)}
           </tr>
         ))}
         </tbody>
@@ -477,9 +483,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
           {visibleColumns.map((col, index: number) =>
             index === 0
               ? <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}]`}>{'Totals'}</td>
-              : <td key={col.name} className={`py-2 px-4 bg-nui text-${col.align} text-white p-2 font-medium ${col.highlight?.('white')}`}>
-                {displayValue(col.total?.(), undefined, fullColumnDetails(col))}
-              </td>,
+              : <DataCell key={col.name} className={`totals text-white ${col.highlight?.('white') ?? ''}`} col={col} s={col.total?.() ?? ''} />,
           )}
         </tr>}
         </tfoot>

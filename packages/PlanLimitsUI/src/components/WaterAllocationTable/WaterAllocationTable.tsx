@@ -16,7 +16,7 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
 
   const columns: ColumnDescriptor[] = [
     { name: 'plan_region_id', visible: false },
-    { name: 'pnrp_allocation_percentage', type: 'percent' },
+    { name: 'pnrp_allocation_percentage', type: 'percent', formula: 'percent(total_allocation, allocation_limit)' },
     { name: 'area_id', visible: false },
     { name: 'name', heading: 'Catchment' },
     { name: 'total_allocation', highlight: (c: string) => `border-r-2 border-l-2 border-${c}` },
