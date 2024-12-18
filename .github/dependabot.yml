@@ -70,7 +70,7 @@ updates:
     open-pull-requests-limit: 5
 
   - package-ecosystem: "docker"
-    directory:
+    directories:
       - "/packages/DataTransformation"
       - "packages/DataTransformation/.batect/sqlfluff"
     schedule:
