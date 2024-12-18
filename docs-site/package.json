@@ -25,7 +25,7 @@
     "gatsby": "^5.13.6",
     "gatsby-plugin-postcss": "^6.13.1",
     "gatsby-plugin-sharp": "^5.13.1",
-    "gatsby-plugin-sitemap": "^6.13.1",
+    "gatsby-plugin-sitemap": "^6.14.0",
     "gatsby-remark-images": "^7.13.2",
     "gatsby-source-filesystem": "^5.13.1",
     "gatsby-transformer-remark": "^6.13.1",
@@ -39,7 +39,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.6",
+    "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^3.4.14",
     "typescript": "^5.4.5"
   },
