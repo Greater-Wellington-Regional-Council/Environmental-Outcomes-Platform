@@ -8,9 +8,8 @@ import { saveAs } from 'file-saver';
 import MonthYearPicker from '@components/MonthYearPicker';
 import XToClose from '@components/XToClose/XToClose';
 import numValue, { isNumber } from '@lib/numValue';
-import _, { capitalize, isDate } from 'lodash';
+import _, { capitalize, isDate, sum } from 'lodash';
 import Dropdown from '@components/Dropdown/Dropdown';
-import randomString from '@lib/randomeString';
 
 const SELECT_ALL = '(All)';
 
@@ -28,7 +27,7 @@ export type ColumnDescriptor = {
   [key: string]: string | number | boolean | undefined | null | (() => unknown) | ((c: string) => string);
 };
 
-type ColumnType = ColumnDescriptor | string | number;
+type ColumnType = ColumnDescriptor | string;
 
 type ColumnGroup = {
   name: string;
@@ -60,9 +59,9 @@ export const MonthYearFilter: React.FC<{
   onChange: (filter: FilterDescriptor, value: unknown) => void
 }> = ({ filter, currentValue, onChange }) => {
   const onSelection = (v: unknown) => {
-    filter.onChange?.(v)
-    onChange?.(filter, v)
-  }
+    filter.onChange?.(v);
+    onChange?.(filter, v);
+  };
 
   return (
     <MonthYearPicker
@@ -102,7 +101,7 @@ export const OuterFilter: React.FC<{
   const onSelection = (value: string) => {
     filter.onChange?.(value);
     onChange?.(filter, value);
-  }
+  };
 
   return (
     <Dropdown
@@ -184,8 +183,6 @@ const Filters: React.FC<{
   );
 };
 
-
-
 function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]>(
   {
     data,
@@ -193,11 +190,11 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     columnGroups = [],
     innerFilters = [],
     outerFilters = [],
-    options = {}
+    options = {},
   }: DataTableProps<T>,
 ): React.ReactElement {
 
-  const allFilters: FilterDescriptor[] = useMemo(() => [...(outerFilters || []), ...(innerFilters || [])], [innerFilters, outerFilters])
+  const allFilters: FilterDescriptor[] = useMemo(() => [...(outerFilters || []), ...(innerFilters || [])], [innerFilters, outerFilters]);
 
   const initialFilterValues = () => {
     return allFilters.reduce((acc, filter) => {
@@ -244,7 +241,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     return rows.filter((row) =>
       innerFilters.every((filter) => {
         const value = _.get(filterValue, filter.name);
-        console.log(value)
+        console.log(value);
         if (!value || value === SELECT_ALL) return true;
         const cellValue = row[filter.name];
         return filter.valueMatchesFilter
@@ -254,19 +251,49 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     );
   }, [rows, outerFilters, innerFilters, filterValue]);
 
+  const aggFunction = {
+    sum: (col: ColumnDescriptor): DataValueType => {
+      return filteredData
+        .reduce((total, row) => total + numValue(_.get(row, col.name)), 0)
+        .toFixed(2);
+    },
+
+    percent: (col: ColumnDescriptor): DataValueType => {
+      const formulaArgs = (base: ColumnDescriptor) =>
+        base.formula?.match(/\w+/g)?.slice(1) || [];
+
+      const argNames = formulaArgs(column(col));
+      const argValues = argNames.map((arg) => aggFunction.sum(column(arg)));
+      return calculate(column(col), _.zipObject(argNames, argValues));
+    },
+
+    aggregate: (c: ColumnType) => {
+      const col = column(c);
+
+      const agg = col.aggregateBy ||
+      col.type === 'percent' ? 'percent' :
+        col.type === 'number' ? 'sum' : 'sum';
+
+      if (agg === 'sum') return aggFunction.sum(col);
+      if (agg === 'percent') return aggFunction.percent(col);
+
+      return '';
+    },
+  };
+
   function fullColumnDetails(
     col: ColumnType | undefined,
   ): ColumnDescriptor {
-    const deriveType = (name: string) => {
+    const deriveTypeFromFirstRecord = (name: string) => {
       if (!data?.[0]) return 'string';
       if (isNumber(_.get(data[0], name))) return 'number';
       return 'string';
     };
 
-    const deriveAlign = (type: string) =>
+    const deriveAlignFromType = (type: string) =>
       ['number', 'percent'].includes(type) ? 'right' : 'left';
 
-    const deriveHeading = (name: string) => {
+    const deriveHeadingFromName = (name: string) => {
       const special = {
         'bc': 'BC',
         'pnrp': 'PNRP',
@@ -281,88 +308,23 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         .join(' ');
     };
 
-    const sumColumn = (columnName: string): DataValueType => {
-      return filteredData
-        .reduce((total, row) => total + numValue(_.get(row, columnName)), 0)
-        .toFixed(2);
-    };
+    // Build or fill out the column descriptor
+    let base: ColumnDescriptor;
 
-    // const colValues = (row: DataValueType[]): { [key: string]: DataValueType } => {
-    //   const result: { [key: string]: DataValueType } = {};
-    //   columns.forEach((c, index) => {
-    //     result[c.name] = row[index];
-    //   });
-    //   return result;
-    // };
+    if (typeof col === 'string')
+      base = columnProps.find((c) => c.name === col) || { name: col };
+    else
+      base = col!;
 
-    const formulaArgs = (base: ColumnDescriptor) =>
-      base.formula?.match(/\w+/g)?.slice(1) || [];
+    base.heading = base.heading ?? deriveHeadingFromName(base.name)
+    base.visible = base.visible ?? true
+    base.width = base.width || 'auto'
+    base.type = base.type || deriveTypeFromFirstRecord(base.name)
+    base.align = base.align || deriveAlignFromType(base.type)
+    base.total = base.total || (() => aggFunction.aggregate(base))
 
-    const sumPercent = (base: ColumnDescriptor | string): DataValueType => {
-      const argNames = formulaArgs(column(base));
-      const argValues = argNames.map((arg) => sumColumn(arg));
-      return calculate(column(base).name, _.zipObject(argNames, argValues));
-    };
-
-    const totalCalc = (agg: string, name: string) => {
-      if (agg === 'sum') return sumColumn(name);
-      if (agg === 'percent') return sumPercent(name);
-      return data?.[0] && typeof _.get(data[0], name) === 'number' ? 'sum' : 'sum'
-    };
-
-    if (typeof col === 'number') {
-      const base = columnProps[col];
-      if (!base) throw new Error(`No column descriptor found at index ${col}`);
-      return {
-        ...base,
-        heading: base.heading ?? deriveHeading(base.name),
-        type: deriveType(base.name),
-        align: base.align ?? deriveAlign(deriveType(base.name)),
-        visible: base.visible ?? true,
-        width: base.width ?? 'auto',
-        total: () => totalCalc(base.aggregateBy ?? 'sum', base.name),
-      };
-    }
-
-    if (typeof col === 'string') {
-      let base = columnProps.find((c) => c.name === col);
-      if (!base) {
-        // Create a default descriptor if none found
-        base = {
-          name: col,
-          heading: deriveHeading(col),
-          align: deriveAlign(deriveType(col)),
-          total: () => totalCalc('sum', col),
-        };
-      }
-      return {
-        ...base,
-        heading: base.heading ?? deriveHeading(base.name),
-        visible: base.visible ?? true,
-        width: base.width ?? 'auto',
-        type: base.type || deriveType(base.name),
-        align: base.align ?? deriveAlign(base.type || deriveType(base.name)),
-        total: () => totalCalc(base.aggregateBy ?? 'sum', base.name),
-      };
-    }
-
-    if (col && typeof col === 'object') {
-      return {
-        ...col,
-        heading: col.heading ?? deriveHeading(col.name),
-        align: col.align ?? deriveAlign(col.type || deriveType(col.name)),
-        visible: col.visible ?? true,
-        width: col.width ?? 'auto',
-        type: col.type ?? deriveType(col.name),
-        total: () => totalCalc(col.aggregateBy ?? 'sum', col.name)
-      };
-    }
-
-    return { name: `UnnamedColumn_${randomString()}`, heading: 'unnamed' };
+    return base;
   }
-
-  // const formulaArgs = (c: ColumnType) =>
-  //   column(c).formula?.match(/\w+/g)?.slice(1) || [];
 
   const displayValue = (
     value: DataValueType | undefined,
@@ -377,27 +339,45 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     return value!.toString();
   };
 
-  function DataCell(props: { col: ColumnDescriptor, s: DataValueType, children?: React.ReactNode, className?: string }): React.ReactElement {
+  function DataCell(props: {
+    col: ColumnDescriptor,
+    s: DataValueType,
+    children?: React.ReactNode,
+    className?: string,
+    ignoreFormula?: boolean
+  }, currentRow: Record<string, DataValueType>): React.ReactElement {
     const col = fullColumnDetails(props.col);
     return <td
       className={`py-2 px-4 text-${props.col.align} p-2 font-medium ${props.className ?? ''}`}>
-      {props.children || displayValue(props.s, undefined, col) || ''}
+      {props.children || displayValue(props.s, currentRow, props.ignoreFormula ? {
+        ...col,
+        formula: undefined,
+      } : col) || ''}
     </td>;
   }
 
-  const calculate = (col: ColumnType, argValue: Row) => {
+  const calculate = (col: ColumnDescriptor, argValue: Row) => {
     const cellFunctions: { [key: string]: ((a: number, b: number) => number) } = {
-      percent: (a: number, b: number) => a / b * 100,
+      // These are the functions that can be used in a formula for a column.
+      //
+      // Currently only one formula is supported.
+      // col.formula is a string like "percent(a, b)" where a and b are other column names.
+      // The formula is evaluated by looking up the values of the other columns in the current row
+      // and applying the function to them by using the function name as a key to this object.
+      //
+      percent: (a: number, b: number) => {
+        console.log(a, b);
+        return a / b * 100;
+      },
     };
 
-    const c = column(col);
-    if (!c.formula) return argValue[c.name];
+    if (!col.formula) return argValue[col.name];
 
-    const fn = cellFunctions[c.formula.split('(')[0]];
-    if (!fn) return '!: ' + c.formula;
-
+    const fn = cellFunctions[col.formula.split('(')[0]];
+    if (!fn) return '!: ' + col.formula;
+    console.log(col.formula, col.formula.match(/\w+/g), argValue);
     const args: DataValueType[] =
-      c.formula.match(/\w+/g)?.slice(1).map((col: string) => _.get(argValue, col)) || [];
+      col.formula.match(/\w+/g)?.slice(1).map((col: string) => _.get(argValue, col)) || [];
     return fn!(...(args as [number, number]));
   };
 
@@ -429,7 +409,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
       <div className="flex py-2 px-4 justify-between items-center">
         <Filters filters={outerFilters} filterValue={filterValue} setFilterValue={setFilterValue} onClose={
           () => outerFilters.forEach(f => clearFilterValue(f.name))
-      }/>
+        } />
 
         {data[0] && <div className="space-x-4">
           <button onClick={downloadCSV}>Download</button>
@@ -448,7 +428,8 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         {/* Column headings */}
         <tr>
           {visibleColumns.map((col) => (
-            <th key={col.name} className={`py-2 px-4 bg-kapiti ${'text-'+(col.align ?? 'left')} text-white p-2 font-medium ${col.highlight?.('white')}`}>
+            <th key={col.name}
+                className={`py-2 px-4 bg-kapiti ${'text-' + (col.align ?? 'left')} text-white p-2 font-medium ${col.highlight?.('white')}`}>
               {col.heading}
             </th>
           ))}
@@ -472,7 +453,8 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         <tbody>
         {filteredData.map((row, rowIndex) => (
           <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-100' : ''}>
-            {visibleColumns.map((col) => <DataCell key={col.name} className={`data ${col.highlight?.('gray') ?? ''}`} col={col} s={row[col.name]} />)}
+            {visibleColumns.map((col) => <DataCell key={col.name} className={`data ${col.highlight?.('gray') ?? ''}`}
+                                                   col={col} s={row[col.name]} ignoreFormula={true} />)}
           </tr>
         ))}
         </tbody>
@@ -483,7 +465,8 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
           {visibleColumns.map((col, index: number) =>
             index === 0
               ? <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}]`}>{'Totals'}</td>
-              : <DataCell key={col.name} className={`totals text-white ${col.highlight?.('white') ?? ''}`} col={col} s={col.total?.() ?? ''} />,
+              : <DataCell key={col.name} className={`totals text-white ${col.highlight?.('white') ?? ''}`} col={col}
+                          s={col.total?.() ?? ''} />,
           )}
         </tr>}
         </tfoot>
