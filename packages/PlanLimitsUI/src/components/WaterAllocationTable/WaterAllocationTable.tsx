@@ -1,12 +1,13 @@
 import DataTable, {
   ColumnDescriptor,
-  FilterDescriptor,
-  MonthYearFilter, OuterFilter,
-  SimpleFilter,
+  OuterFilter,
 } from '@components/DataTable/DataTable';
 
 import { useWaterAllocationQuery } from '@src/api';
 import { useState } from 'react';
+import { FilterDescriptor } from '@components/FilterPanel/FilterPanel';
+import { SimpleFilter } from '@components/FilterPanel/Filters/SimpleFilter/SimpleFilter';
+import { MonthYearFilter } from '@components/FilterPanel/Filters/MonthYearFilter/MonthYearFilter';
 
 export const WaterAllocationTable = ({ council  } : { council: Council }) => {
   const [ waterType, setWaterType ] = useState<string>('ground')
@@ -91,7 +92,7 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
           "pnrp_allocation_percentage",
         ]
       }}
-  />
+    />
   );
 };
 

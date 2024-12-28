@@ -1,8 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, beforeEach, vi, expect } from 'vitest';
-import DataTable from '@components/WaterAllocationTable/WaterAllocationTable';
+import { describe, it, expect, vi } from 'vitest';
+import DataTable from './DataTable';
 import { saveAs } from 'file-saver';
-import 'jspdf-autotable';
 import { jsPDF } from 'jspdf';
 
 vi.mock('file-saver', () => ({
@@ -10,87 +9,110 @@ vi.mock('file-saver', () => ({
 }));
 
 vi.mock('jspdf', () => ({
-  jsPDF: vi.fn(() => ({
+  jsPDF: vi.fn().mockImplementation(() => ({
     text: vi.fn(),
     autoTable: vi.fn(),
     save: vi.fn(),
   })),
 }));
 
+const mockData = [
+  { name: 'Location A', category_a: 10, category_b: 20, surface_take: 30 },
+  { name: 'Location B', category_a: 15, category_b: 26, surface_take: 40 },
+];
+
+const columns = [
+  { name: 'name', heading: 'Name', visible: true },
+  { name: 'category_a', heading: 'Category A', visible: true, type: 'number' },
+  { name: 'category_b', heading: 'Category B', visible: true, type: 'number' },
+  { name: 'surface_take', heading: 'Surface Take', visible: true, type: 'number' },
+];
+
 describe('DataTable Component', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  it('renders the table with correct headers and data', () => {
+    render(
+      <DataTable
+        data={mockData}
+        columns={columns}
+        options={{ includeTotals: false }}
+      />
+    );
+
+    columns.forEach((col) => {
+      expect(screen.getByText(col.heading)).toBeInTheDocument();
+    });
+
+    mockData.forEach((row) => {
+      expect(screen.getByText(row.name)).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes(row.category_a.toString()))).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes(row.category_b.toString()))).toBeInTheDocument();
+      expect(screen.getByText((content) => content.includes(row.surface_take.toString()))).toBeInTheDocument();
+    });
   });
 
-  it('renders the table with data', () => {
-    render(<DataTable />);
+  it('handles empty data gracefully', () => {
+    render(
+      <DataTable
+        data={[]}
+        columns={columns}
+        options={{ includeTotals: false }}
+      />
+    );
 
-    expect(screen.getByText('BoothsSW')).toBeInTheDocument();
-    expect(screen.getByText('HuangaruaSW')).toBeInTheDocument();
-    expect(screen.getByText('Hutt_LowerSW')).toBeInTheDocument();
+    expect(screen.getByText(/There is no data for these criteria/i)).toBeInTheDocument();
   });
 
-  it('filters data by catchment', () => {
-    render(<DataTable />);
-
-    const filterDropdown = screen.getByTestId('dropdown-catchment');
-    fireEvent.click(filterDropdown);
-
-    const option = screen.getByTestId('option-BoothsSW');
-    fireEvent.click(option);
-
-    expect(screen.getByTestId('selected-BoothsSW')).toBeInTheDocument();
-    expect(screen.queryByText('HuangaruaSW')).not.toBeInTheDocument();
-    expect(screen.queryByText('Hutt_LowerSW')).not.toBeInTheDocument();
-  });
-
-  it('filters data by month and year', () => {
-    render(<DataTable />);
-
-    const monthYearPicker = screen.getByTestId('dropdown-months-date');
-    fireEvent.click(monthYearPicker);
-
-    const option = screen.getByText('January 2024');
-    fireEvent.click(option);
-
-    expect(screen.queryByText('BoothsSW')).toBeInTheDocument();
-  });
-
-  it('downloads the filtered data as CSV', () => {
-    render(<DataTable />);
-
-    const downloadButton = screen.getByText('Download');
-    fireEvent.click(downloadButton);
-
-    expect(saveAs).toHaveBeenCalledTimes(1);
-    expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), 'filtered_data.csv');
-  });
-
-  it('prints the filtered data as PDF', () => {
-    render(<DataTable />);
-
-    const printButton = screen.getByText('Print');
-    fireEvent.click(printButton);
-
-    expect(jsPDF).toHaveBeenCalledTimes(1);
-  });
-
-  it('calculates and displays grand totals correctly', () => {
-    render(<DataTable />);
+  it('calculates totals correctly when enabled', () => {
+    render(
+      <DataTable
+        data={mockData}
+        columns={columns}
+        options={{ includeTotals: true }}
+      />
+    );
 
     expect(screen.getByText('Totals')).toBeInTheDocument();
-    expect(screen.getByText('1697.57')).toBeInTheDocument();
+    const totalCategoryA = mockData.reduce((sum, row) => sum + row.category_a, 0);
+    const totalCategoryB = mockData.reduce((sum, row) => sum + row.category_b, 0);
+    const totalSurfaceTake = mockData.reduce((sum, row) => sum + row.surface_take, 0);
+
+    expect(screen.getByText(totalCategoryA.toFixed(2))).toBeInTheDocument();
+    expect(screen.getByText(totalCategoryB.toFixed(2))).toBeInTheDocument();
+    expect(screen.getByText(totalSurfaceTake.toFixed(2))).toBeInTheDocument();
   });
 
-  it.skip('renders and interacts with the dropdown for water type correctly', () => {
-    render(<DataTable />);
+  it('exports data as CSV when download button is clicked', async () => {
+    render(
+      <DataTable
+        data={mockData}
+        columns={columns}
+        options={{ includeTotals: false }}
+      />
+    );
 
-    const waterTypeDropdown = screen.getByTestId('dropdown-water-types');
-    fireEvent.click(waterTypeDropdown);
+    const downloadButton = screen.getByText(/Download/i);
+    fireEvent.click(downloadButton);
 
-    const option = screen.getByTestId('dropdown-water-types');
-    fireEvent.click(option);
+    expect(saveAs).toHaveBeenCalled();
+    const csvContent = vi.mocked(saveAs).mock.calls[0][0];
+    expect(csvContent).toBeInstanceOf(Blob);
+  });
 
-    expect(waterTypeDropdown).toHaveTextContent('Surface water');
+  it('exports data as PDF when print button is clicked', async () => {
+    render(
+      <DataTable
+        data={mockData}
+        columns={columns}
+        options={{ includeTotals: false }}
+      />
+    );
+
+    const printButton = screen.getByText(/Print/i);
+    fireEvent.click(printButton);
+
+    expect(jsPDF).toHaveBeenCalled();
+    const pdfInstance = vi.mocked(jsPDF).mock.results[0].value;
+    expect(pdfInstance.text).toHaveBeenCalledWith('Filtered Data', 10, 10);
+    expect(pdfInstance.autoTable).toHaveBeenCalled();
   });
 });

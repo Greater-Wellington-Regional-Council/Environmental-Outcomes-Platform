@@ -1,17 +1,20 @@
-import React, { useState, useMemo, ReactNode } from 'react';
+import React, { useMemo, ReactNode } from 'react';
 import 'react-dropdown/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
-import MonthYearPicker from '@components/MonthYearPicker';
-import XToClose from '@components/XToClose/XToClose';
 import numValue, { isNumber } from '@lib/numValue';
-import _, { capitalize, isDate, sum } from 'lodash';
+import _, { capitalize, isDate } from 'lodash';
 import Dropdown from '@components/Dropdown/Dropdown';
-
-const SELECT_ALL = '(All)';
+import {
+  FilterDescriptor,
+  FilterPanel,
+  FilterProps,
+  SELECT_ALL,
+} from '@components/FilterPanel/FilterPanel';
+import { useFilterValues } from '@components/FilterPanel/useFilterValues';
 
 export type ColumnDescriptor = {
   name: string;
@@ -24,10 +27,11 @@ export type ColumnDescriptor = {
   total?: () => DataValueType;
   formula?: string;
   highlight?: (colour: string) => string;
+
   [key: string]: string | number | boolean | undefined | null | (() => unknown) | ((c: string) => string);
 };
 
-type ColumnType = ColumnDescriptor | string;
+type ColumnNameOrDescriptor = ColumnDescriptor | string;
 
 type ColumnGroup = {
   name: string;
@@ -36,86 +40,7 @@ type ColumnGroup = {
   lastColumn: string;
 };
 
-export type FilterDescriptor = {
-  name: string;
-  type: React.FC<{
-    filter: FilterDescriptor;
-    currentValue: unknown;
-    onChange: (filter: FilterDescriptor, value: unknown) => void;
-  }>;
-  initialValue?: unknown;
-  key?: string;
-  columns?: string[];
-  valueMatchesFilter?: (value: unknown, filterValue: unknown) => boolean;
-  options?: unknown[];
-  placeholder?: string;
-  className?: string;
-  onChange?: (v: unknown) => void;
-};
-
-export const MonthYearFilter: React.FC<{
-  filter: FilterDescriptor,
-  currentValue: unknown,
-  onChange: (filter: FilterDescriptor, value: unknown) => void
-}> = ({ filter, currentValue, onChange }) => {
-  const onSelection = (v: unknown) => {
-    filter.onChange?.(v);
-    onChange?.(filter, v);
-  };
-
-  return (
-    <MonthYearPicker
-      onChange={onSelection}
-      dataTestid={`dropdown-months-${filter.name}`}
-      current={currentValue as Date}
-      className={`bg-transparent p-4 w-[250px] ${filter.className}`}
-    />
-  );
-};
-
-export const SimpleFilter: React.FC<{
-  filter: FilterDescriptor,
-  currentValue: unknown,
-  onChange: (filter: FilterDescriptor, value: unknown) => void
-}> = ({ filter, currentValue, onChange }) => {
-  const onSelection = (value: string) => onChange?.(filter, value);
-
-  return (
-    <Dropdown
-      options={[SELECT_ALL, ...(filter.options || [])]}
-      onChange={onSelection}
-      value={currentValue as string}
-      placeholder={filter.placeholder || SELECT_ALL}
-      dataTestid={`dropdown-${filter.name}`}
-      className={`bg-transparent p-4 w-[250px] ${filter.className}`}
-      controlClassName={'p-2'}
-    />
-  );
-};
-
-export const OuterFilter: React.FC<{
-  filter: FilterDescriptor,
-  currentValue: unknown,
-  onChange: (filter: FilterDescriptor, value: unknown) => void
-}> = ({ filter, currentValue, onChange }) => {
-  const onSelection = (value: string) => {
-    filter.onChange?.(value);
-    onChange?.(filter, value);
-  };
-
-  return (
-    <Dropdown
-      options={filter.options ?? []}
-      selectAll={SELECT_ALL}
-      onChange={onSelection}
-      value={currentValue as string}
-      placeholder={filter.placeholder || SELECT_ALL}
-      dataTestid={`dropdown-${filter.name}`}
-      className={`bg-transparent p-4 w-[250px] ${filter.className}`}
-      controlClassName={`p-2`}
-    />
-  );
-};
+export type DataValueType = string | number | boolean | null | Date;
 
 declare module 'jspdf' {
   interface jsPDF {
@@ -137,7 +62,27 @@ declare module 'jspdf' {
   }
 }
 
-export type DataValueType = string | number | boolean | null | Date;
+
+
+export const OuterFilter: React.FC<FilterProps> = ({ filter, currentValue, onChange }) => {
+  const onSelection = (value: string) => {
+    filter.onChange?.(value);
+    onChange?.(filter, value);
+  };
+
+  return (
+    <Dropdown
+      options={filter.options ?? []}
+      selectAll={SELECT_ALL}
+      onChange={onSelection}
+      value={currentValue as string}
+      placeholder={filter.placeholder || SELECT_ALL}
+      dataTestid={`dropdown-${filter.name}`}
+      className={`bg-transparent p-4 w-[250px] ${filter.className}`}
+      controlClassName={`p-2`}
+    />
+  );
+};
 
 type Row = Record<string, DataValueType>;
 
@@ -154,33 +99,32 @@ export type DataTableProps<T extends DataValueType[][] | Record<string, DataValu
   };
 };
 
-type FilterValues = {
-  [key: string]: unknown;
-}
+const ColumnGroupHeaders: React.FC<{ columnGroups: ColumnGroup[], columns: ColumnDescriptor[] }> = ({
+                                                                                                      columnGroups,
+                                                                                                      columns,
+                                                                                                    }) => {
+  let currentGroup: string | undefined = undefined;
+  const headers: ReactNode[] = [];
 
-const Filters: React.FC<{
-  className?: string,
-  filters: FilterDescriptor[],
-  filterValue: FilterValues,
-  setFilterValue: (value: FilterValues) => void,
-  onClose: () => void
-}> = ({ filters, filterValue, setFilterValue, className, onClose }) => {
-  return (
-    <div className={`flex space-x-2 ${className}`}>
-      {filters.map((filter: FilterDescriptor, index) =>
-        React.createElement(filter.type, {
-          filter,
-          onChange: (filter, value) => {
-            setFilterValue({ ...filterValue, [filter.name]: value });
-          },
-          currentValue: _.get(filterValue, filter.name),
-          key: `${filter.name}-${index}`,
-        }),
-      )}
+  columns.forEach((col) => {
+    const atGroupStart = columnGroups.find((group) => group.firstColumn === col.name);
+    const atGroupEnd = columnGroups.find((group) => group.lastColumn === col.name);
+    if (atGroupEnd) {
+      headers.push(<th key={atGroupEnd.name} colSpan={
+        columns.findIndex((c) => c.name === atGroupEnd.lastColumn) -
+        columns.findIndex((c) => c.name === atGroupEnd.firstColumn) + 1
+      } className="bg-kapiti text-white text-center p-2 font-medium">
+        {atGroupEnd.heading}
+      </th>);
+      currentGroup = undefined;
+    } else if (atGroupStart)
+      currentGroup = atGroupStart.name;
+    else if (!currentGroup || (col === columns[columns.length - 1])) {
+      headers.push(<th key={col.name} className="bg-kapiti text-white p-2 font-medium" />);
+    }
+  });
 
-      <XToClose onClick={onClose} />
-    </div>
-  );
+  return <>{headers}</>;
 };
 
 function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]>(
@@ -196,15 +140,17 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
   const allFilters: FilterDescriptor[] = useMemo(() => [...(outerFilters || []), ...(innerFilters || [])], [innerFilters, outerFilters]);
 
-  const initialFilterValues = () => {
-    return allFilters.reduce((acc, filter) => {
+  const {
+    filterValues,
+    setFilterValues,
+    getFilterValue,
+    resetFilters: clearFilterValue,
+  } = useFilterValues(allFilters.reduce(
+    (acc, filter) => {
       acc[filter.name] = filter.initialValue;
       return acc;
-    }, {} as Record<string, unknown>);
-  };
-
-  const [filterValue, setFilterValue] = useState<FilterValues>(initialFilterValues());
-  const clearFilterValue = (name: string) => setFilterValue({ ...filterValue, [name]: null });
+    }, {} as Record<string, unknown>)
+  );
 
   /**
    * Normalize the data into an array of objects (Row).
@@ -231,8 +177,8 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     });
   };
 
-  const columns = useMemo(() => data?.[0] ? Object.keys(data[0]).map((colName: string) => fullColumnDetails(colName)) : [], [data]);
-  const column = (c: ColumnType): ColumnDescriptor => fullColumnDetails(c);
+  const columns = useMemo(() => data?.[0] ? Object.keys(data[0]).map((colName: string) => fullColumnDescriptor(colName)) : [], [data]);
+  const column = (c: ColumnNameOrDescriptor): ColumnDescriptor => fullColumnDescriptor(c);
 
   const visibleColumns = (options?.order || columns).map(c => column(c)).filter((c) => c.visible ?? true);
   const rows: Row[] = useMemo(() => normalizeData(data, columns), [data, columns]);
@@ -240,49 +186,48 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   const filteredData = useMemo(() => {
     return rows.filter((row) =>
       innerFilters.every((filter) => {
-        const value = _.get(filterValue, filter.name);
-        console.log(value);
-        if (!value || value === SELECT_ALL) return true;
+        const value = getFilterValue(filter.name);
+        if (value === undefined) return true;
         const cellValue = row[filter.name];
         return filter.valueMatchesFilter
           ? filter.valueMatchesFilter(cellValue, value)
-          : (cellValue === value);
+          : (cellValue === value || undefined);
       }),
     );
-  }, [rows, outerFilters, innerFilters, filterValue]);
+  }, [rows, outerFilters, innerFilters, filterValues]);
 
-  const aggFunction = {
+  const columnAggregationFunctions = {
+
+    /* Simple column sum */
     sum: (col: ColumnDescriptor): DataValueType => {
       return filteredData
         .reduce((total, row) => total + numValue(_.get(row, col.name)), 0)
         .toFixed(2);
     },
 
+    /* Summarize a percentage of two other columns. */
     percent: (col: ColumnDescriptor): DataValueType => {
+      if (!col.formula) return '';
+
       const formulaArgs = (base: ColumnDescriptor) =>
         base.formula?.match(/\w+/g)?.slice(1) || [];
 
       const argNames = formulaArgs(column(col));
-      const argValues = argNames.map((arg) => aggFunction.sum(column(arg)));
+      const argValues = argNames.map((arg) => numValue(column(arg).total?.()) ?? 0);
+
       return calculate(column(col), _.zipObject(argNames, argValues));
     },
 
-    aggregate: (c: ColumnType) => {
+    selectAndCalculate: (c: ColumnNameOrDescriptor) => {
       const col = column(c);
-
-      const agg = col.aggregateBy ||
-      col.type === 'percent' ? 'percent' :
-        col.type === 'number' ? 'sum' : 'sum';
-
-      if (agg === 'sum') return aggFunction.sum(col);
-      if (agg === 'percent') return aggFunction.percent(col);
-
+      if (col.aggregateBy === 'sum') return columnAggregationFunctions.sum(col);
+      if (col.aggregateBy === 'percent') return columnAggregationFunctions.percent(col);
       return '';
     },
   };
 
-  function fullColumnDetails(
-    col: ColumnType | undefined,
+  function fullColumnDescriptor(
+    col: ColumnNameOrDescriptor | undefined,
   ): ColumnDescriptor {
     const deriveTypeFromFirstRecord = (name: string) => {
       if (!data?.[0]) return 'string';
@@ -308,20 +253,22 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         .join(' ');
     };
 
-    // Build or fill out the column descriptor
-    let base: ColumnDescriptor;
+    const deriveAggFromType = (type: string) =>
+      type === 'percent' ? 'percent' : 'sum';
 
-    if (typeof col === 'string')
-      base = columnProps.find((c) => c.name === col) || { name: col };
-    else
-      base = col!;
+    if (!col) return { name: 'unknown' };
 
-    base.heading = base.heading ?? deriveHeadingFromName(base.name)
-    base.visible = base.visible ?? true
-    base.width = base.width || 'auto'
-    base.type = base.type || deriveTypeFromFirstRecord(base.name)
-    base.align = base.align || deriveAlignFromType(base.type)
-    base.total = base.total || (() => aggFunction.aggregate(base))
+    let base = (typeof col === 'string') ? { name: col } : col!;
+    const givenOptions = columnProps.find((c) => c.name === base.name) || { name: base.name };
+
+    base.heading = givenOptions.heading ?? deriveHeadingFromName(base.name)
+    base.visible = givenOptions.visible ?? true
+    base.width = givenOptions.width || 'auto'
+    base.type = givenOptions.type || deriveTypeFromFirstRecord(base.name)
+    base.align = givenOptions.align || deriveAlignFromType(base.type)
+    base.aggregateBy = givenOptions.aggregateBy || deriveAggFromType(base.type);
+    base.total = () => columnAggregationFunctions.selectAndCalculate(base);
+    base.formula = givenOptions.formula || undefined;
 
     return base;
   }
@@ -344,19 +291,21 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     s: DataValueType,
     children?: React.ReactNode,
     className?: string,
-    ignoreFormula?: boolean
-  }, currentRow: Record<string, DataValueType>): React.ReactElement {
-    const col = fullColumnDetails(props.col);
+    ignoreFormula?: boolean,
+    currentRow?: Record<string, DataValueType>
+    }): React.ReactElement {
+    const col = fullColumnDescriptor(props.col);
     return <td
-      className={`py-2 px-4 text-${props.col.align} p-2 font-medium ${props.className ?? ''}`}>
-      {props.children || displayValue(props.s, currentRow, props.ignoreFormula ? {
+      className={`py-2 px-4 p-2 font-medium ${props.className ?? ''}`}
+      style={{ textAlign: col.align }}>
+      {props.children || displayValue(props.s, props.currentRow, props.ignoreFormula ? {
         ...col,
         formula: undefined,
       } : col) || ''}
     </td>;
   }
 
-  const calculate = (col: ColumnDescriptor, argValue: Row) => {
+  const calculate = (col: ColumnDescriptor, argValues: Row) => {
     const cellFunctions: { [key: string]: ((a: number, b: number) => number) } = {
       // These are the functions that can be used in a formula for a column.
       //
@@ -366,18 +315,20 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
       // and applying the function to them by using the function name as a key to this object.
       //
       percent: (a: number, b: number) => {
-        console.log(a, b);
+        if (b === 0) return 0;
         return a / b * 100;
       },
     };
 
-    if (!col.formula) return argValue[col.name];
+    if (!col.formula) return argValues[col.name];
 
     const fn = cellFunctions[col.formula.split('(')[0]];
     if (!fn) return '!: ' + col.formula;
-    console.log(col.formula, col.formula.match(/\w+/g), argValue);
+
     const args: DataValueType[] =
-      col.formula.match(/\w+/g)?.slice(1).map((col: string) => _.get(argValue, col)) || [];
+      col.formula.match(/\w+/g)?.slice(1).map((col: string) => _.get(argValues, col)) || [];
+
+    if (args.some((arg) => !isNumber(arg))) return "";
     return fn!(...(args as [number, number]));
   };
 
@@ -406,9 +357,9 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
       <label className="py-2 px-4 text-gray-700 font-bold w-full ">Show data for:</label>
 
       {/* Outer filters & actions (eg, water type and month) */}
-      <div className="flex py-2 px-4 justify-between items-center">
-        <Filters filters={outerFilters} filterValue={filterValue} setFilterValue={setFilterValue} onClose={
-          () => outerFilters.forEach(f => clearFilterValue(f.name))
+      <div className="flex py-2 px-4 justify-between items-center" style={{ textAlign: 'unset'}}>
+        <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues} onClose={
+          () => clearFilterValue(outerFilters.map(f => f.name))
         } />
 
         {data[0] && <div className="space-x-4">
@@ -438,12 +389,12 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         {/* Inner Filters */}
         <tr>
           <th colSpan={99}>
-            <Filters
+            <FilterPanel
               className="bg-gray-300"
-              filters={innerFilters}
-              filterValue={filterValue}
-              setFilterValue={setFilterValue}
-              onClose={() => innerFilters.forEach(f => clearFilterValue(f.name))}
+              filters={innerFilters} // Pass inner filters prop
+              filterValues={filterValues} // Current filter value state
+              setFilterValues={setFilterValues} // Set filter value function
+              onClose={() => clearFilterValue(innerFilters.map(f => f.name))}
             />
           </th>
         </tr>
@@ -476,33 +427,5 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     </div>
   );
 }
-
-const ColumnGroupHeaders: React.FC<{ columnGroups: ColumnGroup[], columns: ColumnDescriptor[] }> = ({
-                                                                                                      columnGroups,
-                                                                                                      columns,
-                                                                                                    }) => {
-  let currentGroup: string | undefined = undefined;
-  const headers: ReactNode[] = [];
-
-  columns.forEach((col) => {
-    const atGroupStart = columnGroups.find((group) => group.firstColumn === col.name);
-    const atGroupEnd = columnGroups.find((group) => group.lastColumn === col.name);
-    if (atGroupEnd) {
-      headers.push(<th key={atGroupEnd.name} colSpan={
-        columns.findIndex((c) => c.name === atGroupEnd.lastColumn) -
-        columns.findIndex((c) => c.name === atGroupEnd.firstColumn) + 1
-      } className="bg-kapiti text-white text-center p-2 font-medium">
-        {atGroupEnd.heading}
-      </th>);
-      currentGroup = undefined;
-    } else if (atGroupStart)
-      currentGroup = atGroupStart.name;
-    else if (!currentGroup || (col === columns[columns.length - 1])) {
-      headers.push(<th key={col.name} className="bg-kapiti text-white p-2 font-medium" />);
-    }
-  });
-
-  return <>{headers}</>;
-};
 
 export default DataTable;

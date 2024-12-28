@@ -59,3 +59,4 @@ qodana.yaml
 
 /**/*.js
 !src/workers/**/*.js
+/*.patch
