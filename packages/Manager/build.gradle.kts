@@ -72,7 +72,7 @@ dependencies {
   testImplementation("io.kotest:kotest-framework-engine:5.9.1")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.2")
-  testImplementation("io.mockk:mockk:1.13.13")
+  testImplementation("io.mockk:mockk:1.13.14")
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }
