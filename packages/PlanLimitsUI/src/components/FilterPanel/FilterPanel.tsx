@@ -1,5 +1,5 @@
 import React from 'react';
-import _, { filter } from 'lodash';
+import _ from 'lodash';
 import XToClose from '@components/XToClose/XToClose';
 import { DataValueType } from '@components/DataTable/DataTable';
 
