@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import Dropdown from '@components/Dropdown/Dropdown';
+import Dropdown, { DropdownValueType } from '@components/Dropdown/Dropdown';
 
 const MonthYearPicker = ({
                            current,
@@ -60,8 +60,8 @@ const MonthYearPicker = ({
     setSelectedOption(current ? { month: current.getMonth(), year: current.getFullYear() } : null);
   }, [current]);
 
-  const handleSelection = (value: string) => {
-    const [month, year] = value.split('-').map(Number);
+  const handleSelection = (value: DropdownValueType) => {
+    const [month, year] = (value as string).split('-').map(Number);
     const selected = { month, year };
     setSelectedOption(selected);
     const date = new Date(year, month, 1);

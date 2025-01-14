@@ -24,16 +24,16 @@ describe('FilterPanel', () => {
     filters = [
       {
         name: 'filter1',
-        type: ({ filter, onChange }) => (
-          <button data-testid={`filter-${filter.name}`} onClick={() => onChange(filter, 'value1')}>
+        type: (filter) => (
+          <button data-testid={`filter-${filter.name}`} onClick={() => filter.onChange?.(filter)}>
             {filter.name}
           </button>
         ),
       },
       {
         name: 'filter2',
-        type: ({ filter, onChange }) => (
-          <button data-testid={`filter-${filter.name}`} onClick={() => onChange(filter, 'value2')}>
+        type: (filter) => (
+          <button data-testid={`filter-${filter.name}`} onClick={() => filter.onChange?.(filter)}>
             {filter.name}
           </button>
         ),

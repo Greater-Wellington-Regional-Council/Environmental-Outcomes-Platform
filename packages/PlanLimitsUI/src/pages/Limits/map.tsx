@@ -65,7 +65,6 @@ function mapFeatureLayer<T extends Identifyable>(
   collection: T[],
 ) {
   const featureLayers = mapFeatureLayers<T>(features, layerName, collection)
-  if (layerName === "surfaceWaterSubUnitLimits") console.log("featureLayers", featureLayers)
   return featureLayers[layerName === "surfaceWaterSubUnitLimits" ? featureLayers.length - 1 : 0];
 }
 

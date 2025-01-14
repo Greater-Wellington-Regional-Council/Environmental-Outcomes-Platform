@@ -1,33 +1,30 @@
 import React from 'react';
-import _ from 'lodash';
+import _, { filter } from 'lodash';
 import XToClose from '@components/XToClose/XToClose';
+import { DataValueType } from '@components/DataTable/DataTable';
 
-export type FilterDescriptor = {
+export type SubOptions = {
   name: string;
-  type: React.FC<{
-    filter: FilterDescriptor;
-    currentValue: unknown;
-    onChange: (filter: FilterDescriptor, value: unknown) => void;
-  }>;
-  initialValue?: unknown;
+  options: DataValueType[];
+}[];
+
+export interface FilterDescriptor {
+  name: string;
+  type: React.FC<FilterDescriptor>;
+  currentValue?: unknown;
   key?: string;
   columns?: string[];
   valueMatchesFilter?: (value: unknown, filterValue: unknown) => boolean;
-  options?: unknown[];
+  options?:  SubOptions | unknown[];
   placeholder?: string;
   className?: string;
   onChange?: (v: unknown) => void;
-};
+  defaultValue?: DataValueType[];
+}
 
 export type FilterValues = {
   [key: string]: unknown;
 }
-
-export type FilterProps = {
-  filter: FilterDescriptor;
-  currentValue: unknown;
-  onChange: (filter: FilterDescriptor, value: unknown) => void;
-};
 
 export const SELECT_ALL = '(All)';
 
@@ -37,25 +34,28 @@ export const FilterPanel: React.FC<{
   filterValues: FilterValues;
   setFilterValues: (value: FilterValues) => void;
   onClose: () => void;
-}> = ({ filters, filterValues, setFilterValues, className, onClose }) => {
+  children?: React.ReactNode;
+}> = ({ filters, filterValues, setFilterValues, className, onClose, children }) => {
   const handleFilterChange = (filter: FilterDescriptor, value: unknown) => {
     setFilterValues({ ...filterValues, [filter.name]: value });
+    filter.onChange?.(value);
   };
 
   return (
     <div className={`flex space-x-2 ${className}`}>
       {/* Dynamically render each filter */}
       {filters.map((filter: FilterDescriptor, index) =>
-        React.createElement(filter.type, {
-          filter,
-          onChange: handleFilterChange,
+        React.createElement(filter.type, { ...filter,
+          onChange: (e) => handleFilterChange(filter, e),
           currentValue: _.get(filterValues, filter.name),
           key: `${filter.name}-${index}`,
-        }),
+        } as FilterDescriptor),
       )}
 
       {/* Close button */}
-      <XToClose onClick={onClose} />
+      {filters?.length ? <XToClose onClick={onClose} /> : <></>}
+
+      <div className="direct-filters">{children}</div>
     </div>
   );
 };

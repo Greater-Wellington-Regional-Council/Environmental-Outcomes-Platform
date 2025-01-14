@@ -6,7 +6,6 @@ import DataTable, {
 import { useWaterAllocationQuery } from '@src/api';
 import { useState } from 'react';
 import { FilterDescriptor } from '@components/FilterPanel/FilterPanel';
-import { SimpleFilter } from '@components/FilterPanel/Filters/SimpleFilter/SimpleFilter';
 import { MonthYearFilter } from '@components/FilterPanel/Filters/MonthYearFilter/MonthYearFilter';
 
 export const WaterAllocationTable = ({ council  } : { council: Council }) => {
@@ -27,25 +26,15 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
     {
       name: 'waterType',
       type: OuterFilter,
-      initialValue: waterType,
+      currentValue: waterType,
       options: [{ label: 'Groundwater', value: 'ground' }, {label: 'Surface water', value: 'surface' }],
       onChange: (waterType) => setWaterType(waterType as string),
-      className: "w-100"
     },
     {
       name: 'month_start',
       type: MonthYearFilter,
-      initialValue: monthStart,
-      onChange: (monthStart => setMonthStart(monthStart as Date))
-    }
-  ];
-
-  const innerFilters: FilterDescriptor[] = [
-    {
-      name: 'name',
-      type: SimpleFilter,
-      columns: ['name'],
-      options: tableData.map(row => row.name)
+      currentValue: monthStart,
+      onChange: (ms => {console.log('outer onChange ms, monthStart: ', ms, monthStart); setMonthStart(ms as Date); })
     }
   ];
 
@@ -57,11 +46,12 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
         { name: 'allocation', heading: 'Allocated amount - litres per second (L/sec)', firstColumn: 'category_b', lastColumn: 'pnrp_allocation_percentage' },
       ]}
       outerFilters={outerFilters}
-      innerFilters={innerFilters}
+      innerFilters={[]}
       options={{
         includeTotals: true,
         order: [
           "name",
+          "month_start",
           "category_b",
           "category_bc",
           "category_c",
@@ -79,7 +69,7 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
         { name: 'allocation', heading: 'Allocated amount - litres per second (L/sec)', firstColumn: 'category_a', lastColumn: 'pnrp_allocation_percentage' },
       ]}
       outerFilters={outerFilters}
-      innerFilters={innerFilters}
+      innerFilters={[]}
       options={{
         includeTotals: true,
         order: [

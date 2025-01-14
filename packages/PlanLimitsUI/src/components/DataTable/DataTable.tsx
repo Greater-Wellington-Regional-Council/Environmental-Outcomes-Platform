@@ -1,4 +1,4 @@
-import React, { useMemo, ReactNode } from 'react';
+import React, { useMemo, ReactNode, useState, useEffect } from 'react';
 import 'react-dropdown/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
@@ -7,14 +7,17 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import numValue, { isNumber } from '@lib/numValue';
 import _, { capitalize, isDate } from 'lodash';
-import Dropdown from '@components/Dropdown/Dropdown';
+import Dropdown, { DropdownOption, DropdownValueType } from '@components/Dropdown/Dropdown';
+
 import {
   FilterDescriptor,
   FilterPanel,
-  FilterProps,
-  SELECT_ALL,
+  SELECT_ALL
 } from '@components/FilterPanel/FilterPanel';
+
 import { useFilterValues } from '@components/FilterPanel/useFilterValues';
+
+import CompoundFilter from '@components/FilterPanel/Filters/CompoundFilter/CompoundFilter';
 
 export type ColumnDescriptor = {
   name: string;
@@ -62,12 +65,9 @@ declare module 'jspdf' {
   }
 }
 
-
-
-export const OuterFilter: React.FC<FilterProps> = ({ filter, currentValue, onChange }) => {
-  const onSelection = (value: string) => {
+export const OuterFilter: React.FC<FilterDescriptor> = (filter: FilterDescriptor) => {
+  const onSelection = (value: unknown) => {
     filter.onChange?.(value);
-    onChange?.(filter, value);
   };
 
   return (
@@ -75,7 +75,7 @@ export const OuterFilter: React.FC<FilterProps> = ({ filter, currentValue, onCha
       options={filter.options ?? []}
       selectAll={SELECT_ALL}
       onChange={onSelection}
-      value={currentValue as string}
+      value={filter.currentValue as string}
       placeholder={filter.placeholder || SELECT_ALL}
       dataTestid={`dropdown-${filter.name}`}
       className={`bg-transparent p-4 w-[250px] ${filter.className}`}
@@ -147,9 +147,9 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     resetFilters: clearFilterValue,
   } = useFilterValues(allFilters.reduce(
     (acc, filter) => {
-      acc[filter.name] = filter.initialValue;
+      acc[filter.name] = filter.currentValue;
       return acc;
-    }, {} as Record<string, unknown>)
+    }, {} as Record<string, unknown>),
   );
 
   /**
@@ -164,7 +164,6 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     const first = input[0];
     const isObjectData = !Array.isArray(first);
     if (isObjectData) {
-      // Already array of objects
       return input as Array<Record<string, DataValueType>>;
     }
 
@@ -261,11 +260,11 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     let base = (typeof col === 'string') ? { name: col } : col!;
     const givenOptions = columnProps.find((c) => c.name === base.name) || { name: base.name };
 
-    base.heading = givenOptions.heading ?? deriveHeadingFromName(base.name)
-    base.visible = givenOptions.visible ?? true
-    base.width = givenOptions.width || 'auto'
-    base.type = givenOptions.type || deriveTypeFromFirstRecord(base.name)
-    base.align = givenOptions.align || deriveAlignFromType(base.type)
+    base.heading = givenOptions.heading ?? deriveHeadingFromName(base.name);
+    base.visible = givenOptions.visible ?? true;
+    base.width = givenOptions.width || 'auto';
+    base.type = givenOptions.type || deriveTypeFromFirstRecord(base.name);
+    base.align = givenOptions.align || deriveAlignFromType(base.type);
     base.aggregateBy = givenOptions.aggregateBy || deriveAggFromType(base.type);
     base.total = () => columnAggregationFunctions.selectAndCalculate(base);
     base.formula = givenOptions.formula || undefined;
@@ -293,7 +292,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     className?: string,
     ignoreFormula?: boolean,
     currentRow?: Record<string, DataValueType>
-    }): React.ReactElement {
+  }): React.ReactElement {
     const col = fullColumnDescriptor(props.col);
     return <td
       className={`py-2 px-4 p-2 font-medium ${props.className ?? ''}`}
@@ -328,7 +327,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     const args: DataValueType[] =
       col.formula.match(/\w+/g)?.slice(1).map((col: string) => _.get(argValues, col)) || [];
 
-    if (args.some((arg) => !isNumber(arg))) return "";
+    if (args.some((arg) => !isNumber(arg))) return '';
     return fn!(...(args as [number, number]));
   };
 
@@ -351,13 +350,77 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     doc.save('filtered_data.pdf');
   };
 
+  const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
+    const [filterValues, setFilterValues] = useState<DataValueType[]>(props.currentValue as DataValueType[]);
+    const [fieldDetails, setFieldDetails] = useState<{ fieldName: string, conditions: DataValueType[], values: DropdownValueType[] } | undefined>(undefined);
+
+    const handleNewField = (name: string) => {
+      if (name) setFieldDetails(getFieldDetails(name, filteredData))
+    };
+
+    const handleSubmit = (values: DataValueType[]) => {
+      setFilterValues(values);
+      props.onChange?.(filterValues);
+    };
+
+    const getFieldDetails = (fieldName: string, data: Row[]) => {
+      const fieldData = data.map((row) => row[fieldName]);
+      const uniqueValues = _.uniq(fieldData);
+      const conditions = ['=', '!=', '>', '<', '>=', '<='];
+      return { fieldName, conditions, values: uniqueValues };
+    };
+
+    const getCandidateValues = (fieldDetails: { fieldName: string, conditions: DataValueType[], values: DropdownValueType[] }) => {
+      const values = fieldDetails?.values || [];
+      const selectedCondition = filterValues[1] as string;
+      const selectedValue = filterValues[2] as DataValueType;
+      if (selectedCondition === '!=') {
+        return values.filter((v) => v !== selectedValue);
+      }
+      return values;
+    }
+
+    return <div className="flex space-x-2">
+      <CompoundFilter
+        filter={{ name: 'exampleFilter', placeholder: 'Filter...' }}
+        options={[
+          {
+            name: 'Field Name',
+            options: columns.map((c) => ({ label: c.heading, value: c.name } as DropdownOption)),
+            allowFreeText: false,
+            onSelect: ((fieldName) => handleNewField(fieldName as string)),
+            className: 'w-[300px]',
+            placeholder: 'Column',
+          },
+          {
+            name: 'Condition',
+            options: (fieldDetails?.conditions || []) as string[],
+            allowFreeText: false,
+            className: 'w-[100px]',
+            placeholder: '=',
+          },
+          {
+            name: 'Field Value',
+            options: (fieldDetails ? getCandidateValues(fieldDetails) : []).map(v => ({ label: v, value: v } as DropdownOption)),
+            allowFreeText: true,
+            placeholder: 'Value',
+          },
+        ]}
+        currentValue={filterValues}
+        defaultValues={props.defaultValue as DataValueType[]}
+        onSelect={handleSubmit}
+        clearOn={['Field Name']}
+      />
+    </div>;
+  };
+
   return (
     <div>
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label className="py-2 px-4 text-gray-700 font-bold w-full ">Show data for:</label>
 
       {/* Outer filters & actions (eg, water type and month) */}
-      <div className="flex py-2 px-4 justify-between items-center" style={{ textAlign: 'unset'}}>
+      <div className="flex py-2 px-4 justify-between items-center" style={{ textAlign: 'unset' }}>
         <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues} onClose={
           () => clearFilterValue(outerFilters.map(f => f.name))
         } />
@@ -391,11 +454,20 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
           <th colSpan={99}>
             <FilterPanel
               className="bg-gray-300"
-              filters={innerFilters} // Pass inner filters prop
-              filterValues={filterValues} // Current filter value state
-              setFilterValues={setFilterValues} // Set filter value function
-              onClose={() => clearFilterValue(innerFilters.map(f => f.name))}
-            />
+              filters={innerFilters}
+              filterValues={filterValues}
+              setFilterValues={setFilterValues}
+              onClose={() => clearFilterValue(innerFilters.map(f => f.name))}>
+              <ComplexFilter {...{
+                name: 'complexFilter',
+                type: ComplexFilter,
+                currentValue: [undefined, '=' , undefined] as DataValueType[],
+                defaultValue: [undefined, '=', undefined] as DataValueType[],
+                options: [],
+                onChange: (v: unknown) => console.log('Selected:', v),
+                className: 'w-100',
+              }} />
+            </FilterPanel>
           </th>
         </tr>
         </thead>
