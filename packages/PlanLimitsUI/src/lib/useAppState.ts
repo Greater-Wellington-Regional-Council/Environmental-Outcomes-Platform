@@ -4,7 +4,7 @@ import { groupBy } from 'lodash';
 import {ActiveLimits, AllPlanData, AppState, Council, GroundWaterLimit,
   GroundwaterLimitView, GroupedGroundwaterLimitViews,
   LimitView, SurfaceWaterLimit,
-  SurfaceWaterLimitView} from '../shared/lib/types/global';
+  SurfaceWaterLimitView} from '../../global';
 
 export function useAppState(
   council: Council,

@@ -1,4 +1,4 @@
-import {PinnedLocation, ViewLocation} from "../shared/lib/types/global";
+import {PinnedLocation, ViewLocation} from "../../global";
 
 export function parseLocationString(
   locationString: string
