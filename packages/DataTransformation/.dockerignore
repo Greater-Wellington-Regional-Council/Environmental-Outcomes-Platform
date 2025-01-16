@@ -9,4 +9,5 @@ batect*
 .sqlfluff
 .sqlfluffignore
 
+Dockerfile
 README.md
