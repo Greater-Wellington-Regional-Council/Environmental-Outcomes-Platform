@@ -14,6 +14,18 @@ describe('makeSafe', () => {
     expect(safeString).toBe('<div>HelloWorld</div>')
   })
 
+  it('removes partial <script> tag', () => {
+    const unsafeString = '<div>Hello<scriptalert("XSS")</script >World</div>'
+    const safeString = makeSafe(unsafeString)
+    expect(safeString).toBe('<div>HelloWorld</div>')
+  })
+
+  it('removes unclosed partial <script> tag', () => {
+    const unsafeString = '<div>Hello<scriptalert("XSS")World</div>'
+    const safeString = makeSafe(unsafeString)
+    expect(safeString).toBe('<div>Hello</div>')
+  })
+
   it('removes self-closing <script/> tags', () => {
     const unsafeString = '<div>Hello<script/>World</div>'
     const safeString = makeSafe(unsafeString)
