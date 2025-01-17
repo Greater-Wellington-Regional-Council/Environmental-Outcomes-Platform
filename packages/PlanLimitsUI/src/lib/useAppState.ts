@@ -1,10 +1,6 @@
 import { useState, useCallback } from 'react';
 import formatWaterQuantity from './formatWaterQuantity';
 import { groupBy } from 'lodash';
-import {ActiveLimits, AllPlanData, AppState, Council, GroundWaterLimit,
-  GroundwaterLimitView, GroupedGroundwaterLimitViews,
-  LimitView, SurfaceWaterLimit,
-  SurfaceWaterLimitView} from '../../global';
 
 export function useAppState(
   council: Council,
@@ -279,7 +275,6 @@ function unitLimitsToDisplay(
         },
         subUnitLimitView: {},
       };
-    case 'C':
     default:
       return {
         unitLimitView: {
