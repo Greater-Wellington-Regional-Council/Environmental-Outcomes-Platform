@@ -10,13 +10,12 @@ export function convertDate(d: unknown | Date, orNull: boolean = false): Date | 
   } else if (typeof d === 'string') {
     if (isValidDate(d)) {
       const date = new Date(d);
-      // Check if the date is valid
       if (!isNaN(date.getTime())) {
         return date;
       }
     }
   }
-  return orNull ? null : null;
+  return orNull ? null : d;
 }
 
 export default convertDate;
