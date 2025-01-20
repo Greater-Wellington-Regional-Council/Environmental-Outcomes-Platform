@@ -4,7 +4,7 @@ export function isValidDate(dateString: string): boolean {
   return datePattern.test(dateString);
 }
 
-export function convertDate(d: unknown | Date, orNull: boolean = false): Date | null {
+export function convertDate(d: unknown | Date, orNull: boolean = false): unknown | Date | null {
   if (d instanceof Date) {
     return d;
   } else if (typeof d === 'string') {

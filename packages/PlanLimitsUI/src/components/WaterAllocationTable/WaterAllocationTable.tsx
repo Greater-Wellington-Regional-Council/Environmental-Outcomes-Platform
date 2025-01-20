@@ -1,4 +1,4 @@
-import DataTable, {
+  import DataTable, {
   ColumnDescriptor,
   OuterFilter,
 } from '@components/DataTable/DataTable';

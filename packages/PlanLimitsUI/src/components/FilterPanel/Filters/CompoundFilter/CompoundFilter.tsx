@@ -20,6 +20,7 @@ interface CompoundFilterProps {
   filter?: { name: string; placeholder?: string; className?: string };
   defaultValues?: DataValueType[];
   clearOn?: string[];
+  hideSubmitButton?: boolean;
 }
 
 export const CompoundFilter: React.FC<CompoundFilterProps> = ({
@@ -29,6 +30,7 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
                                                                 filter,
                                                                 defaultValues,
                                                                 clearOn = [],
+                                                                hideSubmitButton = false,
                                                               }) => {
   const [values, setValues] = useState<DataValueType[]>(currentValue);
 
@@ -47,6 +49,7 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
 
   const handleClear = () => {
     const clearedValues = defaultValues || Array(options.length).fill(undefined);
+    console.log(defaultValues, clearedValues);
     setValues(clearedValues);
   };
 
@@ -80,7 +83,7 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
       >
         <XMarkIcon className="h-5 w-5" />
       </button>
-      <button
+      {hideSubmitButton ? <></> : <button
         type="button"
         onClick={handleSubmit}
         disabled={values.filter((value) => value !== undefined).length !== options.length}
@@ -88,7 +91,7 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
         data-testid="submit-button"
       >
         <CheckIcon className="h-5 w-5" />
-      </button>
+      </button>}
     </div>
   );
 };

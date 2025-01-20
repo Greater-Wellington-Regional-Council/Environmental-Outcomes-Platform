@@ -33,7 +33,7 @@ export const FilterPanel: React.FC<{
   filters: FilterDescriptor[];
   filterValues: FilterValues;
   setFilterValues: (value: FilterValues) => void;
-  onClose: () => void;
+  onClose?: () => void;
   children?: React.ReactNode;
 }> = ({ filters, filterValues, setFilterValues, className, onClose, children }) => {
   const handleFilterChange = (filter: FilterDescriptor, value: unknown) => {
@@ -53,7 +53,7 @@ export const FilterPanel: React.FC<{
       )}
 
       {/* Close button */}
-      {filters?.length ? <XToClose onClick={onClose} /> : <></>}
+      {(filters?.length && onClose) ? <XToClose onClick={onClose} /> : <></>}
 
       <div className="direct-filters">{children}</div>
     </div>

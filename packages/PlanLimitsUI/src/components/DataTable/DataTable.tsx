@@ -18,6 +18,7 @@ import {
 import { useFilterValues } from '@components/FilterPanel/useFilterValues';
 
 import CompoundFilter from '@components/FilterPanel/Filters/CompoundFilter/CompoundFilter';
+import convertDate from '@lib/convertDate';
 
 export type ColumnDescriptor = {
   name: string;
@@ -359,6 +360,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     };
 
     const handleSubmit = (values: DataValueType[]) => {
+      if (!values[0] || !values[1]) return;
       setFilterValues(values);
       props.onChange?.(values);
     };
@@ -382,7 +384,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
     return <div className="flex space-x-2">
       <CompoundFilter
-        filter={{ name: 'exampleFilter', placeholder: 'Filter...' }}
+        filter={{ name: 'complexFilter' }}
         options={[
           {
             name: 'Field Name',
@@ -398,18 +400,21 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
             allowFreeText: false,
             className: 'w-[100px]',
             placeholder: '=',
+            onSelect: (v) => setFilterValues([fieldDetails?.fieldName as DataValueType, v, filterValues[2]]),
           },
           {
             name: 'Field Value',
             options: (fieldDetails ? getCandidateValues(fieldDetails) : []).map(v => ({ label: v, value: v } as DropdownOption)),
             allowFreeText: true,
             placeholder: 'Value',
+            onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType, filterValues[1], v]),
           },
         ]}
         currentValue={filterValues}
         defaultValues={props.defaultValue as DataValueType[]}
         onSelect={handleSubmit}
         clearOn={['Field Name']}
+        hideSubmitButton={true}
       />
     </div>;
   };
