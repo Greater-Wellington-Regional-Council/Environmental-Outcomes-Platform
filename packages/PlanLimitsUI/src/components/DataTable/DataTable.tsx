@@ -360,7 +360,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
     const handleSubmit = (values: DataValueType[]) => {
       setFilterValues(values);
-      props.onChange?.(filterValues);
+      props.onChange?.(values);
     };
 
     const getFieldDetails = (fieldName: string, data: Row[]) => {
