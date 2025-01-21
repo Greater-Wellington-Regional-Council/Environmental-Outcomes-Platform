@@ -18,7 +18,6 @@ import {
 import { useFilterValues } from '@components/FilterPanel/useFilterValues';
 
 import CompoundFilter from '@components/FilterPanel/Filters/CompoundFilter/CompoundFilter';
-import convertDate from '@lib/convertDate';
 
 export type ColumnDescriptor = {
   name: string;
@@ -114,14 +113,14 @@ const ColumnGroupHeaders: React.FC<{ columnGroups: ColumnGroup[], columns: Colum
       headers.push(<th key={atGroupEnd.name} colSpan={
         columns.findIndex((c) => c.name === atGroupEnd.lastColumn) -
         columns.findIndex((c) => c.name === atGroupEnd.firstColumn) + 1
-      } className="bg-kapiti text-white text-center p-2 font-medium">
+      } className="bg-kapiti text-white text-center pt-2 font-semibold text-lg">
         {atGroupEnd.heading}
       </th>);
       currentGroup = undefined;
     } else if (atGroupStart)
       currentGroup = atGroupStart.name;
     else if (!currentGroup || (col === columns[columns.length - 1])) {
-      headers.push(<th key={col.name} className="bg-kapiti text-white p-2 font-medium" />);
+      headers.push(<th key={col.name} className="bg-kapiti text-white p-2 font-semibold" />);
     }
   });
 
@@ -296,7 +295,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   }): React.ReactElement {
     const col = fullColumnDescriptor(props.col);
     return <td
-      className={`py-2 px-4 p-2 font-medium ${props.className ?? ''}`}
+      className={`py-2 px-2 p-2 ${props.className ?? ''}`}
       style={{ textAlign: col.align }}>
       {props.children || displayValue(props.s, props.currentRow, props.ignoreFormula ? {
         ...col,
@@ -398,7 +397,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
             name: 'Condition',
             options: (fieldDetails?.conditions || []) as string[],
             allowFreeText: false,
-            className: 'w-[100px]',
+            className: 'w-[100px] text-center',
             placeholder: '=',
             onSelect: (v) => setFilterValues([fieldDetails?.fieldName as DataValueType, v, filterValues[2]]),
           },
@@ -422,10 +421,10 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   return (
     <div>
       {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-      <label className="py-2 px-4 text-gray-700 font-bold w-full ">Show data for:</label>
+      <label className="pt-2 px-4 text-gray-700 font-bold w-full ">Show data for:</label>
 
       {/* Outer filters & actions (eg, water type and month) */}
-      <div className="flex py-2 px-4 justify-between items-center" style={{ textAlign: 'unset' }}>
+      <div className="flex pb-2 pt-0 mt-0 px-4 justify-between items-center" style={{ textAlign: 'unset' }}>
         <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues} onClose={
           () => clearFilterValue(outerFilters.map(f => f.name))
         } />
@@ -446,10 +445,10 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
         {/* Column headings */}
         <tr>
-          {visibleColumns.map((col) => (
+          {visibleColumns.map((col, colIndex) => (
             <th key={col.name}
-                className={`py-2 px-4 bg-kapiti ${'text-' + (col.align ?? 'left')} text-white p-2 font-medium ${col.highlight?.('white')}`}>
-              {col.heading}
+                className={`py-2 px-1 bg-kapiti font-semibold ${'text-' + (col.align ?? 'left')} text-white p-2 ${col.highlight?.('white')}`}>
+              {colIndex == 0 ? '' : col.heading}
             </th>
           ))}
         </tr>
@@ -462,6 +461,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
               filters={innerFilters}
               filterValues={filterValues}
               setFilterValues={setFilterValues}
+              label="Show rows where:"
               onClose={() => clearFilterValue(innerFilters.map(f => f.name))}>
               <ComplexFilter {...{
                 name: 'complexFilter',
@@ -470,7 +470,6 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
                 defaultValue: [undefined, '=', undefined] as DataValueType[],
                 options: [],
                 onChange: (v: unknown) => console.log('Selected:', v),
-                className: 'w-100',
               }} />
             </FilterPanel>
           </th>
@@ -481,8 +480,10 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         <tbody>
         {filteredData.map((row, rowIndex) => (
           <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-100' : ''}>
-            {visibleColumns.map((col) => <DataCell key={col.name} className={`data ${col.highlight?.('gray') ?? ''}`}
-                                                   col={col} s={row[col.name]} ignoreFormula={true} />)}
+            {visibleColumns.map((col, colIndex) => <DataCell key={col.name} currentRow={row}
+               className={`${colIndex == 0 ? 'row-title font-bold' : 'data font-light border-white border-r-2'} ${col.highlight?.('gray') ?? ''}`}
+               col={col} s={row[col.name]} ignoreFormula={true} />)
+            }
           </tr>
         ))}
         </tbody>

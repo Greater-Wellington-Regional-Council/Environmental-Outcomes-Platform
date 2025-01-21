@@ -97,7 +97,7 @@ const Dropdown: FC<DropdownProps> = ({
         onClick={toggleDropdown}
         data-testid={dataTestid}
       >
-        <div className="flex min-w-0 items-center text-left w-full space-x-2 pr-2">
+        <div className="flex min-w-0 items-center text-left w-full pr-2">
           {value ? (
             <span className={'w-full'} data-testid={`selected-${value.toString()}`}>
               {selectOptions.find((option) => option.value === value)?.label || value}

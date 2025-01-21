@@ -20,6 +20,7 @@ export interface FilterDescriptor {
   className?: string;
   onChange?: (v: unknown) => void;
   defaultValue?: DataValueType[];
+  label?: string;
 }
 
 export type FilterValues = {
@@ -35,25 +36,47 @@ export const FilterPanel: React.FC<{
   setFilterValues: (value: FilterValues) => void;
   onClose?: () => void;
   children?: React.ReactNode;
-}> = ({ filters, filterValues, setFilterValues, className, onClose, children }) => {
+  label?: string;
+}> = ({ filters, filterValues, setFilterValues, className, onClose, children, label }) => {
   const handleFilterChange = (filter: FilterDescriptor, value: unknown) => {
     setFilterValues({ ...filterValues, [filter.name]: value });
     filter.onChange?.(value);
   };
 
   return (
-    <div className={`flex space-x-2 ${className}`}>
-      {/* Dynamically render each filter */}
-      {filters.map((filter: FilterDescriptor, index) =>
-        React.createElement(filter.type, { ...filter,
+    <div className={`flex items-center ${className}`}>
+      <label className="ml-4 text-lg">{label}</label>
+
+      {filters.map((filter: FilterDescriptor, index) => {
+        const filterElement = React.createElement(filter.type, {
+          ...filter,
           onChange: (e) => handleFilterChange(filter, e),
           currentValue: _.get(filterValues, filter.name),
           key: `${filter.name}-${index}`,
-        } as FilterDescriptor),
-      )}
+        } as FilterDescriptor);
+
+        if (filter.label) {
+          return (
+            <label
+              key={`label-${filter.name}-${index}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                marginRight: '1rem',
+                fontWeight: 'bold',
+              }}
+            >
+              {filter.label}
+              {filterElement}
+            </label>
+          );
+        }
+
+        return filterElement;
+      })}
 
       {/* Close button */}
-      {(filters?.length && onClose) ? <XToClose onClick={onClose} /> : <></>}
+      {filters?.length && onClose ? <XToClose onClick={onClose} /> : null}
 
       <div className="direct-filters">{children}</div>
     </div>

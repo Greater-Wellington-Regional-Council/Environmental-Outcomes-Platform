@@ -34,7 +34,8 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
       name: 'month_start',
       type: MonthYearFilter,
       currentValue: monthStart,
-      onChange: (ms => {console.log('outer onChange ms, monthStart: ', ms, monthStart); setMonthStart(ms as Date); })
+      onChange: (ms => {console.log('outer onChange ms, monthStart: ', ms, monthStart); setMonthStart(ms as Date); }),
+      label: "from:"
     }
   ];
 
@@ -51,7 +52,6 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
         includeTotals: true,
         order: [
           "name",
-          "month_start",
           "category_b",
           "category_bc",
           "category_c",

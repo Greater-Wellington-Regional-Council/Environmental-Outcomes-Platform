@@ -38,8 +38,9 @@ describe('DataTable Component', () => {
       />
     );
 
-    columns.forEach((col) => {
-      expect(screen.getByText(col.heading)).toBeInTheDocument();
+    columns.forEach((col, index ) => {
+      if (index > 0)
+        expect(screen.getByText(col.heading)).toBeInTheDocument();
     });
 
     mockData.forEach((row) => {
