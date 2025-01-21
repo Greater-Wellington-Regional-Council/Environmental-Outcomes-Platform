@@ -22,7 +22,7 @@ class SecurityConfig {
           auth.requestMatchers("/actuator/health").permitAll().anyRequest().authenticated()
         }
         .httpBasic {}
-        .csrf {}
+        .csrf { it.disable() }
 
     return http.build()
   }
