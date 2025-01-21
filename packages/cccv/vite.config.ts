@@ -1,11 +1,14 @@
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import {UserConfig} from 'vitest/config'
+import {ViteUserConfig} from 'vitest/config'
 import tsconfigPaths from "vite-tsconfig-paths"
 import path from 'path'
 
-const config: UserConfig = defineConfig({
+const config: ViteUserConfig = defineConfig({
     plugins: [tsconfigPaths(), react()],
+    worker: {
+        format: 'es',
+    },
     build: {
         outDir: 'dist',
         rollupOptions: {

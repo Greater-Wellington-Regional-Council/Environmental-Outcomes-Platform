@@ -275,14 +275,6 @@ function unitLimitsToDisplay(
         },
         subUnitLimitView: {},
       };
-    case 'C':
-      return {
-        unitLimitView: {
-          limit: groundWaterLimit.allocationLimit,
-          allocated: groundWaterLimit.allocationAmount,
-        },
-        subUnitLimitView: {},
-      };
     default:
       return {
         unitLimitView: {

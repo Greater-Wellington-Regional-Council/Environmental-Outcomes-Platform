@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import jakarta.persistence.*
 import java.io.IOException
 import kotlin.jvm.Transient
+import nz.govt.eop.utils.JsonMapConverter
 import org.geojson.FeatureCollection
 import org.hibernate.annotations.Formula
 
@@ -77,7 +78,18 @@ data class FreshwaterManagementUnit(
     @Column(name = "mci_base") var mciBase: String? = null,
     @Column(name = "mci_obj") var mciObj: String? = null,
     @Column(name = "ecoli_obj") var ecoliObj: String? = null,
-    @Column(name = "implementation_ideas") var implementationIdeas: String? = null,
+    @Column(name = "implementation_ideas", columnDefinition = "jsonb")
+    @Convert(converter = JsonMapConverter::class)
+    var implementationIdeas: Map<String, Any> = emptyMap(),
+    @Column(name = "culturalOverview", columnDefinition = "jsonb")
+    @Convert(converter = JsonMapConverter::class)
+    var culturalOverview: Map<String, Any> = emptyMap(),
+    @Column(name = "other_info", columnDefinition = "jsonb")
+    @Convert(converter = JsonMapConverter::class)
+    var otherInfo: Map<String, Any> = emptyMap(),
+    @Column(name = "vpo", columnDefinition = "jsonb")
+    @Convert(converter = JsonMapConverter::class)
+    var vpo: Map<String, Any> = emptyMap(),
     @JsonSerialize(using = GeoJsonSerializer::class)
     @JsonDeserialize(using = GeoJsonDeserializer::class)
     @Formula("CAST(ST_AsGeoJSON(ST_Transform(geom, 4326), 6 ,2) AS jsonb)")

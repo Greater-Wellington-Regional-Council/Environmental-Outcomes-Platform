@@ -47,6 +47,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
   implementation("org.springframework.kafka:spring-kafka")
@@ -65,7 +66,16 @@ dependencies {
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2024.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
+  implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
+  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.2.0")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.1")
+
+  testImplementation("org.jetbrains.kotlin:kotlin-test")
+  testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
   testImplementation("io.kotest:kotest-assertions-core:5.9.1")
@@ -75,6 +85,7 @@ dependencies {
   testImplementation("io.mockk:mockk:1.13.13")
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+  testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }
@@ -91,7 +102,9 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     // We specify the target directly here to avoid having the plugin depend on
     // generated sources, which was forcing Flyway to run before the SQL had been
     // formatted, which then confused flyway the next time it ran.
+    // TangataWhenuaSite.kt is causing issues with the formatter for now.
     target("src/main/kotlin/**/*.kt", "src/test/kotlin/**/*.kt")
+    targetExclude("**/TangataWhenuaSite.kt")
     ktfmt()
   }
   kotlinGradle { ktfmt() }

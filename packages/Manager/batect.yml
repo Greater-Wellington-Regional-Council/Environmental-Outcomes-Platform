@@ -41,6 +41,9 @@ tasks:
         CONFIG_DATABASE_HOST: database
         SPRING_PROFILES_ACTIVE: local
         CONFIG_ORG_CONTACT_EMAIL: eopdev-notifications@gw.govt.nz
+        CONFIG_ADDRESSFINDER_API_KEY: "${CONFIG_ADDRESSFINDER_API_KEY}"
+        CONFIG_ADDRESSFINDER_API_SECRET: "${CONFIG_ADDRESSFINDER_API_SECRET}"
+        CONFIG_LINZ_KOORD_API_KEY: "${CONFIG_LINZ_KOORD_API_KEY}"
       ports:
         - local: 8080
           container: 8080
