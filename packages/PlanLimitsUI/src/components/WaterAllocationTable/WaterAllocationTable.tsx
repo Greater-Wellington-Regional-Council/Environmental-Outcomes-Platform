@@ -1,5 +1,5 @@
   import DataTable, {
-  ColumnDescriptor,
+  ColumnDescriptor, DataValueType,
   OuterFilter,
 } from '@components/DataTable/DataTable';
 
@@ -7,6 +7,7 @@ import { useWaterAllocationQuery } from '@src/api';
 import { useState } from 'react';
 import { FilterDescriptor } from '@components/FilterPanel/FilterPanel';
 import { MonthYearFilter } from '@components/FilterPanel/Filters/MonthYearFilter/MonthYearFilter';
+  import numValue from '@lib/numValue';
 
 export const WaterAllocationTable = ({ council  } : { council: Council }) => {
   const [ waterType, setWaterType ] = useState<string>('ground')
@@ -16,7 +17,9 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
 
   const columns: ColumnDescriptor[] = [
     { name: 'plan_region_id', visible: false },
-    { name: 'pnrp_allocation_percentage', type: 'percent', formula: 'percent(total_allocation, allocation_limit)' },
+    { name: 'pnrp_allocation_percentage', type: 'percent', formula: 'percent(total_allocation, allocation_limit)',
+      valueOk: [(value: DataValueType) => numValue(value) <= 100],
+    },
     { name: 'area_id', visible: false },
     { name: 'name', heading: 'Catchment' },
     { name: 'total_allocation', highlight: (c: string) => `border-r-2 border-l-2 border-${c}` },
@@ -44,7 +47,7 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
       data={tableData as GroundwaterAllocation[]}
       columns={columns}
       columnGroups={[
-        { name: 'allocation', heading: 'Allocated amount - litres per second (L/sec)', firstColumn: 'category_b', lastColumn: 'pnrp_allocation_percentage' },
+        { name: 'allocation', heading: 'Allocated amount - litres per second (L/sec)', firstColumn: 'category_b', lastColumn: 'pnrp_allocation_percentage'}
       ]}
       outerFilters={outerFilters}
       innerFilters={[]}
@@ -58,7 +61,8 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
           "total_allocation",
           "allocation_limit",
           "pnrp_allocation_percentage"
-        ]
+        ],
+        rowObjectNamePlural: "catchments"
       }}
     />
   ) : (

@@ -30,8 +30,9 @@ export type ColumnDescriptor = {
   total?: () => DataValueType;
   formula?: string;
   highlight?: (colour: string) => string;
+  valueOk?: ((value: DataValueType) => boolean)[];
 
-  [key: string]: string | number | boolean | undefined | null | (() => unknown) | ((c: string) => string);
+  [key: string]: string | number | boolean | undefined | null | (() => unknown) | ((c: string) => string) | unknown[];
 };
 
 type ColumnNameOrDescriptor = ColumnDescriptor | string;
@@ -96,6 +97,7 @@ export type DataTableProps<T extends DataValueType[][] | Record<string, DataValu
     includeTotals?: boolean;
     [key: string]: unknown;
     order?: string[];
+    rowObjectNamePlural?: string;
   };
 };
 
@@ -285,6 +287,12 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     return value!.toString();
   };
 
+
+  const errorFlag = (props: { col: ColumnDescriptor, s: DataValueType }) => {
+    console.log('props.col.valueOk:', props.col.name, props.col.valueOk);
+    return props.col.valueOk?.some((fn) => !fn(props.s)) ? <span className="font-bold">!</span> : '';
+  };
+
   function DataCell(props: {
     col: ColumnDescriptor,
     s: DataValueType,
@@ -295,12 +303,13 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   }): React.ReactElement {
     const col = fullColumnDescriptor(props.col);
     return <td
-      className={`py-2 px-2 p-2 ${props.className ?? ''}`}
+      className={`py-2 px-2 p-2 ${props.className ?? ''} ${col.highlight?.('gray') ?? ''}`}
       style={{ textAlign: col.align }}>
       {props.children || displayValue(props.s, props.currentRow, props.ignoreFormula ? {
         ...col,
         formula: undefined,
       } : col) || ''}
+      <span>{errorFlag(props)}</span>
     </td>;
   }
 
@@ -381,7 +390,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
       return values;
     }
 
-    return <div className="flex space-x-2">
+    return <div className={`flex space-x-2 ${props.className}`}>
       <CompoundFilter
         filter={{ name: 'complexFilter' }}
         options={[
@@ -390,7 +399,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
             options: columns.map((c) => ({ label: c.heading, value: c.name } as DropdownOption)),
             allowFreeText: false,
             onSelect: ((fieldName) => handleNewField(fieldName as string)),
-            className: 'w-[300px]',
+            className: 'w-[500px]',
             placeholder: 'Column',
           },
           {
@@ -406,6 +415,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
             options: (fieldDetails ? getCandidateValues(fieldDetails) : []).map(v => ({ label: v, value: v } as DropdownOption)),
             allowFreeText: true,
             placeholder: 'Value',
+            className: 'w-full',
             onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType, filterValues[1], v]),
           },
         ]}
@@ -420,14 +430,11 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
   return (
     <div>
-      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-      <label className="pt-2 px-4 text-gray-700 font-bold w-full ">Show data for:</label>
-
       {/* Outer filters & actions (eg, water type and month) */}
-      <div className="flex pb-2 pt-0 mt-0 px-4 justify-between items-center" style={{ textAlign: 'unset' }}>
+      <div className="flex pt-0 mt-0 pr-4 justify-between items-center" style={{ textAlign: 'unset' }}>
         <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues} onClose={
           () => clearFilterValue(outerFilters.map(f => f.name))
-        } />
+        } label="Show data for:" labelInline={false}/>
 
         {data[0] && <div className="space-x-4">
           <button onClick={downloadCSV}>Download</button>
@@ -447,7 +454,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         <tr>
           {visibleColumns.map((col, colIndex) => (
             <th key={col.name}
-                className={`py-2 px-1 bg-kapiti font-semibold ${'text-' + (col.align ?? 'left')} text-white p-2 ${col.highlight?.('white')}`}>
+                className={`${col.name} py-2 px-1 bg-kapiti font-semibold ${'text-' + (col.align ?? 'left')} text-white p-2 ${col.highlight?.('white')}`}>
               {colIndex == 0 ? '' : col.heading}
             </th>
           ))}
@@ -457,11 +464,11 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         <tr>
           <th colSpan={99}>
             <FilterPanel
-              className="bg-gray-300"
+              className="bg-gray-300 pl-4"
               filters={innerFilters}
               filterValues={filterValues}
               setFilterValues={setFilterValues}
-              label="Show rows where:"
+              label={`Show ${options.rowObjectNamePlural || `rows`} where:`}
               onClose={() => clearFilterValue(innerFilters.map(f => f.name))}>
               <ComplexFilter {...{
                 name: 'complexFilter',
@@ -481,7 +488,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         {filteredData.map((row, rowIndex) => (
           <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-100' : ''}>
             {visibleColumns.map((col, colIndex) => <DataCell key={col.name} currentRow={row}
-               className={`${colIndex == 0 ? 'row-title font-bold' : 'data font-light border-white border-r-2'} ${col.highlight?.('gray') ?? ''}`}
+               className={`${colIndex == 0 ? 'row-title font-bold' : 'data font-lighter border-gray-200 border-r-2 tracking-wider'} ${col.highlight?.('gray') ?? ''}`}
                col={col} s={row[col.name]} ignoreFormula={true} />)
             }
           </tr>
@@ -493,8 +500,9 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         {options?.includeTotals && <tr className="font-medium bg-nui text-white">
           {visibleColumns.map((col, index: number) =>
             index === 0
-              ? <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}]`}>{'Totals'}</td>
-              : <DataCell key={col.name} className={`totals text-white ${col.highlight?.('white') ?? ''}`} col={col}
+              ? <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}]`}>{'Grand total'}</td>
+              : <DataCell key={col.name}
+                          className={`${col.name} totals text-white ${col.highlight?.('white') ?? ''}`} col={col}
                           s={col.total?.() ?? ''} />,
           )}
         </tr>}

@@ -72,7 +72,7 @@ describe('DataTable Component', () => {
       />
     );
 
-    expect(screen.getByText('Totals')).toBeInTheDocument();
+    expect(screen.getByText('Grand total')).toBeInTheDocument();
     const totalCategoryA = mockData.reduce((sum, row) => sum + row.category_a, 0);
     const totalCategoryB = mockData.reduce((sum, row) => sum + row.category_b, 0);
     const totalSurfaceTake = mockData.reduce((sum, row) => sum + row.surface_take, 0);

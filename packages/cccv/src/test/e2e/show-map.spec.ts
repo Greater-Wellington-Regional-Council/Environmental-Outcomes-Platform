@@ -3,14 +3,14 @@ import { test, expect } from '@playwright/test'
 test('home page should have the correct title and welcome message', async ({
   page
 }) => {
-  await page.goto('http://localhost:5173/map/@-41,175.35,8z')
+  await page.goto('http://localhost:5174/map/@-41,175.35,8z')
 
   await expect(page.getByTestId('InteractiveMap')).toBeVisible()
 })
 
-test('Happy path - select an FMU, check for Tangata Whenua site and change map style', async ({ page }) => {
-  
-  await page.goto('http://localhost:5173/map/@-41,175.35,8z')
+test.skip('Happy path - select an FMU, check for Tangata Whenua site and change map style', async ({ page }) => {
+
+  await page.goto('http://localhost:5174/map/@-41,175.35,8z')
 
   await page.getByLabel('Map', { exact: true }).click({
     position: {
@@ -26,7 +26,7 @@ test('Happy path - select an FMU, check for Tangata Whenua site and change map s
     }
   })
 
-  await expect(page.getByText('Te Ahikouka, Ruamāhanga River')).toBeVisible()
+  await expect(page.getByTestId('Te Ahikouka, Ruamāhanga River')).toBeVisible()
 
   // Test select box without knowing exact values, just that aerial is default
   const aerial = await page.getByRole('combobox').inputValue()

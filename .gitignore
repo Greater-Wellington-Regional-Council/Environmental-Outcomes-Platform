@@ -60,3 +60,4 @@ qodana.yaml
 /**/*.js
 !src/workers/**/*.js
 /*.patch
+/test-results/.last-run.json
