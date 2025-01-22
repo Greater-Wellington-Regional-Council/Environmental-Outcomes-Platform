@@ -270,6 +270,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     base.aggregateBy = givenOptions.aggregateBy || deriveAggFromType(base.type);
     base.total = () => columnAggregationFunctions.selectAndCalculate(base);
     base.formula = givenOptions.formula || undefined;
+    base.valueOk = givenOptions.valueOk || [];
 
     return base;
   }
@@ -288,10 +289,8 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   };
 
 
-  const errorFlag = (props: { col: ColumnDescriptor, s: DataValueType }) => {
-    console.log('props.col.valueOk:', props.col.name, props.col.valueOk);
-    return props.col.valueOk?.some((fn) => !fn(props.s)) ? <span className="font-bold">!</span> : '';
-  };
+  const errorFlag = (props: { col: ColumnDescriptor, s: DataValueType }) =>
+    props.col.valueOk?.some((fn) => !fn(props.s)) ? <span className="font-bold">&nbsp;!</span> : '';
 
   function DataCell(props: {
     col: ColumnDescriptor,
