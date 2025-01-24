@@ -2,7 +2,7 @@ package nz.govt.eop
 
 import com.fasterxml.jackson.core.StreamReadConstraints
 import java.nio.file.Files
-import java.util.Base64
+import java.util.*
 import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
 import org.springframework.beans.factory.annotation.Value
@@ -17,21 +17,27 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.kafka.annotation.EnableKafka
+import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 
 @Configuration
-@ConfigurationProperties(prefix = "arcgis.tangata-whenua-sites")
-class TangataWhenuaSitesSource {
-  lateinit var urls: Array<String>
+@ConfigurationProperties(prefix = "tangata.whenua.sites")
+class TangataWhenuaSitesSources {
+  lateinit var sources: List<Source>
+
+  class Source {
+    lateinit var name: String
+    lateinit var urls: List<String>
+  }
 }
 
 @EnableKafka
 @EnableCaching
 @SpringBootApplication
-@EnableConfigurationProperties(TangataWhenuaSitesSource::class)
+@EnableConfigurationProperties(TangataWhenuaSitesSources::class)
 class Application {
   @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
 }
@@ -49,6 +55,14 @@ fun main(args: Array<String>) {
   )
 
   runApplication<Application>(*args)
+}
+
+@Controller
+class HealthAliasController {
+  @GetMapping("/health")
+  fun healthAlias(): String {
+    return "forward:/actuator/health"
+  }
 }
 
 /**
@@ -69,20 +83,6 @@ private fun storeKeystoreFromEnvironment() {
   keyStoreFile.writeBytes(keyStoreBytes)
 
   System.setProperty(PROP_CONFIG_KEYSTORE_PATH, keyStoreFile.pathString)
-}
-
-/**
- * Check the health of the application.
- *
- * TODO: This is a placeholder for the health check endpoint. It should be replaced with a more
- *   comprehensive health check.
- */
-@RestController
-class HealthCheckController {
-  @GetMapping("/health", produces = [MediaType.APPLICATION_JSON_VALUE])
-  fun healthCheck(): ResponseEntity<Any> {
-    return ResponseEntity.ok().body(mapOf("status" to "UP"))
-  }
 }
 
 @RestController

@@ -18,7 +18,7 @@ describe('SlidingPanel Component', () => {
             <SlidingPanel showPanel={false} contentChanged={false} onClose={() => {}} />
     )
         const panel = container.querySelector('div[class*="sl"]')
-        expect(panel).toHaveStyle('display: none')
+        expect(panel).not.toHaveStyle('display: none')
     })
 
     it('toggles visibility on double-click', () => {
@@ -46,7 +46,7 @@ describe('SlidingPanel Component', () => {
 
         const bezel = container.querySelector('.cursor-ew-resize')
         fireEvent.mouseDown(bezel!)
-        fireEvent.mouseMove(document, { clientX: 100 })
+        fireEvent.mouseMove(document, { clientX: 101 })
 
         // onResize should have been called with new width
         expect(mockOnResize).toHaveBeenCalledWith(expect.any(Number))

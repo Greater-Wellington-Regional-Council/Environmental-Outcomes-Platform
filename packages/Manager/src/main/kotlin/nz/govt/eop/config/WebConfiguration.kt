@@ -9,8 +9,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class WebConfiguration : WebMvcConfigurer {
 
   override fun addCorsMappings(registry: CorsRegistry) {
+    configureCors(registry, "/**") // General API endpoints
+    configureCors(registry, "/actuator/**") // Actuator endpoints
+  }
+
+  private fun configureCors(registry: CorsRegistry, pathPattern: String) {
     registry
-        .addMapping("/**")
+        .addMapping(pathPattern)
         .allowedOriginPatterns(
             "http://localhost:[*]",
             "https://*.amplifyapp.com",

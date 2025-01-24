@@ -1,13 +1,54 @@
 {
   "properties": [
     {
+      "name": "tangata.whenua.sites",
+      "type": "java.util.List<nz.govt.eop.TangataWhenuaSitesSources.Source>",
+      "description": "List of Tangata Whenua Site sources, each containing a name and a list of URLs."
+    },
+    {
+      "name": "tangata.whenua.sites.sources[].name",
+      "type": "java.lang.String",
+      "description": "The name of the Tangata Whenua Site source."
+    },
+    {
+      "name": "tangata.whenua.sites.sources[].urls",
+      "type": "java.util.List<java.lang.String>",
+      "description": "List of URLs for each Tangata Whenua Site source."
+    },
+    {
       "name": "org.contact.email",
       "type": "java.lang.String",
       "description": "Email address for contacting organization."
     },
     {
-      "name": "arcgis.tangata_whenua_sites.urls",
+      "name": "linz.koord.api.key",
       "type": "java.util.List<java.lang.String>",
-      "description": "Tangata Whenua Site sources."
+      "description": "Toitū te Whenua LINZ Data Service Koordinates API key."
+    },
+    {
+      "name": "linz.koord.api.base-url",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Toitū te Whenua LINZ Data Service API URL."
+    },
+    {
+      "name": "linz.address.boundary.timeout",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Seconds to wait for LINZ Address Boundary API response."
+    },
+    {
+      "name": "addressfinder.api.key",
+      "type": "java.util.List<java.lang.String>",
+      "description": "AddressFinder API key."
+    },
+    {
+      "name": "addressfinder.api.secret",
+      "type": "java.util.List<java.lang.String>",
+      "description": "AddressFinder API secret (auth token)."
+    },
+    {
+      "name": "addressfinder.api.base-url",
+      "type": "java.util.List<java.lang.String>",
+      "description": "AddressFinder API base URL."
     }
-] }
+  ]
+}

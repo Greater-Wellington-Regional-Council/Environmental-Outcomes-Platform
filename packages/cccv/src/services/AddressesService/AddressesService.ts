@@ -1,7 +1,8 @@
 import {LabelAndValue} from "@elements/ComboBox/ComboBox.tsx"
-import env from "@src/env.ts"
-import {get} from "@lib/api.tsx"
+import {determineBackendUri, get} from "@lib/api.tsx"
 import {Feature, Point} from "geojson"
+import {announceError} from "@components/ErrorContext/announceError.ts"
+import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 
 export type AddressId = number | string;
 
@@ -55,39 +56,25 @@ export interface AddressLabelAndValue extends LabelAndValue {
 }
 
 const service = {
-    getAddressOptions: async (query: string | null = null, setError: null | ((error: Error | null) => void) = null): Promise<AddressLabelAndValue[]> => {
+    getAddressOptions: async (query: string | null = null): Promise<AddressLabelAndValue[]> => {
         const regionCode = regionCodes["Wellington"]
-        const url = `https://api.addressfinder.io/api/nz/address/autocomplete/?key=${env.ADDRESS_FINDER_KEY}&q=${encodeURIComponent(query || "")}&format=json&post_box=0&strict=2&region_code=${regionCode}&highlight=1`
+        const url = `${determineBackendUri(window.location.hostname)}/addresses/options?query=${encodeURIComponent(query || "")}&regionCode=${regionCode}&format=json`
         const response = await get(url)
-        if (!response && setError) {
-            setError(new Error("Failed to get matching addresses.  The AddressFinder service may be unavailable."))
+        if (!response) {
+            announceError("Failed to get matching addresses.  The AddressFinder service may be unavailable.", ErrorLevel.WARNING)
             return []
         }
-        return response.completions.map((address: AddressFinderCompletion) => ({
-            label: address.a,
-            value: address.pxid
-        }))
+        return response
     },
-    getAddressByPxid: async (id: unknown, setError: null | ((error: Error | null) => void) = null): Promise<Address | null> => {
+    getAddressByPxid: async (id: unknown): Promise<Address | null> => {
         // Retrieves address Toitu Te Whenua LINZ AIMS address id and other metadata from AddressFinder
-        const url = `https://api.addressfinder.io/api/nz/address/metadata/?key=${env.ADDRESS_FINDER_KEY}&format=json&pxid=${id}`
+        const url = `${determineBackendUri(window.location.hostname)}/addresses/${id}`
         const response = await get(url)
-        if (!response && setError) {
-            setError(new Error("Failed to retrieve address data.  The AddressFinder service may be unavailable."))
+        if (!response) {
+            announceError("Failed to retrieve address data.  If this continues to fail, the AddressFinder service may be unavailable.", ErrorLevel.WARNING)
             return null
         }
-        return {
-            id: response.aims_address_id,
-            address: response.a,
-            location: {
-                type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: [response.x, response.y]
-                },
-                properties: {}
-            } as Feature<Point>
-        }
+        return response
     }
 }
 

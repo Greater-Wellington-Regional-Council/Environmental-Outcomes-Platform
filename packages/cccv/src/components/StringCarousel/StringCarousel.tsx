@@ -3,7 +3,7 @@ import React from 'react'
 interface CarouselProps {
     displayValues: string[];
     index: number | null;
-    setIndex: React.Dispatch<React.SetStateAction<number | null>>;
+    setIndex: (index: number) => void;
     className?: string;
 }
 
@@ -25,9 +25,9 @@ const StringCarousel: React.FC<CarouselProps> = ({ displayValues, index, setInde
 
     return (
         <div className={["flex items-center justify-center space-x-2", className].join(' ')}>
-            <button onClick={handlePrev} className="border-none text-xl">&lt;</button>
+            <button onClick={handlePrev} className="hover:bg-transparent hover:text-nui border-none text-xl">&lt;</button>
             <h2 className="text-2lg h-full text-center">{displayValues[currentIndex]}</h2>
-            <button onClick={handleNext} className="border-none text-xl">&gt;</button>
+            <button onClick={handleNext} className="hover:bg-transparent hover:text-nui border-none text-xl">&gt;</button>
         </div>
     )
 }
