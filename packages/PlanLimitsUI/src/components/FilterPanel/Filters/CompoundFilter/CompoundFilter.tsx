@@ -11,6 +11,7 @@ interface DropdownConfig {
   className?: string;
   controlClassName?: string;
   placeholder?: string;
+  label?: string;
 }
 
 interface CompoundFilterProps {
@@ -24,14 +25,14 @@ interface CompoundFilterProps {
 }
 
 export const CompoundFilter: React.FC<CompoundFilterProps> = ({
-                                                                options,
-                                                                currentValue = [],
-                                                                onSelect,
-                                                                filter,
-                                                                defaultValues,
-                                                                clearOn = [],
-                                                                hideSubmitButton = false,
-                                                              }) => {
+  options,
+  currentValue = [],
+  onSelect,
+  filter,
+  defaultValues,
+  clearOn = [],
+  hideSubmitButton = false,
+}) => {
   const [values, setValues] = useState<DataValueType[]>(currentValue);
 
   const handleSelection = (name: string, value: DropdownValueType) => {
@@ -59,8 +60,8 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-4">
-      <div className="flex">
+    <div className="compound-filter flex items-center">
+      <div className="compound-filter-item flex items-center">
         {options.map((dropdownConfig, index) => (
           <Dropdown
             key={dropdownConfig.name}
@@ -70,8 +71,9 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
             placeholder={dropdownConfig?.placeholder || filter?.placeholder || `Select ${dropdownConfig.name}`}
             allowFreeText={dropdownConfig.allowFreeText}
             dataTestid={`dropdown-${dropdownConfig.name}`}
-            className={`bg-transparent p-4 ${dropdownConfig?.className}`}
+            className={`bg-transparent pr-4 ${dropdownConfig.label && index > 0 ? 'pl-0' : 'pr-4' } ${dropdownConfig?.className}`}
             controlClassName="p-2 ${dropdownConfig?.controlClassName}"
+            label={dropdownConfig.label}
           />
         ))}
       </div>

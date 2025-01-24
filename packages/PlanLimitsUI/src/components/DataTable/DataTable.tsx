@@ -1,4 +1,4 @@
-import React, { useMemo, ReactNode, useState } from 'react';
+import React, { useMemo, ReactNode } from 'react';
 import 'react-dropdown/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
@@ -6,8 +6,10 @@ import 'jspdf-autotable';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import numValue, { isNumber } from '@lib/numValue';
-import _, { capitalize, isDate } from 'lodash';
-import Dropdown, { DropdownOption, DropdownValueType } from '@components/Dropdown/Dropdown';
+import _, { capitalize } from 'lodash';
+import Dropdown from '../Dropdown/Dropdown';
+import DataCell from './DataCell';
+import { calculate } from './calculateValue';
 
 import {
   FilterDescriptor,
@@ -17,7 +19,7 @@ import {
 
 import { useFilterValues } from '@components/FilterPanel/useFilterValues';
 
-import CompoundFilter from '@components/FilterPanel/Filters/CompoundFilter/CompoundFilter';
+import ComplexFilter from './ComplexFilter';
 
 export type ColumnDescriptor = {
   name: string;
@@ -85,7 +87,7 @@ export const OuterFilter: React.FC<FilterDescriptor> = (filter: FilterDescriptor
   );
 };
 
-type Row = Record<string, DataValueType>;
+export type Row = Record<string, DataValueType>;
 
 export type DataTableProps<T extends DataValueType[][] | Record<string, DataValueType>[]> = {
   data: T;
@@ -188,28 +190,26 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     return rows.filter((row) =>
       innerFilters.every((filter) => {
         const value = getFilterValue(filter.name);
-        if (value === undefined) return true;
+        if (value === undefined) return false;
         const cellValue = row[filter.name];
+        console.log('cellValue, value: ', cellValue, value);
         return filter.valueMatchesFilter
           ? filter.valueMatchesFilter(cellValue, value)
           : (cellValue === value || undefined);
       }),
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, outerFilters, innerFilters, filterValues]);
 
   const columnAggregationFunctions = {
-
-    /* Simple column sum */
     sum: (col: ColumnDescriptor): DataValueType => {
       return filteredData
         .reduce((total, row) => total + numValue(_.get(row, col.name)), 0)
         .toFixed(2);
     },
 
-    /* Summarize a percentage of two other columns. */
     percent: (col: ColumnDescriptor): DataValueType => {
       if (!col.formula) return '';
-
       const formulaArgs = (base: ColumnDescriptor) =>
         base.formula?.match(/\w+/g)?.slice(1) || [];
 
@@ -275,70 +275,6 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     return base;
   }
 
-  const displayValue = (
-    value: DataValueType | undefined,
-    row?: Row,
-    cd?: ColumnDescriptor,
-  ): string => {
-    if (cd?.formula && row) value = calculate(cd, row);
-    if ((value ?? null) === null) return '';
-    if (isDate(value)) return value.toLocaleDateString();
-    if (cd?.type === 'percent' && isNumber(value)) return `${numValue(value).toFixed(2)}%`;
-    if (isNumber(value)) return numValue(value).toFixed(2);
-    return value!.toString();
-  };
-
-
-  const errorFlag = (props: { col: ColumnDescriptor, s: DataValueType }) =>
-    props.col.valueOk?.some((fn) => !fn(props.s)) ? <span className="font-bold">&nbsp;!</span> : '';
-
-  function DataCell(props: {
-    col: ColumnDescriptor,
-    s: DataValueType,
-    children?: React.ReactNode,
-    className?: string,
-    ignoreFormula?: boolean,
-    currentRow?: Record<string, DataValueType>
-  }): React.ReactElement {
-    const col = fullColumnDescriptor(props.col);
-    return <td
-      className={`py-2 px-2 p-2 ${props.className ?? ''} ${col.highlight?.('gray') ?? ''}`}
-      style={{ textAlign: col.align }}>
-      {props.children || displayValue(props.s, props.currentRow, props.ignoreFormula ? {
-        ...col,
-        formula: undefined,
-      } : col) || ''}
-      <span>{errorFlag(props)}</span>
-    </td>;
-  }
-
-  const calculate = (col: ColumnDescriptor, argValues: Row) => {
-    const cellFunctions: { [key: string]: ((a: number, b: number) => number) } = {
-      // These are the functions that can be used in a formula for a column.
-      //
-      // Currently only one formula is supported.
-      // col.formula is a string like "percent(a, b)" where a and b are other column names.
-      // The formula is evaluated by looking up the values of the other columns in the current row
-      // and applying the function to them by using the function name as a key to this object.
-      //
-      percent: (a: number, b: number) => {
-        if (b === 0) return 0;
-        return a / b * 100;
-      },
-    };
-
-    if (!col.formula) return argValues[col.name];
-
-    const fn = cellFunctions[col.formula.split('(')[0]];
-    if (!fn) return '!: ' + col.formula;
-
-    const args: DataValueType[] =
-      col.formula.match(/\w+/g)?.slice(1).map((col: string) => _.get(argValues, col)) || [];
-
-    if (args.some((arg) => !isNumber(arg))) return '';
-    return fn!(...(args as [number, number]));
-  };
-
   const downloadCSV = () => {
     // Convert filteredData (array of objects) into arrays for CSV
     const csvData = filteredData.map((row) => columns.map((c) => row[c.name]));
@@ -358,84 +294,15 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     doc.save('filtered_data.pdf');
   };
 
-  const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
-    const [filterValues, setFilterValues] = useState<DataValueType[]>(props.currentValue as DataValueType[]);
-    const [fieldDetails, setFieldDetails] = useState<{ fieldName: string, conditions: DataValueType[], values: DropdownValueType[] } | undefined>(undefined);
-
-    const handleNewField = (name: string) => {
-      if (name) setFieldDetails(getFieldDetails(name, filteredData))
-    };
-
-    const handleSubmit = (values: DataValueType[]) => {
-      if (!values[0] || !values[1]) return;
-      setFilterValues(values);
-      props.onChange?.(values);
-    };
-
-    const getFieldDetails = (fieldName: string, data: Row[]) => {
-      const fieldData = data.map((row) => row[fieldName]);
-      const uniqueValues = _.uniq(fieldData);
-      const conditions = ['=', '!=', '>', '<', '>=', '<='];
-      return { fieldName, conditions, values: uniqueValues };
-    };
-
-    const getCandidateValues = (fieldDetails: { fieldName: string, conditions: DataValueType[], values: DropdownValueType[] }) => {
-      const values = fieldDetails?.values || [];
-      const selectedCondition = filterValues[1] as string;
-      const selectedValue = filterValues[2] as DataValueType;
-      if (selectedCondition === '!=') {
-        return values.filter((v) => v !== selectedValue);
-      }
-      return values;
-    }
-
-    return <div className={`flex space-x-2 ${props.className}`}>
-      <CompoundFilter
-        filter={{ name: 'complexFilter' }}
-        options={[
-          {
-            name: 'Field Name',
-            options: columns.map((c) => ({ label: c.heading, value: c.name } as DropdownOption)),
-            allowFreeText: false,
-            onSelect: ((fieldName) => handleNewField(fieldName as string)),
-            className: 'w-[500px]',
-            placeholder: 'Column',
-          },
-          {
-            name: 'Condition',
-            options: (fieldDetails?.conditions || []) as string[],
-            allowFreeText: false,
-            className: 'w-[100px] text-center',
-            placeholder: '=',
-            onSelect: (v) => setFilterValues([fieldDetails?.fieldName as DataValueType, v, filterValues[2]]),
-          },
-          {
-            name: 'Field Value',
-            options: (fieldDetails ? getCandidateValues(fieldDetails) : []).map(v => ({ label: v, value: v } as DropdownOption)),
-            allowFreeText: true,
-            placeholder: 'Value',
-            className: 'w-full',
-            onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType, filterValues[1], v]),
-          },
-        ]}
-        currentValue={filterValues}
-        defaultValues={props.defaultValue as DataValueType[]}
-        onSelect={handleSubmit}
-        clearOn={['Field Name']}
-        hideSubmitButton={true}
-      />
-    </div>;
-  };
-
   return (
     <div>
       {/* Outer filters & actions (eg, water type and month) */}
-      <div className="flex pt-0 mt-0 pr-4 justify-between items-center" style={{ textAlign: 'unset' }}>
+      <div className="flex pt-0 mt-0 pr-4 justify-between items-end" style={{ textAlign: 'unset' }}>
         <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues} onClose={
           () => clearFilterValue(outerFilters.map(f => f.name))
         } label="Show data for:" labelInline={false}/>
 
-        {data[0] && <div className="space-x-4">
+        {data[0] && <div className="space-x-4 mb-4">
           <button onClick={downloadCSV}>Download</button>
           <button onClick={printPDF}>Print</button>
         </div>}
@@ -463,7 +330,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         <tr>
           <th colSpan={99}>
             <FilterPanel
-              className="bg-gray-300 pl-4"
+              className="bg-gray-300 p-4"
               filters={innerFilters}
               filterValues={filterValues}
               setFilterValues={setFilterValues}
@@ -472,10 +339,27 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
               <ComplexFilter {...{
                 name: 'complexFilter',
                 type: ComplexFilter,
-                currentValue: [undefined, '=' , undefined] as DataValueType[],
-                defaultValue: [undefined, '=', undefined] as DataValueType[],
+                currentValue: undefined,
+                defaultValue: undefined,
                 options: [],
                 onChange: (v: unknown) => console.log('Selected:', v),
+                data: filteredData,
+                columns: visibleColumns,
+                valueMatchesFilter: (cellValue: unknown, filterValue: unknown) => {
+                  const values = filterValue as DataValueType[];
+                  const matchValue = cellValue as DataValueType;
+
+                  if (values[1] === '=') return matchValue === values[2];
+                  if (values[1] === '!=') return matchValue !== values[2];
+
+                  if (!matchValue || !values[2]) return false;
+
+                  if (values[1] === '>') return matchValue > values[2]!;
+                  if (values[1] === '<') return matchValue < values[2]!;
+                  if (values[1] === '>=') return matchValue >= values[2]!;
+                  if (values[1] === '<=') return matchValue <= values[2]!;
+                  return false;
+                }
               }} />
             </FilterPanel>
           </th>

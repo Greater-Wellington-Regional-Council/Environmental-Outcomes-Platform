@@ -32,13 +32,15 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
       currentValue: waterType,
       options: [{ label: 'Groundwater', value: 'ground' }, {label: 'Surface water', value: 'surface' }],
       onChange: (waterType) => setWaterType(waterType as string),
+      className: 'pl-0 pr-0'
     },
     {
       name: 'month_start',
       type: MonthYearFilter,
       currentValue: monthStart,
       onChange: (ms => {console.log('outer onChange ms, monthStart: ', ms, monthStart); setMonthStart(ms as Date); }),
-      label: "from:"
+      label: "from:",
+      className: 'pl-0'
     }
   ];
 

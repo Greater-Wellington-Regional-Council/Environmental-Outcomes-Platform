@@ -11,19 +11,21 @@ export type DropdownOption = {
 };
 
 interface DropdownProps {
-  options: unknown[];
-  selectAll?: string;
-  placeholder: string | JSX.Element;
-  value: string | null;
-  onChange: (value: DropdownValueType) => void;
-  arrow?: React.ReactNode;
-  className?: string;
-  controlClassName?: string;
-  dropdownClassName?: string;
-  optionClassName?: string;
-  placeholderClassNames?: string;
-  dataTestid?: string;
-  allowFreeText?: boolean;
+  options: unknown[],
+  selectAll?: string,
+  placeholder: string | JSX.Element,
+  value: string | null,
+  onChange: (value: DropdownValueType) => void,
+  arrow?: React.ReactNode,
+  className?: string,
+  controlClassName?: string,
+  dropdownClassName?: string,
+  optionClassName?: string,
+  placeholderClassName?: string,
+  dataTestid?: string,
+  allowFreeText?: boolean,
+  sortOptions?: boolean | undefined,
+  label?: string | undefined
 }
 
 const Dropdown: FC<DropdownProps> = ({
@@ -37,9 +39,10 @@ const Dropdown: FC<DropdownProps> = ({
                                        controlClassName = '',
                                        dropdownClassName = '',
                                        optionClassName = '',
-                                       placeholderClassNames = '',
+                                       placeholderClassName = '',
                                        dataTestid = 'dropdown-control',
                                        allowFreeText = false,
+                                       label,
                                      }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<DataValueType>('');
@@ -90,20 +93,21 @@ const Dropdown: FC<DropdownProps> = ({
     }
   };
 
-  return (
-    <div ref={dropdownRef} className={`relative font-bold bg-transparent ${className}`}>
+  return (<div className={`dropdown relative font-bold bg-transparent inline-flex items-center ${className}`}>
+    <label className={`text-nui font-bold ${label ? 'block max-w-fit' : 'hidden'} pl-0 pr-4`}>{label}</label>
+    <div ref={dropdownRef} className={`relative font-bold bg-transparent w-full`}>
       <div
-        className={`flex p-2 top-18 font-bold bg-white rounded-xl border border-nui ${controlClassName}`}
+        className={`dropdown-control flex p-2 top-18 font-bold bg-white rounded-xl border-[2px] border-nui ${controlClassName}`}
         onClick={toggleDropdown}
         data-testid={dataTestid}
       >
-        <div className="flex min-w-0 items-center text-left w-full pr-2">
+        <div className="dropdown-value flex w-full items-center text-left pr-2">
           {value ? (
             <span className={'w-full'} data-testid={`selected-${value.toString()}`}>
               {selectOptions.find((option) => option.value === value)?.label || value}
             </span>
           ) : (
-            <span className={`w-full text-nui opacity-60 italic ${placeholderClassNames}`}>
+            <span className={`text-nui font-light italic ${placeholderClassName}`}>
               {placeholder}
             </span>
           )}
@@ -111,19 +115,22 @@ const Dropdown: FC<DropdownProps> = ({
         <div>{arrow || <DefaultArrow isOpen={isOpen} />}</div>
       </div>
       {isOpen && (
-        <div className={`absolute indent-0 z-10 pt-1 px-0 m-0 mt-2 rounded border border-nui bg-white ${dropdownClassName}`}>
-          <ul className="m-0 p-0">
-            {selectOptions.map((option) => (
-              <li
-                key={`${option.value}`}
-                className={`indent-0 m-0 pl-2 px-4 py-2 hover:bg-nui hover:text-white cursor-pointer list-none text-left ${optionClassName}`}
-                onClick={() => selectOption(option.value)}
-                data-testid={`option-${option.label}`}
-              >
-                {option.label}
-              </li>
-            ))}
-          </ul>
+        <div
+          className={`dropdown-list-container absolute indent-0 z-10 pt-1 px-0 m-0 mt-2 rounded border border-nui bg-white ${dropdownClassName}`}>
+          <div className="list-options max-h-[500px] overflow-y-scroll">
+            <ul className="m-0 p-0">
+              {selectOptions.map((option) => (
+                <li
+                  key={`${option.value}`}
+                  className={`indent-0 m-0 pl-2 px-4 py-2 w-[250px] hover:bg-nui hover:text-white cursor-pointer list-none text-left ${optionClassName}`}
+                  onClick={() => selectOption(option.value)}
+                  data-testid={`option-${option.label}`}
+                >
+                  {option.label}
+                </li>
+              ))}
+            </ul>
+          </div>
           {allowFreeText && (
             <div className="p-2 border-t border-gray-300">
               <input
@@ -132,14 +139,14 @@ const Dropdown: FC<DropdownProps> = ({
                 value={inputValue as string | number | readonly string[] | undefined}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleFreeTextSubmit()}
-                placeholder="Type..."
+                placeholder="Enter..."
               />
             </div>
           )}
         </div>
       )}
     </div>
-  );
+  </div>);
 };
 
 const DefaultArrow: FC<{ isOpen: boolean; className?: string }> = ({ isOpen, className }) => (
