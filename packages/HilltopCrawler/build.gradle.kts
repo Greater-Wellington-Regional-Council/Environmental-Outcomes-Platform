@@ -4,7 +4,7 @@ plugins {
   id("org.springframework.boot") version "3.4.2"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "7.0.2"
-  id("org.flywaydb.flyway") version "11.1.0"
+  id("org.flywaydb.flyway") version "11.2.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.1.0"
   kotlin("plugin.spring") version "2.1.0"
@@ -12,7 +12,7 @@ plugins {
 
 buildscript {
   repositories { mavenCentral() }
-  dependencies { classpath("org.flywaydb:flyway-database-postgresql:11.1.0") }
+  dependencies { classpath("org.flywaydb:flyway-database-postgresql:11.2.0") }
 }
 
 group = "nz.govt.eop"
@@ -38,8 +38,8 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("org.springframework.kafka:spring-kafka")
-  implementation("org.flywaydb:flyway-core:11.1.0")
-  implementation("org.flywaydb:flyway-database-postgresql:11.1.0")
+  implementation("org.flywaydb:flyway-core:11.2.0")
+  implementation("org.flywaydb:flyway-database-postgresql:11.2.0")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("org.apache.kafka:kafka-streams")
   implementation("com.bucket4j:bucket4j-core:8.10.1")
