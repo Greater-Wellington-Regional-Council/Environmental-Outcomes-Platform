@@ -67,7 +67,7 @@ dependencies {
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
-  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.2.0")
+  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
