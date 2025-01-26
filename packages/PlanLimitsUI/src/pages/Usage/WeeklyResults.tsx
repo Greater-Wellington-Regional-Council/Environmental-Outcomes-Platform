@@ -1,4 +1,4 @@
-import { ResponsiveHeatMapCanvas, type ComputedCell } from '@nivo/heatmap';
+import { ResponsiveHeatMapCanvas, type ComputedCell, HeatMapSerie } from '@nivo/heatmap';
 import { format } from 'date-fns';
 import { round } from 'lodash';
 import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
@@ -58,7 +58,7 @@ function WeeklyUsageHeatMap({
   return (
     <div className="w-full" style={{ height: `${height}px` }}>
       <ResponsiveHeatMapCanvas
-        data={data}
+        data={data as HeatMapSerie<WeeklyUsageHeatmapDataItem, HeatmapData>[]}
         enableLabels={false}
         onClick={(cell) => {
           window.location.href = `#daily-usage-${cell.serieId}`;

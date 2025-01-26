@@ -44,7 +44,7 @@ describe('InteractiveMap component', () => {
     it('should render', () => {
         const mapRef = {current: {getMap: () => {}, flyTo: () => {}}} as unknown as CombinedMapRef
         render(<InteractiveMap mapRef={mapRef as unknown as MutableRefObject<CombinedMapRef>} startLocation={{longitude: 174.7, latitude: -41.3, zoom: 10}} setLocationInFocus={() => {
-        }} locationInFocus={null} highlights_source_url={"whatever"}/>)
+        }} locationInFocus={null} mapStyle={"whatever"} setMapStyle={(m) => console.log(m)} />)
 
         expect(screen.getByTestId('InteractiveMap')).toBeInTheDocument()
     })

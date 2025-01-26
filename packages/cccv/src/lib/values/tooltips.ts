@@ -1,8 +1,8 @@
-import {HOVER_LAYER, TTW_HIGHLIGHT_LAYER} from "@lib/values/mapSourceAndLayerIds.ts"
+import {POTENTIAL_FMU_LAYER, TANGATA_WHENUA_LOCATIONS_LAYER} from "@lib/values/mapSourceAndLayerIds.ts"
 
 const tooltipProperties = [
         {
-            layer: TTW_HIGHLIGHT_LAYER,
+            layer: TANGATA_WHENUA_LOCATIONS_LAYER,
             property: "properties.location",
             options: {
                 "fill-color": "black",
@@ -13,7 +13,7 @@ const tooltipProperties = [
             },
         },
         {
-            layer: HOVER_LAYER,
+            layer: POTENTIAL_FMU_LAYER,
             property: "properties.fmuName1",
             options: {
                 "fill-color": "white",

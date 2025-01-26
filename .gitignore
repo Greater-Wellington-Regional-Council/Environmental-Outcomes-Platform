@@ -56,3 +56,8 @@ out/
 .volumes/
 
 qodana.yaml
+/scripts/afs.main.kts
+/docs-site/src/pages/404.js
+
+/**/*.js
+!workers/*.js

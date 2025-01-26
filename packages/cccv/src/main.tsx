@@ -18,7 +18,15 @@ const rootElement = document.getElementById('root')
 
 if (!rootElement) throw new Error('Failed to find the root element')
 
-const router = createBrowserRouter(routes as RouteObject[])
+const router = createBrowserRouter(routes as RouteObject[], {
+    future: {
+        v7_partialHydration: true,
+        v7_skipActionErrorRevalidation: true,
+        v7_normalizeFormMethod: true,
+        v7_fetcherPersist: true,
+        v7_relativeSplatPath: true
+    },
+})
 
 const LoadingOverlayContainer: React.FC = () => {
     const { loading } = useLoadingIndicator()

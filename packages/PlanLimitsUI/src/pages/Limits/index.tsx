@@ -8,6 +8,7 @@ import { useAppState } from '../../lib/useAppState';
 import { usePlanLimitsData } from '../../api';
 import Map from './map';
 import Sidebar from './Sidebar';
+
 import {
   type loader,
   viewLocationUrlPath,
@@ -20,8 +21,8 @@ export default function Limits() {
   const navigate = useNavigate();
 
   const {
-    locationString: initialViewLocation,
-    pinnedLocation: initialPinnedLocation,
+    // @ts-ignore
+    locationString: initialViewLocation, pinnedLocation: initialPinnedLocation,
   } = useLoaderData() as ReturnType<typeof loader>;
 
   const [pinnedLocation, setPinnedLocation] = useState(initialPinnedLocation);

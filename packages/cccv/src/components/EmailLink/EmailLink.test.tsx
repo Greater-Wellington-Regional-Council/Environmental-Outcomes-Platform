@@ -2,7 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { describe, it, expect, vi } from 'vitest'
 import EmailLink from './EmailLink'
-import ErrorContext from '@components/ErrorContext/ErrorContext'
 import orgService from '@services/OrgService/OrgService.ts'
 
 vi.mock('@services/OrgService/OrgService', () => ({
@@ -13,7 +12,6 @@ vi.mock('@services/OrgService/OrgService', () => ({
 
 describe('EmailLink', () => {
   it('opens the email client when the button is clicked', async () => {
-    const mockSetError = vi.fn()
     // @ts-expect-error: Mocking function not recognized but ok
     const mockGetContactDetails = orgService.getContactDetails as jest.Mock
 
@@ -28,9 +26,7 @@ describe('EmailLink', () => {
     })
 
     render(
-      <ErrorContext.Provider value={{ error: null, setError: mockSetError }}>
         <EmailLink>Send Email</EmailLink>
-      </ErrorContext.Provider>
     )
 
     const button = screen.getByRole('button', { name: /send email/i })
