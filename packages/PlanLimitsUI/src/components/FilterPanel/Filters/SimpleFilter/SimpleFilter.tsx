@@ -1,18 +1,18 @@
 import React from 'react';
-import Dropdown from '@components/Dropdown/Dropdown';
-import { FilterProps, SELECT_ALL } from '@components/FilterPanel/FilterPanel';
+import Dropdown, { DropdownValueType } from '@components/Dropdown/Dropdown';
+import { FilterDescriptor, SELECT_ALL } from '@components/FilterPanel/FilterPanel';
 
-export const SimpleFilter: React.FC<FilterProps> = ({ filter, currentValue, onChange }) => {
-  const onSelection = (value: string) => onChange?.(filter, value);
+export const SimpleFilter: React.FC<FilterDescriptor> = ({ currentValue, onChange, options, name, className, placeholder }) => {
+  const onSelection = (value: DropdownValueType) => onChange?.(value);
 
   return (
     <Dropdown
-      options={[SELECT_ALL, ...(filter.options || [])]}
+      options={[SELECT_ALL, ...(options || [])]}
       onChange={onSelection}
       value={currentValue as string}
-      placeholder={filter.placeholder || SELECT_ALL}
-      dataTestid={`dropdown-${filter.name}`}
-      className={`bg-transparent p-4 w-[250px] ${filter.className}`}
+      placeholder={placeholder || SELECT_ALL}
+      dataTestid={`dropdown-${name}`}
+      className={`bg-transparent p-4 w-[250px] ${className}`}
       controlClassName={'p-2'}
     />
   );

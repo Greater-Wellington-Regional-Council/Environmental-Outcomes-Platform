@@ -27,9 +27,9 @@ describe('convertDate', () => {
 
   it('should convert valid date string to Date object', () => {
     const dateString = '2023-10-15';
-    const date = convertDate(dateString);
+    const date = convertDate(dateString) as Date;
     expect(date).toBeInstanceOf(Date);
-    expect(date?.toISOString().startsWith('2023-10-15')).toBe(true);
+    expect(date.toISOString().startsWith('2023-10-15')).toBe(true);
   });
 
   it('should return null for invalid date string', () => {

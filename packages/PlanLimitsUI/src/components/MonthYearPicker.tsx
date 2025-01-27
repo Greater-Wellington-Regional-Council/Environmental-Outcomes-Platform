@@ -15,6 +15,7 @@ const MonthYearPicker = ({
   current?: Date;
   limitToLastMonths?: number;
   dataTestid?: string;
+  label?: string;
 }) => {
   const now = new Date();
   const startDate = new Date();

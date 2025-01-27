@@ -2,14 +2,16 @@
 export const isNumber = (value: unknown): boolean =>
   typeof value === 'number' && !Number.isNaN(value);
 
-export const numValue = (value: unknown): number => {
+export const isNumberString = (value: unknown): boolean => /^[+\-]?\d+(\.\d+)?$/.test(value as string)
+
+export const numValue = (value: unknown, defaultValue?: number): number => {
   if (isNumber(value))
     return value as number;
 
-  if (typeof value === 'string' && /^\d+(\.\d+)?$/.test(value))
+  if (typeof value === 'string' && isNumberString(value))
     return parseFloat(value)
 
-  return 0;
+  return defaultValue ?? 0;
 }
 
 export default numValue

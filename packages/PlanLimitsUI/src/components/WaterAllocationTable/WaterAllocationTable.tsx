@@ -22,6 +22,7 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
     },
     { name: 'area_id', visible: false },
     { name: 'name', heading: 'Catchment' },
+    { name: 'allocation_limit', scale: 3, scaleSymbol: 'k'},
     { name: 'total_allocation', highlight: (c: string) => `border-r-2 border-l-2 border-${c}` },
   ];
 
@@ -62,9 +63,10 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
           "category_c",
           "total_allocation",
           "allocation_limit",
-          "pnrp_allocation_percentage"
+          "pnrp_allocation_percentage",
         ],
-        rowObjectNamePlural: "catchments"
+        rowObjectNamePlural: "catchments",
+        sort: [{ name: 'asc' }]
       }}
     />
   ) : (
@@ -86,7 +88,8 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
           "total_allocation",
           "allocation_limit",
           "pnrp_allocation_percentage",
-        ]
+        ],
+        sort: [{ name: 'asc' }]
       }}
     />
   );

@@ -17,7 +17,7 @@ export default defineConfig(async () => {
       rollupOptions: {
         // If you have external dependencies that should be excluded from the build, list them here
         external: [],
-      },
+      }
     },
     resolve: {
       alias: {

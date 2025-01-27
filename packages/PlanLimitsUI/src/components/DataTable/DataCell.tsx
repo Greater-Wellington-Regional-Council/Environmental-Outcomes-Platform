@@ -1,12 +1,12 @@
 import React from 'react';
 import { isDate } from 'lodash';
-import { isNumber, numValue } from '@lib/numValue';
+import { isNumber, isNumberString, numValue } from '@lib/numValue';
 import { ColumnDescriptor, DataValueType } from './DataTable';
 import { calculate } from './calculateValue';
 
 interface DataCellProps {
   col: ColumnDescriptor;
-  s: DataValueType;
+  value: DataValueType;
   children?: React.ReactNode;
   className?: string;
   ignoreFormula?: boolean;
@@ -18,22 +18,33 @@ const displayValue = (
   row?: Record<string, DataValueType>,
   cd?: ColumnDescriptor,
 ): string => {
+
+  const scaleNumber = (input: number | string, scale?: number) => {
+    if (typeof input === 'string') input = parseFloat(input);
+    if (isNaN(input)) return input;
+    if (scale === undefined) return input;
+    return input / Math.pow(10, scale);
+  };
+
   if (cd?.formula && row) value = calculate(cd, row);
   if ((value ?? null) === null) return '';
   if (isDate(value)) return value.toLocaleDateString();
   if (cd?.type === 'percent' && isNumber(value)) return `${numValue(value).toFixed(2)}%`;
-  if (isNumber(value)) return numValue(value).toFixed(2);
+  if (isNumber(value) || isNumberString(value)) return scaleNumber(numValue(value), cd?.scale).toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }) + (cd?.scaleSymbol ?? '');
   return value!.toString();
 };
 
 const errorFlag = (props: { col: ColumnDescriptor; s: DataValueType }) =>
   props.col.valueOk?.some((fn) => !fn(props.s)) ? (
-    <span className="font-bold">&nbsp;!</span>
+    <span className="font-extrabold">&nbsp;!</span>
   ) : '';
 
 export function DataCell({
   col,
-  s,
+  value,
   children,
   className,
   ignoreFormula,
@@ -46,14 +57,14 @@ export function DataCell({
     >
       {children ||
         displayValue(
-          s,
+          value,
           currentRow,
           ignoreFormula ? { ...col, formula: undefined } : col
         ) ||
         ''}
-      <span>{errorFlag({ col, s })}</span>
+      <span>{errorFlag({ col, s: value })}</span>
     </td>
   );
 }
 
-export default DataCell; 
+export default DataCell;

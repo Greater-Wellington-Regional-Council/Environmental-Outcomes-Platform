@@ -6,10 +6,11 @@ import 'jspdf-autotable';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import numValue, { isNumber } from '@lib/numValue';
-import _, { capitalize } from 'lodash';
+import _ from 'lodash';
 import Dropdown from '../Dropdown/Dropdown';
 import DataCell from './DataCell';
 import { calculate } from './calculateValue';
+import { OpenSansRegularBase64 } from '@lib/fonts/OpenSansRegularBase64';
 
 import {
   FilterDescriptor,
@@ -33,6 +34,8 @@ export type ColumnDescriptor = {
   formula?: string;
   highlight?: (colour: string) => string;
   valueOk?: ((value: DataValueType) => boolean)[];
+  scale?: number;
+  scaleSymbol?: string;
 
   [key: string]: string | number | boolean | undefined | null | (() => unknown) | ((c: string) => string) | unknown[];
 };
@@ -100,6 +103,9 @@ export type DataTableProps<T extends DataValueType[][] | Record<string, DataValu
     [key: string]: unknown;
     order?: string[];
     rowObjectNamePlural?: string;
+    sort?: [
+      { [key: string]: 'asc' | 'desc' }
+    ];
   };
 };
 
@@ -186,17 +192,35 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   const visibleColumns = (options?.order || columns).map(c => column(c)).filter((c) => c.visible ?? true);
   const rows: Row[] = useMemo(() => normalizeData(data, columns), [data, columns]);
 
+  const sortArray = (data: Row[], sort: [{ [key: string]: 'asc' | 'desc' }?]) => {
+    return data.sort((a, b) => {
+      for (const s of sort) {
+        if (!s) continue;
+        const key = Object.keys(s)[0];
+        const direction = s[key];
+        const aVal = a[key as keyof Row] ?? '';
+        const bVal = b[key as keyof Row] ?? '';
+        if (aVal === bVal) continue;
+        if (direction === 'asc') return aVal > bVal ? 1 : -1;
+        return aVal < bVal ? 1 : -1;
+      }
+      return 0;
+    });
+  }
+
   const filteredData = useMemo(() => {
-    return rows.filter((row) =>
-      innerFilters.every((filter) => {
-        const value = getFilterValue(filter.name);
-        if (value === undefined) return false;
-        const cellValue = row[filter.name];
-        console.log('cellValue, value: ', cellValue, value);
-        return filter.valueMatchesFilter
-          ? filter.valueMatchesFilter(cellValue, value)
-          : (cellValue === value || undefined);
-      }),
+    return sortArray(
+      rows.filter((row) =>
+        innerFilters.every((filter) => {
+          const value = getFilterValue(filter.name);
+          if (value === undefined) return false;
+          const cellValue = row[filter.name as keyof Row];
+          return filter.valueMatchesFilter
+            ? filter.valueMatchesFilter(cellValue, value)
+            : cellValue === value;
+        })
+      ),
+      options.sort ?? []
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows, outerFilters, innerFilters, filterValues]);
@@ -271,6 +295,8 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     base.total = () => columnAggregationFunctions.selectAndCalculate(base);
     base.formula = givenOptions.formula || undefined;
     base.valueOk = givenOptions.valueOk || [];
+    base.scale = givenOptions.scale || undefined;
+    base.scaleSymbol = givenOptions.scaleSymbol || undefined;
 
     return base;
   }
@@ -283,16 +309,46 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     saveAs(blob, 'filtered_data.csv');
   };
 
-  const printPDF = () => {
+  function capitalize(str: string) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  function printPDF() {
     const doc = new jsPDF();
-    doc.text('Filtered Data', 10, 10);
-    const pdfData = filteredData.map((row) => columns.map((c) => row[c.name]));
+
+    doc.addFileToVFS('OpenSans-Regular.ttf', OpenSansRegularBase64);
+    doc.addFont('OpenSans-Regular.ttf', 'OpenSans', 'normal');
+    doc.setFont('OpenSans', 'normal');
+
+    const pdfData = filteredData.map((row) =>
+      visibleColumns.map((c) =>
+        row[c.name]?.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }) ?? ''
+      )
+    );
+
+    const buildColumnStyles = () =>
+      visibleColumns.reduce((acc, columnKey, index) => {
+        const detail = fullColumnDescriptor(columnKey);
+        if (!detail) return acc;
+        if (detail.type === 'number' || detail.type === 'percent') acc[index] = { halign: 'right' };
+        return acc;
+      }, {} as Record<number, { halign: 'right' | 'left' | 'center' }>);
+
     doc.autoTable({
-      head: [columns.map((col) => col.heading ?? capitalize(col.name))],
+      head: [visibleColumns.map((col) => col.heading || capitalize(col.name))],
       body: pdfData,
+      styles: {
+        font: 'OpenSans',
+      },
+      // @ts-ignore
+      columnStyles: buildColumnStyles() as Object,
     });
+
     doc.save('filtered_data.pdf');
-  };
+  }
 
   return (
     <div>
@@ -371,8 +427,8 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         {filteredData.map((row, rowIndex) => (
           <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-100' : ''}>
             {visibleColumns.map((col, colIndex) => <DataCell key={col.name} currentRow={row}
-               className={`${colIndex == 0 ? 'row-title font-bold' : 'data font-lighter border-gray-200 border-r-2 tracking-wider'} ${col.highlight?.('gray') ?? ''}`}
-               col={col} s={row[col.name]} ignoreFormula={true} />)
+                                                             className={`${colIndex == 0 ? 'row-title font-bold' : 'data font-lighter border-gray-200 border-r-2 tracking-wider'} ${col.highlight?.('gray') ?? ''}`}
+                                                             col={col} value={row[col.name]} ignoreFormula={true} />)
             }
           </tr>
         ))}
@@ -386,7 +442,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
               ? <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}]`}>{'Grand total'}</td>
               : <DataCell key={col.name}
                           className={`${col.name} totals text-white ${col.highlight?.('white') ?? ''}`} col={col}
-                          s={col.total?.() ?? ''} />,
+                          value={col.total?.() ?? ''} />,
           )}
         </tr>}
         </tfoot>
