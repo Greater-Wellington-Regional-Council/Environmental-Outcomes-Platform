@@ -192,6 +192,37 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   const visibleColumns = (options?.order || columns).map(c => column(c)).filter((c) => c.visible ?? true);
   const rows: Row[] = useMemo(() => normalizeData(data, columns), [data, columns]);
 
+  const innerFiltersWithComplex =
+    [
+      ...innerFilters,
+      {
+        name: 'complexFilter',
+        type: ComplexFilter,
+        currentValue: undefined,
+        defaultValue: undefined,
+        options: [],
+        onChange: (v: unknown) => console.log('Selected:', v),
+        data: data,
+        columns: visibleColumns,
+        valueMatchesFilter: (row: unknown, filterValue: unknown) => {
+          const values = filterValue as DataValueType[];
+          const matchValue = (row as Row)[values[0] as string] as DataValueType;
+
+          if (values[1] === '=') return matchValue === values[2];
+          if (values[1] === '!=') return matchValue !== values[2];
+
+          if (!matchValue || !values[2]) return false;
+
+          if (values[1] === '>') return matchValue > values[2]!;
+          if (values[1] === '<') return matchValue < values[2]!;
+          if (values[1] === '>=') return matchValue >= values[2]!;
+          if (values[1] === '<=') return matchValue <= values[2]!;
+
+          return false;
+        }
+      }
+    ] as FilterDescriptor[];
+
   const sortArray = (data: Row[], sort: [{ [key: string]: 'asc' | 'desc' }?]) => {
     return data.sort((a, b) => {
       for (const s of sort) {
@@ -211,13 +242,12 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   const filteredData = useMemo(() => {
     return sortArray(
       rows.filter((row) =>
-        innerFilters.every((filter) => {
+        innerFiltersWithComplex.every((filter) => {
           const value = getFilterValue(filter.name);
-          if (value === undefined) return false;
-          const cellValue = row[filter.name as keyof Row];
+          if (value === undefined) return true;
           return filter.valueMatchesFilter
-            ? filter.valueMatchesFilter(cellValue, value)
-            : cellValue === value;
+            ? filter.valueMatchesFilter(row, value)
+            : row[filter.name] === value;
         })
       ),
       options.sort ?? []
@@ -387,36 +417,10 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
           <th colSpan={99}>
             <FilterPanel
               className="bg-gray-300 p-4"
-              filters={innerFilters}
+              filters={innerFiltersWithComplex}
               filterValues={filterValues}
               setFilterValues={setFilterValues}
-              label={`Show ${options.rowObjectNamePlural || `rows`} where:`}
-              onClose={() => clearFilterValue(innerFilters.map(f => f.name))}>
-              <ComplexFilter {...{
-                name: 'complexFilter',
-                type: ComplexFilter,
-                currentValue: undefined,
-                defaultValue: undefined,
-                options: [],
-                onChange: (v: unknown) => console.log('Selected:', v),
-                data: filteredData,
-                columns: visibleColumns,
-                valueMatchesFilter: (cellValue: unknown, filterValue: unknown) => {
-                  const values = filterValue as DataValueType[];
-                  const matchValue = cellValue as DataValueType;
-
-                  if (values[1] === '=') return matchValue === values[2];
-                  if (values[1] === '!=') return matchValue !== values[2];
-
-                  if (!matchValue || !values[2]) return false;
-
-                  if (values[1] === '>') return matchValue > values[2]!;
-                  if (values[1] === '<') return matchValue < values[2]!;
-                  if (values[1] === '>=') return matchValue >= values[2]!;
-                  if (values[1] === '<=') return matchValue <= values[2]!;
-                  return false;
-                }
-              }} />
+              label={`Show ${options.rowObjectNamePlural || `rows`} where:`}>
             </FilterPanel>
           </th>
         </tr>

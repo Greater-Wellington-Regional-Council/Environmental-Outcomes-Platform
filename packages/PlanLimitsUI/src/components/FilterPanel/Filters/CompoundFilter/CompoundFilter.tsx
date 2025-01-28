@@ -50,8 +50,8 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
 
   const handleClear = () => {
     const clearedValues = defaultValues || Array(options.length).fill(undefined);
-    console.log(defaultValues, clearedValues);
     setValues(clearedValues);
+    onSelect?.(clearedValues);
   };
 
   const handleSubmit = () => {
