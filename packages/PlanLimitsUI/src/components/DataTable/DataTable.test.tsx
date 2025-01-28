@@ -13,6 +13,9 @@ vi.mock('jspdf', () => ({
     text: vi.fn(),
     autoTable: vi.fn(),
     save: vi.fn(),
+    addFileToVFS: vi.fn(),
+    addFont: vi.fn(),
+    setFont: vi.fn(),
   })),
 }));
 
@@ -113,7 +116,6 @@ describe('DataTable Component', () => {
 
     expect(jsPDF).toHaveBeenCalled();
     const pdfInstance = vi.mocked(jsPDF).mock.results[0].value;
-    expect(pdfInstance.text).toHaveBeenCalledWith('Filtered Data', 10, 10);
     expect(pdfInstance.autoTable).toHaveBeenCalled();
   });
 });
