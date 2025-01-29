@@ -38,18 +38,19 @@ function getOperatorOptions() {
 }
 
 export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
-  const [filterValues, setFilterValues] = useState<DataValueType[]>(props.currentValue as DataValueType[]);
+  const [filterValues, setFilterValues] = useState<DataValueType[] | undefined>(props.currentValue as DataValueType[]);
   const [fieldDetails, setFieldDetails] = useState<FieldDetails | undefined>(undefined);
 
-  const handleNewField = (name: string) => {
+  const handleNewField = (name: string | undefined) => {
     if (name) {
       setFieldDetails(getFieldDetails(name, props.data as Row[]));
-      setFilterValues(props.defaultValue || [name, ComparisonOperator.EqualTo, '']);
+      props.onChange?.(undefined)
     }
   };
 
-  const handleSubmit = (values: DataValueType[]) => {
+  const handleSubmit = (values: DataValueType[] | undefined) => {
     setFilterValues(values);
+    if (!values?.every(v => v !== undefined)) return
     props.onChange?.(values);
   };
 
@@ -62,8 +63,8 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
 
   const getCandidateValues = (fieldDetails: FieldDetails) => {
     const values = fieldDetails?.values || [];
-    const selectedCondition = filterValues[1] as string;
-    const selectedValue = filterValues[2] as DataValueType;
+    const selectedCondition = filterValues ? filterValues[1] as string : undefined;
+    const selectedValue = filterValues ? filterValues[2] as DataValueType : undefined;
     return ((selectedCondition === '!=')
       ? values.filter((v) => v !== selectedValue)
       : values as DataValueType[]).sort();
@@ -91,7 +92,8 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
             allowFreeText: false,
             className: 'w-[200px]',
             placeholder: `eg. ${operatorLongNames[ComparisonOperator.EqualTo]}`,
-            onSelect: (v) => setFilterValues([fieldDetails?.fieldName as DataValueType, v, filterValues[2]]),
+            onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType, v,
+              filterValues ? filterValues[2] : undefined]),
             label: 'is',
           },
           {
@@ -100,7 +102,8 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
             allowFreeText: true,
             className: 'w-[250px]',
             placeholder: 'Value',
-            onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType, filterValues[1], v]),
+            onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType,
+              filterValues ? filterValues[1] : undefined, v]),
           },
         ]}
         currentValue={filterValues}

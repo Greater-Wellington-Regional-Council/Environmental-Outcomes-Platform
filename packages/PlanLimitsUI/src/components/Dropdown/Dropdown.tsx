@@ -13,8 +13,8 @@ export type DropdownOption = {
 interface DropdownProps {
   options: unknown[],
   selectAll?: string,
-  placeholder: string | JSX.Element,
-  value: string | null,
+  placeholder: string | React.ReactNode,
+  value: unknown,
   onChange: (value: DropdownValueType) => void,
   arrow?: React.ReactNode,
   className?: string,
@@ -104,7 +104,7 @@ const Dropdown: FC<DropdownProps> = ({
         <div className="dropdown-value flex w-full items-center text-left pr-2">
           {value ? (
             <span className={'w-full'} data-testid={`selected-${value.toString()}`}>
-              {selectOptions.find((option) => option.value === value)?.label || value}
+              <>{selectOptions.find((option) => option.value === value)?.label || value}</>
             </span>
           ) : (
             <span className={`text-nui font-light italic ${placeholderClassName}`}>

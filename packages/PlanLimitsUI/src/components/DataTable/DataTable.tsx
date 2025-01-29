@@ -49,7 +49,7 @@ type ColumnGroup = {
   lastColumn: string;
 };
 
-export type DataValueType = string | number | boolean | null | Date;
+export type DataValueType = string | number | boolean | null | Date | undefined;
 
 declare module 'jspdf' {
   interface jsPDF {

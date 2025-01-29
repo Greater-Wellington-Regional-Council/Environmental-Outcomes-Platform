@@ -17,7 +17,7 @@ interface DropdownConfig {
 interface CompoundFilterProps {
   options: DropdownConfig[];
   currentValue?: DataValueType[];
-  onSelect?: (values: DataValueType[]) => void;
+  onSelect?: (values: DataValueType[] | undefined) => void;
   filter?: { name: string; placeholder?: string; className?: string };
   defaultValues?: DataValueType[];
   clearOn?: string[];
@@ -33,30 +33,30 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
   clearOn = [],
   hideSubmitButton = false,
 }) => {
-  const [values, setValues] = useState<DataValueType[]>(currentValue);
+  const [values, setValues] = useState<DataValueType[] | undefined>(currentValue);
 
   const handleSelection = (name: string, value: DropdownValueType) => {
-    const updatedValues = (clearOn.includes(name)) ?
-      defaultValues || Array(options.length).fill(undefined)
-      : [...values];
-
     const index = options.findIndex((option) => option.name === name);
 
-    updatedValues[index] = value as DataValueType;
-    setValues(updatedValues);
+    const baseValues = clearOn.includes(name)
+      ? defaultValues || []
+      : values || defaultValues || []
 
-    options[index].onSelect?.(value as DataValueType);
+    baseValues[index] = value as DataValueType;
+    setValues(baseValues);
+
+    options[index].onSelect?.(baseValues[index] as DataValueType);
   };
 
   const handleClear = () => {
-    const clearedValues = defaultValues || Array(options.length).fill(undefined);
-    setValues(clearedValues);
-    onSelect?.(clearedValues);
+    setValues(undefined);
+    onSelect?.(undefined);
   };
 
   const handleSubmit = () => {
-    if (values.filter((value) => value !== undefined).length == options.length)
+    if (values && values.every((v: DataValueType) => v != undefined)) {
       onSelect?.(values);
+    }
   };
 
   return (
@@ -67,7 +67,7 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
             key={dropdownConfig.name}
             options={dropdownConfig.options}
             onChange={(value) => handleSelection(dropdownConfig.name, value)}
-            value={values[index] as string | null}
+            value={values ? values[index] : undefined}
             placeholder={dropdownConfig?.placeholder || filter?.placeholder || `Select ${dropdownConfig.name}`}
             allowFreeText={dropdownConfig.allowFreeText}
             dataTestid={`dropdown-${dropdownConfig.name}`}
@@ -80,7 +80,7 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
       <button
         type="button"
         onClick={handleClear}
-        className="text-gray-500 hover:text-red-500 focus:outline-none border-none p-0"
+        className="text-gray-500 hover:text-red-500 hover:bg-transparent focus:outline-none border-none p-0"
         data-testid="clear-button"
       >
         <XMarkIcon className="h-5 w-5" />
@@ -88,7 +88,7 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
       {hideSubmitButton ? <></> : <button
         type="button"
         onClick={handleSubmit}
-        disabled={values.filter((value) => value !== undefined).length !== options.length}
+        disabled={false}
         className="text-gray-500 hover:text-green-500 focus:outline-none border-none p-0"
         data-testid="submit-button"
       >

@@ -75,7 +75,7 @@ export const FilterPanel: React.FC<{
             onChange: (e) => handleFilterChange(filter, e),
             currentValue: _.get(filterValues, filter.name),
             key: `${filter.name}-${index}`,
-            className: `${filter.className}`,
+            className: `${filter.className} ${!labelInline ? 'pt-0' : ''}`,
             label: filter.label,
           } as FilterDescriptor);
         })}

@@ -65,7 +65,7 @@ describe('CompoundFilter', () => {
             onSelect: mockFieldValueChange,
           },
         ]}
-        currentValue={[]}
+        currentValue={undefined}
       />
     );
 
@@ -106,6 +106,7 @@ describe('CompoundFilter', () => {
           },
         ]}
         currentValue={[]}
+        clearOn={['Field Name']}
       />
     );
 
@@ -121,7 +122,7 @@ describe('CompoundFilter', () => {
     expect(screen.getByText('Select Field Name')).toBeInTheDocument();
   });
 
-  it('calls onChange only when the submit button is clicked', () => {
+  it('calls onSelect only whether or not there is a value the submit button is clicked', () => {
     const mockOnSubmit = vi.fn();
 
     render(
@@ -146,7 +147,7 @@ describe('CompoundFilter', () => {
             onSelect: vi.fn(),
           },
         ]}
-        currentValue={[]}
+        currentValue={undefined}
         onSelect={mockOnSubmit}
       />
     );
@@ -154,7 +155,7 @@ describe('CompoundFilter', () => {
     const submitButton = screen.getByTestId('submit-button');
 
     fireEvent.click(submitButton);
-    expect(mockOnSubmit).not.toHaveBeenCalled();
+    expect(mockOnSubmit).toHaveBeenCalled();
 
     fireEvent.click(screen.getByTestId('dropdown-Field Name'));
     fireEvent.click(screen.getByText('field_name_1'));
@@ -166,7 +167,6 @@ describe('CompoundFilter', () => {
     fireEvent.click(screen.getByText('value_2'));
 
     fireEvent.click(submitButton);
-
     expect(mockOnSubmit).toHaveBeenCalledWith(['field_name_1', '!=', 'value_2']);
   });
 });
