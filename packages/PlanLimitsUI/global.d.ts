@@ -1,6 +1,9 @@
-interface Dictionary<T> {
+import {Feature} from "geojson";
+
+declare global {
+  interface Dictionary<T> {
     [index: string]: T;
-}
+  }
 
 interface link {
     title: string;

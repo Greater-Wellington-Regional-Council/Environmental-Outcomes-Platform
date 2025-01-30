@@ -14,7 +14,6 @@ import nz.govt.eop.si.jooq.tables.SurfacewaterAllocationLimitsByAreaAndCategory.
 import nz.govt.eop.si.jooq.tables.WaterAllocationAndUsageByArea.Companion.WATER_ALLOCATION_AND_USAGE_BY_AREA
 import nz.govt.eop.si.jooq.tables.WaterAllocationsByArea.Companion.WATER_ALLOCATIONS_BY_AREA
 import org.jooq.*
-import org.jooq.impl.DSL
 import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -28,7 +27,7 @@ class Queries(@Autowired val context: DSLContext) {
     return buildFeatureCollection(context, innerQuery)
   }
 
-  fun plan(councilId: Int): String {
+  fun plan(councilId: Int): String? {
     val innerQuery =
         select(
                 PLANS.ID,
@@ -45,7 +44,11 @@ class Queries(@Autowired val context: DSLContext) {
         function("to_jsonb", JSONB::class.java, field("to_jsonb(inputs)"))
 
     val result = context.select(featureCollection).from(innerQuery.asTable("inputs")).fetch()
-    return result.firstNotNullOf { it.value1().toString() }
+    return try {
+      result.firstNotNullOf { it.value1().toString() }
+    } catch (e: NoSuchElementException) {
+      return "{'type': 'FeatureCollection', 'features': []}"
+    }
   }
 
   fun planRegions(councilId: Int): String {
@@ -244,7 +247,7 @@ class Queries(@Autowired val context: DSLContext) {
   }
 
   fun waterUsage(councilId: Int, from: LocalDate, to: LocalDate, areaId: String? = null): String {
-    var whereCondition = DSL.noCondition()
+    var whereCondition = noCondition()
     if (areaId != null) {
       whereCondition = whereCondition.and(WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID.eq(areaId))
     }

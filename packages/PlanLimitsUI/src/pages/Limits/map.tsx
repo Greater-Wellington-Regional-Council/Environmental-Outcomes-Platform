@@ -15,6 +15,7 @@ import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/RoundedButton';
 import RiverTilesSource from './RiverTilesSource';
 import flowMarkerImage from '../../images/marker_flow.svg';
+import { MapboxGeoJSONFeature } from 'react-map-gl';
 
 import { MapboxGeoJSONFeature } from 'react-map-gl';
 import { PlanLimitsData } from '@src/api';
@@ -68,7 +69,6 @@ function mapFeatureLayer<T extends Identifyable>(
   return featureLayers[layerName === "surfaceWaterSubUnitLimits" ? featureLayers.length - 1 : 0];
 }
 
-// TODO: Push this into useAppState?
 function mapAllFeatures(
   features: mapboxgl.MapboxGeoJSONFeature[],
   appPlanData: AllPlanData,
