@@ -155,8 +155,7 @@ class Queries(@Autowired val context: DSLContext) {
                   trueCondition() // Or handle it differently based on your requirements
                 })
 
-    val aggregatedJson: Field<String> =
-        field("json_agg(row_to_json(inputs))", String::class.java)
+    val aggregatedJson: Field<String> = field("json_agg(row_to_json(inputs))", String::class.java)
 
     val result =
         context
@@ -197,8 +196,7 @@ class Queries(@Autowired val context: DSLContext) {
                   trueCondition() // Or handle it differently based on your requirements
                 })
 
-    val aggregatedJson: Field<String> =
-        field("json_agg(row_to_json(inputs))", String::class.java)
+    val aggregatedJson: Field<String> = field("json_agg(row_to_json(inputs))", String::class.java)
 
     val result =
         context
