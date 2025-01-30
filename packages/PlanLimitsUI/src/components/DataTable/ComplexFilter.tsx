@@ -50,7 +50,7 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
 
   const handleSubmit = (values: DataValueType[] | undefined) => {
     setFilterValues(values);
-    if (!values?.every(v => v !== undefined)) return
+    if (values && !values?.every(v => v !== undefined)) return
     props.onChange?.(values);
   };
 
