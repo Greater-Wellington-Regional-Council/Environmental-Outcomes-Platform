@@ -1,5 +1,6 @@
 package nz.govt.eop.plan_limits
 
+import java.time.LocalDate
 import nz.govt.eop.si.jooq.tables.Councils.Companion.COUNCILS
 import nz.govt.eop.si.jooq.tables.FlowLimits.Companion.FLOW_LIMITS
 import nz.govt.eop.si.jooq.tables.FlowMeasurementSites.Companion.FLOW_MEASUREMENT_SITES
@@ -16,7 +17,6 @@ import org.jooq.*
 import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.time.LocalDate
 
 @Component
 class Queries(@Autowired val context: DSLContext) {
