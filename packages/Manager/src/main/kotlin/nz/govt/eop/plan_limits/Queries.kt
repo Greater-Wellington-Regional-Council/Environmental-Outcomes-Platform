@@ -1,6 +1,5 @@
 package nz.govt.eop.plan_limits
 
-import java.time.LocalDate
 import nz.govt.eop.si.jooq.tables.Councils.Companion.COUNCILS
 import nz.govt.eop.si.jooq.tables.FlowLimits.Companion.FLOW_LIMITS
 import nz.govt.eop.si.jooq.tables.FlowMeasurementSites.Companion.FLOW_MEASUREMENT_SITES
@@ -17,6 +16,7 @@ import org.jooq.*
 import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 
 @Component
 class Queries(@Autowired val context: DSLContext) {
@@ -152,11 +152,11 @@ class Queries(@Autowired val context: DSLContext) {
                   SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START.`in`(dates)
                 } else {
                   // Default behavior if no dates are provided (optional)
-                  DSL.trueCondition() // Or handle it differently based on your requirements
+                  trueCondition() // Or handle it differently based on your requirements
                 })
 
     val aggregatedJson: Field<String> =
-        DSL.field("json_agg(row_to_json(inputs))", String::class.java)
+        field("json_agg(row_to_json(inputs))", String::class.java)
 
     val result =
         context
@@ -194,11 +194,11 @@ class Queries(@Autowired val context: DSLContext) {
                   GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START.`in`(dates)
                 } else {
                   // Default behavior if no dates are provided (optional)
-                  DSL.trueCondition() // Or handle it differently based on your requirements
+                  trueCondition() // Or handle it differently based on your requirements
                 })
 
     val aggregatedJson: Field<String> =
-        DSL.field("json_agg(row_to_json(inputs))", String::class.java)
+        field("json_agg(row_to_json(inputs))", String::class.java)
 
     val result =
         context
