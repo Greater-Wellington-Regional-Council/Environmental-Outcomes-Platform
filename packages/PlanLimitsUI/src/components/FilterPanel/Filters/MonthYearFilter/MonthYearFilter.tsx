@@ -8,7 +8,7 @@ export const MonthYearFilter: React.FC<FilterDescriptor> = (filter) => {
       onChange={(v) => { console.log(v); filter.onChange?.(v as Date) } }
       dataTestid={`dropdown-months-${filter.name}`}
       current={filter.currentValue as Date}
-      className={`bg-transparent p-4 w-[250px] ${filter.className}`}
+      className={`bg-transparent p-4 ${filter.className}`}
       label={filter.label}
     />
   );

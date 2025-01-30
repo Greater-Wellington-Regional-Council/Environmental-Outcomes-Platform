@@ -117,12 +117,11 @@ const Dropdown: FC<DropdownProps> = ({
       {isOpen && (
         <div
           className={`dropdown-list-container absolute indent-0 z-10 pt-1 px-0 m-0 mt-2 rounded border border-nui bg-white ${dropdownClassName}`}>
-          <div className="list-options max-h-[500px] overflow-y-scroll">
-            <ul className="m-0 p-0">
-              {selectOptions.map((option) => (
-                <li
+          <div className="list-options max-h-full overflow-y-scroll min-w-max">
+            <ul className="m-0 p-0 w-full">
+              {selectOptions.map((option) => (                <li
                   key={`${option.value}`}
-                  className={`indent-0 m-0 pl-2 px-4 py-2 w-[250px] hover:bg-nui hover:text-white cursor-pointer list-none text-left ${optionClassName}`}
+                  className={`indent-0 m-0 pl-2 px-4 py-2 hover:bg-nui hover:text-white cursor-pointer list-none text-left ${optionClassName}`}
                   onClick={() => selectOption(option.value)}
                   data-testid={`option-${option.label}`}
                 >

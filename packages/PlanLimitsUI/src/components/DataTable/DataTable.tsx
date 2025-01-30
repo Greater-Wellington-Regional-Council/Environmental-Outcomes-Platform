@@ -84,7 +84,7 @@ export const OuterFilter: React.FC<FilterDescriptor> = (filter: FilterDescriptor
       value={filter.currentValue as string}
       placeholder={filter.placeholder || SELECT_ALL}
       dataTestid={`dropdown-${filter.name}`}
-      className={`bg-transparent p-4 w-[250px] ${filter.className}`}
+      className={`bg-transparent p-4 ${filter.className}`}
       controlClassName={`p-2`}
     />
   );
@@ -384,9 +384,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     <div>
       {/* Outer filters & actions (eg, water type and month) */}
       <div className="flex pt-0 mt-0 pr-4 justify-between items-end" style={{ textAlign: 'unset' }}>
-        <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues} onClose={
-          () => clearFilterValue(outerFilters.map(f => f.name))
-        } label="Show data for:" labelInline={false}/>
+        <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues} onClose={undefined} label="Show data for:" labelInline={false}/>
 
         {data[0] && <div className="space-x-4 mb-4">
           <button onClick={downloadCSV}>Download</button>

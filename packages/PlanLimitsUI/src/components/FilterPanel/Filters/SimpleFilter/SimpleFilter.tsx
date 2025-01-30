@@ -12,7 +12,7 @@ export const SimpleFilter: React.FC<FilterDescriptor> = ({ currentValue, onChang
       value={currentValue as string}
       placeholder={placeholder || SELECT_ALL}
       dataTestid={`dropdown-${name}`}
-      className={`bg-transparent p-4 w-[250px] ${className}`}
+      className={`bg-transparent p-4 ${className}`}
       controlClassName={'p-2'}
     />
   );

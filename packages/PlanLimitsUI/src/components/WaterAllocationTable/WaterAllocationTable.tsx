@@ -11,7 +11,7 @@ import { MonthYearFilter } from '@components/FilterPanel/Filters/MonthYearFilter
 
 export const WaterAllocationTable = ({ council  } : { council: Council }) => {
   const [ waterType, setWaterType ] = useState<string>('ground')
-  const [ monthStart, setMonthStart ] = useState(new Date(2024, 10, 1))
+  const [ monthStart, setMonthStart ] = useState(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1))
 
   const tableData = (useWaterAllocationQuery(council.id, waterType, monthStart).data || []) as GroundwaterAllocation[] | SurfaceWaterAllocation[];
 

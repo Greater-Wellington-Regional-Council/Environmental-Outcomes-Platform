@@ -196,7 +196,7 @@ export function usePlanLimitsData(councilId: number) {
 export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;
 
 const startOfMonth = (date_in_month: Date | null | undefined) => {
-  const firstDayOfCurrentMonthDate = date_in_month || new Date(2024, 10, 1);
+  const firstDayOfCurrentMonthDate = date_in_month || new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
   const nzFormatter = new Intl.DateTimeFormat('en-NZ', {
     timeZone: 'Pacific/Auckland',
     year: 'numeric',

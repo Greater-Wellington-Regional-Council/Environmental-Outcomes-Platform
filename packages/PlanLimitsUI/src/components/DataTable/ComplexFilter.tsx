@@ -83,7 +83,7 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
             }) || [],
             allowFreeText: false,
             onSelect: ((fieldName) => handleNewField(fieldName as string)),
-            className: 'w-[250px]',
+            className: 'min-w-[250px]',
             placeholder: 'Column',
           },
           {
@@ -100,7 +100,7 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
             name: 'Field Value',
             options: (fieldDetails ? getCandidateValues(fieldDetails) : []).map(v => ({ label: v, value: v } as DropdownOption)),
             allowFreeText: true,
-            className: 'w-[250px]',
+            className: 'min-w-[100px]',
             placeholder: 'Value',
             onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType,
               filterValues ? filterValues[1] : undefined, v]),
