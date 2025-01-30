@@ -12,9 +12,13 @@ interface MapProps {
 
 interface InteractiveMapProps extends MapProps {
     setLocationInFocus?: Dispatch<SetStateAction<ViewLocation | null>>;
-    highlights_source_url: string;
     mapRef: React.RefObject<CombinedMapRef | null>;
     children?: React.ReactNode;
+    onHover?: (e) => void;
+    onClick?: (e) => void;
+    onLoad?: () => void;
+    mapStyle?: string;
+    setMapStyle?: Dispatch<SetStateAction<string>>;
 }
 
 interface BoundaryLinesLayerProps {

@@ -43,7 +43,7 @@ $gapSize: 12px;
     display: none;
   }
 
-  .base-page {
+  .map-page {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -79,6 +79,10 @@ $gapSize: 12px;
   .address-box {
     @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[90%]
   }
+
+  .print-button {
+    @apply mt-9 mr-5;
+  }
 }
 
 @media (min-width: 641px) {
@@ -100,7 +104,7 @@ $gapSize: 12px;
     }
   }
 
-  .base-page {
+  .map-page {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: auto;
