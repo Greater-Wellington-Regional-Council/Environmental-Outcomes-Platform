@@ -330,12 +330,25 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     return base;
   }
 
+  const queryKeyToFile = (date: Date, extension: string, prefix: string = '') => {
+    const key = options?.queryKeys ? (options.queryKeys as unknown[]).map((k: unknown) => {
+      if (typeof k !== 'string') {
+        // @ts-ignore
+        return k.toString();
+      }
+      return k;
+    }).join('-') : '';
+
+    const dateStr = date.toLocaleDateString();
+    return `${prefix ? prefix+'-' : ''}${key}-${dateStr}.${extension}`;
+  };
+
   const downloadCSV = () => {
-    // Convert filteredData (array of objects) into arrays for CSV
     const csvData = filteredData.map((row) => columns.map((c) => row[c.name]));
     const csv = Papa.unparse({ fields: columns.map(c => c.name), data: csvData });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    saveAs(blob, 'filtered_data.csv');
+
+    saveAs(blob, queryKeyToFile(new Date(), 'csv'));
   };
 
   function capitalize(str: string) {
@@ -376,7 +389,10 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
       columnStyles: buildColumnStyles() as Object,
     });
 
-    doc.save('filtered_data.pdf');
+    const dateStr = new Date().toLocaleDateString();
+    doc.text(`Generated on: ${dateStr}`, 8, doc.internal.pageSize.height - 8);
+
+    doc.save(queryKeyToFile(new Date(), 'pdf'));
   }
 
   return (

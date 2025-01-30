@@ -66,7 +66,10 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
           "pnrp_allocation_percentage",
         ],
         rowObjectNamePlural: "catchments",
-        sort: [{ name: 'asc' }]
+        sort: [{ name: 'asc' }],
+        queryKeys: [waterType, 'allocations', council.slug,
+          monthStart.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }).replace(' ', '-')
+        ]
       }}
     />
   ) : (
@@ -89,7 +92,10 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
           "allocation_limit",
           "pnrp_allocation_percentage",
         ],
-        sort: [{ name: 'asc' }]
+        sort: [{ name: 'asc' }],
+        queryKeys: [waterType, 'allocations', council.slug,
+          monthStart.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }).replace(' ', '-')
+        ]
       }}
     />
   );

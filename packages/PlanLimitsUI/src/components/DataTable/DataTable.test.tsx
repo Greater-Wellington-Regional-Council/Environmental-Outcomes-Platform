@@ -16,6 +16,7 @@ vi.mock('jspdf', () => ({
     addFileToVFS: vi.fn(),
     addFont: vi.fn(),
     setFont: vi.fn(),
+    internal: { pageSize: 8 }
   })),
 }));
 
