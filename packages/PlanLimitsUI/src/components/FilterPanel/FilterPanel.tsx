@@ -30,6 +30,7 @@ export interface FilterDescriptor {
   defaultValue?: DataValueType[];
   label?: string;
   data?: Row[];
+  suppressSelectAll?: boolean;
 }
 
 export type FilterValues = {
@@ -56,7 +57,7 @@ export const FilterPanel: React.FC<{
   return (
     <div className={`filter-panel ${className}`}>
       {label && !labelInline && (
-        <label className="block font-bold text-lg">
+        <label className="block font-bold text-lg mb-1.5">
           {label}
         </label>
       )}

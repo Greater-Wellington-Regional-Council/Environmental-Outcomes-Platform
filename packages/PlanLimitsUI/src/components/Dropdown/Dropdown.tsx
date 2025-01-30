@@ -25,7 +25,8 @@ interface DropdownProps {
   dataTestid?: string,
   allowFreeText?: boolean,
   sortOptions?: boolean | undefined,
-  label?: string | undefined
+  label?: string | undefined,
+  suppressSelectAll?: boolean;
 }
 
 const Dropdown: FC<DropdownProps> = ({
@@ -43,6 +44,7 @@ const Dropdown: FC<DropdownProps> = ({
                                        dataTestid = 'dropdown-control',
                                        allowFreeText = false,
                                        label,
+                                       suppressSelectAll = false,
                                      }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<DataValueType>('');
@@ -73,7 +75,7 @@ const Dropdown: FC<DropdownProps> = ({
     if (!givenOptions) return [];
     if (isArray(givenOptions) && !isObject(givenOptions[0])) return simpleStringOptions(givenOptions);
     const baseOptions = givenOptions as DropdownOption[];
-    return selectAll ? [{ label: selectAll, value: null }, ...baseOptions] : baseOptions;
+    return selectAll && (!suppressSelectAll) ? [{ label: selectAll, value: null }, ...baseOptions] : baseOptions;
   };
 
   const selectOptions = formatOptions(options);
@@ -119,7 +121,7 @@ const Dropdown: FC<DropdownProps> = ({
           className={`dropdown-list-container absolute indent-0 z-10 pt-1 px-0 m-0 mt-2 rounded border border-nui bg-white ${dropdownClassName}`}>
           <div className="list-options max-h-full overflow-y-scroll min-w-max">
             <ul className="m-0 p-0 w-full">
-              {selectOptions.map((option) => (                <li
+              {selectOptions.map((option) => (<li
                   key={`${option.value}`}
                   className={`indent-0 m-0 pl-2 px-4 py-2 hover:bg-nui hover:text-white cursor-pointer list-none text-left ${optionClassName}`}
                   onClick={() => selectOption(option.value)}

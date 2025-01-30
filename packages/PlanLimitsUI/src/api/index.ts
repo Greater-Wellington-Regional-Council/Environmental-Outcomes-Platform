@@ -45,7 +45,7 @@ function mapFeatureCollectionPropsToType<T>(
       ...feature,
       properties: {
         id: feature.id,
-        ...mapKeys(feature.properties, (value, key) => camelCase(key)),
+        ...mapKeys(feature.properties, (_value, key) => camelCase(key)),
       },
     };
   });
@@ -167,7 +167,7 @@ export function usePlanLimitsData(councilId: number) {
   const data = features
     ? {
         councils: features.councils.features.map((f) => f.properties),
-        plan: mapKeys(features.plan, (value, key) => camelCase(key)),
+        plan: mapKeys(features.plan, (_value, key) => camelCase(key)),
         planRegions: features.planRegions.features.map((f) => f.properties),
         surfaceWaterUnitLimits: features.surfaceWaterUnitLimits.features.map(
           (f) => f.properties,
@@ -212,6 +212,8 @@ const startOfMonth = (date_in_month: Date | null | undefined) => {
   return `${year}-${month}-${day}`;
 }
 
+export type WaterType = 'surface' | 'ground';
+
 export function useWaterUseQuery(councilId: number, from: string, to: string) {
   return useQuery({
     queryKey: ['/plan-limits/water-usage', councilId, from, to],
@@ -226,7 +228,7 @@ export function useWaterUseQuery(councilId: number, from: string, to: string) {
   });
 }
 
-export function useWaterAllocationQuery(councilId: number, waterType: string, start_month?: Date | null) {
+export function useWaterAllocationQuery(councilId: number, waterType: WaterType, start_month?: Date | null) {
   const formattedDate = startOfMonth(start_month);
   const endpoint = `/plan-limits/${waterType}-water-pnrp`;
 

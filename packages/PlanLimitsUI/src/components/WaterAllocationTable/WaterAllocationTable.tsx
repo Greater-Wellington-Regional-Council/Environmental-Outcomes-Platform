@@ -3,14 +3,14 @@
   OuterFilter,
 } from '@components/DataTable/DataTable';
 
-import { useWaterAllocationQuery } from '@src/api';
+import { useWaterAllocationQuery, WaterType } from '@src/api';
 import { useState } from 'react';
 import { FilterDescriptor } from '@components/FilterPanel/FilterPanel';
 import { MonthYearFilter } from '@components/FilterPanel/Filters/MonthYearFilter/MonthYearFilter';
   import numValue from '@lib/numValue';
 
 export const WaterAllocationTable = ({ council  } : { council: Council }) => {
-  const [ waterType, setWaterType ] = useState<string>('ground')
+  const [ waterType, setWaterType ] = useState<WaterType>('ground')
   const [ monthStart, setMonthStart ] = useState(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1))
 
   const tableData = (useWaterAllocationQuery(council.id, waterType, monthStart).data || []) as GroundwaterAllocation[] | SurfaceWaterAllocation[];
@@ -32,7 +32,8 @@ export const WaterAllocationTable = ({ council  } : { council: Council }) => {
       type: OuterFilter,
       currentValue: waterType,
       options: [{ label: 'Groundwater', value: 'ground' }, {label: 'Surface water', value: 'surface' }],
-      onChange: (waterType) => setWaterType(waterType as string),
+      onChange: (waterType) => setWaterType(waterType as WaterType),
+      suppressSelectAll: true,
       className: 'pl-0 pr-0'
     },
     {

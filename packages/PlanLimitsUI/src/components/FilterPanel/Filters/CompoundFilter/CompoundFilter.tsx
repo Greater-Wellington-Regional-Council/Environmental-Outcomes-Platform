@@ -63,17 +63,15 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
     <div className="compound-filter flex items-center">
       <div className="compound-filter-item flex items-center">
         {options.map((dropdownConfig, index) => (
-          <Dropdown
+          <Dropdown {...dropdownConfig}
             key={dropdownConfig.name}
             options={dropdownConfig.options}
             onChange={(value) => handleSelection(dropdownConfig.name, value)}
             value={values ? values[index] : undefined}
             placeholder={dropdownConfig?.placeholder || filter?.placeholder || `Select ${dropdownConfig.name}`}
-            allowFreeText={dropdownConfig.allowFreeText}
             dataTestid={`dropdown-${dropdownConfig.name}`}
             className={`bg-transparent pr-4 ${dropdownConfig.label && index > 0 ? 'pl-0' : 'pr-4' } ${dropdownConfig?.className}`}
             controlClassName="p-2 ${dropdownConfig?.controlClassName}"
-            label={dropdownConfig.label}
           />
         ))}
       </div>

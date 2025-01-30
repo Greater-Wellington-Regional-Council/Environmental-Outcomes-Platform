@@ -77,7 +77,7 @@ export const OuterFilter: React.FC<FilterDescriptor> = (filter: FilterDescriptor
   };
 
   return (
-    <Dropdown
+    <Dropdown {...filter}
       options={filter.options ?? []}
       selectAll={SELECT_ALL}
       onChange={onSelection}
