@@ -163,7 +163,8 @@ export default function MapPage() {
     useEscapeKey(() => {
         setSelectedLocation(null)
         clearErrors()
-        mapRef.current?.getMap().zoomTo(DEFAULT_ZOOM)
+        const map = mapRef.current?.getMap()
+        map?.zoomTo(DEFAULT_ZOOM)
     })
 
     const selectAddress = async (address: LabelAndValue | null = null) => {
@@ -187,7 +188,7 @@ export default function MapPage() {
             let location: IMViewLocation
 
             if (!addressBoundary) {
-                announceError("Failed to retrieve address data. Either the data is not available, or the LINZ service may be available.", ErrorLevel.INFO)
+                announceError("Failed to retrieve address data. Either the data is not available, or the LINZ service may not be available.", ErrorLevel.INFO)
 
                 location = {
                     longitude: physicalAddress.location.geometry.coordinates[0],
@@ -237,8 +238,9 @@ export default function MapPage() {
         clearErrors()
         const clickedFeatures = getFeaturesUnderMouse(mapRef, e, BOUNDARY_LINES_LAYER)
         if (clickedFeatures) {
-            if (mapRef.current?.getMap()?.getZoom() !== DEFAULT_ZOOM)
-                mapRef.current?.getMap().flyTo({
+            const map = mapRef.current?.getMap()
+            if (map?.getZoom() !== DEFAULT_ZOOM)
+                map?.flyTo({
                     center: e.lngLat,
                     zoom: DEFAULT_ZOOM,
                 })
