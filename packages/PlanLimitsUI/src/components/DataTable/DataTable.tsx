@@ -154,7 +154,6 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     filterValues,
     setFilterValues,
     getFilterValue,
-    resetFilters: clearFilterValue,
   } = useFilterValues(allFilters.reduce(
     (acc, filter) => {
       acc[filter.name] = filter.currentValue;
