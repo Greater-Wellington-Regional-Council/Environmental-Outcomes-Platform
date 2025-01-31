@@ -31,6 +31,7 @@ export interface FilterDescriptor {
   label?: string;
   data?: Row[];
   suppressSelectAll?: boolean;
+  multiSelect?: boolean;
 }
 
 export type FilterValues = {

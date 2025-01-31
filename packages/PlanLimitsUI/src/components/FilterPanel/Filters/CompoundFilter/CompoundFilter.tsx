@@ -12,6 +12,7 @@ interface DropdownConfig {
   controlClassName?: string;
   placeholder?: string;
   label?: string;
+  multiSelect?: boolean;
 }
 
 interface CompoundFilterProps {
@@ -22,6 +23,7 @@ interface CompoundFilterProps {
   defaultValues?: DataValueType[];
   clearOn?: string[];
   hideSubmitButton?: boolean;
+  multiSelect?: boolean;
 }
 
 export const CompoundFilter: React.FC<CompoundFilterProps> = ({
@@ -35,7 +37,7 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
 }) => {
   const [values, setValues] = useState<DataValueType[] | undefined>(currentValue);
 
-  const handleSelection = (name: string, value: DropdownValueType) => {
+  const handleSelection = (name: string, value: DropdownValueType | DropdownValueType[]) => {
     const index = options.findIndex((option) => option.name === name);
 
     const baseValues = clearOn.includes(name)

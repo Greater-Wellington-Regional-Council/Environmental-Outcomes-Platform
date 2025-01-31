@@ -20,7 +20,7 @@ import {
 
 import { useFilterValues } from '@components/FilterPanel/useFilterValues';
 
-import ComplexFilter from './ComplexFilter';
+import ComplexFilter, { ComparisonOperator } from './ComplexFilter';
 
 export type ColumnDescriptor = {
   name: string;
@@ -49,9 +49,10 @@ type ColumnGroup = {
   lastColumn: string;
 };
 
-export type DataValueType = string | number | boolean | null | Date | undefined;
+export type DataValueType = string | number | boolean | null | Date | undefined | ComparisonOperator;
 
 declare module 'jspdf' {
+  // @ts-ignore
   interface jsPDF {
     autoTable: (options: {
       head: Array<Array<string | { content: string; styles?: object }>>;
@@ -207,8 +208,21 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
           const values = filterValue as DataValueType[];
           const matchValue = (row as Row)[values[0] as string] as DataValueType;
 
-          if (values[1] === '=') return matchValue === values[2];
-          if (values[1] === '!=') return matchValue !== values[2];
+          if (values[1] === '=') {
+            if (Array.isArray(values[2])) {
+              return values[2].includes(matchValue);
+            } else {
+              return matchValue === values[2];
+            }
+          }
+
+          if (values[1] === '!=') {
+            if (Array.isArray(values[2])) {
+              return !values[2].includes(matchValue);
+            } else {
+              return matchValue !== values[2];
+            }
+          }
 
           if (!matchValue || !values[2]) return false;
 

@@ -12,7 +12,7 @@ interface FieldDetails {
   values: DropdownValueType[];
 }
 
-enum ComparisonOperator {
+export enum ComparisonOperator {
   EqualTo = '=',
   NotEqualTo = '!=',
   GreaterThan = '>',
@@ -56,8 +56,8 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
 
   const getFieldDetails = (fieldName: string, data: Row[]) => {
     const fieldData = data.map((row) => row[fieldName]);
-    const uniqueValues = uniq(fieldData);
     const conditions = getOperatorOptions();
+    const uniqueValues = uniq(fieldData);
     return { fieldName, conditions, values: uniqueValues };
   };
 
@@ -104,6 +104,7 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
             placeholder: 'Value',
             onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType,
               filterValues ? filterValues[1] : undefined, v]),
+            multiSelect: filterValues && [ComparisonOperator.EqualTo, ComparisonOperator.NotEqualTo].includes(filterValues[1] ?? ComparisonOperator.EqualTo.toString()),
           },
         ]}
         currentValue={filterValues}
