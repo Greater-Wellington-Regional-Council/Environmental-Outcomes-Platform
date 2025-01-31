@@ -2,7 +2,7 @@ const LOCAL_HOST_REGEX = /localhost/
 const REVIEW_HOST_REGEX = /.*\.amplifyapp\.com$/
 const DEV_HOST_REGEX = /.*\.gw-eop-dev\.tech$/
 const STAGE_HOST_REGEX = /.*\.gw-eop-stage\.tech$/
-const PROD_HOSTNAME = 'plan-limits.eop.gw.govt.nz'
+const PROD_HOSTNAME = 'cccv.eop.gw.govt.nz'
 
 const DEFAULT_TIMEOUT_MSECS = 10000
 const DEFAULT_CACHE_EXPIRY_SECS = 60
