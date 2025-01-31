@@ -22,7 +22,7 @@ class RainfallQueries(
     @Autowired val jdbcTemplate: JdbcTemplate
 ) {
 
-  fun rainfall(councilId: Int, from: Instant, to: Instant): String {
+  fun rainfall(councilId: Int, from: Instant, to: Instant): String? {
     //
     val fromUTC = from.atOffset(ZoneOffset.UTC)
     val toUTC = to.atOffset(ZoneOffset.UTC)
@@ -65,7 +65,7 @@ class RainfallQueries(
     return buildFeatureCollection(context, innerQuery)
   }
 
-  fun rainfallAccumulation(from: Instant, to: Instant): String {
+  fun rainfallAccumulation(from: Instant, to: Instant): String? {
     return jdbcTemplate.queryForObject(
         """
         WITH times AS (

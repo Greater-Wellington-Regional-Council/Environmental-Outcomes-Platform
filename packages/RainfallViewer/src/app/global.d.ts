@@ -38,6 +38,7 @@ interface Council {
   id: number;
   slug: string;
   name: string;
+  teReoName?: string;
   url: string;
   logo: string;
   defaultViewLocation: MapView;

@@ -1,6 +1,5 @@
 import { twMerge } from 'tailwind-merge';
 import { pick } from 'lodash';
-import React from 'react';
 
 const BLANK_CELL_CHAR = '-';
 
@@ -242,7 +241,7 @@ export default function LimitsTable({
           {showGroundWaterLimits &&
             appState.catAGroundWaterLimitsView &&
             Object.keys(appState.catAGroundWaterLimitsView).map((key) =>
-              appState.catAGroundWaterLimitsView?.[key].map((gwLimit, index) => (
+              appState.catAGroundWaterLimitsView![key].map((gwLimit, index) => (
                 <LimitRow
                   key={`A-${key}-${index}`}
                   type="Ground"
@@ -266,7 +265,7 @@ export default function LimitsTable({
           appState.catBGroundWaterLimitsView &&
           Object.keys(appState.catBGroundWaterLimitsView).map((key) => (
             <tbody key={key}>
-              {appState.catBGroundWaterLimitsView?.[key].map((gwLimit, index) => (
+              {appState.catBGroundWaterLimitsView![key].map((gwLimit, index) => (
                 <LimitRow
                   key={`B-${key}-${index}`}
                   type="Ground"
@@ -290,7 +289,7 @@ export default function LimitsTable({
           appState.catCGroundWaterLimitsView &&
           Object.keys(appState.catCGroundWaterLimitsView).map((key) => (
             <tbody key={key}>
-              {appState.catCGroundWaterLimitsView?.[key].map((gwLimit, index) => (
+              {appState.catCGroundWaterLimitsView![key].map((gwLimit, index) => (
                 <LimitRow
                   key={`C-${key}-${index}`}
                   type="Ground"
@@ -299,11 +298,11 @@ export default function LimitsTable({
                   hideCategory={!council.hasGroundwaterCategories}
                   {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
                   subUnitLimitRowSpan={
-                    (appState.catCGroundWaterLimitsView?.[key].length ?? 0) > 1 ? 0 : 1
+                    appState.catCGroundWaterLimitsView![key].length > 1 ? 0 : 1
                   }
                   hideSubUnitLimit={index > 0}
                   unitLimitRowSpan={
-                    (appState.catCGroundWaterLimitsView?.[key]?.length ?? 0) > 1 ? 0 : 1
+                    appState.catCGroundWaterLimitsView![key].length > 1 ? 0 : 1
                   }
                   hideUnitLimit={index > 0}
                 />

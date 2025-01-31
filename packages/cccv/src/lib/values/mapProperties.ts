@@ -5,7 +5,7 @@ export const MAP_PROPERTIES  = {
     'tangataWhenua': {
         'fill': {
             'fill-color': 'red',
-            'fill-opacity': 0.6,
+            'fill-opacity': 1.0,
             'fill-outline-color': "black",
         } as MapPaintProperties
     },
@@ -19,14 +19,14 @@ export const MAP_PROPERTIES  = {
     'defaultSelect': {
         'fill': {
             'fill-color': "green",
-            'fill-opacity': 0.8,
+            'fill-opacity': 1.0,
             "fill-outline-color": "black",
         } as MapPaintProperties
     },
     'currentFMU': {
         'fill': {
             'fill-color': colors.castlepoint,
-            'fill-opacity': 0.6,
+            'fill-opacity': 0.2,
             "fill-outline-color": "black",
         } as MapPaintProperties
     },
@@ -44,7 +44,7 @@ export const MAP_PROPERTIES  = {
     'feature': {
         'fill': {
             'fill-color': "green",
-            'fill-opacity': 0.8,
+            'fill-opacity': 1.0,
             "fill-outline-color": "black",
         } as MapPaintProperties
     },
