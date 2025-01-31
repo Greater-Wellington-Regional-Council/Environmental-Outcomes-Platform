@@ -2,7 +2,7 @@ import {determineBackendUri} from "@lib/api"
 
 describe('connect to API', () => {
   it('should return the correct API URL for the production environment', () => {
-    expect(determineBackendUri('plan-limits.eop.gw.govt.nz')).toBe('https://data.eop.gw.govt.nz')
+    expect(determineBackendUri('cccv.eop.gw.govt.nz')).toBe('https://data.eop.gw.govt.nz')
   })
 
   it('should return the correct API URL for the staging environment', () => {
