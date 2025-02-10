@@ -64,7 +64,7 @@ function mapFeatureLayer<T extends Identifyable>(
   collection: T[],
 ) {
   const featureLayers = mapFeatureLayers<T>(features, layerName, collection)
-  return featureLayers[layerName === "surfaceWaterSubUnitLimits" ? featureLayers.length - 1 : 0];
+  return featureLayers[["surfaceWaterSubUnitLimits", "flowLimits"].includes(layerName) ? featureLayers.length - 1 : 0];
 }
 
 function mapAllFeatures(
