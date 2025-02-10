@@ -64,7 +64,14 @@ function mapFeatureLayer<T extends Identifyable>(
   collection: T[],
 ) {
   const featureLayers = mapFeatureLayers<T>(features, layerName, collection)
-  return featureLayers[["surfaceWaterSubUnitLimits", "flowLimits"].includes(layerName) ? featureLayers.length - 1 : 0];
+  return layerName === "flowLimits"
+  ? featureLayers
+      .filter(layer => "minimumFlow" in layer) // Ensure the property exists
+      .reduce((minLayer, layer) => 
+        layer.minimumFlow < minLayer.minimumFlow ? layer : minLayer, 
+        featureLayers[0] // Use the first item as a fallback
+      )
+  : featureLayers[layerName === "surfaceWaterSubUnitLimits" ? featureLayers.length - 1 : 0];
 }
 
 function mapAllFeatures(
