@@ -76,26 +76,48 @@ const BulletList = ({items}: { items: string[] }) => {
     )
 }
 
-const Footer = ({ freshwaterManagementUnit  }: FmuFullDetailsWithMap) => (
-    /* Footer */
-    <View style={tw('absolute bottom-0 left-0 right-0 flex flex-row justify-between items-center m-4')}
-          fixed>
-        <Text style={tw('text-xs')}>{new Date().toLocaleDateString('en-US', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-        })}</Text>
-        <Text
-            style={tw('text-xs')}
-            // Only display the FMU name in the footer on the first page
-            render={({pageNumber}) => pageNumber > 1 ? `CCCV details for ${freshwaterManagementUnit.fmuName1}` : ''}
-        />
-        <Text
-            style={tw('text-xs')}
-            render={({pageNumber, totalPages}) => `Page ${pageNumber} of ${totalPages}`}
-        />
+const Footer: React.FC<{ freshwaterManagementUnit: FmuFullDetailsWithMap["freshwaterManagementUnit"] }> = ({ freshwaterManagementUnit }) => (
+  <View
+    style={{
+      position: "absolute",
+      bottom: 10,
+      left: 0,
+      right: 0,
+      width: "100%",
+      padding: 10,
+    }}
+    fixed
+  >
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+      }}
+    >
+      <Text style={tw("text-xs")}>
+        {new Date().toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}
+      </Text>
+      <Text
+        style={{ ...tw("text-source-sans-3"), fontSize: 8, color: "#000", textAlign: "right", opacity: 0.8 }}
+        render={({ pageNumber }) =>
+          pageNumber > 1 ? `CCCV Details for ${freshwaterManagementUnit.fmuName1}`: ``
+        }
+      />
+      <Text
+        style={{ ...tw("text-source-sans-3"), fontSize: 8, color: "#000", textAlign: "right", opacity: 0.8 }}
+        render={({ pageNumber, totalPages }) =>
+          `Page ${pageNumber} of ${totalPages}`
+        }
+      />
     </View>
-)
+  </View>
+);
 
 const MapImage: React.FC<{ src: string, width?: string }> = ({ src, width }) => {
     return (
@@ -165,7 +187,7 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
                 </View>
 
                 {/* VPO */}
-                {vpoSafe && <View style={[tw("mb-6"), { width: '100%' }]} wrap={false}>
+                {vpoSafe && <View style={[tw("mb-6"), { width: '100%' }]} wrap={true}>
                     <Text style={tw("h2 mb-2")}>Freshwater Values, Priorities, and Outcomes</Text>
                     <Text style={tw("body")}>{rPDFMarkup(makeSafe(vpoSafe ?? ''))}</Text>
                 </View>}
