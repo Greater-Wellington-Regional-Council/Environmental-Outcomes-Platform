@@ -101,4 +101,11 @@ addressfinder:
     secret: "${CONFIG_ADDRESSFINDER_API_SECRET:}"
     base-url: "${CONFIG_ADDRESSFINDER_BASE_URL:https://api.addressfinder.io/api/nz/address}"
 
+freshwater:
+  management:
+    units:
+      sources:
+        - name: "arcgis"
+          urls:
+            - "https://mapping.gw.govt.nz/arcgis/rest/services/GW/Ruamahanga_Whaitua_FMU_Objectives_V1/FeatureServer&f=geojson"
 

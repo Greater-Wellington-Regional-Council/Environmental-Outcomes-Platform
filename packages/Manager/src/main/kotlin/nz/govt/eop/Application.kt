@@ -1,10 +1,7 @@
 package nz.govt.eop
 
 import com.fasterxml.jackson.core.StreamReadConstraints
-import java.nio.file.Files
-import java.util.*
-import kotlin.io.path.pathString
-import kotlin.io.path.writeBytes
+import nz.govt.eop.utils.UrlBasedDataSources
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -13,7 +10,6 @@ import org.springframework.boot.runApplication
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.kafka.annotation.EnableKafka
@@ -22,22 +18,21 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
+import java.nio.file.Files
+import java.util.*
+import kotlin.io.path.pathString
+import kotlin.io.path.writeBytes
 
-@Configuration
 @ConfigurationProperties(prefix = "tangata.whenua.sites")
-class TangataWhenuaSitesSources {
-  lateinit var sources: List<Source>
+class TangataWhenuaSitesDataSources : UrlBasedDataSources<UrlBasedDataSources.Source>()
 
-  class Source {
-    lateinit var name: String
-    lateinit var urls: List<String>
-  }
-}
+@ConfigurationProperties(prefix = "freshwater.management.units")
+class FreshwaterManagementUnitsDataSources : UrlBasedDataSources<UrlBasedDataSources.Source>()
 
 @EnableKafka
 @EnableCaching
 @SpringBootApplication
-@EnableConfigurationProperties(TangataWhenuaSitesSources::class)
+@EnableConfigurationProperties(TangataWhenuaSitesDataSources::class, FreshwaterManagementUnitsDataSources::class)
 class Application {
   @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
 }

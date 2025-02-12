@@ -1,8 +1,23 @@
 {
   "properties": [
     {
+      "name": "freshwater.management.units",
+      "type": "java.util.List<nz.govt.eop.UrlBasedDataSources.Source>",
+      "description": "List of Freshwater Managerment Unit sources, each containing a name and a list of URLs."
+    },
+    {
+      "name": "freshwater.management.units.sources[].name",
+      "type": "java.lang.String",
+      "description": "The name of the Freshwater Management Unit source."
+    },
+    {
+      "name": "freshwater.management.units.sources[].urls",
+      "type": "java.util.List<java.lang.String>",
+      "description": "List of URLs for each Freshwater Management Unit source."
+    },
+    {
       "name": "tangata.whenua.sites",
-      "type": "java.util.List<nz.govt.eop.TangataWhenuaSitesSources.Source>",
+      "type": "java.util.List<nz.govt.eop.UrlBasedDataSources.Source>",
       "description": "List of Tangata Whenua Site sources, each containing a name and a list of URLs."
     },
     {
