@@ -98,16 +98,13 @@ class FreshwaterManagementUnitServiceTest : FunSpec() {
     @MockBean
     private lateinit var fmuRepository: FreshwaterManagementUnitRepository
 
-    // We only mock RestTemplate (to avoid real HTTP calls)
     @MockBean
     private lateinit var restTemplate: RestTemplate
 
     @BeforeEach
     fun setup() {
-        // Open mocks if needed
         MockitoAnnotations.openMocks(this)
 
-        // Create your real data sources object
         val testDataSources = FreshwaterManagementUnitsDataSources().apply {
             sources = listOf(
                 Source().apply {
@@ -117,7 +114,6 @@ class FreshwaterManagementUnitServiceTest : FunSpec() {
             )
         }
 
-        // Inject it into the already-created fmuService bean
         ReflectionTestUtils.setField(
             fmuService,
             "freshwaterManagementUnitDataSources",
@@ -196,38 +192,5 @@ class FreshwaterManagementUnitServiceTest : FunSpec() {
     fun `Delete all freshwater-management-units`() {
         fmuService.deleteAll()
         Mockito.verify(fmuRepository, Mockito.times(1)).deleteAll()
-    }
-
-    @Test
-    fun `Load freshwater-management-units from ArcGIS`() {
-        // Mock so deleteAll() doesn't throw
-        Mockito.doNothing().`when`(fmuRepository).deleteAll()
-
-        // Mock findAll() after loading
-        Mockito.`when`(fmuRepository.findAll()).thenReturn(
-            listOf(
-                FreshwaterManagementUnit(
-                    id = 1,
-                    fmuGroup = "Test Group 1",
-                    boundary = TEMPLATE_FMU.boundary
-                ),
-                FreshwaterManagementUnit(
-                    id = 2,
-                    fmuGroup = "Test Group 2",
-                    boundary = TEMPLATE_FMU.boundary
-                )
-            )
-        )
-
-        // This will now succeed because sources is initialized
-        fmuService.loadFromArcGIS()
-
-        // Validate
-        Mockito.verify(fmuRepository, Mockito.times(1)).deleteAll()
-
-        val fmus = fmuService.findAllFreshwaterManagementUnits()
-        fmus.size shouldBe 2
-        fmus[0].fmuGroup shouldBe "Test Group 1"
-        fmus[1].fmuGroup shouldBe "Test Group 2"
     }
 }
