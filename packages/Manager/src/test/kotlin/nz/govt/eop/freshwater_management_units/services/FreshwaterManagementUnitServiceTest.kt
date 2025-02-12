@@ -167,4 +167,28 @@ class FreshwaterManagementUnitServiceTest : FunSpec() {
             org.geojson.FeatureCollection::class.java
         )
     }
+
+    @Test
+    fun `Don't delete existing if nothing found in ArcGIS`() {
+        Mockito.doNothing().`when`(fmuRepository).deleteAll()
+
+        val mockFeatureCollection = org.geojson.FeatureCollection()
+
+        Mockito.`when`(
+            restTemplate.getForEntity(
+                ArgumentMatchers.any(java.net.URI::class.java),
+                ArgumentMatchers.eq(org.geojson.FeatureCollection::class.java)
+            )
+        ).thenReturn(
+            org.springframework.http.ResponseEntity.ok(mockFeatureCollection)
+        )
+
+        fmuService.loadFromArcGIS()
+
+        Mockito.verify(fmuRepository, Mockito.never()).deleteAll()
+        Mockito.verify(restTemplate).getForEntity(
+            java.net.URI.create("http://test.url1"),
+            org.geojson.FeatureCollection::class.java
+        )
+    }
 }

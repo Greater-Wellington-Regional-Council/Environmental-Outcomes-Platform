@@ -33,7 +33,6 @@ constructor(
 
     @Transactional
     fun loadFromArcGIS() {
-        deleteAll()
         logger.info("Loading Freshwater Management Units from ArcGIS sources")
 
         freshwaterManagementUnitsDataSources.sources.forEach { source ->
@@ -42,11 +41,21 @@ constructor(
     }
 
     fun fetchAndSave(url: String, sourceName: String? = null) {
+        var deleted = false
+
         logger.info { "Fetching and saving FMUs from $url" }
+
         fetchCache
             .computeIfAbsent(url) { fetchFeatureCollection(URI.create(it)) }
             .features
             .forEach { feature ->
+
+                if (!deleted) {
+                    // Delete all FMUs before saving new ones
+                    repository.deleteAll()
+                    deleted = true
+                }
+
                 val objectMapper = ObjectMapper()
 
                 val gid = (feature.properties["gid"] as? Number)?.toInt()
