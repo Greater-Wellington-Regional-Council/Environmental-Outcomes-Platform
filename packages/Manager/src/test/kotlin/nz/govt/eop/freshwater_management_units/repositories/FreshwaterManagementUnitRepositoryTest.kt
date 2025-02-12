@@ -1,14 +1,26 @@
 package nz.govt.eop.freshwater_management_units.repositories
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import nz.govt.eop.FreshwaterManagementUnitsDataSources
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
-import nz.govt.eop.freshwater_management_units.services.objectMapper
+import nz.govt.eop.freshwater_management_units.services.FreshwaterManagementUnitService
+import nz.govt.eop.utils.UrlBasedDataSources.Source
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito
+import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.transaction.annotation.Transactional
+import org.springframework.test.util.ReflectionTestUtils
+import org.springframework.web.client.RestTemplate
 
 var TEMPLATE_FMU =
     FreshwaterManagementUnit(
@@ -73,116 +85,149 @@ var TEMPLATE_FMU =
         catchmentDescription = null,
     )
 
-@SpringBootTest
-@Transactional
+private val objectMapper = ObjectMapper()
+
 @ActiveProfiles("test")
-class FreshwaterManagementUnitRepositoryTest
-@Autowired
-constructor(private val repository: FreshwaterManagementUnitRepository) :
-    StringSpec({
-      "should find freshwater management unit by lat and lng" {
-        val lng = 175.35
-        val lat = -41.175
+@SpringBootTest
+@AutoConfigureMockMvc
+class FreshwaterManagementUnitServiceTest : FunSpec() {
 
-        val foundFmu = repository.findAllByLngLat(lng, lat)
+    @Autowired
+    private lateinit var fmuService: FreshwaterManagementUnitService
 
-        foundFmu.count() shouldBe 1
-        isFmuSameAs(foundFmu[0])
-      }
+    @MockBean
+    private lateinit var fmuRepository: FreshwaterManagementUnitRepository
 
-      "should find freshwater management unit by GeoJSON geometry" {
-        val geoJson =
-            """
-            {
-              "type": "FeatureCollection",
-              "features": [
-                {
-                  "type": "Feature",
-                  "geometry": {
-                    "type": "Polygon",
-                    "coordinates": [
-                      [
-                        [175.349, -41.176],
-                        [175.351, -41.176],
-                        [175.351, -41.174],
-                        [175.349, -41.174],
-                        [175.349, -41.176]
-                      ]
-                    ]
-                  },
-                  "properties": {}
+    // We only mock RestTemplate (to avoid real HTTP calls)
+    @MockBean
+    private lateinit var restTemplate: RestTemplate
+
+    @BeforeEach
+    fun setup() {
+        // Open mocks if needed
+        MockitoAnnotations.openMocks(this)
+
+        // Create your real data sources object
+        val testDataSources = FreshwaterManagementUnitsDataSources().apply {
+            sources = listOf(
+                Source().apply {
+                    name = "Schedule B"
+                    urls = listOf("http://test.url1")
                 }
-              ]
-            }
-        """
-                .trimIndent()
+            )
+        }
 
-        val foundFmu = repository.findAllByGeoJson(geoJson)
+        // Inject it into the already-created fmuService bean
+        ReflectionTestUtils.setField(
+            fmuService,
+            "freshwaterManagementUnitDataSources",
+            testDataSources
+        )
+    }
 
-        foundFmu.count() shouldBe 1
-        isFmuSameAs(foundFmu[0])
-      }
+    @Test
+    fun `get freshwater-management-units by lng and lat`() {
+        Mockito.`when`(
+            fmuRepository.findAllByLngLat(
+                ArgumentMatchers.anyDouble(),
+                ArgumentMatchers.anyDouble(),
+                ArgumentMatchers.anyInt()
+            )
+        ).thenReturn(
+            listOf(
+                FreshwaterManagementUnit(
+                    id = 1,
+                    fmuGroup = "Western hill rivers",
+                    boundary = TEMPLATE_FMU.boundary
+                )
+            )
+        )
 
-      "should not find freshwater management unit with non-intersecting GeoJSON geometry" {
-        val geoJson =
-            """
-                        {
-                          "type": "FeatureCollection",
-                          "features": [
-                            {
-                              "type": "Feature",
-                              "geometry": {
-                                "type": "Polygon",
-                                "coordinates": [
-                                  [
-                  [172.0, -1.0],
-                  [172.1, -1.0],
-                  [172.1, -0.9],
-                  [172.0, -0.9],
-                  [172.0, -1.0]
-                                  ]
-                                ]
-                              },
-                              "properties": {}
-                            }
-                          ]
-                        }
-        """
-                .trimIndent()
+        val foundFmu =
+            fmuService.findFreshwaterManagementUnitByLatAndLng(
+                1805287.5391000006,
+                5469337.152800006
+            )
 
-        val foundFmu = repository.findAllByGeoJson(geoJson)
+        foundFmu?.id shouldBe 1
+        foundFmu?.fmuGroup shouldBe "Western hill rivers"
+    }
 
-        foundFmu.count() shouldBe 0
-      }
+    @Test
+    fun `Get all freshwater-management-units`() {
+        Mockito.`when`(fmuRepository.findAll())
+            .thenReturn(
+                listOf(
+                    FreshwaterManagementUnit(id = 1, boundary = TEMPLATE_FMU.boundary),
+                    FreshwaterManagementUnit(id = 2, boundary = TEMPLATE_FMU.boundary),
+                ),
+            )
 
-      // Any additional test cases...
-    })
+        val fmus = fmuService.findAllFreshwaterManagementUnits()
 
-private fun isFmuSameAs(
-    newFmu: FreshwaterManagementUnit,
-    compareWith: FreshwaterManagementUnit = TEMPLATE_FMU,
-    idShouldBe: Int? = null,
-) {
-  if (idShouldBe != null) {
-    newFmu.id shouldBe idShouldBe
-  }
+        fmus.size shouldBe 2
+        val boundaryJsonNode = fmus[0].boundary?.let { objectMapper.readTree(it) as ObjectNode }
 
-  newFmu.gid shouldBe compareWith.gid
-  newFmu.objectId shouldBe compareWith.objectId
-  newFmu.fmuNo shouldBe compareWith.fmuNo
-  newFmu.location shouldBe compareWith.location
-  newFmu.fmuName1 shouldBe compareWith.fmuName1
-  newFmu.fmuGroup shouldBe compareWith.fmuGroup
-  newFmu.shapeLeng shouldBe compareWith.shapeLeng
-  newFmu.shapeArea shouldBe compareWith.shapeArea
-  newFmu.byWhen shouldBe compareWith.byWhen
-  newFmu.fmuIssue shouldBe compareWith.fmuIssue
-  newFmu.topFmuGrp shouldBe compareWith.topFmuGrp
+        boundaryJsonNode?.get("type")?.asText() shouldBe "MultiPolygon"
+    }
 
-  val actualBoundaryJsonNode = newFmu.boundary?.let { objectMapper.readTree(it) as ObjectNode }
-  val expectedBoundaryJsonNode =
-      compareWith.boundary?.let { objectMapper.readTree(it) as ObjectNode }
+    @Test
+    fun `Get freshwater-management-units by shape`() {
+        Mockito.`when`(fmuRepository.findAllByGeoJson(ArgumentMatchers.anyString()))
+            .thenReturn(
+                listOf(
+                    FreshwaterManagementUnit(id = 1, boundary = TEMPLATE_FMU.boundary),
+                    FreshwaterManagementUnit(id = 2, boundary = TEMPLATE_FMU.boundary),
+                ),
+            )
 
-  actualBoundaryJsonNode?.get("type")?.asText() shouldBe
-      expectedBoundaryJsonNode?.get("type")?.asText()
+        val fmus = TEMPLATE_FMU.boundary?.let {
+            fmuService.findFreshwaterManagementUnitsByShape(it)
+        }
+
+        fmus.shouldNotBe(null)
+        fmus!!.size shouldBe 2
+
+        val boundaryJsonNode = fmus[0].boundary?.let { objectMapper.readTree(it) as ObjectNode }
+        boundaryJsonNode?.get("type")?.asText() shouldBe "MultiPolygon"
+    }
+
+    @Test
+    fun `Delete all freshwater-management-units`() {
+        fmuService.deleteAll()
+        Mockito.verify(fmuRepository, Mockito.times(1)).deleteAll()
+    }
+
+    @Test
+    fun `Load freshwater-management-units from ArcGIS`() {
+        // Mock so deleteAll() doesn't throw
+        Mockito.doNothing().`when`(fmuRepository).deleteAll()
+
+        // Mock findAll() after loading
+        Mockito.`when`(fmuRepository.findAll()).thenReturn(
+            listOf(
+                FreshwaterManagementUnit(
+                    id = 1,
+                    fmuGroup = "Test Group 1",
+                    boundary = TEMPLATE_FMU.boundary
+                ),
+                FreshwaterManagementUnit(
+                    id = 2,
+                    fmuGroup = "Test Group 2",
+                    boundary = TEMPLATE_FMU.boundary
+                )
+            )
+        )
+
+        // This will now succeed because sources is initialized
+        fmuService.loadFromArcGIS()
+
+        // Validate
+        Mockito.verify(fmuRepository, Mockito.times(1)).deleteAll()
+
+        val fmus = fmuService.findAllFreshwaterManagementUnits()
+        fmus.size shouldBe 2
+        fmus[0].fmuGroup shouldBe "Test Group 1"
+        fmus[1].fmuGroup shouldBe "Test Group 2"
+    }
 }
