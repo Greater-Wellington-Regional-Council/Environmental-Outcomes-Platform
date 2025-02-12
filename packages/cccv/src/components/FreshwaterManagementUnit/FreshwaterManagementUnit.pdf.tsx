@@ -163,9 +163,9 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
                 {/* Header */}
                 <View style={tw("bg-nui -m-4 p-4 mb-0 text-white flex flex-row justify-between items-start")}>
                     <View style={tw("flex flex-col")}>
-                        <Text style={tw("h1 mb-0")}>Freshwater Management Unit</Text>
+                        <Text style={tw("h1 mb-0")}>Freshwater Management</Text>
                         <Text style={tw("h2 mb-4")}>Catchment context, challenges and values (CCCV)</Text>
-                        <Text style={tw("body")}>Find information useful for creating a Freshwater Farm Plan, such
+                        <Text style={tw("body")}>Find information useful for creating a Farm Environment Plan, such
                             as contaminant goals, sites of significance, and implementation ideas for your catchment area.</Text>
                     </View>
                     <Image style={[{width: 120, height: 'auto'}, tw("mr-4")]} source={gwrcLogo}/>
