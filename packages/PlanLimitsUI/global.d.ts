@@ -5,17 +5,17 @@ declare global {
     [index: string]: T;
   }
 
-  interface link {
+interface link {
     title: string;
     url: string;
-  }
+}
 
-  interface links {
+interface links {
     text: string;
     url: string;
-  }
+}
 
-  interface Council {
+interface Council {
     id: number;
     slug: string;
     name: string;
@@ -25,59 +25,85 @@ declare global {
     footerLinks: links[];
     hasGroundwaterCategories: boolean;
     unitTypes: {
-      flow: string;
-      surface: string;
-      ground: string;
+        flow: string;
+        surface: string;
+        ground: string;
     };
     labels: {
-      headingText: string;
-      surfaceWaterParent: string;
-      surfaceWaterChild: string;
-      region: string;
-      surfaceWaterParentLimit: string;
-      surfaceWaterChildLimit: string;
-      groundwaterLimit: string;
+        headingText: string;
+        surfaceWaterParent: string;
+        surfaceWaterChild: string;
+        region: string;
+        surfaceWaterParentLimit: string;
+        surfaceWaterChildLimit: string;
+        groundwaterLimit: string;
     };
     regionOverrides: {
-      sourceId: string;
-      swCMU: React.Element | string;
-      swCMSU: React.Element | string;
-      gwCMU: React.Element | string;
-      flowManagementSite: React.Element | string;
-      flowLimit: React.Element | string;
-      limitsTableFooter: React.Element | string;
-      groundwaterLimit: React.Element | string;
-      surfaceWaterLimit: React.Element | string;
+        sourceId: string;
+        swCMU: React.Element | string;
+        swCMSU: React.Element | string;
+        gwCMU: React.Element | string;
+        flowManagementSite: React.Element | string;
+        flowLimit: React.Element | string;
+        limitsTableFooter: React.Element | string;
+        groundwaterLimit: React.Element | string;
+        surfaceWaterLimit: React.Element | string;
     }[];
     usageDisplayGroups: UsageDisplayGroup[];
-  }
+}
 
-  interface UsageDisplayGroup {
+interface UsageDisplayGroup {
     name: string;
     hideLabel: boolean;
     showLegend: boolean;
     areaIds: string[];
-  }
+}
 
-  interface Usage {
+interface Usage {
     date: string;
     areaId: string;
     allocationPlan: number | null;
     allocationDaily: number | null;
     allocationDailyUsed: number | null;
     dailyUsage: number | null;
-  }
+}
 
-  interface Plan {
+interface GroundwaterAllocation  extends Record<string, DataValueType> {
+  month_start: Date;
+  area_id: string;
+  plan_region_id: number;
+  category_b: number;
+  category_bc: number;
+  category_c: number;
+  total_allocation: number;
+  allocation_limit: number;
+  pnrp_allocation_percentage: number;
+  name: string;
+}
+
+interface SurfaceWaterAllocation  extends Record<string, DataValueType> {
+  month_start: Date,
+  area_id: string,
+  plan_region_id: number,
+  category_a: number,
+  category_b: number,
+  surface_take: number,
+  total_allocation: number,
+  allocation_limit: number,
+  pnrp_allocation_percentage: number,
+  name: string
+}
+
+interface Plan {
     id: number;
     councilId: number;
     defaultSurfaceWaterLimit: string;
     defaultGroundwaterLimit: string;
     defaultFlowManagementSite: string;
     defaultFlowManagementLimit: string;
-  }
+}
 
-  interface PlanRegion {
+interface PlanRegion {
     id: number;
     sourceId: string;
     planId: number;
@@ -87,9 +113,9 @@ declare global {
     defaultGroundwaterLimit: string;
     defaultFlowManagementSite: string;
     defaultFlowManagementLimit: string;
-  }
+}
 
-  interface SurfaceWaterLimit {
+interface SurfaceWaterLimit {
     id: number;
     sourceId: string;
     name: string;
@@ -97,9 +123,9 @@ declare global {
     parentSurfaceWaterLimitId: number;
     allocationLimit: number;
     allocationAmount: number;
-  }
+}
 
-  interface GroundWaterLimit {
+interface GroundWaterLimit {
     id: number;
     limitId: number;
     sourceId: string;
@@ -110,36 +136,36 @@ declare global {
     depth: string;
     category: string;
     depletionLimitId: number;
-  }
+}
 
-  interface FlowMeasurementSite {
+interface FlowMeasurementSite {
     id: number;
     name: string;
-  }
+}
 
-  interface FlowLimit {
+interface FlowLimit {
     id: number;
     minimumFlow: number;
     measuredAtSiteId: number;
-  }
+}
 
-  interface PinnedLocation {
+interface PinnedLocation {
     longitude: number;
     latitude: number;
-  }
+}
 
-  interface ViewLocation {
+interface ViewLocation {
     longitude: number;
     latitude: number;
     zoom: number;
     srid?: number | null;
     description?: string;
     geometry?: Feature;
-  }
+}
 
-  type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
+type WaterTakeFilter = 'Surface' | 'Ground' | 'Combined';
 
-  interface AllPlanData {
+interface AllPlanData {
     plan: Plan;
     councils: Council[];
     planRegions: PlanRegion[];
@@ -148,17 +174,17 @@ declare global {
     groundWaterLimits: GroundWaterLimit[];
     flowLimits: FlowLimit[];
     flowMeasurementSites: FlowMeasurementSite[];
-  }
+}
 
-  interface ActiveLimits {
+interface ActiveLimits {
     planRegion: PlanRegion | null;
     flowLimit: FlowLimit | null;
     surfaceWaterUnitLimit: SurfaceWaterLimit | null;
     surfaceWaterSubUnitLimit: SurfaceWaterLimit | null;
     groundWaterLimits: GroundWaterLimit[];
-  }
+}
 
-  interface AppState extends ActiveLimits {
+interface AppState extends ActiveLimits {
     flowSite: FlowMeasurementSite | null;
     groundWaterZones: Array<number>;
     groundWaterZoneName?: string;
@@ -166,62 +192,61 @@ declare global {
     catAGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
     catBGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
     catCGroundWaterLimitsView?: GroupedGroundwaterLimitViews;
-  }
+}
 
-  type GroupedGroundwaterLimitViews = Dictionary<GroundwaterLimitView[]>;
+type GroupedGroundwaterLimitViews = Dictionary<GroundwaterLimitView[]>;
 
-  interface LimitView {
+interface LimitView {
     limit?: number;
     allocated?: number;
     allocatedPercent?: number;
     overrideText?: string;
     limitToDisplay?: string;
     allocatedToDisplay?: string;
-  }
+}
 
-  interface SurfaceWaterLimitView {
+interface SurfaceWaterLimitView {
     unitLimitView: LimitView;
     subUnitLimitView: LimitView;
-  }
+}
 
-  interface GroundwaterLimitView {
+interface GroundwaterLimitView {
     groundWaterLimit: GroundWaterLimit;
     depletesFromUnitLimit?: SurfaceWaterLimit;
     depletesFromSubunitLimit?: SurfaceWaterLimit;
     unitLimitView: LimitView;
     subUnitLimitView: LimitView;
-  }
+}
 
-  interface HeatmapData {
+interface HeatmapData {
     id: string;
     data: HeatmapDataItem[];
-  }
+}
 
-  interface HeatmapDataItem {
+interface HeatmapDataItem {
     x: string;
     y: number | null;
-  }
+}
 
-  interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
+interface WeeklyUsageHeatmapDataItem extends HeatmapDataItem {
     endOfWeek: Date;
     dailyData: ParsedUsage[];
-  }
+}
 
-  interface PopulatedDailyUsageHeatmapDataItem extends HeatmapDataItem {
+interface PopulatedDailyUsageHeatmapDataItem extends HeatmapDataItem {
     date: Date;
     usage: number;
     allocation: number;
-  }
+}
 
-  interface MissingDailyUsageHeatmapDataItem {
+interface MissingDailyUsageHeatmapDataItem {
     date: Date;
     usage: number | null;
     allocation: number | null;
     x: string;
     y: number | null;
-  }
+}
 
-  type DailyUsageHeatmapDataItem =
+type DailyUsageHeatmapDataItem =
     | PopulatedDailyUsageHeatmapDataItem
     | EmptyDailyUsageHeatmapDataItem;
-}

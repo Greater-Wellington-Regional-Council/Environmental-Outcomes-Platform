@@ -11,12 +11,14 @@ import Map, {
   type ViewStateChangeEvent,
   type MapLayerMouseEvent,
 } from 'react-map-gl/maplibre';
-import type { PlanLimitsData } from '../../api';
 import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/RoundedButton';
 import RiverTilesSource from './RiverTilesSource';
 import flowMarkerImage from '../../images/marker_flow.svg';
 import { MapboxGeoJSONFeature } from 'react-map-gl';
+
+import { MapboxGeoJSONFeature } from 'react-map-gl';
+import { PlanLimitsData } from '@src/api';
 
 const LINZ_API_KEY = import.meta.env.VITE_LINZ_API_KEY;
 const EMPTY_GEO_JSON_DATA = {
