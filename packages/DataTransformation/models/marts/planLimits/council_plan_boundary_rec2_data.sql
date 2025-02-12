@@ -1,3 +1,8 @@
+{{ config(
+    materialized = 'table'
+) }}
+
+
 WITH RECURSIVE
 input AS (
   SELECT
