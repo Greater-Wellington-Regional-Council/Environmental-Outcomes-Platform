@@ -5,7 +5,7 @@ export const MAP_PROPERTIES  = {
     'tangataWhenua': {
         'fill': {
             'fill-color': 'red',
-            'fill-opacity': 1.0,
+            'fill-opacity': 0.5,
             'fill-outline-color': "black",
         } as MapPaintProperties
     },
@@ -44,7 +44,7 @@ export const MAP_PROPERTIES  = {
     'feature': {
         'fill': {
             'fill-color': "green",
-            'fill-opacity': 1.0,
+            'fill-opacity': 0.6,
             "fill-outline-color": "black",
         } as MapPaintProperties
     },
