@@ -103,7 +103,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
             )}
 
             {/* Scrollable content area */}
-            <div className="relative z-30 overflow-auto h-full">
+            <div className="relative z-30 min-h-full">
                 {children}
             </div>
         </div>

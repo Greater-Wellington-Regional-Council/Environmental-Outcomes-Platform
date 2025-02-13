@@ -86,7 +86,7 @@ export default function Limits() {
       </nav>
 
       <main role="application">
-        <div className="map-panel relative">
+        <div className="map-panel relative h-full">
           {planLimitsData.isLoaded && (
             <Map
               appState={appState}
