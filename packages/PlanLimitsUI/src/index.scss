@@ -170,7 +170,8 @@ $gapSize: 12px;
     transition: grid-column 0.5s ease-in-out;
     position: relative;
     height: fit-content;
-    order: 1;
+    width: 100%;
+    order: 1
   }
 
   .info-panel {
