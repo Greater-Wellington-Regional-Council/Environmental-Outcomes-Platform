@@ -53,7 +53,9 @@ all_hydro_ids AS (
     rv.hydro_id
   FROM rivers rv
   INNER JOIN all_hydro_ids a ON a.hydro_id = rv.next_hydro_id
-  WHERE rv.hydro_id NOT IN (SELECT excluded_hydro_id FROM excluded_hydro)
+  WHERE 
+  NOT EXISTS (SELECT 1 FROM excluded_hydro) OR
+   rv.hydro_id NOT IN (SELECT excluded_hydro_id FROM excluded_hydro where excluded_hydro.source_id = a.source_id)
 ),
 
 with_watershed_geom AS (
