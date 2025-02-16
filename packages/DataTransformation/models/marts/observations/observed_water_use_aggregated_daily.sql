@@ -3,8 +3,6 @@
 WITH observations AS (
 
   SELECT * FROM {{ ref('stg_obs_observations') }}
-  WHERE observed_at >= CURRENT_DATE - INTERVAL '372 days';
-
 ),
 
 observation_sites_measurements AS (

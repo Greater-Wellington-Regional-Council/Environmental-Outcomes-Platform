@@ -12,3 +12,4 @@ WITH source AS (
 )
 
 SELECT * FROM source
+WHERE observed_at >= CURRENT_DATE - INTERVAL '372 days';
