@@ -32,6 +32,7 @@ export interface FilterDescriptor {
   data?: Row[];
   suppressSelectAll?: boolean;
   multiSelect?: boolean;
+  useModifierKeys?: boolean;
 }
 
 export type FilterValues = {
@@ -45,7 +46,7 @@ export const FilterPanel: React.FC<{
   filters: FilterDescriptor[];
   filterValues: FilterValues;
   setFilterValues: (value: FilterValues) => void;
-  onClose?: () => void;
+  onClose?: (e?: unknown) => void;
   children?: React.ReactNode;
   label?: string;
   labelInline?: boolean;

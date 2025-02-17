@@ -7,15 +7,21 @@ const MonthYearPicker = ({
                            limitToLastMonths = 24,
                            className,
                            dataTestid,
-                           label
-}: {
+                           label,
+                           multiSelect,
+                           useModifierKeys,
+                           dateFilter,
+                         }: {
   className?: string;
   controlClassName?: string;
-  onChange: (date: Date) => void;
-  current?: Date;
+  onChange: (date: Date | Date[]) => void;
+  current?: Date[];
   limitToLastMonths?: number;
   dataTestid?: string;
   label?: string;
+  multiSelect?: boolean;
+  useModifierKeys?: boolean;
+  dateFilter?: (d: Date) => boolean;
 }) => {
   const now = new Date();
   const startDate = new Date();
@@ -50,24 +56,25 @@ const MonthYearPicker = ({
       }))
       .filter((option) => {
         const optionDate = new Date(option.year, option.month, 1);
-        return optionDate >= startDate && optionDate <= now;
+        return optionDate >= startDate && optionDate <= now && (!dateFilter || dateFilter(optionDate));
       }),
   );
 
-  const [selectedOption, setSelectedOption] = useState<{ month: number; year: number } | null>(
-    current ? { month: current.getMonth(), year: current.getFullYear() } : null,
+  const [selectedOption, setSelectedOption] = useState<Array<{ month: number; year: number }> | null>(
+    current ? current.map((d: Date) => ({ month: d.getMonth(), year: d.getFullYear() })) : null,
   );
 
   useEffect(() => {
-    setSelectedOption(current ? { month: current.getMonth(), year: current.getFullYear() } : null);
+    setSelectedOption(current ? current.map((d: Date) => ({ month: d.getMonth(), year: d.getFullYear() })) : null);
   }, [current]);
 
-  const handleSelection = (value: DropdownValueType) => {
-    const [month, year] = (value as string).split('-').map(Number);
-    const selected = { month, year };
+  const handleSelection = (value: DropdownValueType | DropdownValueType[]) => {
+    const selected = !value ? [] : [value].flat().map((v: DropdownValueType) => {
+      const [month, year] = (v as string).split('-').map(Number);
+      return { month, year };
+    }) || [];
     setSelectedOption(selected);
-    const date = new Date(year, month, 1);
-    onChange?.(date);
+    onChange?.(selected.map(v => new Date(v.year, v.month, 1)));
   };
 
   return (
@@ -75,9 +82,11 @@ const MonthYearPicker = ({
       <Dropdown
         options={options.reverse()}
         placeholder="Select Month and Year"
-        value={selectedOption ? `${selectedOption.month}-${selectedOption.year}` : null}
+        value={selectedOption ? selectedOption.map(my => `${my.month}-${my.year}`) : null}
         onChange={handleSelection}
         dataTestid={dataTestid || 'dropdown-months'}
+        multiSelect={multiSelect}
+        useModifierKeys={useModifierKeys}
         label={label}
       />
     </div>

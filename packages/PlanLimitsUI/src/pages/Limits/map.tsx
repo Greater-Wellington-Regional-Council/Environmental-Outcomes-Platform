@@ -15,7 +15,6 @@ import LayerControl from '../../components/map/LayerControl';
 import Button from '../../components/RoundedButton';
 import RiverTilesSource from './RiverTilesSource';
 import flowMarkerImage from '../../images/marker_flow.svg';
-import { MapboxGeoJSONFeature } from 'react-map-gl';
 
 import { MapboxGeoJSONFeature } from 'react-map-gl';
 import { PlanLimitsData } from '@src/api';

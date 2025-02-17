@@ -2,6 +2,7 @@ import type { FeatureCollection, Geometry } from 'geojson';
 import { useQuery } from '@tanstack/react-query';
 import { camelCase, mapKeys } from 'lodash';
 import { DataValueType } from '@components/DataTable/DataTable';
+import { minDate } from '@lib/convertDate';
 
 const REVIEW_HOST_REGEX = /.*\.amplifyapp\.com$/;
 const DEV_HOST_REGEX = /.*\.gw-eop-dev\.tech$/;
@@ -228,8 +229,8 @@ export function useWaterUseQuery(councilId: number, from: string, to: string) {
   });
 }
 
-export function useWaterAllocationQuery(councilId: number, waterType: WaterType, start_month?: Date | null) {
-  const formattedDate = startOfMonth(start_month);
+export function useWaterAllocationQuery(councilId: number, waterType: WaterType, start_month?: Array<Date> | null) {
+  const formattedDate = start_month?.map(d => startOfMonth(d))?.join(",") || startOfMonth(new Date());
   const endpoint = `/plan-limits/${waterType}-water-pnrp`;
 
   return useQuery({

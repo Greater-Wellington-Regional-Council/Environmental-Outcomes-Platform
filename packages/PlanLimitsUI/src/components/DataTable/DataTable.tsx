@@ -1,4 +1,4 @@
-import React, { useMemo, ReactNode } from 'react';
+import React, { ReactNode, useMemo, useEffect } from 'react';
 import 'react-dropdown/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
@@ -12,15 +12,13 @@ import DataCell from './DataCell';
 import { calculate } from './calculateValue';
 import { OpenSansRegularBase64 } from '@lib/fonts/OpenSansRegularBase64';
 
-import {
-  FilterDescriptor,
-  FilterPanel,
-  SELECT_ALL
-} from '@components/FilterPanel/FilterPanel';
+import { FilterDescriptor, FilterPanel, SELECT_ALL } from '@components/FilterPanel/FilterPanel';
 
 import { useFilterValues } from '@components/FilterPanel/useFilterValues';
 
 import ComplexFilter, { ComparisonOperator } from './ComplexFilter';
+import randomString from '@lib/randomeString';
+import capitalise from '@lib/capitalise';
 
 export type ColumnDescriptor = {
   name: string;
@@ -79,19 +77,25 @@ export const OuterFilter: React.FC<FilterDescriptor> = (filter: FilterDescriptor
 
   return (
     <Dropdown {...filter}
-      options={filter.options ?? []}
-      selectAll={SELECT_ALL}
-      onChange={onSelection}
-      value={filter.currentValue as string}
-      placeholder={filter.placeholder || SELECT_ALL}
-      dataTestid={`dropdown-${filter.name}`}
-      className={`bg-transparent p-4 ${filter.className}`}
-      controlClassName={`p-2`}
+              options={filter.options ?? []}
+              selectAll={SELECT_ALL}
+              onChange={onSelection}
+              value={filter.currentValue as string}
+              placeholder={filter.placeholder || SELECT_ALL}
+              dataTestid={`dropdown-${filter.name}`}
+              className={`bg-transparent p-4 ${filter.className}`}
+              controlClassName={`p-2`}
     />
   );
 };
 
 export type Row = Record<string, DataValueType>;
+
+export interface ColumnComparison {
+  unzipColumn: string;
+  keyColumn: string;
+  compareColumn: string;
+}
 
 export type DataTableProps<T extends DataValueType[][] | Record<string, DataValueType>[]> = {
   data: T;
@@ -99,6 +103,7 @@ export type DataTableProps<T extends DataValueType[][] | Record<string, DataValu
   columnGroups?: ColumnGroup[];
   innerFilters?: FilterDescriptor[];
   outerFilters?: FilterDescriptor[];
+  onClearFilters?: (e?: unknown) => void;
   options?: {
     includeTotals?: boolean;
     [key: string]: unknown;
@@ -107,13 +112,15 @@ export type DataTableProps<T extends DataValueType[][] | Record<string, DataValu
     sort?: [
       { [key: string]: 'asc' | 'desc' }
     ];
+    compareColumn?: ColumnComparison;
   };
 };
 
 const ColumnGroupHeaders: React.FC<{ columnGroups: ColumnGroup[], columns: ColumnDescriptor[] }> = ({
-                                                                                                      columnGroups,
-                                                                                                      columns,
-                                                                                                    }) => {
+    columnGroups,
+    columns,
+  }) => {
+
   let currentGroup: string | undefined = undefined;
   const headers: ReactNode[] = [];
 
@@ -146,25 +153,30 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     innerFilters = [],
     outerFilters = [],
     options = {},
+    onClearFilters = undefined,
   }: DataTableProps<T>,
 ): React.ReactElement {
 
-  const allFilters: FilterDescriptor[] = useMemo(() => [...(outerFilters || []), ...(innerFilters || [])], [innerFilters, outerFilters]);
+  const [ hideFilters, setHideFilters ] = React.useState(false);
+  const [ hideGroups, setHideGroups ] = React.useState(false);
 
+  // Gather all filter values into one object
+  // so we can catch and respond to changes in any filter
   const {
     filterValues,
     setFilterValues,
     getFilterValue,
-  } = useFilterValues(allFilters.reduce(
+  } = useFilterValues(
+    [...(outerFilters || []), ...(innerFilters || [])]
+    .reduce(
     (acc, filter) => {
       acc[filter.name] = filter.currentValue;
       return acc;
     }, {} as Record<string, unknown>),
   );
 
-  /**
-   * Normalize the data into an array of objects (Row).
-   */
+  // Normalize data to array of objects in case it has been passed as array of arrays
+  // and an array of column descriptors
   const normalizeData = (
     input: Array<Array<DataValueType>> | Array<Record<string, DataValueType>>,
     cols: ColumnDescriptor[],
@@ -186,114 +198,38 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     });
   };
 
-  const columns = useMemo(() => data?.[0] ? Object.keys(data[0]).map((colName: string) => fullColumnDescriptor(colName)) : [], [data]);
-  const column = (c: ColumnNameOrDescriptor): ColumnDescriptor => fullColumnDescriptor(c);
+  // It is possible for the normalized table to transform into a comparison across dates or another column
+  // This function does that to the normalized data
+  const dataCompared = (input: Row[], columns: ColumnComparison): [Row[], ColumnDescriptor[], ColumnDescriptor[]] => {
+    const resultMap = new Map<DataValueType, Row>();
+    let resultColumns: Array<ColumnDescriptor> = [{ ...fullColumnDescriptor(columns.keyColumn), visible: true }];
 
-  const visibleColumns = (options?.order || columns).map(c => column(c)).filter((c) => c.visible ?? true);
-  const rows: Row[] = useMemo(() => normalizeData(data, columns), [data, columns]);
+    input.forEach(({ [columns.unzipColumn]: d, [columns.keyColumn]: k, [columns.compareColumn]: v }) => {
+      const keyHeader = (d || randomString(12)).toString();
 
-  const innerFiltersWithComplex =
-    [
-      ...innerFilters,
-      {
-        name: 'complexFilter',
-        type: ComplexFilter,
-        currentValue: undefined,
-        defaultValue: undefined,
-        options: [],
-        onChange: (v: unknown) => console.log('Selected:', v),
-        data: data,
-        columns: visibleColumns,
-        valueMatchesFilter: (row: unknown, filterValue: unknown) => {
-          const values = filterValue as DataValueType[];
-          const matchValue = (row as Row)[values[0] as string] as DataValueType;
-
-          if (values[1] === '=') {
-            if (Array.isArray(values[2])) {
-              return values[2].includes(matchValue);
-            } else {
-              return matchValue === values[2];
-            }
-          }
-
-          if (values[1] === '!=') {
-            if (Array.isArray(values[2])) {
-              return !values[2].includes(matchValue);
-            } else {
-              return matchValue !== values[2];
-            }
-          }
-
-          if (!matchValue || !values[2]) return false;
-
-          if (values[1] === '>') return matchValue > values[2]!;
-          if (values[1] === '<') return matchValue < values[2]!;
-          if (values[1] === '>=') return matchValue >= values[2]!;
-          if (values[1] === '<=') return matchValue <= values[2]!;
-
-          return false;
-        }
+      if (!resultMap.has(k)) {
+        resultMap.set(k, { [columns.keyColumn]: k });
       }
-    ] as FilterDescriptor[];
 
-  const sortArray = (data: Row[], sort: [{ [key: string]: 'asc' | 'desc' }?]) => {
-    return data.sort((a, b) => {
-      for (const s of sort) {
-        if (!s) continue;
-        const key = Object.keys(s)[0];
-        const direction = s[key];
-        const aVal = a[key as keyof Row] ?? '';
-        const bVal = b[key as keyof Row] ?? '';
-        if (aVal === bVal) continue;
-        if (direction === 'asc') return aVal > bVal ? 1 : -1;
-        return aVal < bVal ? 1 : -1;
-      }
-      return 0;
+      resultMap.get(k)![keyHeader] = v;
+
+      if (!resultColumns.find((r: { name: string; }) => r.name === keyHeader))
+        resultColumns.push({ ...fullColumnDescriptor(columns.compareColumn), name: keyHeader, heading: keyHeader, visible: true });
     });
-  }
 
-  const filteredData = useMemo(() => {
-    return sortArray(
-      rows.filter((row) =>
-        innerFiltersWithComplex.every((filter) => {
-          const value = getFilterValue(filter.name);
-          if (value === undefined) return true;
-          return filter.valueMatchesFilter
-            ? filter.valueMatchesFilter(row, value)
-            : row[filter.name] === value;
-        })
-      ),
-      options.sort ?? []
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, outerFilters, innerFilters, filterValues]);
+    setHideFilters(true);
+    setHideGroups(true);
 
-  const columnAggregationFunctions = {
-    sum: (col: ColumnDescriptor): DataValueType => {
-      return filteredData
-        .reduce((total, row) => total + numValue(_.get(row, col.name)), 0)
-        .toFixed(2);
-    },
-
-    percent: (col: ColumnDescriptor): DataValueType => {
-      if (!col.formula) return '';
-      const formulaArgs = (base: ColumnDescriptor) =>
-        base.formula?.match(/\w+/g)?.slice(1) || [];
-
-      const argNames = formulaArgs(column(col));
-      const argValues = argNames.map((arg) => numValue(column(arg).total?.()) ?? 0);
-
-      return calculate(column(col), _.zipObject(argNames, argValues));
-    },
-
-    selectAndCalculate: (c: ColumnNameOrDescriptor) => {
-      const col = column(c);
-      if (col.aggregateBy === 'sum') return columnAggregationFunctions.sum(col);
-      if (col.aggregateBy === 'percent') return columnAggregationFunctions.percent(col);
-      return '';
-    },
+    return [
+      Array.from(resultMap.values()),
+      resultColumns,
+      resultColumns
+    ];
   };
 
+  // This utility function is used to create a full column descriptor
+  // from a column name and any other properties that may be defined
+  // in the columnProps array
   function fullColumnDescriptor(
     col: ColumnNameOrDescriptor | undefined,
   ): ColumnDescriptor {
@@ -344,6 +280,134 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     return base;
   }
 
+  // Use the above methods to prepare the data and columns,
+  // normalizing the data and columns, and comparing if necessary
+  const [rows, columns, visibleColumns] = useMemo(() => {
+    const columns = data?.[0] ? Object.keys(data[0]).map((colName: string) => fullColumnDescriptor(colName)) : [];
+    const normalizedData = normalizeData(data, columns);
+
+    if (options?.compare)
+      return dataCompared(normalizedData, options.compare as ColumnComparison);
+
+    setHideFilters(false);
+    setHideGroups(false);
+
+    return [normalizedData, columns, (options?.order || columns).map(c => fullColumnDescriptor(c)).filter((c) => c.visible ?? true), [columns]];
+  }, [data, options.compare, filterValues]);
+
+  // Sort the data based on the sort options
+  const sortArray = (data: Row[], sort: [{ [key: string]: 'asc' | 'desc' }?]) => {
+    return data.sort((a, b) => {
+      for (const s of sort) {
+        if (!s) continue;
+        const key = Object.keys(s)[0];
+        const direction = s[key];
+        const aVal = a[key as keyof Row] ?? '';
+        const bVal = b[key as keyof Row] ?? '';
+        if (aVal === bVal) continue;
+        if (direction === 'asc') return aVal > bVal ? 1 : -1;
+        return aVal < bVal ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  // Filter rows based on the inner filters
+  // which are displayed in the table header
+  const innerFiltersWithComplex =
+    [
+      ...innerFilters,
+      {
+        name: 'complexFilter',
+        type: ComplexFilter,
+        currentValue: undefined,
+        defaultValue: undefined,
+        options: [],
+        onChange: (v: unknown) => console.log('Selected:', v),
+        data: data,
+        columns: visibleColumns,
+        valueMatchesFilter: (row: unknown, filterValue: unknown) => {
+          const values = filterValue as DataValueType[];
+          const matchValue = (row as Row)[values[0] as string] as DataValueType;
+
+          if (values[1] === ComparisonOperator.EqualTo) {
+            if (Array.isArray(values[2])) {
+              return values[2].includes(matchValue);
+            } else {
+              return matchValue === values[2];
+            }
+          }
+
+          if (values[1] === ComparisonOperator.NotEqualTo) {
+            if (Array.isArray(values[2])) {
+              return !values[2].includes(matchValue);
+            } else {
+              return matchValue !== values[2];
+            }
+          }
+
+          if (!matchValue || !values[2]) return false;
+
+          if (values[1] === ComparisonOperator.GreaterThan) return matchValue > values[2]!;
+          if (values[1] === ComparisonOperator.LessThan) return matchValue < values[2]!;
+          if (values[1] === ComparisonOperator.GreaterThanOrEqualTo) return matchValue >= values[2]!;
+          if (values[1] === ComparisonOperator.LessThanOrEqualTo) return matchValue <= values[2]!;
+
+          return false;
+        },
+      },
+    ] as FilterDescriptor[];
+
+  const filteredData = useMemo(() => {
+    return sortArray(
+      rows.filter((row) =>
+        innerFiltersWithComplex.every((filter) => {
+          const value = getFilterValue(filter.name);
+          if (value === undefined) return true;
+          return filter.valueMatchesFilter
+            ? filter.valueMatchesFilter(row as Row, value)
+            : (row as Row)[filter.name] === value;
+        }),
+      ) as Row[],
+      options.sort ?? [],
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, outerFilters, innerFilters, filterValues]);
+
+  // Define aggregation functions for column types
+  // whose results are displayed in the footer of the table
+  // sum: sums the values in the column
+  // percent: calculates a percentage based on the formula
+  // selectAndCalculate: selects the correct aggregation function (one of the above)
+  // based on the column type
+  const columnAggregationFunctions = {
+    sum: (col: ColumnDescriptor): DataValueType => {
+      return filteredData
+        .reduce((total, row) => total + numValue(_.get(row, col.name)), 0)
+        .toFixed(2);
+    },
+
+    percent: (col: ColumnDescriptor): DataValueType => {
+      if (!col.formula) return '';
+      const formulaArgs = (base: ColumnDescriptor) =>
+        base.formula?.match(/\w+/g)?.slice(1) || [];
+
+      const argNames = formulaArgs(fullColumnDescriptor(col));
+      const argValues = argNames.map((arg) => numValue(fullColumnDescriptor(arg).total?.()) ?? 0);
+
+      return calculate(fullColumnDescriptor(col), _.zipObject(argNames, argValues));
+    },
+
+    selectAndCalculate: (c: ColumnNameOrDescriptor) => {
+      const col = fullColumnDescriptor(c);
+      if (col.aggregateBy === 'sum') return columnAggregationFunctions.sum(col);
+      if (col.aggregateBy === 'percent') return columnAggregationFunctions.percent(col);
+      return '';
+    },
+  };
+
+  // Generate a filename for the downloaded CSV or PDF file
+  // based on a queryKey property in the options object and the current date
   const queryKeyToFile = (date: Date, extension: string, prefix: string = '') => {
     const key = options?.queryKeys ? (options.queryKeys as unknown[]).map((k: unknown) => {
       if (typeof k !== 'string') {
@@ -354,20 +418,16 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     }).join('-') : '';
 
     const dateStr = date.toLocaleDateString();
-    return `${prefix ? prefix+'-' : ''}${key}-${dateStr}.${extension}`;
+    return `${prefix ? prefix + '-' : ''}${key}-${dateStr}.${extension}`;
   };
 
   const downloadCSV = () => {
-    const csvData = filteredData.map((row) => columns.map((c) => row[c.name]));
-    const csv = Papa.unparse({ fields: columns.map(c => c.name), data: csvData });
+    const csvData = filteredData.map((row) => columns.map((c) => row[typeof c === 'string' ? c : c.name]));
+    const csv = Papa.unparse({ fields: columns.map(c => typeof c === 'string' ? c : c.name), data: csvData });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
 
     saveAs(blob, queryKeyToFile(new Date(), 'csv'));
   };
-
-  function capitalize(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
 
   function printPDF() {
     const doc = new jsPDF();
@@ -381,8 +441,8 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         row[c.name]?.toLocaleString(undefined, {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
-        }) ?? ''
-      )
+        }) ?? '',
+      ),
     );
 
     const buildColumnStyles = () =>
@@ -394,7 +454,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
       }, {} as Record<number, { halign: 'right' | 'left' | 'center' }>);
 
     doc.autoTable({
-      head: [visibleColumns.map((col) => col.heading || capitalize(col.name))],
+      head: [visibleColumns.map((col) => col.heading || capitalise(col.name))],
       body: pdfData,
       styles: {
         font: 'OpenSans',
@@ -413,7 +473,8 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     <div>
       {/* Outer filters & actions (eg, water type and month) */}
       <div className="flex pt-0 mt-0 pr-4 justify-between items-end" style={{ textAlign: 'unset' }}>
-        <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues} onClose={undefined} label="Show data for:" labelInline={false}/>
+        <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues}
+                     onClose={onClearFilters} label="Show data for:" labelInline={false} />
 
         {data[0] && <div className="space-x-4 mb-4">
           <button onClick={downloadCSV}>Download</button>
@@ -424,10 +485,24 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
       {data[0] ? <table className="table-auto border-collapse w-full">
 
         <thead>
+
+        {/* Inner Filters */}
+        {!hideFilters && <tr>
+          <th colSpan={99}>
+            <FilterPanel
+              className="bg-gray-300 p-4"
+              filters={innerFiltersWithComplex}
+              filterValues={filterValues}
+              setFilterValues={setFilterValues}
+              label={`Show ${options.rowObjectNamePlural || `rows`} where:`}>
+            </FilterPanel>
+          </th>
+        </tr>}
+
         {/* Column groups */}
-        <tr>
+        {!hideGroups && <tr>
           <ColumnGroupHeaders columnGroups={columnGroups} columns={visibleColumns} />
-        </tr>
+        </tr>}
 
         {/* Column headings */}
         <tr>
@@ -439,18 +514,6 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
           ))}
         </tr>
 
-        {/* Inner Filters */}
-        <tr>
-          <th colSpan={99}>
-            <FilterPanel
-              className="bg-gray-300 p-4"
-              filters={innerFiltersWithComplex}
-              filterValues={filterValues}
-              setFilterValues={setFilterValues}
-              label={`Show ${options.rowObjectNamePlural || `rows`} where:`}>
-            </FilterPanel>
-          </th>
-        </tr>
         </thead>
 
         {/* Data */}

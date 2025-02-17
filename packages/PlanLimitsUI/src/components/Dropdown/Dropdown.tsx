@@ -28,6 +28,13 @@ interface DropdownProps {
   label?: string | undefined;
   suppressSelectAll?: boolean;
   multiSelect?: boolean;
+  /**
+   * When true and multiSelect is also true, selection uses CTRL/SHIFT logic:
+   * - SHIFT + click => Select contiguous items from last focus item
+   * - CTRL + click => Toggle clicked item in selection
+   * - Regular click => Replace selection with clicked item
+   */
+  useModifierKeys?: boolean;
 }
 
 const Dropdown: FC<DropdownProps> = ({
@@ -47,10 +54,17 @@ const Dropdown: FC<DropdownProps> = ({
                                        label,
                                        suppressSelectAll = false,
                                        multiSelect = false,
+                                       useModifierKeys = false,
                                      }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<DataValueType>('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * For SHIFT-click logic in multiSelect mode with modifier keys:
+   * This tracks the last "anchor" (or "focus") index.
+   */
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -102,31 +116,101 @@ const Dropdown: FC<DropdownProps> = ({
   };
 
   /**
-   * Toggle or select an option depending on multiSelect state.
+   * Helper: toggles optionValue in an array of selected values
    */
-  const handleOptionClick = (optionValue: DropdownValueType) => {
+  const toggleValueInArray = (
+    currentArray: DropdownValueType[],
+    optionValue: DropdownValueType
+  ) => {
+    const index = currentArray.indexOf(optionValue);
+    if (index >= 0) {
+      // Remove it
+      return [...currentArray.slice(0, index), ...currentArray.slice(index + 1)];
+    } else {
+      // Add it
+      return [...currentArray, optionValue];
+    }
+  };
+
+  /**
+   * Helper: get new selection by SHIFT-click from focusIndex => newIndex
+   */
+  const shiftRangeSelection = (
+    currentArray: DropdownValueType[],
+    focusIdx: number,
+    newIdx: number
+  ) => {
+    // We assume focusIdx/newIdx are valid array indices
+    const start = Math.min(focusIdx, newIdx);
+    const end = Math.max(focusIdx, newIdx);
+    const rangeValues = selectOptions
+      .slice(start, end + 1)
+      .map((option) => option.value);
+
+    // Union of currentArray and the new range
+    const union = new Set([...currentArray, ...rangeValues]);
+    return Array.from(union);
+  };
+
+  /**
+   * The master click handler for an option, handling shift/ctrl logic if
+   * useModifierKeys and multiSelect are both true.
+   */
+  const handleOptionClick = (
+    optionValue: DropdownValueType,
+    event: React.MouseEvent<HTMLLIElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+
     if (!multiSelect) {
+      // Single-select behavior remains the same as original
       onChange(optionValue ?? '');
       setIsOpen(false);
-    } else {
-      const currentValueArray = Array.isArray(value) ? [...value] : [];
-      const index = currentValueArray.indexOf(optionValue);
-
-      if (index >= 0) {
-        currentValueArray.splice(index, 1);
-      } else {
-        currentValueArray.push(optionValue);
-      }
-      onChange(currentValueArray);
-      // For multi-select, we often keep it open:
-      // setIsOpen(false);
+      return;
     }
+
+    // If multiSelect but no useModifierKeys, fallback to original multiSelect toggle
+    if (!useModifierKeys) {
+      const currentValueArray = Array.isArray(value) ? [...value] : [];
+      const newValueArray = toggleValueInArray(currentValueArray, optionValue);
+      onChange(newValueArray);
+      return;
+    }
+
+    // If we get here, multiSelect = true AND useModifierKeys = true
+    const { shiftKey, ctrlKey, metaKey } = event; // metaKey is for Mac "command" key
+    const currentValueArray = Array.isArray(value) ? [...value] : [];
+
+    // Find the index of the clicked item in selectOptions
+    const newIndex = selectOptions.findIndex((opt) => opt.value === optionValue);
+
+    let newSelection: DropdownValueType[];
+
+    if (shiftKey && focusIndex !== null) {
+      // SHIFT + click: select contiguous range from focusIndex to newIndex
+      newSelection = shiftRangeSelection(currentValueArray, focusIndex, newIndex);
+    } else if (shiftKey && focusIndex === null) {
+      // SHIFT + click but no focusIndex yet => treat like a single click
+      newSelection = [optionValue];
+    } else if (ctrlKey || metaKey) {
+      // CTRL or CMD + click: toggle
+      newSelection = toggleValueInArray(currentValueArray, optionValue);
+    } else {
+      // No modifier: replace selection with just this item
+      newSelection = [optionValue];
+    }
+
+    // Update selection
+    onChange(newSelection);
+
+    // Always update the focusIndex to the newly clicked item
+    setFocusIndex(newIndex);
   };
 
   /**
    * Handle free text submit:
    * In multiSelect mode, appended to array.
-   * In single-select, it becomes the single value.
+   * In single-select mode, it becomes the single value.
    */
   const handleFreeTextSubmit = () => {
     if (inputValue !== undefined && inputValue !== '') {
@@ -157,10 +241,13 @@ const Dropdown: FC<DropdownProps> = ({
             {multiSelect ? (
               Array.isArray(value) && value.length > 0 ? (
                 <span className="w-full">
-                  {selectOptions
-                    .filter((option) => value.includes(option.value))
-                    .map((option) => option.label)
-                    .join(', ')}
+                  {
+                    // Show the last selected label plus "..."
+                    selectOptions
+                      .filter((option) => value.includes(option.value))
+                      .map((option) => option.label)
+                      .at(0) + (value.length > 1 ? '...' : '')
+                  }
                 </span>
               ) : (
                 <span className={`text-nui font-light italic ${placeholderClassName}`}>
@@ -184,7 +271,7 @@ const Dropdown: FC<DropdownProps> = ({
           <div
             className={`dropdown-list-container absolute indent-0 z-10 pt-1 px-0 m-0 mt-2 rounded border border-nui bg-white ${dropdownClassName}`}
           >
-            {/* Free text box moved to the top */}
+            {/* Free text box */}
             {allowFreeText && (
               <div className="p-2 border-b border-gray-300">
                 <input
@@ -198,7 +285,7 @@ const Dropdown: FC<DropdownProps> = ({
               </div>
             )}
 
-            {/* Use max-h-64 and overflow-y-auto to avoid scrollbars when not needed */}
+            {/* Options */}
             <div className="list-options max-h-200 overflow-y-auto min-w-max">
               <ul className="m-0 p-0 w-full">
                 {selectOptions.map((option) => {
@@ -206,11 +293,15 @@ const Dropdown: FC<DropdownProps> = ({
                   return (
                     <li
                       key={`${option.value}`}
-                      className={`indent-0 m-0 pl-2 px-4 py-2 hover:bg-nui hover:text-white cursor-pointer list-none text-left
+                      className={`indent-0 m-0 pl-2 px-4 py-2 hover:bg-black hover:text-white cursor-pointer list-none text-left
                         ${selected ? 'bg-nui text-white' : ''}
                         ${optionClassName}
                       `}
-                      onClick={() => handleOptionClick(option.value)}
+                      onClick={(e) => {
+                        // Stop toggleDropdown from re-firing if we only want one click
+                        e.stopPropagation();
+                        handleOptionClick(option.value, e);
+                      }}
                       data-testid={`option-${option.label}`}
                     >
                       {option.label}

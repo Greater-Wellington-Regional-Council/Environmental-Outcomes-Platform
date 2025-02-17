@@ -18,4 +18,10 @@ export function convertDate(d: unknown | Date, orNull: boolean = false): unknown
   return orNull ? null : d;
 }
 
+export function minDate(dates: Date[]): Date | null {
+  if (dates.length === 0) return null;
+
+  return new Date(Math.min(...dates.map(date => date.getTime())));
+}
+
 export default convertDate;
