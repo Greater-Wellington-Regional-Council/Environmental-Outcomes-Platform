@@ -9,7 +9,7 @@ WITH source AS (
     updated_at
 
   FROM {{ source('public', 'observations') }}
+  WHERE observed_at >= CURRENT_DATE - INTERVAL '372 days'
 )
 
 SELECT * FROM source
-WHERE observed_at >= CURRENT_DATE - INTERVAL '372 days';
