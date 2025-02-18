@@ -1,25 +1,29 @@
+import java.io.File
+import java.io.FileReader
+import java.nio.charset.StandardCharsets
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
+import org.jooq.tools.csv.CSVReader
 import org.springframework.core.io.FileSystemResource
 import org.springframework.jdbc.datasource.SingleConnectionDataSource
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
-  id("org.springframework.boot") version "3.3.5"
+  id("org.springframework.boot") version "3.4.0"
   id("io.spring.dependency-management") version "1.1.6"
   id("com.diffplug.spotless") version "6.25.0"
   id("org.flywaydb.flyway") version "10.21.0"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
-  kotlin("jvm") version "2.0.21"
-  kotlin("plugin.spring") version "2.0.21"
+  kotlin("jvm") version "2.1.0"
+  kotlin("plugin.spring") version "2.1.0"
 }
 
 buildscript {
   repositories { mavenCentral() }
   dependencies {
     classpath("org.flywaydb:flyway-database-postgresql:10.21.0")
-    classpath("org.springframework:spring-jdbc:6.1.14")
+    classpath("org.springframework:spring-jdbc:6.2.1")
     classpath("org.postgresql:postgresql:42.6.2")
   }
 }
@@ -47,6 +51,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
@@ -61,11 +66,12 @@ dependencies {
   implementation("org.flywaydb:flyway-database-postgresql:10.21.0")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("net.javacrumbs.shedlock:shedlock-spring:5.16.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.16.0")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:6.0.2")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.0.2")
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2024.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
+  implementation("com.opencsv:opencsv:5.9")
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.2.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
@@ -209,6 +215,56 @@ tasks.register("loadSampleData") {
           it.connection.use { connection ->
             executeSqlScript(connection, FileSystemResource("./sample-data/allocation_data.sql"))
             executeSqlScript(connection, FileSystemResource("./sample-data/observation_data.sql"))
+          }
+        }
+  }
+}
+
+// import org.springframework.core.io.FileSystemResource
+//        import org.springframework.jdbc.datasource.SingleConnectionDataSource
+//        import org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScript
+//        import java.io.File
+//
+// val dbConfig = mapOf(
+//  "devUrl" to "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?:
+// "localhost"}:5432/eop_dev",
+//  "user" to "postgres",
+//  "password" to "password"
+// )
+
+tasks.register("loadSampleDataFromCSV") {
+  dependsOn("flywayMigrate")
+  doLast {
+    println("Loading Sample Data from CSV")
+
+    val csvFile = File("./sample-data/water_allocations_202412122223.csv")
+    val sqlFile = File("./sample-data/allocation_data.sql")
+
+    CSVReader(FileReader(csvFile, StandardCharsets.UTF_8)).use { reader ->
+      sqlFile.printWriter(StandardCharsets.UTF_8).use { writer ->
+        writer.println("DELETE FROM water_allocations;")
+
+        reader.readAll().drop(1).forEach { columns ->
+          val effectiveTo = if (columns[14].isEmpty()) "NULL" else "'${columns[14]}'"
+          val sql =
+              """
+                        INSERT INTO water_allocations (
+                            id, area_id, allocation_plan, ingest_id, created_at, updated_at, source_id, consent_id, status, is_metered, allocation_daily, allocation_yearly, meters, effective_from, effective_to, category
+                        ) VALUES (
+                            ${columns[0]}, '${columns[1]}', ${columns[2]}, '${columns[3]}', '${columns[4]}', '${columns[5]}', '${columns[6]}', '${columns[7]}', '${columns[8]}', ${columns[9]}, ${columns[10]}, ${columns[11]}, '${columns[12]}', '${columns[13]}', $effectiveTo, '${columns[15]}'
+                        );
+                    """
+                  .trimIndent()
+          writer.println(sql)
+        }
+      }
+    }
+
+    SingleConnectionDataSource(
+            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
+        .let {
+          it.connection.use { connection ->
+            executeSqlScript(connection, FileSystemResource(sqlFile))
           }
         }
   }
