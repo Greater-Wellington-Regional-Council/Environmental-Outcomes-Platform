@@ -67,7 +67,7 @@ dependencies {
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.0.2")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.0.2")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.3.0")
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2024.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
