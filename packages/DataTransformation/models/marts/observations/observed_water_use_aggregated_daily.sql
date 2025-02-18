@@ -3,7 +3,6 @@
 WITH observations AS (
 
   SELECT * FROM {{ ref('stg_obs_observations') }}
-
 ),
 
 observation_sites_measurements AS (
@@ -34,7 +33,6 @@ filtered_obs AS (
 
   WHERE
     osm.measurement_name IN ('Water Meter Reading', 'Water Meter Volume')
-    AND o.observed_at > '2022-11-01 00:00:00+12'
 ),
 
 first_values AS (

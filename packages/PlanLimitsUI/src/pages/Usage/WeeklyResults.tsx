@@ -1,7 +1,7 @@
 import { ResponsiveHeatMapCanvas, type ComputedCell, HeatMapSerie } from '@nivo/heatmap';
 import { format } from 'date-fns';
 import { round } from 'lodash';
-import type { GroupedWaterUseData } from '../../lib/useDetailedWaterUseData';
+import type { GroupedWaterUseData } from '@lib/useDetailedWaterUseData';
 
 const formatNumber = Intl.NumberFormat();
 

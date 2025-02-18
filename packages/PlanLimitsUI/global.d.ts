@@ -1,4 +1,4 @@
-import {Feature} from "geojson";
+import { Feature } from 'geojson';
 
 declare global {
   interface Dictionary<T> {
@@ -66,6 +66,32 @@ declare global {
     allocationDaily: number | null;
     allocationDailyUsed: number | null;
     dailyUsage: number | null;
+  }
+
+  interface GroundwaterAllocation extends Record<string, DataValueType> {
+    month_start: Date;
+    area_id: string;
+    plan_region_id: number;
+    category_b: number;
+    category_bc: number;
+    category_c: number;
+    total_allocation: number;
+    allocation_limit: number;
+    pnrp_allocation_percentage: number;
+    name: string;
+  }
+
+  interface SurfaceWaterAllocation extends Record<string, DataValueType> {
+    month_start: Date,
+    area_id: string,
+    plan_region_id: number,
+    category_a: number,
+    category_b: number,
+    surface_take: number,
+    total_allocation: number,
+    allocation_limit: number,
+    pnrp_allocation_percentage: number,
+    name: string
   }
 
   interface Plan {
@@ -213,13 +239,13 @@ declare global {
     allocation: number;
   }
 
-  interface MissingDailyUsageHeatmapDataItem {
-    date: Date;
-    usage: number | null;
-    allocation: number | null;
-    x: string;
-    y: number | null;
-  }
+// interface MissingDailyUsageHeatmapDataItem {
+//     date: Date;
+//     usage: number | null;
+//     allocation: number | null;
+//     x: string;
+//     y: number | null;
+// }
 
   type DailyUsageHeatmapDataItem =
     | PopulatedDailyUsageHeatmapDataItem
