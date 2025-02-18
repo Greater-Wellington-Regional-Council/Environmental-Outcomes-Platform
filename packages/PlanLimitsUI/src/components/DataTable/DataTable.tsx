@@ -17,7 +17,6 @@ import { FilterDescriptor, FilterPanel, SELECT_ALL } from '@components/FilterPan
 import { useFilterValues } from '@components/FilterPanel/useFilterValues';
 
 import ComplexFilter, { ComparisonOperator } from './ComplexFilter';
-import randomString from '@lib/randomeString';
 import capitalise from '@lib/capitalise';
 
 export type ColumnDescriptor = {
@@ -117,9 +116,9 @@ export type DataTableProps<T extends DataValueType[][] | Record<string, DataValu
 };
 
 const ColumnGroupHeaders: React.FC<{ columnGroups: ColumnGroup[], columns: ColumnDescriptor[] }> = ({
-    columnGroups,
-    columns,
-  }) => {
+                                                                                                      columnGroups,
+                                                                                                      columns,
+                                                                                                    }) => {
 
   let currentGroup: string | undefined = undefined;
   const headers: ReactNode[] = [];
@@ -157,23 +156,21 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   }: DataTableProps<T>,
 ): React.ReactElement {
 
-  const [ hideFilters, setHideFilters ] = React.useState(false);
-  const [ hideGroups, setHideGroups ] = React.useState(false);
+  const [hideFilters, setHideFilters] = React.useState(false);
+  const [hideGroups, setHideGroups] = React.useState(false);
+  const [columnGrouping, setColumnGrouping] = React.useState(columnGroups);
 
-  // Gather all filter values into one object
-  // so we can catch and respond to changes in any filter
-  const {
-    filterValues,
-    setFilterValues,
-    getFilterValue,
-  } = useFilterValues(
-    [...(outerFilters || []), ...(innerFilters || [])]
-    .reduce(
-    (acc, filter) => {
-      acc[filter.name] = filter.currentValue;
-      return acc;
-    }, {} as Record<string, unknown>),
-  );
+  const computedFilters = React.useMemo(() => {
+    return [...(outerFilters || []), ...(innerFilters || [])].reduce(
+      (acc, filter) => {
+        acc[filter.name] = filter.currentValue;
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    );
+  }, [outerFilters, innerFilters]);
+
+  const { filterValues, setFilterValues, getFilterValue } = useFilterValues(computedFilters);
 
   // Normalize data to array of objects in case it has been passed as array of arrays
   // and an array of column descriptors
@@ -202,10 +199,10 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   // This function does that to the normalized data
   const dataCompared = (input: Row[], columns: ColumnComparison): [Row[], ColumnDescriptor[], ColumnDescriptor[]] => {
     const resultMap = new Map<DataValueType, Row>();
-    let resultColumns: Array<ColumnDescriptor> = [{ ...fullColumnDescriptor(columns.keyColumn), visible: true }];
+    const resultColumns: Array<ColumnDescriptor> = [{ ...fullColumnDescriptor(columns.keyColumn), visible: true }];
 
     input.forEach(({ [columns.unzipColumn]: d, [columns.keyColumn]: k, [columns.compareColumn]: v }) => {
-      const keyHeader = (d || randomString(12)).toString();
+      const keyHeader = (d || 'No label').toString();
 
       if (!resultMap.has(k)) {
         resultMap.set(k, { [columns.keyColumn]: k });
@@ -214,16 +211,36 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
       resultMap.get(k)![keyHeader] = v;
 
       if (!resultColumns.find((r: { name: string; }) => r.name === keyHeader))
-        resultColumns.push({ ...fullColumnDescriptor(columns.compareColumn), name: keyHeader, heading: keyHeader, visible: true });
+        resultColumns.push({
+          ...fullColumnDescriptor(columns.compareColumn),
+          name: keyHeader,
+          heading: keyHeader,
+          visible: true,
+        });
     });
 
     setHideFilters(true);
-    setHideGroups(true);
+    setHideGroups(false);
+
+    // Key column is always first, then the rest are sorted alphabetically
+    // we do this here because we need to know the last column name
+    // for the column group
+    const columnOrder = [
+      fullColumnDescriptor(columns.keyColumn),
+      ...resultColumns.slice(1).sort((a, b) => a.name.localeCompare(b.name))
+    ];
+
+    // Add a column group for the comparison columns
+    setColumnGrouping([{ name: 'comparisonColumns',
+      heading: 'Comparison of ' + fullColumnDescriptor(columns.compareColumn).heading,
+      firstColumn: columns.keyColumn,
+      lastColumn: columnOrder[resultColumns.length - 1].name
+    }]);
 
     return [
       Array.from(resultMap.values()),
       resultColumns,
-      resultColumns
+      columnOrder
     ];
   };
 
@@ -291,6 +308,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
     setHideFilters(false);
     setHideGroups(false);
+    setColumnGrouping(columnGroups);
 
     return [normalizedData, columns, (options?.order || columns).map(c => fullColumnDescriptor(c)).filter((c) => c.visible ?? true), [columns]];
   }, [data, options.compare, filterValues]);
@@ -501,7 +519,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
         {/* Column groups */}
         {!hideGroups && <tr>
-          <ColumnGroupHeaders columnGroups={columnGroups} columns={visibleColumns} />
+          <ColumnGroupHeaders columnGroups={columnGrouping} columns={visibleColumns} />
         </tr>}
 
         {/* Column headings */}

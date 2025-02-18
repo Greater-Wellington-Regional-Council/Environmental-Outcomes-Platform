@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import _ from 'lodash';
 import { SELECT_ALL } from '@components/FilterPanel/FilterPanel';
 
 export const useFilterValues = <T extends Record<string, unknown>>(initialFilters: T) => {
-  const [filterValues, setFilterValues] = useState<T>(initialFilters);
+  const [filterValues, setFilterValues] = useState<T>({...initialFilters});
+
+  useEffect(() => {
+    setFilterValues({...initialFilters});
+  }, [initialFilters]);
 
   const updateFilterValue = (key: keyof T, value: T[keyof T] | undefined) => {
     setFilterValues((prevFilters) => ({

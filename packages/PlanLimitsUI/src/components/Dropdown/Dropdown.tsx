@@ -93,6 +93,7 @@ const Dropdown: FC<DropdownProps> = ({
       return simpleStringOptions(givenOptions);
     }
     const baseOptions = givenOptions as DropdownOption[];
+
     return selectAll && !suppressSelectAll
       ? [{ label: selectAll, value: null }, ...baseOptions]
       : baseOptions;
@@ -198,6 +199,7 @@ const Dropdown: FC<DropdownProps> = ({
     } else {
       // No modifier: replace selection with just this item
       newSelection = [optionValue];
+      setIsOpen(false);
     }
 
     // Update selection

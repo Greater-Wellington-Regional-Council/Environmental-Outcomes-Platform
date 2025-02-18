@@ -37,13 +37,13 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
         name: 'allocation',
         heading: 'Allocated amount - litres per second (L/sec)',
         firstColumn: 'category_b',
-        lastColumn: 'pnrp_allocation_percentage',
+        lastColumn: 'total_allocation',
       }]
       : [{
         name: 'allocation',
         heading: 'Allocated amount - litres per second (L/sec)',
         firstColumn: 'category_a',
-        lastColumn: 'pnrp_allocation_percentage',
+        lastColumn: 'total_allocation',
       }];
   };
 
@@ -77,9 +77,8 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
       },
     ] as unknown as FilterDescriptor[];
 
-    return (compareColumn && tableData && monthStart.length > 1) ?
-      [...filters,
-        {
+    if (compareColumn && tableData && monthStart.length > 1)
+      filters.push({
           name: 'compare',
           type: OuterFilter,
           currentValue: compareColumn,
@@ -88,8 +87,9 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
           suppressSelectAll: true,
           className: 'pl-0 pr-0',
           label: 'Compare',
-        },
-      ] : filters;
+        });
+
+    return filters;
   }, [monthStart, waterType, compareColumn, tableData]);
 
   return (
