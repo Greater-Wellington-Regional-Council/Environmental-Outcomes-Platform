@@ -19,7 +19,7 @@ export const MAP_PROPERTIES  = {
     'defaultSelect': {
         'fill': {
             'fill-color': "green",
-            'fill-opacity': 1.0,
+            'fill-opacity': 0.5,
             "fill-outline-color": "black",
         } as MapPaintProperties
     },
