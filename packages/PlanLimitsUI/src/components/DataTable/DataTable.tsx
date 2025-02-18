@@ -11,7 +11,7 @@ import Dropdown from '../Dropdown/Dropdown';
 import DataCell from './DataCell';
 import { calculate } from './calculateValue';
 import { OpenSansRegularBase64 } from '@lib/fonts/OpenSansRegularBase64';
-
+import { dateString } from '@lib/convertDate';
 import { FilterDescriptor, FilterPanel, SELECT_ALL } from '@components/FilterPanel/FilterPanel';
 
 import { useFilterValues } from '@components/FilterPanel/useFilterValues';
@@ -202,19 +202,23 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     const resultColumns: Array<ColumnDescriptor> = [{ ...fullColumnDescriptor(columns.keyColumn), visible: true }];
 
     input.forEach(({ [columns.unzipColumn]: d, [columns.keyColumn]: k, [columns.compareColumn]: v }) => {
-      const keyHeader = (d || 'No label').toString();
+      const unzipHeader = d && fullColumnDescriptor(columns.unzipColumn).type === 'date' ?
+        dateString(d, true, 'mmm yyyy') || 'No date' :
+        (d || 'No label').toString();
+
+      const unzipName = (d || 'zzzzz').toString();
 
       if (!resultMap.has(k)) {
         resultMap.set(k, { [columns.keyColumn]: k });
       }
 
-      resultMap.get(k)![keyHeader] = v;
+      resultMap.get(k)![unzipName] = v;
 
-      if (!resultColumns.find((r: { name: string; }) => r.name === keyHeader))
+      if (!resultColumns.find((r: { name: string; }) => r.name === unzipName))
         resultColumns.push({
           ...fullColumnDescriptor(columns.compareColumn),
-          name: keyHeader,
-          heading: keyHeader,
+          name: unzipName,
+          heading: unzipHeader,
           visible: true,
         });
     });
@@ -232,7 +236,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
     // Add a column group for the comparison columns
     setColumnGrouping([{ name: 'comparisonColumns',
-      heading: 'Comparison of ' + fullColumnDescriptor(columns.compareColumn).heading,
+      heading: 'Compare ' + fullColumnDescriptor(columns.compareColumn).heading,
       firstColumn: columns.keyColumn,
       lastColumn: columnOrder[resultColumns.length - 1].name
     }]);

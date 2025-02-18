@@ -8,6 +8,7 @@ import { useState, useMemo } from 'react';
 import { FilterDescriptor } from '@components/FilterPanel/FilterPanel';
 import { MonthYearFilter } from '@components/FilterPanel/Filters/MonthYearFilter/MonthYearFilter';
 import numValue from '@lib/numValue';
+import capitalise from '@lib/capitalise';
 
 export const WaterAllocationTable = ({ council }: { council: Council }) => {
   const DEFAULT_MONTHS = [new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)]
@@ -28,7 +29,7 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
     { name: 'name', heading: 'Catchment' },
     { name: 'allocation_limit', scale: 3, scaleSymbol: 'k' },
     { name: 'total_allocation', highlight: (c: string) => `border-r-2 border-l-2 border-${c}` },
-    { name: 'month_start',visible: false },
+    { name: 'month_start',visible: false, type: 'date' },
   ];
 
   const getColumnGroups = (waterType: string) => {
@@ -82,7 +83,7 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
           name: 'compare',
           type: OuterFilter,
           currentValue: compareColumn,
-          options: getOrder(waterType).filter(c => !['name'].includes(c)).map(c => ({ label: c, value: c })),
+          options: getOrder(waterType).filter(c => !['name'].includes(c)).map(c => ({ label: columns.find(cc => cc.name == c)?.heading || capitalise(c), value: c })),
           onChange: (compareCol: unknown) => setCompareColumn(compareCol as string),
           suppressSelectAll: true,
           className: 'pl-0 pr-0',
