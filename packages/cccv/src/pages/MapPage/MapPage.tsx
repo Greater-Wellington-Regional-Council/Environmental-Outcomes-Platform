@@ -294,6 +294,7 @@ export default function MapPage() {
                                 'line-color': mapStyle.includes('aerial') ? 'yellow' : 'blue'
                             }}
                             source={FMU_BOUNDARIES_SOURCE}
+                            line-sort-key={5000}
                         />
 
                         {currentFmu && <Layer
@@ -301,6 +302,7 @@ export default function MapPage() {
                             type="fill"
                             paint={mapProperties.tangataWhenua.fill}
                             source={TANGATA_WHENUA_SHAPES_SOURCE}
+                            fill-sort-key={250}
                         />}
 
                         <Layer
@@ -309,6 +311,7 @@ export default function MapPage() {
                             paint={{'fill-opacity': 0}}
 
                             source={FMU_BOUNDARIES_SOURCE}
+                            fill-sort-key={10}
                         />
 
                         {featureBeingRolledOver && !currentFmu && (
@@ -318,6 +321,7 @@ export default function MapPage() {
                                 filter={['==', ['id'], _.get(featureBeingRolledOver, "properties.id")]}
                                 paint={{...mapProperties.defaultHover['fill']}}
                                 source={FMU_BOUNDARIES_SOURCE}
+                                fill-sort-key={400}
                             />
                         )}
 
@@ -327,6 +331,7 @@ export default function MapPage() {
                             paint={mapProperties.currentFMU.fill}
                             filter={['==', ['id'], currentFmu?.freshwaterManagementUnit?.id ?? null]}
                             source={FMU_BOUNDARIES_SOURCE}
+                            fill-sort-key={100}
                         />)}
 
                         {selectedLocation?.featuresInFocus && <Layer
@@ -334,6 +339,7 @@ export default function MapPage() {
                             type="fill"
                             paint={mapProperties.feature.fill}
                             source={OTHER_FEATURE_SHAPE_SOURCE}
+                            fill-sort-key={200}
                         />}
 
                         {Tooltip && <Tooltip/>}
