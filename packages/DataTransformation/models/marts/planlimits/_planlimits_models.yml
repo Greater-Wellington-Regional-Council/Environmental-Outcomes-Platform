@@ -328,11 +328,11 @@ models:
 
       - name: allocation_limit
         data_type: numeric
-        description: "PNRP allocation limit for each area"
+        description: "NRP allocation limit for each area"
 
       - name: pnrp_allocation_percentage
         data_type: numeric
-        description: "PNRP allocation limit for each area"
+        description: "NRP allocation limit for each area"
 
   - name: surfacewater_allocation_limits_by_area_and_category
     description: "Information on surface water allocation per area and category"
@@ -356,8 +356,8 @@ models:
 
       - name: allocation_limit
         data_type: numeric
-        description: "PNRP allocation limit for each area"
+        description: "NRP allocation limit for each area"
 
       - name: pnrp_allocation_percentage
         data_type: numeric
-        description: "PNRP allocation limit for each area"
+        description: "NRP allocation limit for each area"
