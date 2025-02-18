@@ -104,7 +104,7 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
             placeholder: 'Value',
             onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType,
               filterValues ? filterValues[1] : undefined, v]),
-            multiSelect: filterValues && [ComparisonOperator.EqualTo, ComparisonOperator.NotEqualTo].includes(filterValues[1] ?? ComparisonOperator.EqualTo.toString()),
+            multiSelect: filterValues && [ComparisonOperator.EqualTo, ComparisonOperator.NotEqualTo].includes(filterValues[1] as ComparisonOperator),
           },
         ]}
         currentValue={filterValues}
