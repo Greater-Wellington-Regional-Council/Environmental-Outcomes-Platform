@@ -23,7 +23,7 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
     { name: 'plan_region_id', visible: false },
     {
       name: 'pnrp_allocation_percentage', type: 'percent', formula: 'percent(total_allocation, allocation_limit)',
-      valueOk: [(value: DataValueType) => numValue(value) <= 100],
+      valueOk: [(value: DataValueType) => numValue(value) <= 100], heading: 'NRP Allocation %',
     },
     { name: 'area_id', visible: false },
     { name: 'name', heading: 'Catchment' },
