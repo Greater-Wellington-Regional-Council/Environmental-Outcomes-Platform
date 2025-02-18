@@ -5,6 +5,7 @@ import CompoundFilter from '@components/FilterPanel/Filters/CompoundFilter/Compo
 import { DataValueType, ColumnDescriptor } from './DataTable';
 import { uniq } from 'lodash';
 import { Row } from './types';
+import { isNumber } from '@lib/numValue';
 
 interface FieldDetails {
   fieldName: string;
@@ -98,13 +99,20 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
           },
           {
             name: 'Field Value',
-            options: (fieldDetails ? getCandidateValues(fieldDetails) : []).map(v => ({ label: v, value: v } as DropdownOption)),
+            options: (fieldDetails ? getCandidateValues(fieldDetails) : []).map(v => ({ label:
+              isNumber(v) ? v?.toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }) : v,
+              value: v
+            } as DropdownOption)),
             allowFreeText: true,
             className: 'min-w-[100px]',
             placeholder: 'Value',
             onSelect: (v) => handleSubmit([fieldDetails?.fieldName as DataValueType,
               filterValues ? filterValues[1] : undefined, v]),
             multiSelect: filterValues && [ComparisonOperator.EqualTo, ComparisonOperator.NotEqualTo].includes(filterValues[1] as ComparisonOperator),
+            useModifierKeys: true,
           },
         ]}
         currentValue={filterValues}

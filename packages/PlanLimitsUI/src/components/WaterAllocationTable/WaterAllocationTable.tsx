@@ -87,7 +87,7 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
           onChange: (compareCol: unknown) => setCompareColumn(compareCol as string),
           suppressSelectAll: true,
           className: 'pl-0 pr-0',
-          label: 'Compare',
+          label: 'comparing',
         });
 
     return filters;

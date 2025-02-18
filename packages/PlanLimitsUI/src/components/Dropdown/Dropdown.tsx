@@ -271,7 +271,7 @@ const Dropdown: FC<DropdownProps> = ({
 
         {isOpen && (
           <div
-            className={`dropdown-list-container h-[40rem] overflow-y-scroll absolute indent-0 z-10 pt-1 px-0 m-0 mt-2 rounded border border-nui bg-white ${dropdownClassName}`}
+            className={`dropdown-list-container max-h-[40rem] overflow-y-scroll absolute indent-0 z-10 pt-1 px-0 m-0 mt-2 rounded border border-nui bg-white ${dropdownClassName}`}
           >
             {/* Free text box */}
             {allowFreeText && (

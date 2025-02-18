@@ -13,6 +13,7 @@ interface DropdownConfig {
   placeholder?: string;
   label?: string;
   multiSelect?: boolean;
+  useModifierKeys?: boolean;
 }
 
 interface CompoundFilterProps {
