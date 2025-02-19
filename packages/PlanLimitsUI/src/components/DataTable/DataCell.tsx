@@ -38,9 +38,7 @@ const displayValue = (
 };
 
 const errorFlag = (props: { col: ColumnDescriptor; s: DataValueType }) =>
-  props.col.valueOk?.some((fn) => !fn(props.s)) ? (
-    <span className="font-extrabold">&nbsp;!</span>
-  ) : '';
+  props.col.valueOk?.some((fn) => !fn(props.s)) ? '' : '';
 
 export function DataCell({
   col,
