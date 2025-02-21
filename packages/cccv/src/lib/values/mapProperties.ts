@@ -1,10 +1,11 @@
 import {MapPaintProperties} from "@shared/types/global"
+import colors from "@lib/colors.ts"
 
 export const MAP_PROPERTIES  = {
     'tangataWhenua': {
         'fill': {
-            'fill-color': 'yellow',
-            'fill-opacity': 0.6,
+            'fill-color': 'red',
+            'fill-opacity': 0.5,
             'fill-outline-color': "black",
         } as MapPaintProperties
     },
@@ -17,8 +18,15 @@ export const MAP_PROPERTIES  = {
     },
     'defaultSelect': {
         'fill': {
-            'fill-color': 'orange',
-            'fill-opacity': 0.4,
+            'fill-color': "green",
+            'fill-opacity': 0.5,
+            "fill-outline-color": "black",
+        } as MapPaintProperties
+    },
+    'currentFMU': {
+        'fill': {
+            'fill-color': colors.castlepoint,
+            'fill-opacity': 0.2,
             "fill-outline-color": "black",
         } as MapPaintProperties
     },
@@ -32,7 +40,14 @@ export const MAP_PROPERTIES  = {
             'fill-color': 'orange',
             'fill-opacity': 0,
         } as MapPaintProperties
-    }
+    },
+    'feature': {
+        'fill': {
+            'fill-color': "green",
+            'fill-opacity': 0.6,
+            "fill-outline-color": "black",
+        } as MapPaintProperties
+    },
 }
 
 export default MAP_PROPERTIES

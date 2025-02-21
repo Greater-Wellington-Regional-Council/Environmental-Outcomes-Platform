@@ -1,0 +1,31 @@
+.table-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 500px; /* Set a max height for the scrollable body */
+  border: 1px solid #ddd;
+}
+
+.table-header, .table-footer {
+  flex: none; /* Keep header and footer fixed */
+}
+
+.table-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.table-auto {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures proper column alignment */
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.table-body td {
+  white-space: nowrap;
+}

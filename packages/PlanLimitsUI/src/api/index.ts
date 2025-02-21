@@ -1,6 +1,7 @@
 import type { FeatureCollection, Geometry } from 'geojson';
 import { useQuery } from '@tanstack/react-query';
 import { camelCase, mapKeys } from 'lodash';
+import { DataValueType } from '@components/DataTable/DataTable';
 
 const REVIEW_HOST_REGEX = /.*\.amplifyapp\.com$/;
 const DEV_HOST_REGEX = /.*\.gw-eop-dev\.tech$/;
@@ -44,7 +45,7 @@ function mapFeatureCollectionPropsToType<T>(
       ...feature,
       properties: {
         id: feature.id,
-        ...mapKeys(feature.properties, (value, key) => camelCase(key)),
+        ...mapKeys(feature.properties, (_value, key) => camelCase(key)),
       },
     };
   });
@@ -126,7 +127,7 @@ export function usePlanLimitsData(councilId: number) {
   const flowLimits = useFeatureQueryWith<FlowLimit>('/plan-limits/flow-limits');
 
   // TODO: can we re-use useFeatureQueryWith here?
-  const plan = useQuery({
+  const plan = useQuery<Plan>({
     enabled: Boolean(manifest),
     queryKey: ['/plan-limits/plan', councilId, manifest],
     refetchOnWindowFocus: false,
@@ -159,14 +160,14 @@ export function usePlanLimitsData(councilId: number) {
         groundWaterLimits: groundWaterLimits.data,
         flowMeasurementSites: flowMeasurementSites.data,
         flowLimits: flowLimits.data,
-        plan: plan.data,
+        plan: plan.data as Plan | Dictionary<string | null>,
       }
     : undefined;
 
   const data = features
     ? {
         councils: features.councils.features.map((f) => f.properties),
-        plan: mapKeys(features.plan, (value, key) => camelCase(key)),
+        plan: mapKeys(features.plan, (_value, key) => camelCase(key)),
         planRegions: features.planRegions.features.map((f) => f.properties),
         surfaceWaterUnitLimits: features.surfaceWaterUnitLimits.features.map(
           (f) => f.properties,
@@ -192,8 +193,29 @@ export function usePlanLimitsData(councilId: number) {
   };
 }
 
+export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;
+
+const startOfMonth = (date_in_month: Date | null | undefined) => {
+  const firstDayOfCurrentMonthDate = date_in_month || new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
+  const nzFormatter = new Intl.DateTimeFormat('en-NZ', {
+    timeZone: 'Pacific/Auckland',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+
+  const parts = nzFormatter.formatToParts(firstDayOfCurrentMonthDate);
+  const year = parts!.find(part => part!.type === 'year')!.value;
+  const month = parts!.find(part => part!.type === 'month')!.value;
+  const day = parts!.find(part => part!.type === 'day')!.value;
+
+  return `${year}-${month}-${day}`;
+}
+
+export type WaterType = 'surface' | 'ground';
+
 export function useWaterUseQuery(councilId: number, from: string, to: string) {
-  const usage = useQuery({
+  return useQuery({
     queryKey: ['/plan-limits/water-usage', councilId, from, to],
     // These settings prevent a refetch within in the same browser session
     refetchOnWindowFocus: false,
@@ -204,7 +226,18 @@ export function useWaterUseQuery(councilId: number, from: string, to: string) {
         `/plan-limits/water-usage?councilId=${councilId}&from=${from}&to=${to}`,
       ),
   });
-  return usage;
 }
 
-export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;
+export function useWaterAllocationQuery(councilId: number, waterType: WaterType, start_month?: Array<Date> | null) {
+  const formattedDate = start_month?.map(d => startOfMonth(d))?.join(",") || startOfMonth(new Date());
+  const endpoint = `/plan-limits/${waterType}-water-pnrp`;
+
+  return useQuery({
+    queryKey: [endpoint, councilId, formattedDate],
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    staleTime: Infinity,
+    queryFn: () =>
+      fetchFromAPI<Record<string, DataValueType>[]>(`${endpoint}?councilId=${councilId}&dates=${formattedDate}`),
+  });
+}

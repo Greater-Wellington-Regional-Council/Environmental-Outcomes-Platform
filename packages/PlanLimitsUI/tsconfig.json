@@ -10,19 +10,42 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
-  },
-  "paths": {
-    "@shared/*": ["../shared/*"],
+    "jsx": "react-jsx",
+    "typeRoots": ["node_modules/@types", "src/lib/types", "src/types"],
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@lib/*": ["src/lib/*"],
+      "@values/*": ["./src/values/*"],
+      "@images/*": ["./src/images/*"],
+      "@src/*": ["./src/*"],
+      "@loaders/*": ["./src/loaders/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@models/*": ["./src/models/*"],
+      "@pdfs/*": ["./src/pdfs/*"],
+      "@services/*": ["./src/services/*"],
+      "@elements/*": ["./src/elements/*"],
+      "@shared/*": ["./src/lib/shared/*"],
+      "@context/*": ["./src/lib/*"],
+      "@values": ["./src/lib/values/*"],
+      "@loaders": ["./src/lib/loaders/*"],
+      "@types": ["./src/lib/types/*"],
+      "@mocks": ["./src/mocks/*"],
+    }
   },
   "include": [
-    "src", "src/lib/types",
-    "../shared/lib/types/global.d.ts",
-    "node_modules/vitest/globals.d.ts"
+    "src",
+    "src/lib/types",
+    "global.d.ts",
+    "node_modules/vitest/globals.d.ts",
+    "../RainfallViewer/src/app/global.d.ts"
   ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "exclude": [ "src/**/*.js" ],
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "types": ["vitest/globals"]
 }

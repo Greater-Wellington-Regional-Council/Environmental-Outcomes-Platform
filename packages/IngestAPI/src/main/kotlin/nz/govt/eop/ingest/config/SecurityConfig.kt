@@ -18,14 +18,12 @@ class SecurityConfig {
   @Bean
   fun filterChain(http: HttpSecurity): SecurityFilterChain {
     http
-        .authorizeHttpRequests()
-        .requestMatchers("/actuator/health")
-        .permitAll()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .httpBasic()
-    http.csrf().disable()
+        .authorizeHttpRequests { auth ->
+          auth.requestMatchers("/actuator/health").permitAll().anyRequest().authenticated()
+        }
+        .httpBasic {}
+        .csrf { it.disable() }
+
     return http.build()
   }
 }

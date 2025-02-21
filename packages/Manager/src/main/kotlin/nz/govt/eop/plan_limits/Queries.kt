@@ -4,15 +4,16 @@ import java.time.LocalDate
 import nz.govt.eop.si.jooq.tables.Councils.Companion.COUNCILS
 import nz.govt.eop.si.jooq.tables.FlowLimits.Companion.FLOW_LIMITS
 import nz.govt.eop.si.jooq.tables.FlowMeasurementSites.Companion.FLOW_MEASUREMENT_SITES
+import nz.govt.eop.si.jooq.tables.GroundwaterAllocationLimitsByAreaAndCategory.Companion.GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY
 import nz.govt.eop.si.jooq.tables.GroundwaterAreas.Companion.GROUNDWATER_AREAS
 import nz.govt.eop.si.jooq.tables.GroundwaterLimits.Companion.GROUNDWATER_LIMITS
 import nz.govt.eop.si.jooq.tables.PlanRegions.Companion.PLAN_REGIONS
 import nz.govt.eop.si.jooq.tables.Plans.Companion.PLANS
 import nz.govt.eop.si.jooq.tables.SurfaceWaterLimits.Companion.SURFACE_WATER_LIMITS
+import nz.govt.eop.si.jooq.tables.SurfacewaterAllocationLimitsByAreaAndCategory.Companion.SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY
 import nz.govt.eop.si.jooq.tables.WaterAllocationAndUsageByArea.Companion.WATER_ALLOCATION_AND_USAGE_BY_AREA
 import nz.govt.eop.si.jooq.tables.WaterAllocationsByArea.Companion.WATER_ALLOCATIONS_BY_AREA
 import org.jooq.*
-import org.jooq.impl.DSL
 import org.jooq.impl.DSL.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -26,7 +27,7 @@ class Queries(@Autowired val context: DSLContext) {
     return buildFeatureCollection(context, innerQuery)
   }
 
-  fun plan(councilId: Int): String {
+  fun plan(councilId: Int): String? {
     val innerQuery =
         select(
                 PLANS.ID,
@@ -43,7 +44,11 @@ class Queries(@Autowired val context: DSLContext) {
         function("to_jsonb", JSONB::class.java, field("to_jsonb(inputs)"))
 
     val result = context.select(featureCollection).from(innerQuery.asTable("inputs")).fetch()
-    return result.firstNotNullOf { it.value1().toString() }
+    return try {
+      result.firstNotNullOf { it.value1().toString() }
+    } catch (e: NoSuchElementException) {
+      return "{'type': 'FeatureCollection', 'features': []}"
+    }
   }
 
   fun planRegions(councilId: Int): String {
@@ -120,6 +125,88 @@ class Queries(@Autowired val context: DSLContext) {
     return buildFeatureCollection(context, innerQuery)
   }
 
+  fun surfaceWaterPNRP(councilId: Int, dates: List<LocalDate>?): String {
+    val innerQuery =
+        select(
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START,
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.AREA_ID,
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID,
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_A,
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_B,
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.SURFACE_TAKE,
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.TOTAL_ALLOCATION,
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.ALLOCATION_LIMIT,
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PNRP_ALLOCATION_PERCENTAGE,
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.NAME)
+            .from(SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY)
+            .where(
+                SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID.`in`(
+                    select(PLAN_REGIONS.ID)
+                        .from(PLAN_REGIONS)
+                        .join(PLANS)
+                        .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
+                        .where(PLANS.COUNCIL_ID.eq(councilId))))
+            .and(
+                if (!dates.isNullOrEmpty()) {
+                  // Filter rows by the specific dates
+                  SURFACEWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START.`in`(dates)
+                } else {
+                  // Default behavior if no dates are provided (optional)
+                  trueCondition() // Or handle it differently based on your requirements
+                })
+
+    val aggregatedJson: Field<String> = field("json_agg(row_to_json(inputs))", String::class.java)
+
+    val result =
+        context
+            .select(aggregatedJson)
+            .from(innerQuery.asTable("inputs"))
+            .fetchOne(0, String::class.java)
+
+    return result ?: "[]"
+  }
+
+  fun groundWaterPNRP(councilId: Int, dates: List<LocalDate>?): String {
+    val innerQuery =
+        select(
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START,
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.AREA_ID,
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID,
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_B,
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_BC,
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.CATEGORY_C,
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.TOTAL_ALLOCATION,
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.ALLOCATION_LIMIT,
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PNRP_ALLOCATION_PERCENTAGE,
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.NAME)
+            .from(GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY)
+            .where(
+                GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.PLAN_REGION_ID.`in`(
+                    select(PLAN_REGIONS.ID)
+                        .from(PLAN_REGIONS)
+                        .join(PLANS)
+                        .on(PLAN_REGIONS.PLAN_ID.eq(PLANS.ID))
+                        .where(PLANS.COUNCIL_ID.eq(councilId))))
+            .and(
+                if (!dates.isNullOrEmpty()) {
+                  // Filter rows by the specific dates
+                  GROUNDWATER_ALLOCATION_LIMITS_BY_AREA_AND_CATEGORY.MONTH_START.`in`(dates)
+                } else {
+                  // Default behavior if no dates are provided (optional)
+                  trueCondition() // Or handle it differently based on your requirements
+                })
+
+    val aggregatedJson: Field<String> = field("json_agg(row_to_json(inputs))", String::class.java)
+
+    val result =
+        context
+            .select(aggregatedJson)
+            .from(innerQuery.asTable("inputs"))
+            .fetchOne(0, String::class.java)
+
+    return result ?: "[]"
+  }
+
   fun flowMeasurementSites(councilId: Int): String {
     val innerQuery =
         select(
@@ -158,7 +245,7 @@ class Queries(@Autowired val context: DSLContext) {
   }
 
   fun waterUsage(councilId: Int, from: LocalDate, to: LocalDate, areaId: String? = null): String {
-    var whereCondition = DSL.noCondition()
+    var whereCondition = noCondition()
     if (areaId != null) {
       whereCondition = whereCondition.and(WATER_ALLOCATION_AND_USAGE_BY_AREA.AREA_ID.eq(areaId))
     }

@@ -7,7 +7,7 @@ export const pdfTailwindStyles = {
   h4: "font-sans font-bold text-[16px] leading-6 capitalize",
   h5: "font-sans font-bold text-[16px] leading-6",
   h6: "font-sans font-bold text-[14px] leading-6",
-  body: "font-sans text-[12px] leading-6",
+  body: "font-sans text-[12px] leading-6 font-normal",
   caption: "font-sans text-[16px] leading-[22px] text-textCaption",
   button: "font-sans text-nui font-bold text-[16px] leading-[22px] border-2 rounded-3xl pl-4 border-nui pr-4 pt-2 pb-2",
   "button:hover": "font-source-sans-3 text-white bg-nui font-bold text-[16px] leading-[22px]",

@@ -1,6 +1,5 @@
 import { useAtom } from 'jotai';
-import { councilAtom } from '../../../lib/loader';
-import Header from './Header';
+import { councilAtom } from '@lib/loader';
 import Footer from './Footer';
 import Overview from './Overview';
 import LimitsTable from './LimitsTable';
@@ -20,19 +19,17 @@ export default function Sidebar({
 
   return (
     <>
-      <Header council={council} />
-
-      <div className="border-t border-gray-200 px-6 py-4">
+      <div className="px-6">
         <div className="pb-4 flex flex-row justify-around">
           <Button
-            text="Surface water view"
+            text="Surface water"
             onClick={() => {
               setWaterTakeFilter('Surface');
             }}
             active={waterTakeFilter === 'Surface'}
           />
           <Button
-            text="Groundwater view"
+            text="Groundwater"
             onClick={() => {
               setWaterTakeFilter('Ground');
             }}

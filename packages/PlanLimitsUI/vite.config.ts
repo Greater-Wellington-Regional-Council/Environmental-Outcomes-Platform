@@ -11,13 +11,13 @@ export default defineConfig(async () => {
     plugins: [
       tsconfigPaths(),
       react(),
-      redirectAll()
+      redirectAll(),
     ],
     build: {
       rollupOptions: {
         // If you have external dependencies that should be excluded from the build, list them here
         external: [],
-      },
+      }
     },
     resolve: {
       alias: {

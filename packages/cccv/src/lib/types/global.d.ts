@@ -1,4 +1,4 @@
-import {Feature} from "geojson";
+import {Feature} from "geojson"
 
 interface Dictionary<T> {
     [index: string]: T;
