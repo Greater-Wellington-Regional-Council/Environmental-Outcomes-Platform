@@ -68,7 +68,7 @@ dependencies {
   implementation("com.opencsv:opencsv:5.9")
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
-  implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.1")
