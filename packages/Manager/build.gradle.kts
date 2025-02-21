@@ -1,11 +1,5 @@
-import java.io.File
-import java.io.FileReader
-import java.nio.charset.StandardCharsets
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
-import org.jooq.tools.csv.CSVReader
-import org.springframework.core.io.FileSystemResource
-import org.springframework.jdbc.datasource.SingleConnectionDataSource
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
@@ -199,95 +193,4 @@ testlogger {
   showPassedStandardStreams = false
   showSkippedStandardStreams = false
   showFailedStandardStreams = true
-}
-
-tasks.register("loadSampleData") {
-  dependsOn("flywayMigrate")
-  doLast {
-    println("Loading Sample Data")
-    SingleConnectionDataSource(
-            dbConfig["devUrl"]!!,
-            dbConfig["user"]!!,
-            dbConfig["password"]!!,
-            true,
-        )
-        .let {
-          it.connection.use { connection ->
-            executeSqlScript(connection, FileSystemResource("./sample-data/allocation_data.sql"))
-            executeSqlScript(connection, FileSystemResource("./sample-data/observation_data.sql"))
-          }
-        }
-  }
-}
-
-// import org.springframework.core.io.FileSystemResource
-//        import org.springframework.jdbc.datasource.SingleConnectionDataSource
-//        import org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScript
-//        import java.io.File
-//
-// val dbConfig = mapOf(
-//  "devUrl" to "jdbc:postgresql://${System.getenv("CONFIG_DATABASE_HOST") ?:
-// "localhost"}:5432/eop_dev",
-//  "user" to "postgres",
-//  "password" to "password"
-// )
-
-tasks.register("loadSampleDataFromCSV") {
-  dependsOn("flywayMigrate")
-  doLast {
-    println("Loading Sample Data from CSV")
-
-    val csvFile = File("./sample-data/water_allocations_202412122223.csv")
-    val sqlFile = File("./sample-data/allocation_data.sql")
-
-    CSVReader(FileReader(csvFile, StandardCharsets.UTF_8)).use { reader ->
-      sqlFile.printWriter(StandardCharsets.UTF_8).use { writer ->
-        writer.println("DELETE FROM water_allocations;")
-
-        reader.readAll().drop(1).forEach { columns ->
-          val effectiveTo = if (columns[14].isEmpty()) "NULL" else "'${columns[14]}'"
-          val sql =
-              """
-                        INSERT INTO water_allocations (
-                            id, area_id, allocation_plan, ingest_id, created_at, updated_at, source_id, consent_id, status, is_metered, allocation_daily, allocation_yearly, meters, effective_from, effective_to, category
-                        ) VALUES (
-                            ${columns[0]}, '${columns[1]}', ${columns[2]}, '${columns[3]}', '${columns[4]}', '${columns[5]}', '${columns[6]}', '${columns[7]}', '${columns[8]}', ${columns[9]}, ${columns[10]}, ${columns[11]}, '${columns[12]}', '${columns[13]}', $effectiveTo, '${columns[15]}'
-                        );
-                    """
-                  .trimIndent()
-          writer.println(sql)
-        }
-      }
-    }
-
-    SingleConnectionDataSource(
-            dbConfig["devUrl"]!!, dbConfig["user"]!!, dbConfig["password"]!!, true)
-        .let {
-          it.connection.use { connection ->
-            executeSqlScript(connection, FileSystemResource(sqlFile))
-          }
-        }
-  }
-}
-
-tasks.register("refreshSampleData") {
-  dependsOn("flywayMigrate")
-  doLast {
-    println("Refresh Sample Data Dates")
-
-    SingleConnectionDataSource(
-            dbConfig["devUrl"]!!,
-            dbConfig["user"]!!,
-            dbConfig["password"]!!,
-            true,
-        )
-        .let {
-          it.connection.use { connection ->
-            executeSqlScript(
-                connection,
-                FileSystemResource("./sample-data/update_observation_dates.sql"),
-            )
-          }
-        }
-  }
 }
