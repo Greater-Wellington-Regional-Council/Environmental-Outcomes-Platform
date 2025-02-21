@@ -4,9 +4,9 @@ import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
   id("org.springframework.boot") version "3.4.0"
-  id("io.spring.dependency-management") version "1.1.6"
+  id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "6.25.0"
-  id("org.flywaydb.flyway") version "10.21.0"
+  id("org.flywaydb.flyway") version "11.3.2"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.1.0"
@@ -16,8 +16,8 @@ plugins {
 buildscript {
   repositories { mavenCentral() }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:10.21.0")
-    classpath("org.springframework:spring-jdbc:6.2.1")
+    classpath("org.flywaydb:flyway-database-postgresql:11.3.2")
+    classpath("org.springframework:spring-jdbc:6.2.3")
     classpath("org.postgresql:postgresql:42.6.2")
   }
 }
@@ -56,12 +56,12 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:10.21.0")
-  implementation("org.flywaydb:flyway-database-postgresql:10.21.0")
+  implementation("org.flywaydb:flyway-core:11.3.2")
+  implementation("org.flywaydb:flyway-database-postgresql:11.3.2")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("net.javacrumbs.shedlock:shedlock-spring:6.0.2")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.0.2")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:6.3.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.3.0")
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2024.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
@@ -70,8 +70,8 @@ dependencies {
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.2.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.1")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.1")
 
   testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -82,7 +82,7 @@ dependencies {
   testImplementation("io.kotest:kotest-framework-engine:5.9.1")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.2")
-  testImplementation("io.mockk:mockk:1.13.13")
+  testImplementation("io.mockk:mockk:1.13.16")
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
