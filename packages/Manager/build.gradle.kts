@@ -77,7 +77,7 @@ dependencies {
   implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.1")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.1")
 
   testImplementation("org.jetbrains.kotlin:kotlin-test")
