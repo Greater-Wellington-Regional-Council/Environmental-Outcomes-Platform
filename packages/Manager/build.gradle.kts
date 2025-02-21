@@ -10,7 +10,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
   id("org.springframework.boot") version "3.4.0"
-  id("io.spring.dependency-management") version "1.1.6"
+  id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "6.25.0"
   id("org.flywaydb.flyway") version "11.3.2"
   id("nu.studer.jooq") version "9.0"
@@ -23,7 +23,7 @@ buildscript {
   repositories { mavenCentral() }
   dependencies {
     classpath("org.flywaydb:flyway-database-postgresql:11.3.2")
-    classpath("org.springframework:spring-jdbc:6.2.1")
+    classpath("org.springframework:spring-jdbc:6.2.3")
     classpath("org.postgresql:postgresql:42.6.2")
   }
 }
@@ -66,7 +66,7 @@ dependencies {
   implementation("org.flywaydb:flyway-database-postgresql:11.3.2")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("net.javacrumbs.shedlock:shedlock-spring:6.0.2")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:6.3.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.3.0")
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2024.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
