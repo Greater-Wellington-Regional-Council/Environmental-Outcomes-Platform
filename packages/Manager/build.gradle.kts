@@ -1,11 +1,5 @@
-import java.io.File
-import java.io.FileReader
-import java.nio.charset.StandardCharsets
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
-import org.jooq.tools.csv.CSVReader
-import org.springframework.core.io.FileSystemResource
-import org.springframework.jdbc.datasource.SingleConnectionDataSource
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
