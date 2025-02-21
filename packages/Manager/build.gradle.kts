@@ -12,7 +12,7 @@ plugins {
   id("org.springframework.boot") version "3.4.0"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "7.0.2"
-  id("org.flywaydb.flyway") version "11.3.2"
+  id("org.flywaydb.flyway") version "11.3.3"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.1.0"
@@ -22,7 +22,7 @@ plugins {
 buildscript {
   repositories { mavenCentral() }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.3.2")
+    classpath("org.flywaydb:flyway-database-postgresql:11.3.3")
     classpath("org.springframework:spring-jdbc:6.2.3")
     classpath("org.postgresql:postgresql:42.6.2")
   }
@@ -62,8 +62,8 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:11.3.2")
-  implementation("org.flywaydb:flyway-database-postgresql:11.3.2")
+  implementation("org.flywaydb:flyway-core:11.3.3")
+  implementation("org.flywaydb:flyway-database-postgresql:11.3.3")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.3.0")
@@ -73,7 +73,7 @@ dependencies {
   implementation("org.locationtech.jts:jts-core:1.20.0")
   implementation("com.opencsv:opencsv:5.9")
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
-  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.2.0")
+  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
