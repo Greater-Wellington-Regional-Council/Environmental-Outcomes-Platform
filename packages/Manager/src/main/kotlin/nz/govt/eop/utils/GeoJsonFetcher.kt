@@ -1,9 +1,9 @@
 package nz.govt.eop.utils
 
-import java.net.URI
 import org.geojson.FeatureCollection
 import org.springframework.http.HttpStatus
 import org.springframework.web.client.RestTemplate
+import java.net.URI
 
 open class GeoJsonFetcher(
     private val restTemplate: RestTemplate,
