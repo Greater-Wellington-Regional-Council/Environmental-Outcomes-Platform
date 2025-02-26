@@ -19,8 +19,19 @@ logging:
     org.jooq.Constants: OFF
     org.jooq: INFO
 
-arcgis:
-  tangata_whenua_sites:
-    urls:
-      - "http://test1.url"
-      - "http://test2.url"
+tangata.whenua.sites:
+  sources:
+    - name: "Schedule C"
+      urls:
+        - "http://test1.url"
+        - "http://test2.url"
+
+addressfinder:
+  api:
+    key: "${CONFIG_ADDRESSFINDER_API_KEY:address-finder-key-from-YAML}"
+    secret: "${CONFIG_ADDRESSFINDER_API_SECRET:address-finder-secret-from-YAML}"
+
+linz:
+  koord:
+    api:
+      key: "${CONFIG_LINZ_API_KEY:linz-api-key-from-YAML}"

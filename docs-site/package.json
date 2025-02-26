@@ -23,25 +23,25 @@
     "@tailwindcss/typography": "^0.5.9",
     "clsx": "^2.1.1",
     "gatsby": "^5.13.6",
-    "gatsby-plugin-postcss": "^6.13.1",
+    "gatsby-plugin-postcss": "^6.14.0",
     "gatsby-plugin-sharp": "^5.13.1",
     "gatsby-plugin-sitemap": "^6.14.0",
     "gatsby-remark-images": "^7.13.2",
-    "gatsby-source-filesystem": "^5.13.1",
-    "gatsby-transformer-remark": "^6.13.1",
+    "gatsby-source-filesystem": "^5.14.0",
+    "gatsby-transformer-remark": "^6.14.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/node": "^22.10.1",
+    "@types/node": "^22.13.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.9",
+    "postcss": "^8.5.3",
+    "prettier": "^3.5.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.14",
-    "typescript": "^5.4.5"
+    "typescript": "^5.7.2"
   },
   "//": "This is a workaround for https://github.com/gatsbyjs/gatsby/issues/37242#issuecomment-1396620944. Should be fixed in later version of Gatsby",
   "overrides": {

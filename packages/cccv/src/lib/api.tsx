@@ -2,7 +2,10 @@ const LOCAL_HOST_REGEX = /localhost/
 const REVIEW_HOST_REGEX = /.*\.amplifyapp\.com$/
 const DEV_HOST_REGEX = /.*\.gw-eop-dev\.tech$/
 const STAGE_HOST_REGEX = /.*\.gw-eop-stage\.tech$/
-const PROD_HOSTNAME = 'plan-limits.eop.gw.govt.nz'
+const PROD_HOSTNAME = 'cccv.eop.gw.govt.nz'
+
+const DEFAULT_TIMEOUT_MSECS = 10000
+const DEFAULT_CACHE_EXPIRY_SECS = 60
 
 export const determineBackendUri = (hostname: string = window.location.hostname) => {
   if (PROD_HOSTNAME === hostname)
@@ -28,27 +31,40 @@ export const expireCache = (url: string) => {
 
 export const get = async (
     url: string,
-    options: { timeout: number, expiry?: number } = { timeout: 2000, expiry: 60 }
+    options: { timeout?: number; expiry?: number; mode?: RequestMode } = {}
 ) => {
+
+  const requestOptions = {
+    timeout: DEFAULT_TIMEOUT_MSECS,
+    expiry: DEFAULT_CACHE_EXPIRY_SECS,
+    ...options
+  }
+
   const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), options.timeout)
+  const timeoutId = setTimeout(() => controller.abort(), requestOptions.timeout)
 
   const cacheEntry = cache[url]
 
-  // If a cached entry exists and hasn't expired, return the cached data
   const now = Date.now()
   if (cacheEntry && cacheEntry.expiry > now) {
     clearTimeout(timeoutId)
     return cacheEntry.data
   }
 
-  // If expiry is set to 0, we bypass the cache and ensure it's expired
-  if (options.expiry === 0) {
+  if (requestOptions.expiry === 0) {
     expireCache(url)
   }
 
   try {
-    const res = await fetch(url, { signal: controller.signal })
+    const res = await fetch(url, {
+      signal: controller.signal,
+      mode: requestOptions.mode,
+    })
+
+    if (!res.status) {
+      console.log('No response status fetching from', url)
+      clearTimeout(timeoutId)
+    }
 
     if (!res.ok) {
       const errorText = `"res.ok" not true fetching from ${url}: ${res.statusText}`
@@ -60,9 +76,8 @@ export const get = async (
     const data = await res.json()
     clearTimeout(timeoutId)
 
-    // Update the cache with the new data and set the expiry time
-    const expiryTime = options.expiry ? now + options.expiry * 1000 : Infinity
-    cache[url] = { data, expiry: expiryTime }
+    const expiryTime = requestOptions.expiry ? now + requestOptions.expiry * 1000 : Infinity
+    cache[url] = {data, expiry: expiryTime}
 
     return data
   } catch (e) {
@@ -73,15 +88,17 @@ export const get = async (
       return { error: 'Request timed out' }
     }
 
-    console.error('Fetch error:', e)
-    return { error: (e as { message: string }).message }
+    if (e instanceof Error) {
+      e && console.error('Fetch error:', e)
+      return {error: (e as { message: string }).message}
+    } return { error: 'Unknown error' }
   }
 }
 
 export const post = async (
     url: string,
     payload: unknown,
-    options: { timeout: number, rawPayload: boolean } = { timeout: 2000, rawPayload: false }
+    options: { timeout?: number, rawPayload?: boolean } = { timeout: 2000, rawPayload: false }
 ) => {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), options.timeout)

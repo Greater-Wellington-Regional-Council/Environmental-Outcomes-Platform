@@ -18,12 +18,6 @@ class Manifest(val queries: Queries, val context: DSLContext) {
     return generate(councilId)
   }
 
-  fun updateAll() {
-    //  Hard coded to just Wellington until we have more data since empty results
-    //  for individual queries cause errors
-    update(9)
-  }
-
   @CachePut(cacheNames = [MANIFEST_CACHE_KEY])
   fun update(councilId: Int): Map<String, String> {
     return generate(councilId)
@@ -33,11 +27,15 @@ class Manifest(val queries: Queries, val context: DSLContext) {
     return mapOf(
         "updatedAt" to Instant.now().toString(),
         "/plan-limits/councils" to generateHash(queries.councils()),
-        "/plan-limits/plan" to generateHash(queries.plan(councilId)),
+        "/plan-limits/plan" to generateHash(queries.plan(councilId) ?: ""),
         "/plan-limits/plan-regions" to generateHash(queries.planRegions(councilId)),
         "/plan-limits/surface-water-limits" to generateHash(queries.surfaceWaterLimits(councilId)),
         "/plan-limits/ground-water-limits" to
             generateHash(queries.groundwaterWaterLimits(councilId)),
+        "/plan-limits/surface-water-pnrp" to
+            generateHash(queries.surfaceWaterPNRP(councilId, listOf())),
+        "/plan-limits/ground-water-pnrp" to
+            generateHash(queries.groundWaterPNRP(councilId, listOf())),
         "/plan-limits/flow-measurement-sites" to
             generateHash(queries.flowMeasurementSites(councilId)),
         "/plan-limits/flow-limits" to generateHash(queries.flowLimits(councilId)),

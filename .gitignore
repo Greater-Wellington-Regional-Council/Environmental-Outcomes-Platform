@@ -1,5 +1,6 @@
 ### Java / Gradle ###
 .gradle
+.kotlin
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
@@ -56,3 +57,12 @@ out/
 .volumes/
 
 qodana.yaml
+/scripts/afs.main.kts
+/docs-site/src/pages/404.js
+
+/**/*.js
+!workers/*.js
+
+!src/workers/**/*.js
+/*.patch
+/test-results/.last-run.json

@@ -1,25 +1,23 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
-import org.springframework.core.io.FileSystemResource
-import org.springframework.jdbc.datasource.SingleConnectionDataSource
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
-  id("org.springframework.boot") version "3.3.5"
-  id("io.spring.dependency-management") version "1.1.6"
-  id("com.diffplug.spotless") version "6.25.0"
-  id("org.flywaydb.flyway") version "10.21.0"
+  id("org.springframework.boot") version "3.4.0"
+  id("io.spring.dependency-management") version "1.1.7"
+  id("com.diffplug.spotless") version "7.0.2"
+  id("org.flywaydb.flyway") version "11.3.3"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
-  kotlin("jvm") version "2.0.21"
-  kotlin("plugin.spring") version "2.0.21"
+  kotlin("jvm") version "2.1.10"
+  kotlin("plugin.spring") version "2.1.10"
 }
 
 buildscript {
   repositories { mavenCentral() }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:10.21.0")
-    classpath("org.springframework:spring-jdbc:6.1.14")
+    classpath("org.flywaydb:flyway-database-postgresql:11.3.3")
+    classpath("org.springframework:spring-jdbc:6.2.3")
     classpath("org.postgresql:postgresql:42.6.2")
   }
 }
@@ -47,7 +45,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
+  implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
 
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.apache.kafka:kafka-streams")
@@ -56,25 +56,36 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:10.21.0")
-  implementation("org.flywaydb:flyway-database-postgresql:10.21.0")
+  implementation("org.flywaydb:flyway-core:11.3.3")
+  implementation("org.flywaydb:flyway-database-postgresql:11.3.3")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("net.javacrumbs.shedlock:shedlock-spring:5.16.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.16.0")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:6.3.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.3.0")
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2024.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
+  implementation("com.opencsv:opencsv:5.10")
+  implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
+  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.1")
+
+  testImplementation("org.jetbrains.kotlin:kotlin-test")
+  testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
   testImplementation("io.kotest:kotest-assertions-core:5.9.1")
   testImplementation("io.kotest:kotest-framework-engine:5.9.1")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.2.2")
-  testImplementation("io.mockk:mockk:1.13.13")
+  testImplementation("io.mockk:mockk:1.13.16")
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+  testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }
@@ -91,7 +102,9 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     // We specify the target directly here to avoid having the plugin depend on
     // generated sources, which was forcing Flyway to run before the SQL had been
     // formatted, which then confused flyway the next time it ran.
+    // TangataWhenuaSite.kt is causing issues with the formatter for now.
     target("src/main/kotlin/**/*.kt", "src/test/kotlin/**/*.kt")
+    targetExclude("**/TangataWhenuaSite.kt")
     ktfmt()
   }
   kotlinGradle { ktfmt() }
@@ -180,45 +193,4 @@ testlogger {
   showPassedStandardStreams = false
   showSkippedStandardStreams = false
   showFailedStandardStreams = true
-}
-
-tasks.register("loadSampleData") {
-  dependsOn("flywayMigrate")
-  doLast {
-    println("Loading Sample Data")
-    SingleConnectionDataSource(
-            dbConfig["devUrl"]!!,
-            dbConfig["user"]!!,
-            dbConfig["password"]!!,
-            true,
-        )
-        .let {
-          it.connection.use { connection ->
-            executeSqlScript(connection, FileSystemResource("./sample-data/allocation_data.sql"))
-            executeSqlScript(connection, FileSystemResource("./sample-data/observation_data.sql"))
-          }
-        }
-  }
-}
-
-tasks.register("refreshSampleData") {
-  dependsOn("flywayMigrate")
-  doLast {
-    println("Refresh Sample Data Dates")
-
-    SingleConnectionDataSource(
-            dbConfig["devUrl"]!!,
-            dbConfig["user"]!!,
-            dbConfig["password"]!!,
-            true,
-        )
-        .let {
-          it.connection.use { connection ->
-            executeSqlScript(
-                connection,
-                FileSystemResource("./sample-data/update_observation_dates.sql"),
-            )
-          }
-        }
-  }
 }

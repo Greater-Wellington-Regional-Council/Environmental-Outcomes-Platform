@@ -9,7 +9,7 @@ h1 {
 }
 
 h2 {
-  @apply font-source-sans-3 font-bold text-[22px] leading-[34px];
+  @apply font-source-sans-3 font-bold text-[22px] leading-[32px];
 }
 
 h3 {
@@ -37,7 +37,7 @@ caption {
 }
 
 .button-style {
-  @apply font-source-sans-3 text-nui font-bold text-[16px] leading-[22px] border-2 rounded-3xl pl-4 border-nui pr-4 pt-2 pb-2;
+  @apply font-source-sans-3 hover:text-white text-nui font-bold text-[16px] leading-[22px] border-2 rounded-3xl pl-4 border-nui pr-4 pt-2 pb-2;
 }
 
 button {
@@ -49,13 +49,13 @@ button:hover {
 }
 
 button:disabled {
-  @apply font-source-sans-3 text-nui font-bold text-[16px] leading-[22px];
+  @apply font-source-sans-3 text-kapiti font-bold text-[16px] leading-[22px];
 }
 
 ul {
     @apply list-inside ml-[-1.5em] pl-1.5 indent-[-1.5em];
 
     li {
-        @apply list-disc ml-6 pl-6 -mt-1.5 leading-7;
+        @apply list-disc ml-6 mt-2 pl-6 leading-7;
     }
 }
