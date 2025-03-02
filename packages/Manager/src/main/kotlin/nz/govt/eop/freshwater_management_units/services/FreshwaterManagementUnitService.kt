@@ -1,12 +1,14 @@
 package nz.govt.eop.freshwater_management_units.services
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import mu.KotlinLogging
 import nz.govt.eop.FreshwaterManagementUnitsDataSources
+import nz.govt.eop.freshwater_management_units.mappers.FreshwaterManagementUnitMapper
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.models.toFeatureCollection
 import nz.govt.eop.freshwater_management_units.repositories.FreshwaterManagementUnitRepository
 import nz.govt.eop.utils.GeoJsonFetcher
+import org.locationtech.jts.io.WKTReader
+import org.locationtech.jts.io.geojson.GeoJsonWriter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,14 +19,14 @@ import java.net.URI
 class FreshwaterManagementUnitService
 @Autowired
 constructor(
+    private val mapper: FreshwaterManagementUnitMapper,
     private val repository: FreshwaterManagementUnitRepository,
-    private val twsService: TangataWhenuaSiteService, // Include this service to get tangataWhenuaSites
+    private val freshwaterManagementUnitsDataSources: FreshwaterManagementUnitsDataSources,
+    private val twsService: TangataWhenuaSiteService,
     restTemplate: RestTemplate
 ) : GeoJsonFetcher(restTemplate) {
 
     private val logger = KotlinLogging.logger {}
-
-    @Autowired lateinit var freshwaterManagementUnitsDataSources: FreshwaterManagementUnitsDataSources
 
     @Transactional
     fun deleteAll() {
@@ -40,6 +42,11 @@ constructor(
         }
     }
 
+    fun saveFMU(fmu: FreshwaterManagementUnit) {
+        repository.save(fmu)
+    }
+
+    @Transactional
     fun fetchAndSave(url: String, sourceName: String? = null) {
         var deleted = false
 
@@ -49,84 +56,17 @@ constructor(
             .computeIfAbsent(url) { fetchFeatureCollection(URI.create(it)) }
             .features
             .forEach { feature ->
-
+                logger.info { feature }
                 if (!deleted) {
-                    // Delete all FMUs before saving new ones
-                    repository.deleteAll()
+                    deleteAll()
                     deleted = true
                 }
 
-                val objectMapper = ObjectMapper()
-
-                val gid = (feature.properties["gid"] as? Number)?.toInt()
-                val objectId = (feature.properties["objectid"] as? Number)?.toDouble()
-                val fmuNo = (feature.properties["fmu_no"] as? Number)?.toInt()
-                val location = feature.properties["location"] as? String
-                val fmuName1 = feature.properties["fmu_name1"] as? String
-                val fmuGroup = feature.properties["fmu_group"] as? String
-                val shapeLeng = (feature.properties["shape_leng"] as? Number)?.toDouble()
-                val shapeArea = (feature.properties["shape_area"] as? Number)?.toDouble()
-                val byWhen = feature.properties["by_when"] as? String
-                val fmuIssue = feature.properties["fmu_issue"] as? String
-                val topFmuGrp = feature.properties["top_fmugrp"] as? String
-
-                val geometry = objectMapper.writeValueAsString(feature.geometry)
-
-                val propertiesJson = objectMapper.writeValueAsString(feature.properties)
-
-                saveFreshwaterManagementUnit(
-                    gid = gid,
-                    objectId = objectId,
-                    fmuNo = fmuNo,
-                    location = location,
-                    fmuName1 = fmuName1,
-                    fmuGroup = fmuGroup,
-                    shapeLeng = shapeLeng,
-                    shapeArea = shapeArea,
-                    byWhen = byWhen,
-                    fmuIssue = fmuIssue,
-                    topFmuGrp = topFmuGrp,
-                    geomGeoJson = geometry,
-                    propertiesJson = propertiesJson
-                )
+                val fmu = mapper.fromFeature(feature)
+                saveFMU(fmu)
             }
     }
 
-    private fun saveFreshwaterManagementUnit(
-        gid: Int?,
-        objectId: Double?,
-        fmuNo: Int?,
-        location: String?,
-        fmuName1: String?,
-        fmuGroup: String?,
-        shapeLeng: Double?,
-        shapeArea: Double?,
-        byWhen: String?,
-        fmuIssue: String?,
-        topFmuGrp: String?,
-        geomGeoJson: String,
-        propertiesJson: String
-    ) {
-        repository.saveWithGeom(
-            gid = gid,
-            objectId = objectId,
-            fmuNo = fmuNo,
-            location = location,
-            fmuName1 = fmuName1,
-            fmuGroup = fmuGroup,
-            shapeLeng = shapeLeng,
-            shapeArea = shapeArea,
-            byWhen = byWhen,
-            fmuIssue = fmuIssue,
-            topFmuGrp = topFmuGrp,
-            geom = geomGeoJson,
-            implementationIdeas = propertiesJson,
-            otherInfo = propertiesJson,
-            vpo = propertiesJson
-        )
-    }
-
-    // Fetch FMU by latitude/longitude
     fun findFreshwaterManagementUnitByLatAndLng(
         lng: Double,
         lat: Double,
@@ -143,7 +83,6 @@ constructor(
         return fmu
     }
 
-    // Fetch FMU by ID
     fun findFreshwaterManagementUnitById(
         id: Int,
         includeTangataWhenuaSites: Boolean = true
@@ -158,12 +97,45 @@ constructor(
         return fmu
     }
 
-    // Fetch FMUs intersecting with a GeoJSON shape
+    fun wktToGeoJson(wkt: String): String {
+        val reader = WKTReader()
+        val geometry = reader.read(wkt)
+        val writer = GeoJsonWriter()
+        return writer.write(geometry)
+    }
+
+    fun String.toGeoJsonIfWkt(): String {
+        return when {
+            this.trim().startsWith("POLYGON") || this.trim().startsWith("MULTIPOLYGON") ||
+                    this.trim().startsWith("POINT") || this.trim().startsWith("LINESTRING") -> {
+                wktToGeoJson(this)
+            }
+
+            else -> this
+        }
+    }
+
+    fun String.findFMUsByShape(): List<FreshwaterManagementUnit> {
+        if (this.trim().isEmpty())
+            return emptyList()
+        return repository.findAllByGeoJson(this.toGeoJsonIfWkt())
+    }
+
+    fun org.locationtech.jts.geom.Geometry.findFMUsByShape(): List<FreshwaterManagementUnit> {
+        val writer = GeoJsonWriter()
+        val geoJson = writer.write(this)
+        return repository.findAllByGeoJson(geoJson)
+    }
+
     fun findFreshwaterManagementUnitsByShape(
-        geoJson: String,
+        shape: Any,
         includeTangataWhenuaSites: Boolean = true
     ): List<FreshwaterManagementUnit> {
-        val fmus = repository.findAllByGeoJson(geoJson)
+        val fmus = when (shape) {
+            is String -> shape.findFMUsByShape()
+            is org.locationtech.jts.geom.Geometry -> shape.findFMUsByShape()
+            else -> throw IllegalArgumentException("Unsupported shape format: $shape")
+        }
 
         if (includeTangataWhenuaSites) {
             fmus.forEach { fmu: FreshwaterManagementUnit ->
@@ -175,7 +147,6 @@ constructor(
         return fmus
     }
 
-    // Fetch all FMUs
     fun findAllFreshwaterManagementUnits(
         includeTangataWhenuaSites: Boolean = true
     ): List<FreshwaterManagementUnit> {
@@ -187,7 +158,6 @@ constructor(
                     twsService.findTangataWhenuaInterestSitesForFMU(fmu).toFeatureCollection()
             }
         }
-
         return fmus
     }
 }
