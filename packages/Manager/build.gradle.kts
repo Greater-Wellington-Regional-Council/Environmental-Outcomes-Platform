@@ -69,10 +69,13 @@ dependencies {
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+  implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.9.2")
+  implementation("org.hibernate:hibernate-spatial:6.5.3.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.1")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.1")
+  implementation("commons-codec:commons-codec:1.15")
 
   testImplementation("org.jetbrains.kotlin:kotlin-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
