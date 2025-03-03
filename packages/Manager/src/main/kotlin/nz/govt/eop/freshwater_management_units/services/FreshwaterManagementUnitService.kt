@@ -1,5 +1,6 @@
 package nz.govt.eop.freshwater_management_units.services
 
+import java.net.URI
 import mu.KotlinLogging
 import nz.govt.eop.FreshwaterManagementUnitsDataSources
 import nz.govt.eop.freshwater_management_units.mappers.FreshwaterManagementUnitMapper
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
-import java.net.URI
 
 @Service
 class FreshwaterManagementUnitService
@@ -97,10 +97,7 @@ constructor(
   }
 
   fun wktToGeoJson(wkt: String): String {
-    val reader = WKTReader()
-    val geometry = reader.read(wkt)
-    val writer = GeoJsonWriter()
-    return writer.write(geometry)
+    return GeoJsonWriter().write(WKTReader().read(wkt))
   }
 
   fun String.toGeoJsonIfWkt(): String {
