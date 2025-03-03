@@ -17,26 +17,26 @@ data class FreshwaterManagementUnitFeatureCollection(
 )
 
 fun FreshwaterManagementUnit.toFeature(): FreshwaterManagementUnitFeature {
-    val objectMapper = ObjectMapper()
+  val objectMapper = ObjectMapper()
 
-    return FreshwaterManagementUnitFeature(
-        id = this.id,
-        geometry = objectMapper.readTree(this.boundary),
-        properties =
-            this::class
-                .memberProperties
-                .filter { it.name != "geom" && it.name != "boundary" }
-                .mapNotNull { prop -> prop.getter.call(this)?.let { prop.name to it } }
-                .toMap(),
-    )
+  return FreshwaterManagementUnitFeature(
+      id = this.id,
+      geometry = objectMapper.readTree(this.boundary),
+      properties =
+          this::class
+              .memberProperties
+              .filter { it.name != "geom" && it.name != "boundary" }
+              .mapNotNull { prop -> prop.getter.call(this)?.let { prop.name to it } }
+              .toMap(),
+  )
 }
 
 fun List<FreshwaterManagementUnit>.toFeatureCollection():
-        FreshwaterManagementUnitFeatureCollection {
-    return FreshwaterManagementUnitFeatureCollection(features = this.map { it.toFeature() })
+    FreshwaterManagementUnitFeatureCollection {
+  return FreshwaterManagementUnitFeatureCollection(features = this.map { it.toFeature() })
 }
 
 fun FreshwaterManagementUnitFeatureCollection.toGeoJson(): String {
-    val objectMapper = ObjectMapper()
-    return objectMapper.writeValueAsString(this)
+  val objectMapper = ObjectMapper()
+  return objectMapper.writeValueAsString(this)
 }

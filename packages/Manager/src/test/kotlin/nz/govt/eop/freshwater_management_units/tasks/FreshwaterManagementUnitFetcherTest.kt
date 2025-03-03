@@ -15,30 +15,33 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-class FreshwaterManagementUnitsFetcherTest : FunSpec({
-    val fmuService = mockk<FreshwaterManagementUnitService>(relaxed = true) {
-        every { loadFromArcGIS() } returns Unit
-    }
+class FreshwaterManagementUnitsFetcherTest :
+    FunSpec({
+      val fmuService =
+          mockk<FreshwaterManagementUnitService>(relaxed = true) {
+            every { loadFromArcGIS() } returns Unit
+          }
 
-    val freshwaterManagementUnitFetcher = FreshwaterManagementUnitFetcher(fmuService)
+      val freshwaterManagementUnitFetcher = FreshwaterManagementUnitFetcher(fmuService)
 
-    test("updateFreshwaterManagementUnits should call fetchFreshwaterManagementUnits") {
+      test("updateFreshwaterManagementUnits should call fetchFreshwaterManagementUnits") {
         freshwaterManagementUnitFetcher.updateFreshwaterManagementUnits()
         verify { fmuService.loadFromArcGIS() }
-    }
-})
+      }
+    })
 
 @ActiveProfiles("test")
 @SpringBootTest
 class FreshwaterManagementUnitsFetcherWriteTest(
     private val rmuRepository: FreshwaterManagementUnitRepository,
     private val fmuService: FreshwaterManagementUnitService
-) : FunSpec({
-    val freshwaterManagementUnitsFetcher = FreshwaterManagementUnitFetcher(fmuService)
+) :
+    FunSpec({
+      val freshwaterManagementUnitsFetcher = FreshwaterManagementUnitFetcher(fmuService)
 
-    test("updateFreshwaterManagementUnits should call fetchFreshwaterManagementUnits") {
+      test("updateFreshwaterManagementUnits should call fetchFreshwaterManagementUnits") {
         freshwaterManagementUnitsFetcher.updateFreshwaterManagementUnits()
-    }
+      }
 
-    rmuRepository.count() shouldBe 26
-})
+      rmuRepository.count() shouldBe 26
+    })

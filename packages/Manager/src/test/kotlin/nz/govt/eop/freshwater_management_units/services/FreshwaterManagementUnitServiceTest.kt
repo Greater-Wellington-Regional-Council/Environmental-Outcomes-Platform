@@ -8,6 +8,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import java.net.URI
 import nz.govt.eop.FreshwaterManagementUnitsDataSources
 import nz.govt.eop.freshwater_management_units.mappers.FreshwaterManagementUnitMapper
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
@@ -33,70 +34,66 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.web.client.RestTemplate
-import java.net.URI
 
 @TestConfiguration
 class TestConfig {
-    @Bean
-    @Primary
-    fun objectMapper(): ObjectMapper {
-        return ObjectMapper()
-            .registerModule(KotlinModule.Builder().build())
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
+  @Bean
+  @Primary
+  fun objectMapper(): ObjectMapper {
+    return ObjectMapper()
+        .registerModule(KotlinModule.Builder().build())
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+  }
 }
 
 @ActiveProfiles("test")
 @SpringBootTest
 class FreshwaterManagementUnitServiceTest : FunSpec() {
 
-    @Autowired
-    private lateinit var fmuService: FreshwaterManagementUnitService
+  @Autowired private lateinit var fmuService: FreshwaterManagementUnitService
 
-    @Autowired
-    private lateinit var fmuRepository: FreshwaterManagementUnitRepository // Mocked Repository
+  @Autowired
+  private lateinit var fmuRepository: FreshwaterManagementUnitRepository // Mocked Repository
 
-    @MockBean
-    private lateinit var restTemplate: RestTemplate
+  @MockBean private lateinit var restTemplate: RestTemplate
 
-    @Test
-    fun `get freshwater-management-units by lng and lat`() {
-        val foundFmu = fmuService.findFreshwaterManagementUnitByLatAndLng(
-            175.600289,
-            -41.018856,
-            4326,
-            true
-        )
+  @Test
+  fun `get freshwater-management-units by lng and lat`() {
+    val foundFmu =
+        fmuService.findFreshwaterManagementUnitByLatAndLng(175.600289, -41.018856, 4326, true)
 
-        foundFmu shouldNotBe null
-    }
+    foundFmu shouldNotBe null
+  }
 
-    @Test
-    fun `Get all freshwater-management-units`() {
-        val fmus = fmuService.findAllFreshwaterManagementUnits()
-        fmus.size shouldBe fmuRepository.findAll().size
-        fmus.size shouldNotBe 0
-    }
+  @Test
+  fun `Get all freshwater-management-units`() {
+    val fmus = fmuService.findAllFreshwaterManagementUnits()
+    fmus.size shouldBe fmuRepository.findAll().size
+    fmus.size shouldNotBe 0
+  }
 
-    @Test
-    fun `Get freshwater-management-units by shape`() {
-        val savedFMU =
-            fmuRepository.findAll().find { fmu: FreshwaterManagementUnit -> fmu.fmuName1 == "Parkvale Stream" }
-        val shape = listOf(savedFMU!!).toFeatureCollection().toGeoJson()
-        val fmus = fmuService.findFreshwaterManagementUnitsByShape(shape)
+  @Test
+  fun `Get freshwater-management-units by shape`() {
+    val savedFMU =
+        fmuRepository.findAll().find { fmu: FreshwaterManagementUnit ->
+          fmu.fmuName1 == "Parkvale Stream"
+        }
+    val shape = listOf(savedFMU!!).toFeatureCollection().toGeoJson()
+    val fmus = fmuService.findFreshwaterManagementUnitsByShape(shape)
 
-        fmus.size shouldBe 6
-        fmus.find { fmu: FreshwaterManagementUnit -> fmu.fmuName1 == savedFMU.fmuName1 } shouldNotBe null
-    }
+    fmus.size shouldBe 6
+    fmus.find { fmu: FreshwaterManagementUnit -> fmu.fmuName1 == savedFMU.fmuName1 } shouldNotBe
+        null
+  }
 
-    @Test
-    @Disabled
-    fun `Load freshwater-management-units from ArcGIS Full Test`() {
-        fmuRepository.deleteAll()
-        fmuRepository.count() shouldBe 0
-        fmuService.loadFromArcGIS()
-        fmuRepository.count() shouldBeGreaterThan 0
-    }
+  @Test
+  @Disabled
+  fun `Load freshwater-management-units from ArcGIS Full Test`() {
+    fmuRepository.deleteAll()
+    fmuRepository.count() shouldBe 0
+    fmuService.loadFromArcGIS()
+    fmuRepository.count() shouldBeGreaterThan 0
+  }
 }
 
 @Import(TestConfig::class)
@@ -105,143 +102,124 @@ class FreshwaterManagementUnitServiceTest : FunSpec() {
 @AutoConfigureMockMvc
 class FreshwaterManagementUnitServiceWithMockedRepositoryTest {
 
-    @MockBean
-    private lateinit var fmuRepository: FreshwaterManagementUnitRepository
+  @MockBean private lateinit var fmuRepository: FreshwaterManagementUnitRepository
 
-    @MockBean
-    private lateinit var restTemplate: RestTemplate
+  @MockBean private lateinit var restTemplate: RestTemplate
 
-    @MockBean
-    private lateinit var mapper: FreshwaterManagementUnitMapper
+  @MockBean private lateinit var mapper: FreshwaterManagementUnitMapper
 
-    @MockBean
-    private lateinit var twsService: TangataWhenuaSiteService
+  @MockBean private lateinit var twsService: TangataWhenuaSiteService
 
-    @MockBean
-    private lateinit var freshwaterManagementUnitsDataSources: FreshwaterManagementUnitsDataSources
+  @MockBean
+  private lateinit var freshwaterManagementUnitsDataSources: FreshwaterManagementUnitsDataSources
 
-    @Autowired
-    private lateinit var fmuService: FreshwaterManagementUnitService
+  @Autowired private lateinit var fmuService: FreshwaterManagementUnitService
 
-    @BeforeEach
-    fun setup() {
-        Mockito.reset(fmuRepository, restTemplate, mapper, twsService, freshwaterManagementUnitsDataSources)
+  @BeforeEach
+  fun setup() {
+    Mockito.reset(
+        fmuRepository, restTemplate, mapper, twsService, freshwaterManagementUnitsDataSources)
 
-        Mockito.`when`(freshwaterManagementUnitsDataSources.sources).thenReturn(
+    Mockito.`when`(freshwaterManagementUnitsDataSources.sources)
+        .thenReturn(
             listOf(
                 UrlBasedDataSources.Source().apply {
-                    name = "arcgis"
-                    urls = listOf("http://test.url1")
-                }
-            )
-        )
-    }
+                  name = "arcgis"
+                  urls = listOf("http://test.url1")
+                }))
+  }
 
-    @Test
-    fun `Delete all freshwater-management-units`() {
-        Mockito.doNothing().`when`(fmuRepository).deleteAll()
+  @Test
+  fun `Delete all freshwater-management-units`() {
+    Mockito.doNothing().`when`(fmuRepository).deleteAll()
 
-        fmuService.deleteAll()
+    fmuService.deleteAll()
 
-        Mockito.verify(fmuRepository, Mockito.times(1)).deleteAll()
-    }
+    Mockito.verify(fmuRepository, Mockito.times(1)).deleteAll()
+  }
 
-    @Test
-    fun `Don't delete existing if nothing found in ArcGIS`() {
-        Mockito.doNothing().`when`(fmuRepository).deleteAll()
+  @Test
+  fun `Don't delete existing if nothing found in ArcGIS`() {
+    Mockito.doNothing().`when`(fmuRepository).deleteAll()
 
-        val mockFeatureCollection: FeatureCollection? = null
+    val mockFeatureCollection: FeatureCollection? = null
 
-        Mockito.`when`(
+    Mockito.`when`(
             restTemplate.getForEntity(
-                ArgumentMatchers.any<URI>(),
-                ArgumentMatchers.eq(FeatureCollection::class.java)
-            )
-        ).thenReturn(ResponseEntity.ok(mockFeatureCollection))
+                ArgumentMatchers.any<URI>(), ArgumentMatchers.eq(FeatureCollection::class.java)))
+        .thenReturn(ResponseEntity.ok(mockFeatureCollection))
 
-        try {
-            fmuService.loadFromArcGIS()
-        } catch (e: Exception) {
-            // ignore
-        }
-
-        Mockito.verify(fmuRepository, Mockito.never()).deleteAll()
-        Mockito.verify(restTemplate).getForEntity(
-            URI.create("http://test.url1"),
-            FeatureCollection::class.java
-        )
-        Mockito.verify(fmuRepository, Mockito.never()).save(ArgumentMatchers.any(FreshwaterManagementUnit::class.java))
+    try {
+      fmuService.loadFromArcGIS()
+    } catch (e: Exception) {
+      // ignore
     }
 
-    @Test
-    fun `Don't delete existing if empty FeatureCollection returned`() {
-        Mockito.doNothing().`when`(fmuRepository).deleteAll()
+    Mockito.verify(fmuRepository, Mockito.never()).deleteAll()
+    Mockito.verify(restTemplate)
+        .getForEntity(URI.create("http://test.url1"), FeatureCollection::class.java)
+    Mockito.verify(fmuRepository, Mockito.never())
+        .save(ArgumentMatchers.any(FreshwaterManagementUnit::class.java))
+  }
 
-        val mockFeatureCollection = FeatureCollection()
+  @Test
+  fun `Don't delete existing if empty FeatureCollection returned`() {
+    Mockito.doNothing().`when`(fmuRepository).deleteAll()
 
-        Mockito.`when`(
+    val mockFeatureCollection = FeatureCollection()
+
+    Mockito.`when`(
             restTemplate.getForEntity(
-                ArgumentMatchers.any<URI>(),
-                ArgumentMatchers.eq(FeatureCollection::class.java)
-            )
-        ).thenReturn(ResponseEntity.ok(mockFeatureCollection))
+                ArgumentMatchers.any<URI>(), ArgumentMatchers.eq(FeatureCollection::class.java)))
+        .thenReturn(ResponseEntity.ok(mockFeatureCollection))
 
-        try {
-            fmuService.loadFromArcGIS()
-        } catch (e: Exception) {
-            // ignore
-        }
-
-        Mockito.verify(fmuRepository, Mockito.never()).deleteAll()
-        Mockito.verify(restTemplate).getForEntity(
-            URI.create("http://test.url1"),
-            FeatureCollection::class.java
-        )
-        Mockito.verify(fmuRepository, Mockito.never()).save(ArgumentMatchers.any(FreshwaterManagementUnit::class.java))
+    try {
+      fmuService.loadFromArcGIS()
+    } catch (e: Exception) {
+      // ignore
     }
 
-    @Test
-    @Disabled
-    fun `Fetch and save FMUs from URL`() {
-        Mockito.`when`(
+    Mockito.verify(fmuRepository, Mockito.never()).deleteAll()
+    Mockito.verify(restTemplate)
+        .getForEntity(URI.create("http://test.url1"), FeatureCollection::class.java)
+    Mockito.verify(fmuRepository, Mockito.never())
+        .save(ArgumentMatchers.any(FreshwaterManagementUnit::class.java))
+  }
+
+  @Test
+  @Disabled
+  fun `Fetch and save FMUs from URL`() {
+    Mockito.`when`(
             restTemplate.getForEntity(
-                ArgumentMatchers.any<URI>(),
-                ArgumentMatchers.eq(FeatureCollection::class.java)
-            )
-        ).thenReturn(ResponseEntity.ok(FeatureCollection()))
+                ArgumentMatchers.any<URI>(), ArgumentMatchers.eq(FeatureCollection::class.java)))
+        .thenReturn(ResponseEntity.ok(FeatureCollection()))
 
-        fmuService.fetchAndSave("http://test.url1")
+    fmuService.fetchAndSave("http://test.url1")
 
-        Mockito.verify(restTemplate).getForEntity(
-            URI.create("http://test.url1"),
-            FeatureCollection::class.java
-        )
-        Mockito.verify(fmuRepository).deleteAll()
-        Mockito.verify(fmuRepository).save(ArgumentMatchers.any(FreshwaterManagementUnit::class.java))
-    }
+    Mockito.verify(restTemplate)
+        .getForEntity(URI.create("http://test.url1"), FeatureCollection::class.java)
+    Mockito.verify(fmuRepository).deleteAll()
+    Mockito.verify(fmuRepository).save(ArgumentMatchers.any(FreshwaterManagementUnit::class.java))
+  }
 
-    @Test
-    @Disabled
-    fun `Fetch and save actual response data from URL using mock JSON file`() {
-        val geoJsonFile = ClassPathResource("fmus_test_response.json").file
-        val mockFeatureCollection: FeatureCollection = ObjectMapper().readValue(geoJsonFile)
+  @Test
+  @Disabled
+  fun `Fetch and save actual response data from URL using mock JSON file`() {
+    val geoJsonFile = ClassPathResource("fmus_test_response.json").file
+    val mockFeatureCollection: FeatureCollection = ObjectMapper().readValue(geoJsonFile)
 
-        Mockito.`when`(
+    Mockito.`when`(
             restTemplate.getForEntity(
-                ArgumentMatchers.any<URI>(),
-                ArgumentMatchers.eq(FeatureCollection::class.java)
-            )
-        ).thenReturn(ResponseEntity.ok(mockFeatureCollection))
+                ArgumentMatchers.any<URI>(), ArgumentMatchers.eq(FeatureCollection::class.java)))
+        .thenReturn(ResponseEntity.ok(mockFeatureCollection))
 
-        fmuService.fetchAndSave("http://test.url1")
+    fmuService.fetchAndSave("http://test.url1")
 
-        Mockito.verify(restTemplate).getForEntity(
-            URI.create("http://test.url1"),
-            FeatureCollection::class.java
-        )
+    Mockito.verify(restTemplate)
+        .getForEntity(URI.create("http://test.url1"), FeatureCollection::class.java)
 
-        Mockito.verify(fmuRepository).deleteAll()
-        Mockito.verify(fmuRepository, Mockito.times(25))
-            .save(ArgumentMatchers.any(FreshwaterManagementUnit::class.java))
-    }
+    Mockito.verify(fmuRepository).deleteAll()
+    Mockito.verify(fmuRepository, Mockito.times(25))
+        .save(ArgumentMatchers.any(FreshwaterManagementUnit::class.java))
+  }
 }

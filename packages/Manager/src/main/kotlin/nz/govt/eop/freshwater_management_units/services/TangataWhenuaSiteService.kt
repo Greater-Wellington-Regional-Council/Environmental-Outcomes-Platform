@@ -1,6 +1,7 @@
 package nz.govt.eop.freshwater_management_units.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.net.URI
 import mu.KotlinLogging
 import nz.govt.eop.TangataWhenuaSitesDataSources
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
-import java.net.URI
 
 @Service
 class TangataWhenuaSiteService(

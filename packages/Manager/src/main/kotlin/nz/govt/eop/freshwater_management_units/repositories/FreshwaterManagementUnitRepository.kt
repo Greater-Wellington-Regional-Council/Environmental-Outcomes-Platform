@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 interface CustomFreshwaterManagementUnitRepository {
-    fun saveWithLogging(entity: FreshwaterManagementUnit): FreshwaterManagementUnit
+  fun saveWithLogging(entity: FreshwaterManagementUnit): FreshwaterManagementUnit
 }
 
 @Repository
@@ -17,19 +17,18 @@ class FreshwaterManagementUnitRepositoryImpl(
     @PersistenceContext private val entityManager: EntityManager
 ) : CustomFreshwaterManagementUnitRepository {
 
-    @Transactional
-    override fun saveWithLogging(entity: FreshwaterManagementUnit): FreshwaterManagementUnit {
-        return entityManager.merge(entity)
-    }
+  @Transactional
+  override fun saveWithLogging(entity: FreshwaterManagementUnit): FreshwaterManagementUnit {
+    return entityManager.merge(entity)
+  }
 }
 
 @Repository
 interface FreshwaterManagementUnitRepository :
-    JpaRepository<FreshwaterManagementUnit, Int>,
-    CustomFreshwaterManagementUnitRepository {
-    @Query(
-        value =
-            """
+    JpaRepository<FreshwaterManagementUnit, Int>, CustomFreshwaterManagementUnitRepository {
+  @Query(
+      value =
+          """
 WITH catchments AS (
     SELECT fmu2.id as catchment_id, bi.description as description
             FROM freshwater_management_units fmu2
@@ -49,17 +48,17 @@ FROM freshwater_management_units fmu
     ON id = catchment_id
 WHERE ST_Intersects(fmu.geom, ST_Transform(ST_SetSRID(ST_Point(:lng, :lat), :srid), :srid))
     """,
-        nativeQuery = true,
-    )
-fun findAllByLngLat(
-    lng: Double,
-    lat: Double,
-    srid: Int = FreshwaterManagementUnit.DEFAULT_SRID,
-    ): List<FreshwaterManagementUnit>
+      nativeQuery = true,
+  )
+  fun findAllByLngLat(
+      lng: Double,
+      lat: Double,
+      srid: Int = FreshwaterManagementUnit.DEFAULT_SRID,
+  ): List<FreshwaterManagementUnit>
 
-    @Query(
-        value =
-            """
+  @Query(
+      value =
+          """
 WITH catchments AS (
     SELECT fmu2.id as catchment_id, bi.description as description
             FROM freshwater_management_units fmu2
@@ -85,10 +84,9 @@ WHERE ST_Intersects(
     )
 )
     """,
-        nativeQuery = true
-    )
-    fun findAllByGeoJson(
-        geoJson: String,
-        srid: Int = FreshwaterManagementUnit.DEFAULT_SRID
-    ): List<FreshwaterManagementUnit>
+      nativeQuery = true)
+  fun findAllByGeoJson(
+      geoJson: String,
+      srid: Int = FreshwaterManagementUnit.DEFAULT_SRID
+  ): List<FreshwaterManagementUnit>
 }

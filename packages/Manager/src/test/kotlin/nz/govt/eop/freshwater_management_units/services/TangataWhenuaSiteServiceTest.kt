@@ -1,6 +1,7 @@
 package nz.govt.eop.freshwater_management_units.services
 
 import io.kotest.core.spec.style.BehaviorSpec
+import java.net.URI
 import nz.govt.eop.TangataWhenuaSitesDataSources
 import nz.govt.eop.freshwater_management_units.repositories.TangataWhenuaSiteRepository
 import nz.govt.eop.utils.UrlBasedDataSources
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.util.ReflectionTestUtils
 import org.springframework.web.client.RestTemplate
-import java.net.URI
 
 @SpringBootTest
 @ActiveProfiles("test")

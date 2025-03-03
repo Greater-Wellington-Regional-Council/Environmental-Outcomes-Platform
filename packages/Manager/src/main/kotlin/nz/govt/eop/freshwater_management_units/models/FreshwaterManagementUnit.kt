@@ -3,6 +3,8 @@ package nz.govt.eop.freshwater_management_units.models
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType
 import jakarta.persistence.*
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import org.apache.commons.codec.binary.Hex
 import org.geojson.FeatureCollection
 import org.hibernate.annotations.Formula
@@ -12,8 +14,6 @@ import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.PrecisionModel
 import org.locationtech.jts.io.ParseException
 import org.locationtech.jts.io.WKBReader
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 @Entity
 @Table(name = "freshwater_management_units")
@@ -52,19 +52,14 @@ data class FreshwaterManagementUnit(
     @Column(name = "mci_base") var mciBase: String? = null,
     @Column(name = "mci_obj") var mciObj: String? = null,
     @Column(name = "ecoli_obj") var ecoliObj: String? = null,
-
     @Type(JsonBinaryType::class)
     @Column(columnDefinition = "jsonb")
     var farmPlanInfo: FarmPlanInfo = FarmPlanInfo(),
-
-    @Formula("CAST(ST_AsGeoJSON(geom, 6 ,2) AS jsonb)")
-    val boundary: String? = null,
-
+    @Formula("CAST(ST_AsGeoJSON(geom, 6 ,2) AS jsonb)") val boundary: String? = null,
     @JsonIgnore
     @Convert(converter = WKBGeometryConverter::class)
     @Column(name = "geom", columnDefinition = "geometry(GEOMETRY,4326)")
     var geom: Geometry? = null,
-
     @Basic(fetch = FetchType.LAZY)
     @Formula(
         """(
@@ -78,12 +73,11 @@ data class FreshwaterManagementUnit(
     )""",
     )
     val catchmentDescription: String? = null,
-
     @Transient var tangataWhenuaSites: FeatureCollection? = null,
 ) {
-    companion object {
-        const val DEFAULT_SRID = 4326
-    }
+  companion object {
+    const val DEFAULT_SRID = 4326
+  }
 }
 
 data class FarmPlanInfo(
@@ -95,40 +89,38 @@ data class FarmPlanInfo(
 
 @Converter(autoApply = true)
 class WKBGeometryConverter : AttributeConverter<Geometry?, ByteArray?> {
-    override fun convertToDatabaseColumn(attribute: Geometry?): ByteArray? {
-        return attribute?.let {
-            it.srid = FreshwaterManagementUnit.DEFAULT_SRID
-            org.locationtech.jts.io.WKBWriter(2).write(it)
-        }
+  override fun convertToDatabaseColumn(attribute: Geometry?): ByteArray? {
+    return attribute?.let {
+      it.srid = FreshwaterManagementUnit.DEFAULT_SRID
+      org.locationtech.jts.io.WKBWriter(2).write(it)
     }
+  }
 
-    override fun convertToEntityAttribute(dbData: ByteArray?): Geometry? {
-        return dbData?.let {
-            try {
-                val hexString = String(dbData)
-                val decodedBytes: ByteArray = Hex.decodeHex(hexString)
-                val byteBuffer = ByteBuffer.wrap(decodedBytes)
+  override fun convertToEntityAttribute(dbData: ByteArray?): Geometry? {
+    return dbData?.let {
+      try {
+        val hexString = String(dbData)
+        val decodedBytes: ByteArray = Hex.decodeHex(hexString)
+        val byteBuffer = ByteBuffer.wrap(decodedBytes)
 
-                byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
 
-                val geometryFactory = GeometryFactory(PrecisionModel(), FreshwaterManagementUnit.DEFAULT_SRID)
-                val wkbReader = WKBReader(geometryFactory)
-                val geometry = wkbReader.read(decodedBytes)
-                if (geometry.srid == 0) {
-                    geometry.srid = FreshwaterManagementUnit.DEFAULT_SRID
-                }
-                return geometry
-
-            } catch (e: ParseException) {
-                println("ParseException converting WKB to Geometry: ${e.message}")
-
-            } catch (e: IllegalArgumentException) {
-                println("IllegalArgumentException converting WKB to Geometry: ${e.message}")
-
-            } catch (e: Exception) {
-                println("Exception converting WKB to Geometry: ${e.message}")
-            }
-            return null
+        val geometryFactory =
+            GeometryFactory(PrecisionModel(), FreshwaterManagementUnit.DEFAULT_SRID)
+        val wkbReader = WKBReader(geometryFactory)
+        val geometry = wkbReader.read(decodedBytes)
+        if (geometry.srid == 0) {
+          geometry.srid = FreshwaterManagementUnit.DEFAULT_SRID
         }
+        return geometry
+      } catch (e: ParseException) {
+        println("ParseException converting WKB to Geometry: ${e.message}")
+      } catch (e: IllegalArgumentException) {
+        println("IllegalArgumentException converting WKB to Geometry: ${e.message}")
+      } catch (e: Exception) {
+        println("Exception converting WKB to Geometry: ${e.message}")
+      }
+      return null
     }
+  }
 }
