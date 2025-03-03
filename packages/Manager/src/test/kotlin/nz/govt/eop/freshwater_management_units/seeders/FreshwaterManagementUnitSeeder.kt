@@ -14,29 +14,26 @@ import org.springframework.context.annotation.Profile
 @Profile("test")
 class DatabaseSeeder {
 
-    @Autowired
-    lateinit var fmuRepository: FreshwaterManagementUnitRepository
+  @Autowired lateinit var fmuRepository: FreshwaterManagementUnitRepository
 
-    @Bean
-    fun seedDatabase(): ApplicationRunner {
-        return ApplicationRunner {
-            seedData()
+  @Bean
+  fun seedDatabase(): ApplicationRunner {
+    return ApplicationRunner { seedData() }
+  }
+
+  fun seedData() {
+    val path = "/fmus_test_response.json"
+    val mapper = FreshwaterManagementUnitMapper()
+    val featureCollection: FeatureCollection =
+        DatabaseSeeder::class.java.getResourceAsStream(path).use { inputStream ->
+          ObjectMapper().readValue(inputStream, FeatureCollection::class.java)
         }
+
+    fmuRepository.deleteAll()
+
+    featureCollection.features.forEach { feature ->
+      val fmu = mapper.fromFeature(feature)
+      fmuRepository.save(fmu)
     }
-
-    fun seedData() {
-        val path = "/fmus_test_response.json"
-        val mapper = FreshwaterManagementUnitMapper()
-        val featureCollection: FeatureCollection =
-            DatabaseSeeder::class.java.getResourceAsStream(path).use { inputStream ->
-                ObjectMapper().readValue(inputStream, FeatureCollection::class.java)
-            }
-
-        fmuRepository.deleteAll()
-
-        featureCollection.features.forEach { feature ->
-            val fmu = mapper.fromFeature(feature)
-            fmuRepository.save(fmu)
-        }
-    }
+  }
 }

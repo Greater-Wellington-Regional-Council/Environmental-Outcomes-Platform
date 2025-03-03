@@ -94,12 +94,18 @@ class FreshwaterManagementUnitControllerTest {
   @Test
   fun `Get all freshwater-management-units as feature collection`() {
     val fmu1 =
-        FreshwaterManagementUnit(id = 1, fmuName1 = "fmu 1", boundary =
-            "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
+        FreshwaterManagementUnit(
+            id = 1,
+            fmuName1 = "fmu 1",
+            boundary =
+                "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
         )
     val fmu2 =
-        FreshwaterManagementUnit(id = 2, fmuName1 = "fmu 2", boundary =
-            "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
+        FreshwaterManagementUnit(
+            id = 2,
+            fmuName1 = "fmu 2",
+            boundary =
+                "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
         )
     Mockito.`when`(fmuService.findAllFreshwaterManagementUnits(ArgumentMatchers.anyBoolean()))
         .thenReturn(
@@ -128,7 +134,7 @@ class FreshwaterManagementUnitControllerTest {
 
   @Test
   fun `Search freshwater-management-units intersecting a shape`() {
-      val unsavedFMU = createUnsavedFMU()
+    val unsavedFMU = createUnsavedFMU()
     val geoJson =
         """
         {
@@ -137,10 +143,8 @@ class FreshwaterManagementUnitControllerTest {
         }
         """
 
-    val fmu1 =
-        FreshwaterManagementUnit(id = 1, fmuName1 = "fmu 1", boundary = unsavedFMU.boundary)
-    val fmu2 =
-        FreshwaterManagementUnit(id = 2, fmuName1 = "fmu 2", boundary = unsavedFMU.boundary)
+    val fmu1 = FreshwaterManagementUnit(id = 1, fmuName1 = "fmu 1", boundary = unsavedFMU.boundary)
+    val fmu2 = FreshwaterManagementUnit(id = 2, fmuName1 = "fmu 2", boundary = unsavedFMU.boundary)
 
     Mockito.`when`(
             fmuService.findFreshwaterManagementUnitsByShape(

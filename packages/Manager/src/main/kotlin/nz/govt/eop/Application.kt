@@ -1,6 +1,10 @@
 package nz.govt.eop
 
 import com.fasterxml.jackson.core.StreamReadConstraints
+import java.nio.file.Files
+import java.util.*
+import kotlin.io.path.pathString
+import kotlin.io.path.writeBytes
 import nz.govt.eop.utils.UrlBasedDataSources
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -18,10 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
-import java.nio.file.Files
-import java.util.*
-import kotlin.io.path.pathString
-import kotlin.io.path.writeBytes
 
 @ConfigurationProperties(prefix = "tangata.whenua.sites")
 class TangataWhenuaSitesDataSources : UrlBasedDataSources<UrlBasedDataSources.Source>()
@@ -32,7 +32,8 @@ class FreshwaterManagementUnitsDataSources : UrlBasedDataSources<UrlBasedDataSou
 @EnableKafka
 @EnableCaching
 @SpringBootApplication
-@EnableConfigurationProperties(TangataWhenuaSitesDataSources::class, FreshwaterManagementUnitsDataSources::class)
+@EnableConfigurationProperties(
+    TangataWhenuaSitesDataSources::class, FreshwaterManagementUnitsDataSources::class)
 class Application {
   @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
 }

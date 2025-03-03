@@ -15,23 +15,26 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-class FreshwaterManagementUnitRepositoryTest @Autowired constructor(
-    private val fmuRepository: FreshwaterManagementUnitRepository
-) : FunSpec() {
+class FreshwaterManagementUnitRepositoryTest
+@Autowired
+constructor(private val fmuRepository: FreshwaterManagementUnitRepository) : FunSpec() {
 
-    val savedFMU = fmuRepository.findAll().find { fmu: FreshwaterManagementUnit -> fmu.fmuName1 == "Parkvale Stream" }
+  val savedFMU =
+      fmuRepository.findAll().find { fmu: FreshwaterManagementUnit ->
+        fmu.fmuName1 == "Parkvale Stream"
+      }
 
-    @Test
-    fun `get freshwater-management-units by name`() {
-        savedFMU?.boundary shouldNotBe null
-    }
+  @Test
+  fun `get freshwater-management-units by name`() {
+    savedFMU?.boundary shouldNotBe null
+  }
 
-    @Test
-    fun `Get freshwater-management-units by shape`() {
-        val shape = listOf(savedFMU!!).toFeatureCollection().toGeoJson()
+  @Test
+  fun `Get freshwater-management-units by shape`() {
+    val shape = listOf(savedFMU!!).toFeatureCollection().toGeoJson()
 
-        val matchingFMUs = fmuRepository.findAllByGeoJson(shape)
-        matchingFMUs.shouldNotBe(null)
-        matchingFMUs.size shouldBe 6
-    }
+    val matchingFMUs = fmuRepository.findAllByGeoJson(shape)
+    matchingFMUs.shouldNotBe(null)
+    matchingFMUs.size shouldBe 6
+  }
 }
