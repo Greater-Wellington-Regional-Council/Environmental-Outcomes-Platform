@@ -16,7 +16,7 @@ import {
     byWhen
 } from "@components/Contaminants/ContaminantObjectiveDescription"
 import makeSafe from "@lib/makeSafe.ts"
-import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
+import {parseHtmlOrTextListToArray} from "@lib/parseHtmlOrTextListToArray.ts"
 import _ from "lodash"
 import DOMPurify from "dompurify"
 import Html from "react-pdf-html"
@@ -140,21 +140,28 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
     const {
         fmuName1,
         catchmentDescription,
-        implementationIdeas,
-        vpo,
-        otherInfo,
-        culturalOverview,
+        farmPlanInfo,
     } = details.freshwaterManagementUnit
+
+    const { implementationIdeas, otherInfo, vpo, culturalOverview } = farmPlanInfo ?? {}
 
     const tangataWhenuaSites = details.tangataWhenuaSites
 
     const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit)
 
-    const vpoSafe = vpo?.value ? DOMPurify.sanitize(vpo.value!) : null
+    const vpoSafe = vpo ? DOMPurify.sanitize(vpo) : null
 
-    const otherInfoSafe = otherInfo?.value ? DOMPurify.sanitize(otherInfo.value!) : null
+    const otherInfoSafe = otherInfo ? DOMPurify.sanitize(otherInfo) : null
 
-    const culturalOverviewSafe = culturalOverview?.value ? DOMPurify.sanitize(culturalOverview.value!) : null
+    const culturalOverviewSafe = culturalOverview ? DOMPurify.sanitize(culturalOverview) : null
+
+    const implementationIdeasList = implementationIdeas ? parseHtmlOrTextListToArray(implementationIdeas) : []
+
+    const implementationIdeasSafe = implementationIdeasList.length > 1 ?
+      <BulletList items={implementationIdeasList} /> :
+      implementationIdeasList.length === 1 ?
+      <Text style={tw("body mb-2")}>{implementationIdeasList[0]}</Text> :
+      null
 
     return (
         <Document key={_.get(details, "key")}>
@@ -223,10 +230,10 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
                 ) : <View style={tw("mt-0")} />}
 
                 {/* Actions */}
-                {implementationIdeas?.value ? (
-                    <View style={tw("mt-6")} wrap={false}>
-                        <Text style={tw("h2")}>Implementation Ideas</Text>
-                        <BulletList items={parseHtmlListToArray(implementationIdeas?.value)} />
+                {implementationIdeasSafe ? (
+                    <View style={tw("mt-6 mb-6")} wrap={false}>
+                        <Text style={tw("h2 mb-2")}>Implementation Ideas</Text>
+                      {implementationIdeasSafe}
                     </View>
                 ) : <View style={tw("mt-0")} />}
 
