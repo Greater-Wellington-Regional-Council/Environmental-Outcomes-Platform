@@ -96,43 +96,11 @@ constructor(
     return fmu
   }
 
-  fun wktToGeoJson(wkt: String): String {
-    return GeoJsonWriter().write(WKTReader().read(wkt))
-  }
-
-  fun String.toGeoJsonIfWkt(): String {
-    return when {
-      this.trim().startsWith("POLYGON") ||
-          this.trim().startsWith("MULTIPOLYGON") ||
-          this.trim().startsWith("POINT") ||
-          this.trim().startsWith("LINESTRING") -> {
-        wktToGeoJson(this)
-      }
-      else -> this
-    }
-  }
-
-  fun String.findFMUsByShape(): List<FreshwaterManagementUnit> {
-    if (this.trim().isEmpty()) return emptyList()
-    return repository.findAllByGeoJson(this.toGeoJsonIfWkt())
-  }
-
-  fun org.locationtech.jts.geom.Geometry.findFMUsByShape(): List<FreshwaterManagementUnit> {
-    val writer = GeoJsonWriter()
-    val geoJson = writer.write(this)
-    return repository.findAllByGeoJson(geoJson)
-  }
-
   fun findFreshwaterManagementUnitsByShape(
-      shape: Any,
+      geoJson: String,
       includeTangataWhenuaSites: Boolean = true
   ): List<FreshwaterManagementUnit> {
-    val fmus =
-        when (shape) {
-          is String -> shape.findFMUsByShape()
-          is org.locationtech.jts.geom.Geometry -> shape.findFMUsByShape()
-          else -> throw IllegalArgumentException("Unsupported shape format: $shape")
-        }
+    val fmus = repository.findAllByGeoJson(geoJson)
 
     if (includeTangataWhenuaSites) {
       fmus.forEach { fmu: FreshwaterManagementUnit ->
