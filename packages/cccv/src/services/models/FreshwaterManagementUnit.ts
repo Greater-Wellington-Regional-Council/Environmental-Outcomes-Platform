@@ -1,9 +1,11 @@
 import {Feature, FeatureCollection} from "geojson"
 import {SystemValues} from "@services/SystemValueService/SystemValueService.ts"
 
-interface JsonContent {
-    value?: string
-    type: "html"
+interface FarmPlanInfo {
+    implementationIdeas?: string
+    vpo?: string
+    culturalOverview?: string
+    otherInfo?: string
 }
 
 export default interface FreshwaterManagementUnit {
@@ -41,11 +43,8 @@ export default interface FreshwaterManagementUnit {
     atoxObj?: string
     ntoxBase?: string
     ntoxObj?: string
-    implementationIdeas?: JsonContent
+    farmPlanInfo?: FarmPlanInfo
     catchmentDescription?: string
-    vpo?: JsonContent
-    otherInfo?: JsonContent
-    culturalOverview?: JsonContent
     tangataWhenuaSites?: FeatureCollection
 }
 
