@@ -21,7 +21,11 @@ import _ from "lodash"
 import DOMPurify from "dompurify"
 import Html from "react-pdf-html"
 
-Font.register(fonts.inter)
+try {
+  (Font as unknown as { register: (arg0: unknown) => void }).register(fonts.inter)
+} catch (e) {
+  console.log("Couldn't register inter font")
+}
 
 const twContext = createTw({
     theme: {
