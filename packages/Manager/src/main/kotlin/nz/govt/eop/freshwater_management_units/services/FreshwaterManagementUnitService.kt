@@ -8,8 +8,6 @@ import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.models.toFeatureCollection
 import nz.govt.eop.freshwater_management_units.repositories.FreshwaterManagementUnitRepository
 import nz.govt.eop.utils.GeoJsonFetcher
-import org.locationtech.jts.io.WKTReader
-import org.locationtech.jts.io.geojson.GeoJsonWriter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
