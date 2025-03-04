@@ -1,5 +1,5 @@
 import React, { useState, Key } from "react"
-import manaWhenuaSiteService from "@services/ManaWhenuaSiteService/ManaWhenuaSiteService.ts"
+import manaWhenuaSiteService from '@services/ManaWhenuaSiteService/ManaWhenuaSiteService.ts';
 import Tooltip from "@elements/Tooltip/Tooltip.tsx"
 import { Feature, FeatureCollection } from "geojson"
 import { MapPinIcon } from '@heroicons/react/20/solid'
@@ -11,12 +11,13 @@ interface TangataWhenuaSitesProps {
     culturalOverview?: string | null;
 }
 
+export async function getSiteDescription(location: unknown, siteName: string) {
+  // Caches the return value as often retrieved more than once
+  return _.get(location, `properties.[${siteName}]`) || (await manaWhenuaSiteService.getBySiteName(siteName))?.explanation
+}
+
 const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSites, gotoTangataWhenua, culturalOverview = null }) => {
     const [tooltip, setTooltip] = useState<{ description: string | null; x: number; y: number; isLoading: boolean } | null>(null)
-
-    async function getSiteDescription(location: unknown, siteName: string) {
-        return _.get(location, `properties.[${siteName}]`) || (await manaWhenuaSiteService.getBySiteName(siteName))?.explanation
-    }
 
     const showSiteDescription = async (e: React.MouseEvent<HTMLLIElement>, site: Feature, siteName: string) => {
         e.stopPropagation()

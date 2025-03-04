@@ -232,22 +232,15 @@ export default function MapPage() {
         } else {
             setFeatureBeingRolledOver(null)
         }
-    }, 100) // Execute at most every 100ms
+    }, 100)
 
     const handleClick = (e: MapMouseEvent) => {
         clearErrors()
         const clickedFeatures = getFeaturesUnderMouse(mapRef, e, BOUNDARY_LINES_LAYER)
         if (clickedFeatures) {
-            const map = mapRef.current?.getMap()
-            if (map?.getZoom() !== DEFAULT_ZOOM)
-                map?.flyTo({
-                    center: e.lngLat,
-                    zoom: DEFAULT_ZOOM,
-                })
             setSelectedLocation({
                 longitude: e.lngLat.lng, latitude: e.lngLat.lat,
-                boundary: clickedFeatures[0],
-                zoom: DEFAULT_ZOOM,
+                boundary: clickedFeatures[0]
             })
         }
     }
