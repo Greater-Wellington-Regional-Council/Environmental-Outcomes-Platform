@@ -1,8 +1,10 @@
 import {Document, Font, Image, Page, Text, View} from '@react-pdf/renderer'
+
 import {
     contaminants as fmuContaminants,
     ContaminantList
 } from "@components/FreshwaterManagementUnit/utils.ts"
+
 import {FmuFullDetailsWithMap} from "@services/models/FreshwaterManagementUnit.ts"
 import colors from '@lib/colors'
 import {createTw} from "react-pdf-tailwind"
@@ -10,16 +12,22 @@ import gwrcLogo from "@images/printLogo_500x188px.png"
 import {tw as predefinedTw} from "@lib/pdfTailwindStyles.ts"
 import fonts from "@src/fonts.ts"
 import React from "react"
+
 import {
     getObjectiveDescription,
     contaminantTitle,
     byWhen
 } from "@components/Contaminants/ContaminantObjectiveDescription"
+
 import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlOrTextListToArray} from "@lib/parseHtmlOrTextListToArray.ts"
 import _ from "lodash"
 import DOMPurify from "dompurify"
 import Html from "react-pdf-html"
+import { Feature } from "geojson"
+import { getSiteDescription } from '@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx';
+
+import { Style } from '@react-pdf/types';
 
 try {
   (Font as unknown as { register: (arg0: unknown) => void }).register(fonts.inter)
@@ -41,7 +49,7 @@ const twContext = createTw({
 const tw = (input: string) => twContext(predefinedTw(input))
 
 const Contaminants: React.FC<{ contaminants: ContaminantList }> = ({contaminants}) => (
-    <View style={tw('w-full body mt-4')}>
+    <View style={tw('w-full body mt-4')} wrap={true}>
         <View style={tw('flex flex-row border-b border-gray-300')}>
             <Text style={tw('w-1/5 p-2 font-bold')}></Text>
             <Text style={tw('w-2/5 p-2')}>Base</Text>
@@ -88,7 +96,7 @@ const Footer: React.FC<{ freshwaterManagementUnit: FmuFullDetailsWithMap["freshw
       left: 0,
       right: 0,
       width: "100%",
-      padding: 10,
+      padding: "0 10",
     }}
     fixed
   >
@@ -166,6 +174,20 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
       <Text style={tw("body mb-2")}>{implementationIdeasList[0]}</Text> :
       null
 
+    const TangataWhenuaSiteDescription: React.FC<{ location: unknown, siteName: string, style?: Style | Style[] | undefined }> = ({ location, siteName, style }) => {
+      const [description, setDescription] = React.useState<string | undefined>(undefined);
+
+      React.useEffect(() => {
+        const fetchDescription = async () => {
+          const desc = await getSiteDescription(location, siteName);
+          setDescription(desc);
+        };
+        fetchDescription().then();
+      }, [location, siteName]);
+
+      return <Text style={style}>{description}</Text>
+    };
+
     return (
         <Document key={_.get(details, "key")}>
             <Page size="A4" style={tw("bg-white font-sans p-4 flex flex-col")}>
@@ -197,14 +219,14 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
                 </View>
 
                 {/* VPO */}
-                {vpoSafe && <View style={[tw("mb-6"), { width: '100%' }]} wrap={true}>
+                {vpoSafe && <View style={[tw("mb-6"), { width: '100%' }]} wrap={false}>
                     <Text style={tw("h2 mb-2")}>Freshwater Values, Priorities, and Outcomes</Text>
                     <Text style={tw("body")}>{rPDFMarkup(makeSafe(vpoSafe ?? ''))}</Text>
                 </View>}
 
                 {/* Contaminants */}
                 {contaminants?.length ? (
-                    <View style={tw("mt-2 mb-2")}>
+                    <View style={tw("mt-2 mb-2")} wrap={true}>
                         <Text style={tw("h2 mb-2")}>Contaminants</Text>
                         <Text style={tw("body")}>
                             Freshwater objectives from {fmuName1} Whaitua Implementation Plan (as at August 2018)
@@ -216,38 +238,51 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
 
                 {/* Tangata Whenua Sites */}
                 {tangataWhenuaSites?.features.length ? (
-                    <View style={tw("mt-6 body")} wrap={false}>
+                    <View style={tw("mt-6 body")} wrap={true}>
                         {culturalOverviewSafe && <View style={tw("h2 mb-2")}>
                             <Text style={tw("h2 mb-2")}>Cultural Significance of the Catchment</Text>
-                            <Text style={tw("body")}>{rPDFMarkup(makeSafe(culturalOverviewSafe ?? ''))}</Text>
+                            <Text style={tw("body")} wrap={true}>{rPDFMarkup(makeSafe(culturalOverviewSafe ?? ''))}</Text>
                         </View>}
 
+                      <View style={tw("mt-6")}>
                         <Text style={tw("h3 mb-2")}>Sites of Significance</Text>
-
                         <Text style={tw("body mb-1")}>
-                            This area contains sites of significance to Tangata Whenua.
+                          This area contains sites of significance to Tangata Whenua.
                         </Text>
 
-                        <BulletList items={tangataWhenuaSites?.features.map(s => s.properties?.location)} />
+                        {tangataWhenuaSites?.features.sort((a) => a?.properties?.sourceName == "Schedule C" ? 0 : -1).reverse().map((site: Feature, siteIndex: number) => (
+                        <View style={tw("mt-2")} key={siteIndex}>
+                            <Text style={tw("h4 mb-2")}>{site?.properties?.location}</Text>
+                            <View style={tw("")}>
+                            {site?.properties?.sites?.map((siteName: string) => (
+                              <View style={tw("mb-2")} key={siteName} wrap={false}>
+                                <Text style={tw("h5")}>{siteName.replace(/_/g, " ")}</Text>
+                                <TangataWhenuaSiteDescription style={tw("body")} location={site!} siteName={siteName} />
+                              </View>
+                            ))}
+                          </View>
+                        </View>
+                      ))}
                     </View>
+                  </View>
                 ) : <View style={tw("mt-0")} />}
 
                 {/* Actions */}
                 {implementationIdeasSafe ? (
-                    <View style={tw("mt-6 mb-6")} wrap={false}>
+                    <View style={tw("mt-6 mb-6")} wrap={true}>
                         <Text style={tw("h2 mb-2")}>Implementation Ideas</Text>
                       {implementationIdeasSafe}
                     </View>
                 ) : <View style={tw("mt-0")} />}
 
                 {/* Other info */}
-                {otherInfoSafe && <View style={[tw("mb-6"), { width: '100%' }]} wrap={false}>
+                {otherInfoSafe && <View style={[tw("mb-6"), { width: '100%' }]} wrap={true}>
                     <Text style={tw("h2 mb-2")}>Other Relevant Information</Text>
                     <Text style={tw("body")}>{rPDFMarkup(makeSafe(otherInfoSafe ?? ''))}</Text>
                 </View>}
 
                 {/* Disclaimer */}
-                <View style={tw("mt-6")} wrap={false}>
+                <View style={tw("mt-6")} wrap={true}>
                     <Text style={tw("h2 mb-2")}>About this Information</Text>
                     <Text style={tw("body")}>
                         The content, data, and information used in this app comes from multiple sources,
