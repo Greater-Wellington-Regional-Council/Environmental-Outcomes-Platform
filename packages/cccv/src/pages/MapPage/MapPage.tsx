@@ -386,6 +386,7 @@ export default function MapPage() {
                                     gotoLink: (f: Feature | FeatureCollection) =>
                                         setSelectedLocation({
                                             featuresInFocus: f,
+                                            address: selectedLocation?.address,
                                             highlight: mapProperties.tangataWhenua.fill,
                                         }),
                                 }}
