@@ -73,6 +73,7 @@ fun createUnsavedFMU(): FreshwaterManagementUnit {
             culturalOverview = "Cultural overview"
             vpo = "vpo"
             otherInfo = "Other info"
+            catchmentOverview = "Catchment overview"
           },
   )
 }
@@ -91,6 +92,7 @@ class FreshwaterManagementUnitTest(
 
         savedFmu.fmuName1 shouldBe unsavedFMU.fmuName1
 
+        savedFmu.farmPlanInfo.catchmentOverview shouldBe unsavedFMU.farmPlanInfo.catchmentOverview
         savedFmu.farmPlanInfo.culturalOverview shouldBe unsavedFMU.farmPlanInfo.culturalOverview
         savedFmu.farmPlanInfo.otherInfo shouldBe unsavedFMU.farmPlanInfo.otherInfo
         savedFmu.farmPlanInfo.vpo shouldBe unsavedFMU.farmPlanInfo.vpo

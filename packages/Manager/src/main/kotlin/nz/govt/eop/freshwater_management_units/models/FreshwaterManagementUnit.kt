@@ -84,7 +84,8 @@ data class FarmPlanInfo(
     var implementationIdeas: String? = null,
     var culturalOverview: String? = null,
     var otherInfo: String? = null,
-    var vpo: String? = null
+    var vpo: String? = null,
+    var catchmentOverview: String? = null,
 )
 
 @Converter(autoApply = true)

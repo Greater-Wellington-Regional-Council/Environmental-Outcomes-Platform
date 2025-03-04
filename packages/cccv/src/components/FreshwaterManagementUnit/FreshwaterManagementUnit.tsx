@@ -33,11 +33,10 @@ const FreshwaterManagementUnit = (
     const {
         id,
         fmuName1,
-        catchmentDescription,
-        farmPlanInfo
+        farmPlanInfo,
     } = details.freshwaterManagementUnit
 
-    const { implementationIdeas, otherInfo, vpo, culturalOverview } = farmPlanInfo ?? {}
+    const { implementationIdeas, otherInfo, vpo, culturalOverview, catchmentOverview } = farmPlanInfo ?? {}
 
     const showHeader = details.showHeader
 
@@ -55,18 +54,18 @@ const FreshwaterManagementUnit = (
 
     const links = details.links
 
-    const [overview, setOverview] = useState<string | undefined>(catchmentDescription ?? "")
+    const [overview, setOverview] = useState<string | undefined>(catchmentOverview ?? "")
 
     useEffect(() => {
-        if (catchmentDescription)
-            setOverview(catchmentDescription)
+        if (catchmentOverview)
+            setOverview(catchmentOverview)
         else {
             (async () => {
                 const fetchedOverview = await getSystemValueForCouncil(SystemValueNames.RUAMAHANGA_WHAITUA_OVERVIEW) ?? null
                 setOverview(fetchedOverview || undefined)
             })()
         }
-    }, [catchmentDescription, fmuName1])
+    }, [catchmentOverview, fmuName1])
 
     if (!details?.freshwaterManagementUnit) {
         return <div>No data found.</div>

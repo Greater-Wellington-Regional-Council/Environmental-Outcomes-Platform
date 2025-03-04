@@ -32,7 +32,8 @@ class FreshwaterManagementUnitMapperTest :
                       "Implementation" to "Conservation Efforts",
                       "cultural_significance" to "High",
                       "Other" to "Additional Info",
-                      "values_priorities_outcomes" to "Sustainability")
+                      "values_priorities_outcomes" to "Sustainability",
+                      "Overview" to "Catchment Overview")
             }
 
         val fmu = mapper.fromFeature(feature)
@@ -55,8 +56,8 @@ class FreshwaterManagementUnitMapperTest :
                 implementationIdeas = "Conservation Efforts",
                 culturalOverview = "High",
                 otherInfo = "Additional Info",
-                vpo = "Sustainability")
-
+                vpo = "Sustainability",
+                catchmentOverview = "Catchment Overview")
         fmu.geom!!.srid shouldBe 4326
       }
     })

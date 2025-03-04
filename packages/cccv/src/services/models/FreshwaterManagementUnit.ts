@@ -6,6 +6,7 @@ interface FarmPlanInfo {
     vpo?: string
     culturalOverview?: string
     otherInfo?: string
+    catchmentOverview?: string
 }
 
 export default interface FreshwaterManagementUnit {

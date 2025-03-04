@@ -143,11 +143,10 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
 
     const {
         fmuName1,
-        catchmentDescription,
         farmPlanInfo,
     } = details.freshwaterManagementUnit
 
-    const { implementationIdeas, otherInfo, vpo, culturalOverview } = farmPlanInfo ?? {}
+    const { implementationIdeas, otherInfo, vpo, culturalOverview, catchmentOverview } = farmPlanInfo ?? {}
 
     const tangataWhenuaSites = details.tangataWhenuaSites
 
@@ -189,12 +188,12 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
 
                 {/* Overview */}
                 <View style={[tw("mb-6 flex-row items-start"), { width: '100%' }]} wrap={false}>
-                    {catchmentDescription && (
+                    {catchmentOverview && (
                         <View style={{ flex: 1, marginRight: '12px' }}>
-                            <Text style={tw("body tb-2")}>{rPDFMarkup(makeSafe(catchmentDescription ?? ''))}</Text>
+                            <Text style={tw("body tb-2")}>{rPDFMarkup(makeSafe(catchmentOverview ?? ''))}</Text>
                         </View>
                     )}
-                    {details.mapImage && <MapImage width={catchmentDescription ? '42%' : '100%'} src={details.mapImage}/>}
+                    {details.mapImage && <MapImage width={catchmentOverview ? '42%' : '100%'} src={details.mapImage}/>}
                 </View>
 
                 {/* VPO */}
