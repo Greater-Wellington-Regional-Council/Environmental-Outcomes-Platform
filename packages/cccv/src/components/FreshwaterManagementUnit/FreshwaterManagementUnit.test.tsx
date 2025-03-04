@@ -59,7 +59,7 @@ describe('Spec FreshwaterManagementUnit', function () {
 
     it('shows fmu with catchment description', () => {
         render(<FreshwaterManagementUnit
-            freshwaterManagementUnit={{catchmentDescription: "This is a catchment description"}}
+            freshwaterManagementUnit={{farmPlanInfo: {catchmentOverview: "This is a catchment description"}}}
             tangataWhenuaSites={emptyFeatureCollection}/>)
         expect(screen.getByText('This is a catchment description')).toBeInTheDocument()
     })
