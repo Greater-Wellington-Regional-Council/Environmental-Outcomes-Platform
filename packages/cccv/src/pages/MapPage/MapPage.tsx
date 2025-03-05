@@ -123,7 +123,7 @@ export default function MapPage() {
     const [printing, setPrinting] = useState(false)
 
     const getFileName = () => {
-        return formatFilename(currentFmu?.freshwaterManagementUnit.fmuName1 || "fmu_ccv", `fmu_${currentFmu?.freshwaterManagementUnit.id}`) + `_${dateTimeString()}` + ".pdf"
+        return formatFilename(currentFmu?.freshwaterManagementUnit.fmuName1 || "fmu_cccv", `fmu_${currentFmu?.freshwaterManagementUnit.id}`) + `_${dateTimeString()}` + ".pdf"
     }
 
     useEffect(() => {

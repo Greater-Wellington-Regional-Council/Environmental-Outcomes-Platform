@@ -11,11 +11,6 @@ interface TangataWhenuaSitesProps {
     culturalOverview?: string | null;
 }
 
-export async function getSiteDescription(location: unknown, siteName: string) {
-  // Caches the return value as often retrieved more than once
-  return _.get(location, `properties.[${siteName}]`) || (await manaWhenuaSiteService.getBySiteName(siteName))?.explanation
-}
-
 const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSites, gotoTangataWhenua, culturalOverview = null }) => {
     const [tooltip, setTooltip] = useState<{ description: string | null; x: number; y: number; isLoading: boolean } | null>(null)
 
@@ -33,7 +28,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
 
         setTooltip({ description: "Loading...", x, y, isLoading: true })
 
-        const description = await getSiteDescription(site, siteName)
+        const description = site?.properties?.siteDescription?.[siteName]
         setTooltip({ description: description || "No description available", x, y, isLoading: false })
     }
 

@@ -22,12 +22,8 @@ import {
 import makeSafe from "@lib/makeSafe.ts"
 import {parseHtmlOrTextListToArray} from "@lib/parseHtmlOrTextListToArray.ts"
 import _ from "lodash"
-import DOMPurify from "dompurify"
 import Html from "react-pdf-html"
 import { Feature } from "geojson"
-import { getSiteDescription } from '@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx';
-
-import { Style } from '@react-pdf/types';
 
 try {
   (Font as unknown as { register: (arg0: unknown) => void }).register(fonts.inter)
@@ -174,20 +170,6 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
       <Text style={tw("body mb-2")}>{implementationIdeasList[0]}</Text> :
       null
 
-    const TangataWhenuaSiteDescription: React.FC<{ location: unknown, siteName: string, style?: Style | Style[] | undefined }> = ({ location, siteName, style }) => {
-      const [description, setDescription] = React.useState<string | undefined>(undefined);
-
-      React.useEffect(() => {
-        const fetchDescription = async () => {
-          const desc = await getSiteDescription(location, siteName);
-          setDescription(desc);
-        };
-        fetchDescription().then();
-      }, [location, siteName]);
-
-      return <Text style={style}>{description}</Text>
-    };
-
     return (
         <Document key={_.get(details, "key")}>
             <Page size="A4" style={tw("bg-white font-sans p-4 flex flex-col")}>
@@ -257,7 +239,7 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
                             {site?.properties?.sites?.map((siteName: string) => (
                               <View style={tw("mb-2")} key={siteName} wrap={false}>
                                 <Text style={tw("h5")}>{siteName.replace(/_/g, " ")}</Text>
-                                <TangataWhenuaSiteDescription style={tw("body")} location={site!} siteName={siteName} />
+                                {site?.properties?.siteDescription?.[siteName] && <Text style={tw("body")}>{site.properties.siteDescription[siteName]}</Text>}
                               </View>
                             ))}
                           </View>

@@ -126,7 +126,7 @@ const FreshwaterManagementUnit = (
                 <div></div>
             )}
 
-            {implementationIdeasSafe ? (
+            {implementationIdeasSafe?.length ? (
                 <div className="implementation-ideas mt-6">
                     <h2>Implementation Ideas</h2>
                     <div className="implementation-ideas">
