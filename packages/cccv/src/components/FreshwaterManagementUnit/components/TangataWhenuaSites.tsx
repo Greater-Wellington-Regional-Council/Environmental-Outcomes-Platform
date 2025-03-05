@@ -1,9 +1,8 @@
-import React, { useState, Key } from "react"
-import manaWhenuaSiteService from '@services/ManaWhenuaSiteService/ManaWhenuaSiteService.ts';
-import Tooltip from "@elements/Tooltip/Tooltip.tsx"
-import { Feature, FeatureCollection } from "geojson"
-import { MapPinIcon } from '@heroicons/react/20/solid'
-import _ from "lodash"
+import React, { Key, useState } from 'react';
+import Tooltip from '@elements/Tooltip/Tooltip.tsx';
+import { Feature, FeatureCollection } from 'geojson';
+import { MapPinIcon } from '@heroicons/react/20/solid';
+import makeSafe from '@lib/makeSafe.ts';
 
 interface TangataWhenuaSitesProps {
     tangataWhenuaSites: FeatureCollection;
@@ -41,7 +40,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
             {tangataWhenuaSites?.features.length ? (
                 <div className="tangata-whenua mt-6" onClick={hideTooltip}>
                     <h2>Cultural Significance of the Catchment</h2>
-                    {culturalOverview && <div dangerouslySetInnerHTML={{ __html: culturalOverview }} />}
+                    {culturalOverview && <div dangerouslySetInnerHTML={{ __html: `${makeSafe(culturalOverview)}` }} />}
                     <h3 className="mt-6">Sites of Significance</h3>
                     <p className="mt-2">This area contains sites of significance to Tangata Whenua including:</p>
                     <div className="tangata-whenua-sites">

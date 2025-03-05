@@ -1,30 +1,41 @@
-import DOMPurify from 'dompurify';
+import makeSafe from '@lib/makeSafe.ts';
 
-export function parseHtmlOrTextListToArray(textOrHtml: string, tagsAllowed = []): string[] {
-    const quotedStringPattern = /"([^"]*)"(?:\s*,\s*|$)/g;
-    const matches = [];
-    const allowedTags = { ALLOWED_TAGS: tagsAllowed }
-    let match;
-    while ((match = quotedStringPattern.exec(textOrHtml)) !== null) {
-        if (match[1]) {
-            matches.push(DOMPurify.sanitize(match[1], allowedTags));
-        }
+export function isEmptyHtmlTag(str: string): boolean {
+  const emptyHtmlTagRegex = /^<([a-zA-Z][a-zA-Z0-9]*)>\s*<\/\1>$/;
+  return emptyHtmlTagRegex.test(str.trim());
+}
+
+export function parseHtmlOrTextListToArray(textOrHtml: string): string[] {
+
+  const quotedStringPattern = /"([^"]*)"(?:\s*,\s*|$)/g;
+  const matches = [];
+  let match;
+  while ((match = quotedStringPattern.exec(textOrHtml)) !== null) {
+    if (match[1]) {
+      matches.push(makeSafe(match[1]));
     }
+  }
 
-    if (matches.length > 0) {
-        return matches;
-    }
+  if (matches.length > 0) {
+    return matches;
+  }
 
-    const tempDiv = document.createElement('div');
-    const sanitizedHtml = DOMPurify.sanitize(textOrHtml);
-    tempDiv.innerHTML = sanitizedHtml;
+  const tempDiv = document.createElement('div');
+  const sanitizedHtml = makeSafe(textOrHtml);
+  tempDiv.innerHTML = sanitizedHtml;
 
-    const listItems = Array.from(tempDiv.querySelectorAll('li'));
+  const listItems = Array.from(tempDiv.querySelectorAll('li'));
+  console.log('listItems', listItems, sanitizedHtml);
 
-    if (listItems.length > 0) {
-        return listItems.map(li => DOMPurify.sanitize(li.textContent?.trim() || '', allowedTags));
-    } else {
-        const singleItem= DOMPurify.sanitize(sanitizedHtml, allowedTags)?.trim()
-        return singleItem ? [singleItem] : [];
-    }
+  if (listItems.length > 1) {
+    return listItems.map(li => makeSafe(li.textContent?.trim() || ''));
+  } else {
+    if (!listItems.length && (!sanitizedHtml || sanitizedHtml.trim() === ''))
+      return [];
+
+    if (isEmptyHtmlTag(sanitizedHtml)) return []
+
+    const singleItem = makeSafe(sanitizedHtml)?.trim();
+    return singleItem ? [singleItem] : [];
+  }
 }

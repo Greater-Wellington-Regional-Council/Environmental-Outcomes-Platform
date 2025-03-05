@@ -133,13 +133,17 @@ const FreshwaterManagementUnit = (
                         {implementationIdeasSafe.length > 1 ? (
                             <ul className={"mt-2"}>
                                 {implementationIdeasSafe?.map((idea: string, index) => (
-                                    <li className="list-disc my-0" key={index}>
-                                        {makeSafe(idea)}
-                                    </li>
+                                    <li className="list-disc my-0" key={index}
+                                        dangerouslySetInnerHTML={{
+                                          __html: purify.sanitize(makeSafe(idea)),
+                                        }} />
                                 ))}
                             </ul>
                         ) : (
-                            <p>{makeSafe(implementationIdeasSafe[0])}</p>
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: purify.sanitize(makeSafe(implementationIdeasSafe[0])),
+                              }} />
                         )}
                     </div>
                 </div>

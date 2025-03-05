@@ -78,7 +78,7 @@ const BulletList = ({items}: { items: string[] }) => {
         <View>{items.map((item: string, index: number) => (
             <View key={index} style={tw('flex flex-row items-center mb-2 body')}>
                 <Text style={tw('mr-2')}>•</Text>
-                <Text style={tw('body')}>{makeSafe(item)}</Text>
+                <Text style={tw('body')}>{rPDFMarkup(makeSafe(item))}</Text>
             </View>
         ))}</View>
     )
@@ -156,18 +156,18 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
 
     const contaminants: ContaminantList = fmuContaminants(details.freshwaterManagementUnit)
 
-    const vpoSafe = vpo ? DOMPurify.sanitize(vpo) : null
+    const vpoSafe = vpo ? makeSafe(vpo) : null
 
-    const otherInfoSafe = otherInfo ? DOMPurify.sanitize(otherInfo) : null
+    const otherInfoSafe = otherInfo ? makeSafe(otherInfo) : null
 
-    const culturalOverviewSafe = culturalOverview ? DOMPurify.sanitize(culturalOverview) : null
+    const culturalOverviewSafe = culturalOverview ? makeSafe(culturalOverview) : null
 
     const implementationIdeasList = implementationIdeas ? parseHtmlOrTextListToArray(implementationIdeas) : []
 
     const implementationIdeasSafe = implementationIdeasList.length > 1 ?
       <BulletList items={implementationIdeasList} /> :
       implementationIdeasList.length === 1 ?
-      <Text style={tw("body mb-2")}>{implementationIdeasList[0]}</Text> :
+      <Text style={tw("body mb-2")}>{rPDFMarkup(implementationIdeasList[0])}</Text> :
       null
 
     return (

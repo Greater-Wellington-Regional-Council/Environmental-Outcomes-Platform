@@ -58,9 +58,9 @@ describe('parseHtmlOrTextListToArray', () => {
 
     it('should return an array of items with special characters', () => {
         const html = `<ul>
-      <li>Item &amp; Special 1</li>
-      <li>Item &lt; Special 2</li>
-    </ul>`;
+          <li>Item &amp; Special 1</li>
+          <li>Item &lt; Special 2</li>
+        </ul>`;
 
         const result = parseHtmlOrTextListToArray(html);
 
