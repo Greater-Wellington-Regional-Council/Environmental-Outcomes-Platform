@@ -59,14 +59,14 @@ describe('Spec FreshwaterManagementUnit', function () {
 
     it('shows fmu with catchment description', () => {
         render(<FreshwaterManagementUnit
-            freshwaterManagementUnit={{catchmentDescription: "This is a catchment description"}}
+            freshwaterManagementUnit={{farmPlanInfo: {catchmentOverview: "This is a catchment description"}}}
             tangataWhenuaSites={emptyFeatureCollection}/>)
         expect(screen.getByText('This is a catchment description')).toBeInTheDocument()
     })
 
     it('shows fmu with implementation ideas', () => {
         render(<FreshwaterManagementUnit
-            freshwaterManagementUnit={{implementationIdeas: {'value': "<ul><li>Ideas for implementation</li></ul>", "type": "html"}}}
+            freshwaterManagementUnit={{farmPlanInfo: {implementationIdeas: "<ul><li>Ideas for implementation</li></ul>"}}}
             tangataWhenuaSites={emptyFeatureCollection}/>)
         expect(screen.getByText('Ideas for implementation')).toBeInTheDocument()
     })

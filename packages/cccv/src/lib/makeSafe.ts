@@ -1,8 +1,17 @@
 import purify from "dompurify"
 
-export const makeSafe = (str: string): string => {
+const normalize = (str: string): string => {
+  // Convert bullets to <ul>
+  let s = str.replace(/^(·)/, '<ul><li>')
+  s = s.replace(/(·)$/, '</li></ul>')
+  s = s.replace(/(·)/g, '</li><li>')
+  return s
+}
+
+export const makeSafe = (str: string, allowedTags?: string[]): string => {
+  const tagsAllowed = ['p', 'br', 'ul', 'li', ...allowedTags ?? []]
   return purify.sanitize(
-      (str ?? '').replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/\s*script\s*>/gi, '')
+      (normalize(str) ?? ''), { ALLOWED_TAGS: tagsAllowed }
   )
 }
 

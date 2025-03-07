@@ -2,8 +2,9 @@ package nz.govt.eop.freshwater_management_units.services
 
 import io.kotest.core.spec.style.BehaviorSpec
 import java.net.URI
-import nz.govt.eop.TangataWhenuaSitesSources
+import nz.govt.eop.TangataWhenuaSitesDataSources
 import nz.govt.eop.freshwater_management_units.repositories.TangataWhenuaSiteRepository
+import nz.govt.eop.utils.UrlBasedDataSources
 import org.geojson.Feature
 import org.geojson.FeatureCollection
 import org.geojson.Point
@@ -38,11 +39,11 @@ class TangataWhenuaSiteServiceTest :
             TangataWhenuaSiteService(restTemplateMock, repositoryMock).apply {
               ReflectionTestUtils.setField(
                   this,
-                  "tangataWhenuaSitesSources",
-                  TangataWhenuaSitesSources().apply {
+                  "tangataWhenuaSitesDataSources",
+                  TangataWhenuaSitesDataSources().apply {
                     sources =
                         listOf(
-                            TangataWhenuaSitesSources.Source().apply {
+                            UrlBasedDataSources.Source().apply {
                               name = "Schedule B"
                               urls = listOf("http://test.url1")
                             })

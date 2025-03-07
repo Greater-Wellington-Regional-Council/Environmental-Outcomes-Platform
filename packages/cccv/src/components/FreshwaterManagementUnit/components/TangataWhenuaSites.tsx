@@ -1,9 +1,8 @@
-import React, { useState, Key } from "react"
-import manaWhenuaSiteService from "@services/ManaWhenuaSiteService/ManaWhenuaSiteService.ts"
-import Tooltip from "@elements/Tooltip/Tooltip.tsx"
-import { Feature, FeatureCollection } from "geojson"
-import { MapPinIcon } from '@heroicons/react/20/solid'
-import _ from "lodash"
+import React, { Key, useState } from 'react';
+import Tooltip from '@elements/Tooltip/Tooltip.tsx';
+import { Feature, FeatureCollection } from 'geojson';
+import { MapPinIcon } from '@heroicons/react/20/solid';
+import makeSafe from '@lib/makeSafe.ts';
 
 interface TangataWhenuaSitesProps {
     tangataWhenuaSites: FeatureCollection;
@@ -13,10 +12,6 @@ interface TangataWhenuaSitesProps {
 
 const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSites, gotoTangataWhenua, culturalOverview = null }) => {
     const [tooltip, setTooltip] = useState<{ description: string | null; x: number; y: number; isLoading: boolean } | null>(null)
-
-    async function getSiteDescription(location: unknown, siteName: string) {
-        return _.get(location, `properties.[${siteName}]`) || (await manaWhenuaSiteService.getBySiteName(siteName))?.explanation
-    }
 
     const showSiteDescription = async (e: React.MouseEvent<HTMLLIElement>, site: Feature, siteName: string) => {
         e.stopPropagation()
@@ -32,7 +27,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
 
         setTooltip({ description: "Loading...", x, y, isLoading: true })
 
-        const description = await getSiteDescription(site, siteName)
+        const description = site?.properties?.siteDescription?.[siteName]
         setTooltip({ description: description || "No description available", x, y, isLoading: false })
     }
 
@@ -45,7 +40,7 @@ const TangataWhenuaSites: React.FC<TangataWhenuaSitesProps> = ({ tangataWhenuaSi
             {tangataWhenuaSites?.features.length ? (
                 <div className="tangata-whenua mt-6" onClick={hideTooltip}>
                     <h2>Cultural Significance of the Catchment</h2>
-                    {culturalOverview && <div dangerouslySetInnerHTML={{ __html: culturalOverview }} />}
+                    {culturalOverview && <div dangerouslySetInnerHTML={{ __html: `${makeSafe(culturalOverview)}` }} />}
                     <h3 className="mt-6">Sites of Significance</h3>
                     <p className="mt-2">This area contains sites of significance to Tangata Whenua including:</p>
                     <div className="tangata-whenua-sites">

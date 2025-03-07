@@ -47,6 +47,9 @@ spring:
           value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       application-id: nz.govt.eop.consumers.manager
 
+  jpa:
+    database-platform: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+
 management:
   endpoints:
     enabled-by-default: true
@@ -101,4 +104,10 @@ addressfinder:
     secret: "${CONFIG_ADDRESSFINDER_API_SECRET:}"
     base-url: "${CONFIG_ADDRESSFINDER_BASE_URL:https://api.addressfinder.io/api/nz/address}"
 
-
+freshwater:
+  management:
+    units:
+      sources:
+        - name: "arcgis"
+          urls:
+            - "https://services2.arcgis.com/RS7BXJAO6ksvblJm/ArcGIS/rest/services/Ruamahanga_Whaitua_Catchment_Context_Challenges_and_Values_(Public_View)/FeatureServer/2/query?where=1%3D1&fullText=&objectIds=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&relationParam=&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&returnEnvelope=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=4326&defaultSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&collation=&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnTrueCurves=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token="
