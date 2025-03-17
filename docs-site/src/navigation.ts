@@ -3,6 +3,7 @@ export default [
   { title: 'What is EOP?', href: '/' },
   { title: 'Technical Design', href: '/technical-design/' },
   { title: 'Current status', href: '/current-status/' },
+  { title: 'CCCV', href: '/cccv/' },
   { title: 'Plan Limits Viewer', href: '/plan-limits-viewer/' },
   { title: 'How to contribute', href: '/how-to-contribute/' },
   { title: 'Changing this Site', href: '/changing-this-site/' },
