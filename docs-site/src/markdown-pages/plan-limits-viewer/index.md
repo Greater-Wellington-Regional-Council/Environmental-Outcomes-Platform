@@ -27,7 +27,7 @@ reference, allowing a user to easily understand what limits apply where. It has
 been developed with Greater Wellington data sources as a starting point, and
 we're currently in the process of integrating data from other councils.
 
-![Context Diagram](./structurizr-1-SystemContext.png)
+![Context Diagram](./structurizr-1-planLimitsSystemContext.svg)
 ![Context Key](./structurizr-1-SystemContext-key.png)
 
 ## High-level architecture
@@ -35,7 +35,7 @@ we're currently in the process of integrating data from other councils.
 The diagram below shows the high level technical architecture of the Plan Limits
 system
 
-![Containers Diagram](./structurizr-1-SystemContainers.png)
+![Containers Diagram](./structurizr-1-ServerComponents.svg)
 ![Containers Key](./structurizr-1-SystemContainers-key.png)
 
 ### Key areas:

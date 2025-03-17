@@ -31,3 +31,11 @@ the scope of this documentation.
   (see an existing file for an example)
 - Add a reference to the new page in `navigation.ts` to make it appear in the
   left hand menu
+
+### Diagrams are created using [Structurizr](https://structurizr.com/)
+
+Here is a simpe key to the diagrams used in this documentation:
+
+![structurizr-1-SystemContainers-key.png](plan-limits-viewer/structurizr-1-SystemContainers-key.png)
+
+See the top level Readme for more information on how to work with Structurizr.
