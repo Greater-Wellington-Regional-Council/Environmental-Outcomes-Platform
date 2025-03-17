@@ -18,13 +18,13 @@ neatly presents data and information about their catchment that they can use to
 inform their submission.   It complements another application built by an 
 external party that the farmers can use to actually create and submit their farm plan.
 
-![Context Diagram](./structurizr-1-freshwaterManagementUnitsSystemContext.svg))
+![Context Diagram](./structurizr-1-freshwaterManagementUnitsSystemContext.png)
 
 ## High-level architecture
 
 The diagram below shows the high level technical architecture of the CCCV application
 
-![Containers Diagram](./structurizr-1-SystemContainersCCCV.svg)
+![Containers Diagram](./structurizr-1-SystemContainersCCCV.png)
 
 ### Key areas:
 
