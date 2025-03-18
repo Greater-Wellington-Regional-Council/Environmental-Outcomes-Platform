@@ -30,7 +30,7 @@ The diagram below shows the high level technical architecture of the CCCV applic
 
 #### CCCV Application
 
-This is the front-end UI that end-users interact with to view Plan Limits. It's
+This is the front-end UI that end-users interact with to view CCCV. It's
 deployed as static HTML/CSS/JS to [AWS Amplify](https://aws.amazon.com/amplify/) and served
 via [AWS Cloudfront](https://www.amazonaws.cn/en/cloudfront/). It consumes data
 from the Management API, the Tile Server and
@@ -67,29 +67,17 @@ The Manager API, like all EOP/He Kākāno backend components is deployed in Dock
 - [jOOQ](https://www.jooq.org/) and [Flyway](https://flywaydb.org/) - Data
   access and management libraries
 
-#### Ingest API
-
-This server-side application exposes authenticated APIs to accept
-incoming Plan and Consent data from Councils, and persist this to a Kafka
-Broker. It's developed and deployed using the same technology stack as the
-Manager API.
-
 #### Vector Tile Server
 
 This is a simple containerised deployment of
 [pg_tileserv](https://github.com/CrunchyData/pg_tileserv), which connects to the
-database and serves NZ River GIS data directly to the Web Application as Vector
+database and serves NZ River spatial data directly to the Web Application as Vector
 Tiles.
 
 #### Database
 
 This is a Postgres database with PostGIS extensions installed deployed via
 [AWS RDS](https://aws.amazon.com/rds/).
-
-#### Kafka Broker
-
-This is a standard Kafka Broker deployed using
-[AWS EKS](https://aws.amazon.com/eks/).
 
 ### Hosting
 
