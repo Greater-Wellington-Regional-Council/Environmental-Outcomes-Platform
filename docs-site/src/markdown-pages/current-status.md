@@ -15,12 +15,3 @@ The team has been operational since late 2022, and progress to date includes:
 - Development of our first [outcome](/#outcomes), a
   [Plan Limits Viewer](/plan-limits-viewer/)
 - Establishment of a [Steering Group](/#steering-group)
-
-### What's up next:
-
-The roadmap for the few months includes:
-
-- Iterating on the Plan Limits Viewer to include consented allocation amounts
-  and usage
-- Integrating data from other councils into the Plan Limits Viewer
-- Establishment of a [Technical Working Group](/#technical-working-group)
