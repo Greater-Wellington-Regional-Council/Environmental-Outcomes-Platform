@@ -1,16 +1,16 @@
 # Environmental Outcomes Platform (EOP)
 
-## On Documentation
+EOP / He Kākano is an initiative led by Greater Wellington Regional Council to establish an end-to-end platform for capture, management and reporting of environmental information. It's goal is to allow all regional councils to maximise the value they get from their environmental data efforts and provide clear, consistent and user-centric information to end-users if this data. It’s built based on the experiences from the Environment Canterbury Water Data programme
+## About this Documentation
+> Published documentation is available [here](https://greater-wellington-regional-council.github.io/Environmental-Outcomes-Platform/)
 
-> Published documentation should be available [here](https://greater-wellington-regional-council.github.io/Environmental-Outcomes-Platform/)
-
-All documentation for EOP should be defined in code as part of this repo, and deployed to GitHub pages. It is all very much a work in progress at this stage, with focus on high level of the 
+Documentation for EOP is expressed as a Gatsby web site as part of this repo, and deployed to GitHub pages.  Any changes are automatically published to the above link when the repository is pushed to or merged into the `main` branch in GitHub.
 
 ### Updating the documentation
 
-It is recommended to start the documentation locally and use the live preview in your browser to monitor the effect of changes.
+It is recommended to start the documentation server locally and use the live preview in your browser to monitor the effect of changes.
 
-See the docs-site README for more information on how to run the documentation locally.
+See the [docs-site README](./docs-site/README.md) for more information on how to run the documentation locally.
 
 ### How to Run the application locally
 
@@ -37,6 +37,6 @@ This script was developed on a Mac.
 ### DataTransformation script when running locally
 
 Something you may need to remember when running the EOP locally is that the data transformation script is not run automatically.  This script is responsible for transforming some raw data into forms that are needed by certain parts of the application.  You can run it manually by executing the following command after the rest of backend has started fully.
-`./batect run data-transformation`
+`./start.sh DataTransformation`
 
 Try this if your front end or API are not displaying the data you expect.

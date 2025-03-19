@@ -13,9 +13,8 @@ This is a Gatsby site that provides documentation for the EOP project.  It is a 
 
 It is recommended that you run the site locally to see the effect of changes as you edit the document locally.  The easiest way to do this is to clone the repo to your machine and do following at the command line from the root of the project:-
 - `cd docs-site`
-- `npm install` - to install node js dependencies
-- `./batect build` - will compile and run the site on port `8000`
-- Open a browser and navigate to `http://localhost:8000` to view the site
+- `./batect run` - will compile and run the site on port `8000`
+- Open a browser and navigate to `http://localhost:8000` to view the documentation
 
 ### Adding a Page
 
