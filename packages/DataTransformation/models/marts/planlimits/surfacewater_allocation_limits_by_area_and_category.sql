@@ -25,10 +25,23 @@ WITH water_allocations AS (
 
                  LEFT JOIN
              water_allocations t
-             ON
-                 t.effective_from <= m.month_start
-                     AND (t.effective_to IS NULL OR t.effective_to > m.month_start)
-
+             ON 
+                ( 
+                    -- For past and future months: effective_from <= month_start
+                    t.effective_from <= m.month_start
+                    -- For the current month: effective_from must be <= today
+                    OR (m.month_start = DATE_TRUNC('month', CURRENT_DATE) AND t.effective_from <= CURRENT_DATE)
+                )
+                AND 
+                (
+                    -- Keep records where effective_to is NULL or after the month start
+                    t.effective_to IS NULL OR t.effective_to > m.month_start
+                )
+                -- Exclude records where effective_to is before today in the current month
+                AND NOT (
+                    m.month_start = DATE_TRUNC('month', CURRENT_DATE) 
+                    AND t.effective_to < CURRENT_DATE
+                )
      ),
 
      surface_water_limits AS (
