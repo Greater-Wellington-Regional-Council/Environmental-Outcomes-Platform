@@ -45,6 +45,7 @@ WITH water_allocations AS (
                 AND NOT (
                     m.month_end = (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day') 
                     AND COALESCE(t.effective_to, '9999-12-31') < CURRENT_DATE
+
                 )
     ),
 
