@@ -11,7 +11,7 @@ import numValue from '@lib/numValue';
 import capitalise from '@lib/capitalise';
 
 export const WaterAllocationTable = ({ council }: { council: Council }) => {
-  const DEFAULT_MONTHS = [new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)]
+  const DEFAULT_MONTHS = [new Date(new Date().getFullYear(), new Date().getMonth(), 1)]
 
   const [waterType, setWaterType] = useState<WaterType>('ground');
   const [monthStart, setMonthStart] = useState(DEFAULT_MONTHS);
