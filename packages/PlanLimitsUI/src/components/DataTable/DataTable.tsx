@@ -203,7 +203,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
     input.forEach(({ [columns.unzipColumn]: d, [columns.keyColumn]: k, [columns.compareColumn]: v }) => {
       const unzipHeader = d && fullColumnDescriptor(columns.unzipColumn).type === 'date' ?
-        dateString(d, true, 'mmm yyyy') || 'No date' :
+        dateString(d, true, 'lmy') || 'No date' :
         (d || 'No label').toString();
 
       const unzipName = (d || 'zzzzz').toString();
@@ -248,9 +248,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     ];
   };
 
-  // This utility function is used to create a full column descriptor
-  // from a column name and any other properties that may be defined
-  // in the columnProps array
+  // Analyse all column data including defaults, and hydrate and return full column descriptor
   function fullColumnDescriptor(
     col: ColumnNameOrDescriptor | undefined,
   ): ColumnDescriptor {

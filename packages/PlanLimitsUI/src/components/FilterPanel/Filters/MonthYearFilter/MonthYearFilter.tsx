@@ -12,6 +12,7 @@ export const MonthYearFilter: React.FC<FilterDescriptor> = (filter) => {
       label={filter.label}
       multiSelect={filter.multiSelect}
       useModifierKeys={filter.useModifierKeys}
+      showLastDayForCurrentMonth={true}
     />
   );
 };
