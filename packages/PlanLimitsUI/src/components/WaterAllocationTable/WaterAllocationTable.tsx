@@ -10,8 +10,10 @@ import { MonthYearFilter } from '@components/FilterPanel/Filters/MonthYearFilter
 import numValue from '@lib/numValue';
 import capitalise from '@lib/capitalise';
 
+import { monthLabel } from '@lib/monthToToday';
+
 export const WaterAllocationTable = ({ council }: { council: Council }) => {
-  const DEFAULT_MONTHS = [new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1)]
+  const DEFAULT_MONTHS = [new Date(new Date().getFullYear(), new Date().getMonth(), 1)]
 
   const [waterType, setWaterType] = useState<WaterType>('ground');
   const [monthStart, setMonthStart] = useState(DEFAULT_MONTHS);
@@ -110,10 +112,7 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
           'allocations',
           council.slug,
           (monthStart.length > 1 ? `compare-${compareColumn}-` : 'from-') +
-            monthStart.at(0)?.toLocaleDateString('en-US', {
-              month: 'short',
-              year: '2-digit',
-          }).replace(' ', '-'),
+            monthLabel(monthStart.at(0)!).replaceAll(' ', '-'),
         ],
         compare: monthStart.length > 1 && {
           unzipColumn: 'month_start',

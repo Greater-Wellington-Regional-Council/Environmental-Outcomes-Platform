@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Dropdown, { DropdownValueType } from '@components/Dropdown/Dropdown';
+import monthToToday, { lastPastDay } from '@lib/monthToToday';
 
 const MonthYearPicker = ({
                            current,
@@ -22,6 +23,7 @@ const MonthYearPicker = ({
   multiSelect?: boolean;
   useModifierKeys?: boolean;
   dateFilter?: (d: Date) => boolean;
+  showLastDayForCurrentMonth?: boolean;
 }) => {
   const now = new Date();
   const startDate = new Date();
@@ -49,13 +51,14 @@ const MonthYearPicker = ({
   const options = years.flatMap((year) =>
     months
       .map((month) => ({
-        label: `${month.label} ${year}`,
+        label: monthToToday(lastPastDay(year, month.value, true)),
         year,
         month: month.value,
+        day: lastPastDay(year, month.value, true).getDate(),
         value: `${month.value}-${year}`,
       }))
       .filter((option) => {
-        const optionDate = new Date(option.year, option.month, 1);
+        const optionDate = new Date(option.year, option.month, option.day);
         return optionDate >= startDate && optionDate <= now && (!dateFilter || dateFilter(optionDate));
       }),
   );
@@ -80,7 +83,9 @@ const MonthYearPicker = ({
   return (
     <div className={`space-x-4 items-center ${className}`}>
       <Dropdown
-        options={options.reverse()}
+        options={options.sort((a, b) =>
+          a.year === b.year ? (b.month === a.month ? b.day - a.day : b.month - a.month) : b.year - a.year
+        )}
         placeholder="Select Month and Year"
         value={selectedOption ? selectedOption.map(my => `${my.month}-${my.year}`) : null}
         onChange={handleSelection}

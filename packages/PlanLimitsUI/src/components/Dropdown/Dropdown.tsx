@@ -2,6 +2,7 @@ import React, { FC, useState, useEffect, useRef } from 'react';
 import { isArray, isObject } from 'lodash';
 import arrowSvg from '@images/icon_chevronDown.svg';
 import { DataValueType } from '@components/DataTable/DataTable';
+import randomString from '@lib/randomeString';
 
 export type DropdownValueType = string | number | null | undefined | DataValueType;
 
@@ -13,8 +14,8 @@ export type DropdownOption = {
 interface DropdownProps {
   options: unknown[];
   selectAll?: string;
-  placeholder: string | React.ReactNode;
-  value: DropdownValueType | DropdownValueType[];
+  placeholder?: string | React.ReactNode;
+  value?: DropdownValueType | DropdownValueType[];
   onChange: (value: DropdownValueType | DropdownValueType[]) => void;
   arrow?: React.ReactNode;
   className?: string;
@@ -40,8 +41,8 @@ interface DropdownProps {
 const Dropdown: FC<DropdownProps> = ({
                                        options,
                                        selectAll,
-                                       placeholder,
-                                       value,
+                                       placeholder = 'Select...',
+                                       value = undefined,
                                        onChange,
                                        arrow,
                                        className = '',
@@ -196,6 +197,7 @@ const Dropdown: FC<DropdownProps> = ({
     } else if (ctrlKey || metaKey) {
       // CTRL or CMD + click: toggle
       newSelection = toggleValueInArray(currentValueArray, optionValue);
+      console.log(newSelection)
     } else {
       // No modifier: replace selection with just this item
       newSelection = [optionValue];
@@ -228,15 +230,18 @@ const Dropdown: FC<DropdownProps> = ({
     }
   };
 
+  const labelId = label ? `${label.replace(/\s+/g, '-')}-dropdown-label-${randomString(5)}` : undefined;
+
   return (
     <div className={`dropdown relative font-bold bg-transparent inline-flex items-center ${className}`}>
-      <label className={`text-nui font-bold ${label ? 'block max-w-fit' : 'hidden'} pl-0 pr-4`}>
+      <label className={`text-nui font-bold ${label ? 'block max-w-fit' : 'hidden'} pl-0 pr-4`} id={labelId}>
         {label}
       </label>
-      <div ref={dropdownRef} className="relative font-bold bg-transparent w-full">
+      <div ref={dropdownRef} data-testid='dropdown-div' className="dropdown-div relative font-bold bg-transparent w-full" aria-labelledby={labelId}>
         <div
           className={`dropdown-control flex p-2 top-18 font-bold bg-white rounded-xl border-[2px] border-nui ${controlClassName}`}
           onClick={toggleDropdown}
+          role="combobox"
           data-testid={dataTestid}
         >
           <div className="dropdown-value flex w-full items-center text-left pr-2">
