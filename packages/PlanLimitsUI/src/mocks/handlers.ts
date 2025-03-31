@@ -7,7 +7,7 @@ export const handlers = [
 
     const { dates } = params
     const datesRequested: string = dates.split(',')
-    console.log('Thiss', HttpResponse)
+
     return HttpResponse.json({
       data: [
         {

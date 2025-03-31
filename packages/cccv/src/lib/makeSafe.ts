@@ -2,7 +2,7 @@ import purify from "dompurify"
 
 const normalize = (str: string): string => {
   // Convert bullets to <ul>
-  let s = str.replace(/^(·)/, '<ul><li>')
+  let s = str?.replace(/^(·)/, '<ul><li>') || '';
   s = s.replace(/(·)$/, '</li></ul>')
   s = s.replace(/(·)/g, '</li><li>')
   return s
