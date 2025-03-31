@@ -197,7 +197,6 @@ const Dropdown: FC<DropdownProps> = ({
     } else if (ctrlKey || metaKey) {
       // CTRL or CMD + click: toggle
       newSelection = toggleValueInArray(currentValueArray, optionValue);
-      console.log(newSelection)
     } else {
       // No modifier: replace selection with just this item
       newSelection = [optionValue];

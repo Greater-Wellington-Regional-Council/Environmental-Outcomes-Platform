@@ -319,7 +319,7 @@ describe('WaterAllocationTable Component', () => {
 
     const monthDropdown = screen.getByLabelText(/from:/i);
     const firstEntry = monthToToday();
-    console.log(firstEntry)
+
     expect(monthDropdown).toHaveTextContent(firstEntry);
   });
 

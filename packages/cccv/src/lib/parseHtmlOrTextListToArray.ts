@@ -25,7 +25,6 @@ export function parseHtmlOrTextListToArray(textOrHtml: string): string[] {
   tempDiv.innerHTML = sanitizedHtml;
 
   const listItems = Array.from(tempDiv.querySelectorAll('li'));
-  console.log('listItems', listItems, sanitizedHtml);
 
   if (listItems.length > 1) {
     return listItems.map(li => makeSafe(li.textContent?.trim() || ''));

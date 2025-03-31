@@ -7,8 +7,6 @@ import Worker from './pdf.worker?worker'
 
 export const pdfWorker = wrap<WorkerType>(new Worker())
 
-await pdfWorker.onProgress(proxy((info: unknown) => console.log(info)))
-
 export const useRenderPDF = (props: Parameters<WorkerType['renderPDFInWorker']>[0]) => {
     const {
         value: url,
