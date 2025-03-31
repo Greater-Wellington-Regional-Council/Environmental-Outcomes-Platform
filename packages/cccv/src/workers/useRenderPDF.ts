@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useAsync } from 'react-use'
 
-import { proxy, wrap } from 'comlink'
+import { wrap } from 'comlink'
 import type { WorkerType } from './pdf.worker'
 import Worker from './pdf.worker?worker'
 
