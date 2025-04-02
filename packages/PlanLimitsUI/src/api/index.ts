@@ -219,8 +219,7 @@ export function useWaterUseQuery(councilId: number, from: string, to: string) {
     queryKey: ['/plan-limits/water-usage', councilId, from, to],
     // These settings prevent a refetch within in the same browser session
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    staleTime: Infinity,
+    staleTime: 60 * 60 * 1000, // 1 hour
     queryFn: () =>
       fetchFromAPI<Usage[]>(
         `/plan-limits/water-usage?councilId=${councilId}&from=${from}&to=${to}`,
@@ -235,8 +234,7 @@ export function useWaterAllocationQuery(councilId: number, waterType: WaterType,
   return useQuery({
     queryKey: [endpoint, councilId, formattedDate],
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    staleTime: Infinity,
+    staleTime: 60 * 60 * 1000, // 1 hour
     queryFn: () =>
       fetchFromAPI<Record<string, DataValueType>[]>(`${endpoint}?councilId=${councilId}&dates=${formattedDate}`),
   });

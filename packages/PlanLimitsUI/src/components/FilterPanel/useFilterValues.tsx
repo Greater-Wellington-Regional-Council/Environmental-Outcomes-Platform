@@ -6,7 +6,10 @@ export const useFilterValues = <T extends Record<string, unknown>>(initialFilter
   const [filterValues, setFilterValues] = useState<T>({...initialFilters});
 
   useEffect(() => {
-    setFilterValues({...initialFilters});
+    setFilterValues((prev) => {
+      if (_.isEqual(prev, initialFilters)) return prev;
+      return { ...initialFilters };
+    });
   }, [initialFilters]);
 
   const updateFilterValue = (key: keyof T, value: T[keyof T] | undefined) => {
