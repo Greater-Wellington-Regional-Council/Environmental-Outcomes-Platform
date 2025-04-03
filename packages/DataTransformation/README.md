@@ -1,6 +1,6 @@
 # Data Transformations
 
-TODO - this is super quick doc so it can be shared while work is sitll going on
+TODO - this is super quick doc so it can be shared while work is still going on
 
 ## Running
 
@@ -34,7 +34,7 @@ This will allow JOOQ to generate classes before DBT has run
 
 ### Generate DBT documentation
 
-The command helps in generating your project's documentation and catelog will be created.
+The command helps in generating your project's documentation and catalog will be created.
 
 * `./batect generate-docs`
 

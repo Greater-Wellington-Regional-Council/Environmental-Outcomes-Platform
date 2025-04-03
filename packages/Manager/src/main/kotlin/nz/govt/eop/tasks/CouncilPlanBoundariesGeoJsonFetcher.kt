@@ -33,7 +33,7 @@ class CouncilPlanBoundariesGeoJsonFetcher(
 
   private fun updateCouncilPlanGeoJsonBoundaries() {
     // Expect multiple rows to pull from the same source URL, so cache the results for the length of
-    // this execution
+    // this execution.
     jdbcTemplate.queryForList("SELECT * FROM council_plan_boundary_geojson_source").forEach {
       val councilId = it["council_id"] as Int
       val sourceId = it["source_id"] as String
