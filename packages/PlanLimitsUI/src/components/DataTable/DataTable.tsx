@@ -496,17 +496,17 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   }
 
   return (
-    <div>
+    <div className="data-table-container min-w-[639px] flex-col">
       {/* Outer filters & actions (eg, water type and month) */}
-      <div className="flex pt-0 mt-0 pr-4 justify-between items-end" style={{ textAlign: 'unset' }}>
+      <div className="flex pt-0 mt-0 pr-4 justify-between items-end flex-wrap" style={{ textAlign: 'unset' }}>
         <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues}
                      onClose={onClearFilters} label="Show data for:" labelInline={false} />
-
-        {data[0] && <div className="space-x-4 mb-4">
+        {data[0] && <div className="action-buttons space-x-4 mb-4">
           <button onClick={downloadCSV}>Download</button>
           <button onClick={printPDF}>Print</button>
         </div>}
       </div>
+
 
       {data[0] ? <table className="table-auto border-collapse w-full">
 
