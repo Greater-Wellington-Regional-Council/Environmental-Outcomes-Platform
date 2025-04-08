@@ -4,12 +4,12 @@ import React, { useState, useEffect, useRef } from 'react'
 interface InfoPanelProps {
     showPanel: boolean;
     contentChanged: boolean;
-    onClose: () => void;
+    onClose?: () => void;
     onResize?: (width: number) => void;
     children?: React.ReactNode;
 }
 
-export default function SlidingPanel({ showPanel, contentChanged, onResize, children }: InfoPanelProps) {
+export default function SlidingPanel({ showPanel, contentChanged, onResize, children, onClose = () => {} }: InfoPanelProps) {
     const panelRef = useRef<HTMLDivElement>(null)
     const isResizing = useRef(false)
     const [panelWidth, setPanelWidth] = useState(300)
@@ -77,6 +77,15 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
         setIsPanelVisible(!isPanelVisible) // Toggle panel visibility
     }
 
+    const handleClose = () => {
+      setIsPanelVisible(false)
+      onClose?.()
+    }
+
+    useEffect(() => {
+      setIsPanelVisible(showPanel) // Update visibility state based on showPanel prop
+    }, [showPanel]);
+
     const revealOrHideInfoPanel = isPanelVisible ? 'animate-in' : 'animate-out'
     const signalUpdatedInfoPanel = contentChanged ? 'pulsate' : ''
     const stateClass = isPanelVisible ? 'sliding-panel-visible' : 'sliding-panel-hidden'
@@ -93,6 +102,19 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
             }}
             data-testid="sliding-panel"
         >
+          <div
+            className="close-button absolute top-1 m-0 z-999 bg-kapiti text-gray-400 bg-transparent cursor-pointer leading-none"
+            onClick={handleClose}
+            role="button"
+            aria-label="Close Panel"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"/>
+            </svg>
+          </div>
+
             {isLargeScreen && (
               // eslint-disable-next-line jsx-a11y/no-static-element-interactions
                 <div
