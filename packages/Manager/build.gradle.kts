@@ -7,7 +7,7 @@ plugins {
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "7.0.2"
   id("org.flywaydb.flyway") version "11.4.0"
-  id("nu.studer.jooq") version "9.0"
+  id("nu.studer.jooq") version "10.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.1.20"
   kotlin("plugin.spring") version "2.1.10"
