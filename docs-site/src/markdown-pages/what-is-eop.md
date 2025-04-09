@@ -1,5 +1,5 @@
 ---
-title: The intention of EOP?
+title: What is EOP?
 key: index
 ---
 
