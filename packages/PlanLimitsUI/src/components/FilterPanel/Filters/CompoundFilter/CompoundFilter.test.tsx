@@ -69,15 +69,15 @@ describe('CompoundFilter', () => {
       />
     );
 
-    fireEvent.click(screen.getByTestId('dropdown-Field Name'));
+    fireEvent.click(screen.getByTestId('dropdown-field-name'));
     fireEvent.click(screen.getByText('field_name_1'));
     expect(mockFieldNameChange).toHaveBeenCalledWith('field_name_1');
 
-    fireEvent.click(screen.getByTestId('dropdown-Condition'));
+    fireEvent.click(screen.getByTestId('dropdown-condition'));
     fireEvent.click(screen.getByText('!='));
     expect(mockConditionChange).toHaveBeenCalledWith('!=');
 
-    fireEvent.click(screen.getByTestId('dropdown-Field Value'));
+    fireEvent.click(screen.getByTestId('dropdown-field-value'));
     fireEvent.click(screen.getByText('value_2'));
     expect(mockFieldValueChange).toHaveBeenCalledWith('value_2');
   });
@@ -110,7 +110,7 @@ describe('CompoundFilter', () => {
       />
     );
 
-    fireEvent.click(screen.getByTestId('dropdown-Field Name'));
+    fireEvent.click(screen.getByTestId('dropdown-field-name'));
     fireEvent.click(screen.getByText('field_name_1'));
 
     const fieldNameDropdown = screen.getByText('field_name_1');
@@ -157,13 +157,13 @@ describe('CompoundFilter', () => {
     fireEvent.click(submitButton);
     expect(mockOnSubmit).toHaveBeenCalled();
 
-    fireEvent.click(screen.getByTestId('dropdown-Field Name'));
+    fireEvent.click(screen.getByTestId('dropdown-field-name'));
     fireEvent.click(screen.getByText('field_name_1'));
 
-    fireEvent.click(screen.getByTestId('dropdown-Condition'));
+    fireEvent.click(screen.getByTestId('dropdown-condition'));
     fireEvent.click(screen.getByText('!='));
 
-    fireEvent.click(screen.getByTestId('dropdown-Field Value'));
+    fireEvent.click(screen.getByTestId('dropdown-field-value'));
     fireEvent.click(screen.getByText('value_2'));
 
     fireEvent.click(submitButton);

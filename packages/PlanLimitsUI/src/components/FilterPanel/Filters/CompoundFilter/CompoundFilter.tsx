@@ -74,7 +74,7 @@ export const CompoundFilter: React.FC<CompoundFilterProps> = ({
             placeholder={dropdownConfig?.placeholder || filter?.placeholder || `Select ${dropdownConfig.name}`}
             dataTestid={`dropdown-${dropdownConfig.name}`}
             className={`bg-transparent pr-4 ${dropdownConfig.label && index > 0 ? 'pl-0' : 'pr-4' } ${dropdownConfig?.className}`}
-            controlClassName="p-2 ${dropdownConfig?.controlClassName}"
+            controlClassName={`p-2 ${dropdownConfig?.controlClassName}`}
           />
         ))}
       </div>
