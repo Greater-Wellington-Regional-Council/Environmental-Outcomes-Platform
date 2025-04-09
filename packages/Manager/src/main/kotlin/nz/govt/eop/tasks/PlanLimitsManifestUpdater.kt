@@ -1,12 +1,12 @@
 package nz.govt.eop.tasks
 
+import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import nz.govt.eop.plan_limits.Manifest
 import org.jooq.DSLContext
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.util.concurrent.TimeUnit
 
 @Component
 class PlanLimitsManifestUpdater(val context: DSLContext, val manifest: Manifest) {
@@ -20,7 +20,7 @@ class PlanLimitsManifestUpdater(val context: DSLContext, val manifest: Manifest)
 
     if (!manifest.tablesExistAndPopulated()) {
       logger.info { "Manifest data tables do not yet exist." }
-        return
+      return
     }
 
     //  Hard coded to just Wellington until we have more data since empty results
