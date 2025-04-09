@@ -30,9 +30,20 @@ with plugins for Kotlin and Gradle also works (though support for running inline
 * In a second session start the application ```./gradlew bootRun```
 * Or ```./gradlew bootRun --args='--spring.profiles.active=allocations-consumer'``` to run Manager with the IngestApi allocation consumer on.
 
+### ``start.sh`` ZSH convenience script
+
+To simplify running EOP locally, a `start.sh` script written using ZSH can also be run from this package's root.  This script accepts a number of options:-
+- `./start.sh -r` will completely delete the database, stop and remove any running containers and restart the backend services.
+- `./start.sh -p` will stop any local services and prepare the local repository for pushing to the remote repository, running ./gradlew spotlessApply and all tests
+- `./start.sh -h` will show a help message with all available options
+
+This was developed on a Mac, so may not work on other operating systems.
+
 ### Code Formatting
 
-Code is formatted using [Spotless](https://github.com/diffplug/spotless)
+Code is formatted using [Spotless](https://github.com/diffplug/spotless) which needs to be run before pushing changes.
+
+```shell
 
 ## Config
 
@@ -62,6 +73,11 @@ The table below lists all the config settings that can be controlled via the env
 | CONFIG_KEYSTORE_PATH                | Path to Java keystore (overridden if CONFIG_KEYSTORE_CONTENT is set) | NONE      | ssl      | 
 | CONFIG_KEYSTORE_PASSWORD            | Password for the Keystore                                            | NONE      | ssl      | 
 | CONFIG_KEYSTORE_KEY                 | Key ion the keystore for SSL                                         | NONE      | ssl      | 
+| CONFIG_ADDRESSFINDER_API_KEY        | API key for Address Finder service used by AddressesService          | NONE      | ssl      |
+| CONFIG_ADDRESSFINDER_API_SECRET     | Also needed by the AddressesService for AddressFinder                | NONE      | ssl      |
+| CONFIG_LINZ_KOORD_API_KEY           | LINZ data services key used to get address data from LINZ            | NONE      | ssl      |
+
+
 
 ## Database
 

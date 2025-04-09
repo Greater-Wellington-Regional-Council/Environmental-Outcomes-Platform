@@ -123,7 +123,7 @@ export default function MapPage() {
     const [printing, setPrinting] = useState(false)
 
     const getFileName = () => {
-        return formatFilename(currentFmu?.freshwaterManagementUnit.fmuName1 || "fmu_ccv", `fmu_${currentFmu?.freshwaterManagementUnit.id}`) + `_${dateTimeString()}` + ".pdf"
+        return formatFilename(currentFmu?.freshwaterManagementUnit.fmuName1 || "fmu_cccv", `fmu_${currentFmu?.freshwaterManagementUnit.id}`) + `_${dateTimeString()}` + ".pdf"
     }
 
     useEffect(() => {
@@ -187,28 +187,28 @@ export default function MapPage() {
 
             let location: IMViewLocation
 
-            if (!addressBoundary) {
-                announceError("Failed to retrieve address data. Either the data is not available, or the LINZ service may not be available.", ErrorLevel.INFO)
+            if (addressBoundary) {
+              const centroid = calculateCentroids(addressBoundary)
 
-                location = {
-                    longitude: physicalAddress.location.geometry.coordinates[0],
-                    latitude: physicalAddress.location.geometry.coordinates[1],
-                    description: `<p>${physicalAddress.address}</p><br/><p class="tooltip-note">Boundary not available</p>`,
-                    zoom: ADDRESS_ZOOM,
-                } as IMViewLocation
+              const desc = `<p>${physicalAddress.address}</p>`
+
+              location = {
+                longitude: centroid[0] || physicalAddress.location.geometry.coordinates[0],
+                latitude: centroid[1] || physicalAddress.location.geometry.coordinates[1],
+                description: desc + (centroid[0] ? "" : '<p class="tooltip-note">Boundary not available</p>'),
+                zoom: ADDRESS_ZOOM,
+                featuresInFocus: addPropertiesToGeoJSON(addressBoundary, {location: physicalAddress.address}),
+                address: physicalAddress,
+              } as IMViewLocation
             } else {
-                const centroid = calculateCentroids(addressBoundary)
+              announceError("Failed to retrieve address data. Either the data is not available, or the LINZ service may not be available.", ErrorLevel.INFO)
 
-                const desc = `<p>${physicalAddress.address}</p>`
-
-                location = {
-                    longitude: centroid[0] || physicalAddress.location.geometry.coordinates[0],
-                    latitude: centroid[1] || physicalAddress.location.geometry.coordinates[1],
-                    description: desc + (centroid[0] ? "" : '<p class="tooltip-note">Boundary not available</p>'),
-                    zoom: ADDRESS_ZOOM,
-                    featuresInFocus: addPropertiesToGeoJSON(addressBoundary, {location: physicalAddress.address}),
-                    address: physicalAddress,
-                } as IMViewLocation
+              location = {
+                longitude: physicalAddress.location.geometry.coordinates[0],
+                latitude: physicalAddress.location.geometry.coordinates[1],
+                description: `<p>${physicalAddress.address}</p><br/><p class="tooltip-note">Boundary not available</p>`,
+                zoom: ADDRESS_ZOOM,
+              } as IMViewLocation
             }
 
             setSelectedLocation(location)
@@ -232,22 +232,15 @@ export default function MapPage() {
         } else {
             setFeatureBeingRolledOver(null)
         }
-    }, 100) // Execute at most every 100ms
+    }, 100)
 
     const handleClick = (e: MapMouseEvent) => {
         clearErrors()
         const clickedFeatures = getFeaturesUnderMouse(mapRef, e, BOUNDARY_LINES_LAYER)
         if (clickedFeatures) {
-            const map = mapRef.current?.getMap()
-            if (map?.getZoom() !== DEFAULT_ZOOM)
-                map?.flyTo({
-                    center: e.lngLat,
-                    zoom: DEFAULT_ZOOM,
-                })
             setSelectedLocation({
                 longitude: e.lngLat.lng, latitude: e.lngLat.lat,
-                boundary: clickedFeatures[0],
-                zoom: DEFAULT_ZOOM,
+                boundary: clickedFeatures[0]
             })
         }
     }
@@ -393,6 +386,7 @@ export default function MapPage() {
                                     gotoLink: (f: Feature | FeatureCollection) =>
                                         setSelectedLocation({
                                             featuresInFocus: f,
+                                            address: selectedLocation?.address,
                                             highlight: mapProperties.tangataWhenua.fill,
                                         }),
                                 }}

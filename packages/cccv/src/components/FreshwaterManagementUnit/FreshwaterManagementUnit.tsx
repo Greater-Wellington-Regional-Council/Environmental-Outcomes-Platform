@@ -7,7 +7,7 @@ import {ContaminantList, contaminants as fmuContaminants} from "@components/Fres
 import EmailLink from "@components/EmailLink/EmailLink.tsx"
 import {Contaminants} from "@components/Contaminants/Contaminants.tsx"
 import makeSafe from "@lib/makeSafe.ts"
-import {parseHtmlListToArray} from "@lib/parseHtmlListToArray.ts"
+import {parseHtmlOrTextListToArray} from "@lib/parseHtmlOrTextListToArray.ts"
 import TangataWhenuaSites from "@components/FreshwaterManagementUnit/components/TangataWhenuaSites.tsx"
 import DOMPurify from "dompurify"
 import {getSystemValueForCouncil, SystemValueNames} from "@services/SystemValueService/SystemValueService.ts"
@@ -33,22 +33,20 @@ const FreshwaterManagementUnit = (
     const {
         id,
         fmuName1,
-        catchmentDescription,
-        implementationIdeas,
-        vpo,
-        otherInfo,
-        culturalOverview,
+        farmPlanInfo,
     } = details.freshwaterManagementUnit
+
+    const { implementationIdeas, otherInfo, vpo, culturalOverview, catchmentOverview } = farmPlanInfo ?? {}
 
     const showHeader = details.showHeader
 
-    const vpoSafe = vpo?.value ? DOMPurify.sanitize(vpo.value!) : null
+    const vpoSafe = vpo ? DOMPurify.sanitize(vpo) : null
 
-    const otherInfoSafe = otherInfo?.value ? DOMPurify.sanitize(otherInfo.value!) : null
+    const otherInfoSafe = otherInfo ? DOMPurify.sanitize(otherInfo) : null
 
-    const culturalOverviewSafe = culturalOverview?.value ? DOMPurify.sanitize(culturalOverview.value!) : null
+    const culturalOverviewSafe = culturalOverview ? DOMPurify.sanitize(culturalOverview) : null
 
-    const implementationIdeasSafe = implementationIdeas?.value ? DOMPurify.sanitize(implementationIdeas.value!) : null
+    const implementationIdeasSafe = implementationIdeas ? parseHtmlOrTextListToArray(implementationIdeas) : []
 
     const tangataWhenuaSites = details.tangataWhenuaSites
 
@@ -56,18 +54,18 @@ const FreshwaterManagementUnit = (
 
     const links = details.links
 
-    const [overview, setOverview] = useState<string | undefined>(catchmentDescription ?? "")
+    const [overview, setOverview] = useState<string | undefined>(catchmentOverview ?? "")
 
     useEffect(() => {
-        if (catchmentDescription)
-            setOverview(catchmentDescription)
+        if (catchmentOverview)
+            setOverview(catchmentOverview)
         else {
             (async () => {
                 const fetchedOverview = await getSystemValueForCouncil(SystemValueNames.RUAMAHANGA_WHAITUA_OVERVIEW) ?? null
                 setOverview(fetchedOverview || undefined)
             })()
         }
-    }, [catchmentDescription, fmuName1])
+    }, [catchmentOverview, fmuName1])
 
     if (!details?.freshwaterManagementUnit) {
         return <div>No data found.</div>
@@ -128,17 +126,25 @@ const FreshwaterManagementUnit = (
                 <div></div>
             )}
 
-            {implementationIdeasSafe ? (
+            {implementationIdeasSafe?.length ? (
                 <div className="implementation-ideas mt-6">
                     <h2>Implementation Ideas</h2>
                     <div className="implementation-ideas">
-                        <ul className={"mt-2"}>
-                            {parseHtmlListToArray(implementationIdeasSafe)?.map((idea: string, index) => (
-                                <li className="list-disc my-0" key={index}>
-                                    {makeSafe(idea)}
-                                </li>
-                            ))}
-                        </ul>
+                        {implementationIdeasSafe.length > 1 ? (
+                            <ul className={"mt-2"}>
+                                {implementationIdeasSafe?.map((idea: string, index) => (
+                                    <li className="list-disc my-0" key={index}
+                                        dangerouslySetInnerHTML={{
+                                          __html: purify.sanitize(makeSafe(idea)),
+                                        }} />
+                                ))}
+                            </ul>
+                        ) : (
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: purify.sanitize(makeSafe(implementationIdeasSafe[0])),
+                              }} />
+                        )}
                     </div>
                 </div>
             ) : (

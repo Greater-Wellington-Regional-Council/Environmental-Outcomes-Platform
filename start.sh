@@ -10,22 +10,9 @@ if [ -z "$1" ]
     exit 1
 fi
 
-module_to_run=$1
-# Shift args along by 1
-Shift 1
+run-package () {
+  cd "packages/$1" || exit 1
+  ./start.sh $2 $3 $4 $5 $6 $7 $8 $9
+}
 
-cd packages/Manager || exit 1
-
-if [ "$module_to_run" == "Manager" ]
-  then
-    #  Manager in foreground
-    ./start.sh "$@"
-    exit 0
-fi
-
-# Start Manager in background remembering process id
-./start.sh "$@" &
-
-echo "Front-end application started. Starting the package..."
-cd "../$module_to_run" || exit 1
-./start.sh
+run-package "$@"

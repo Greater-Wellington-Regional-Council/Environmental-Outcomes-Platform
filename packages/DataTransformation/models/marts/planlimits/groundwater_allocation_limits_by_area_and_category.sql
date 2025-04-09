@@ -14,22 +14,40 @@ WITH water_allocations AS (
 
      ),
 
-     water_allocations_at_month_start AS(
+    generate_month_ends AS (
+        SELECT 
+            month_start,
+            (month_start + INTERVAL '1 month' - INTERVAL '1 day') AS month_end
+        FROM generate_months
+    ),
 
-         SELECT
+     water_allocations_at_month_end AS (
+        SELECT
+            m.month_start,
+            m.month_end,
+            t.*
+        FROM generate_month_ends m
+        LEFT JOIN water_allocations t
+            ON 
+                ( 
+                    -- For past and future months: effective_from <= month_end
+                    t.effective_from <= m.month_end
+                    -- For the current month: effective_from must be <= today
+                    OR (m.month_end = (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day') 
+                        AND t.effective_from <= CURRENT_DATE)
+                )
+                AND 
+                (
+                    -- Keep records where effective_to is NULL or after the month end
+                    t.effective_to IS NULL OR t.effective_to > m.month_end
+                )
+                -- Exclude records where effective_to is before today in the current month
+                AND NOT (
+                    m.month_end = (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day') 
+                    AND COALESCE(t.effective_to, '9999-12-31') < CURRENT_DATE
 
-             m.month_start,
-             w.*
-         FROM
-             generate_months m
-
-                 LEFT JOIN
-             water_allocations w
-             ON
-                 w.effective_from <= m.month_start
-                     AND (w.effective_to IS NULL OR w.effective_to > m.month_start)
-
-     ),
+                )
+    ),
 
      ground_water_limits AS (
 
@@ -44,7 +62,7 @@ WITH water_allocations AS (
              category,
              SUM(allocation_plan) AS allocation_amount
 
-         FROM water_allocations_at_month_start
+         FROM water_allocations_at_month_end
          WHERE
              status = 'active'
            AND category IN ('B', 'C', 'B/C') AND area_id LIKE ('%GW')

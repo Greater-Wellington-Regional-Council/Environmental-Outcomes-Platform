@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from 'react';
+import React, { ReactNode, useMemo, useEffect } from 'react';
 import 'react-dropdown/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
@@ -160,15 +160,17 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   const [hideGroups, setHideGroups] = React.useState(false);
   const [columnGrouping, setColumnGrouping] = React.useState(columnGroups);
 
-  const computedFilters = React.useMemo(() => {
-    return [...(outerFilters || []), ...(innerFilters || [])].reduce(
-      (acc, filter) => {
-        acc[filter.name] = filter.currentValue;
-        return acc;
-      },
-      {} as Record<string, unknown>,
-    );
-  }, [outerFilters, innerFilters]);
+  const computedFilters = useMemo(() => {
+    const filters = [...(outerFilters || []), ...(innerFilters || [])];
+    const result: Record<string, unknown> = {};
+    for (const filter of filters) {
+      result[filter.name] = filter.currentValue;
+    }
+    return result;
+  }, [
+    JSON.stringify(outerFilters?.map(f => [f.name, f.currentValue])),
+    JSON.stringify(innerFilters?.map(f => [f.name, f.currentValue])),
+  ]);
 
   const { filterValues, setFilterValues, getFilterValue } = useFilterValues(computedFilters);
 
@@ -203,7 +205,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
     input.forEach(({ [columns.unzipColumn]: d, [columns.keyColumn]: k, [columns.compareColumn]: v }) => {
       const unzipHeader = d && fullColumnDescriptor(columns.unzipColumn).type === 'date' ?
-        dateString(d, true, 'mmm yyyy') || 'No date' :
+        dateString(d, true, 'lmy') || 'No date' :
         (d || 'No label').toString();
 
       const unzipName = (d || 'zzzzz').toString();
@@ -248,9 +250,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     ];
   };
 
-  // This utility function is used to create a full column descriptor
-  // from a column name and any other properties that may be defined
-  // in the columnProps array
+  // Analyse all column data including defaults, and hydrate and return full column descriptor
   function fullColumnDescriptor(
     col: ColumnNameOrDescriptor | undefined,
   ): ColumnDescriptor {
@@ -310,12 +310,16 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     if (options?.compare)
       return dataCompared(normalizedData, options.compare as ColumnComparison);
 
-    setHideFilters(false);
-    setHideGroups(false);
-    setColumnGrouping(columnGroups);
-
     return [normalizedData, columns, (options?.order || columns).map(c => fullColumnDescriptor(c)).filter((c) => c.visible ?? true), [columns]];
   }, [data, options.compare, filterValues]);
+
+  useEffect(() => {
+    if (!options?.compare) {
+      setHideFilters(false);
+      setHideGroups(false);
+      setColumnGrouping(columnGroups);
+    }
+  }, []);
 
   // Sort the data based on the sort options
   const sortArray = (data: Row[], sort: [{ [key: string]: 'asc' | 'desc' }?]) => {

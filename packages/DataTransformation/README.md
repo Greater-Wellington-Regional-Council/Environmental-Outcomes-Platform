@@ -38,7 +38,7 @@ The command helps in generating your project's documentation and catelog will be
 
 * `./batect generate-docs`
 
-### Start a webserver
+### Start a DBT docs webserver
 This command starts a webserver on port 8080 to serve your documentation locally and opens the documentation site in your default browser.
 
 * `./batect serve-docs`

@@ -3,7 +3,7 @@ package nz.govt.eop.freshwater_management_units.services
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.net.URI
 import mu.KotlinLogging
-import nz.govt.eop.TangataWhenuaSitesSources
+import nz.govt.eop.TangataWhenuaSitesDataSources
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.models.TangataWhenuaSite
 import nz.govt.eop.freshwater_management_units.repositories.TangataWhenuaSiteRepository
@@ -20,7 +20,7 @@ class TangataWhenuaSiteService(
 ) : GeoJsonFetcher(restTemplate) {
   private val logger = KotlinLogging.logger {}
 
-  @Autowired lateinit var tangataWhenuaSitesSources: TangataWhenuaSitesSources
+  @Autowired lateinit var tangataWhenuaSitesDataSources: TangataWhenuaSitesDataSources
 
   @Transactional
   fun deleteAll() {
@@ -34,7 +34,7 @@ class TangataWhenuaSiteService(
         "Loading from ArcGIS URL",
     )
 
-    tangataWhenuaSitesSources.sources.forEach { source ->
+    tangataWhenuaSitesDataSources.sources.forEach { source ->
       source.urls.forEach { fetchAndSave(it, source.name) }
     }
   }

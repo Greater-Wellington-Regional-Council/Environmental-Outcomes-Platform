@@ -1,53 +1,27 @@
 package nz.govt.eop.freshwater_management_units.models
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.annotation.JsonIgnore
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType
 import jakarta.persistence.*
-import java.io.IOException
-import kotlin.jvm.Transient
-import nz.govt.eop.utils.JsonMapConverter
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import org.apache.commons.codec.binary.Hex
 import org.geojson.FeatureCollection
 import org.hibernate.annotations.Formula
-
-class GeoJsonSerializer : JsonSerializer<String>() {
-  private val objectMapper = ObjectMapper()
-
-  override fun serialize(
-      value: String?,
-      gen: JsonGenerator,
-      serializers: SerializerProvider,
-  ) {
-    val geoJson: JsonNode = objectMapper.readTree(value)
-    gen.writeObject(geoJson)
-  }
-}
-
-internal class GeoJsonDeserializer : JsonDeserializer<JsonNode>() {
-  private val mapper = ObjectMapper()
-
-  override fun deserialize(
-      jp: JsonParser,
-      ctxt: DeserializationContext,
-  ): JsonNode {
-    try {
-      return mapper.readTree(jp)
-    } catch (e: IOException) {
-      println("Error deserializing GeoJSON: " + e.message)
-      throw RuntimeException("Failed to deserialize GeoJSON", e)
-    }
-  }
-}
+import org.hibernate.annotations.Type
+import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.PrecisionModel
+import org.locationtech.jts.io.ParseException
+import org.locationtech.jts.io.WKBReader
 
 @Entity
 @Table(name = "freshwater_management_units")
 data class FreshwaterManagementUnit(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int? = null,
     @Column(name = "gid") val gid: Int? = 0,
-    @Column(name = "objectid") val objectId: Double = 0.0,
-    @Column(name = "fmu_no") val fmuNo: Int = 0,
+    @Column(name = "objectid") val objectId: Double? = 0.0,
+    @Column(name = "fmu_no") val fmuNo: Int? = 0,
     @Column(name = "location") val location: String? = "",
     @Column(name = "fmu_name1") val fmuName1: String? = "",
     @Column(name = "fmu_group") val fmuGroup: String? = "",
@@ -78,22 +52,14 @@ data class FreshwaterManagementUnit(
     @Column(name = "mci_base") var mciBase: String? = null,
     @Column(name = "mci_obj") var mciObj: String? = null,
     @Column(name = "ecoli_obj") var ecoliObj: String? = null,
-    @Column(name = "implementation_ideas", columnDefinition = "jsonb")
-    @Convert(converter = JsonMapConverter::class)
-    var implementationIdeas: Map<String, Any> = emptyMap(),
-    @Column(name = "culturalOverview", columnDefinition = "jsonb")
-    @Convert(converter = JsonMapConverter::class)
-    var culturalOverview: Map<String, Any> = emptyMap(),
-    @Column(name = "other_info", columnDefinition = "jsonb")
-    @Convert(converter = JsonMapConverter::class)
-    var otherInfo: Map<String, Any> = emptyMap(),
-    @Column(name = "vpo", columnDefinition = "jsonb")
-    @Convert(converter = JsonMapConverter::class)
-    var vpo: Map<String, Any> = emptyMap(),
-    @JsonSerialize(using = GeoJsonSerializer::class)
-    @JsonDeserialize(using = GeoJsonDeserializer::class)
-    @Formula("CAST(ST_AsGeoJSON(ST_Transform(geom, 4326), 6 ,2) AS jsonb)")
-    var boundary: String? = null,
+    @Type(JsonBinaryType::class)
+    @Column(columnDefinition = "jsonb")
+    var farmPlanInfo: FarmPlanInfo = FarmPlanInfo(),
+    @Formula("CAST(ST_AsGeoJSON(geom, 6 ,2) AS jsonb)") val boundary: String? = null,
+    @JsonIgnore
+    @Convert(converter = WKBGeometryConverter::class)
+    @Column(name = "geom", columnDefinition = "geometry(GEOMETRY,4326)")
+    var geom: Geometry? = null,
     @Basic(fetch = FetchType.LAZY)
     @Formula(
         """(
@@ -111,5 +77,51 @@ data class FreshwaterManagementUnit(
 ) {
   companion object {
     const val DEFAULT_SRID = 4326
+  }
+}
+
+data class FarmPlanInfo(
+    var implementationIdeas: String? = null,
+    var culturalOverview: String? = null,
+    var otherInfo: String? = null,
+    var vpo: String? = null,
+    var catchmentOverview: String? = null,
+)
+
+@Converter(autoApply = true)
+class WKBGeometryConverter : AttributeConverter<Geometry?, ByteArray?> {
+  override fun convertToDatabaseColumn(attribute: Geometry?): ByteArray? {
+    return attribute?.let {
+      it.srid = FreshwaterManagementUnit.DEFAULT_SRID
+      org.locationtech.jts.io.WKBWriter(2).write(it)
+    }
+  }
+
+  override fun convertToEntityAttribute(dbData: ByteArray?): Geometry? {
+    return dbData?.let {
+      try {
+        val hexString = String(dbData)
+        val decodedBytes: ByteArray = Hex.decodeHex(hexString)
+        val byteBuffer = ByteBuffer.wrap(decodedBytes)
+
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN)
+
+        val geometryFactory =
+            GeometryFactory(PrecisionModel(), FreshwaterManagementUnit.DEFAULT_SRID)
+        val wkbReader = WKBReader(geometryFactory)
+        val geometry = wkbReader.read(decodedBytes)
+        if (geometry.srid == 0) {
+          geometry.srid = FreshwaterManagementUnit.DEFAULT_SRID
+        }
+        return geometry
+      } catch (e: ParseException) {
+        println("ParseException converting WKB to Geometry: ${e.message}")
+      } catch (e: IllegalArgumentException) {
+        println("IllegalArgumentException converting WKB to Geometry: ${e.message}")
+      } catch (e: Exception) {
+        println("Exception converting WKB to Geometry: ${e.message}")
+      }
+      return null
+    }
   }
 }

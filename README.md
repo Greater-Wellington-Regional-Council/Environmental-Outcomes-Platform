@@ -1,68 +1,42 @@
 # Environmental Outcomes Platform (EOP)
 
-## Documentation
+EOP / He Kākano is an initiative led by Greater Wellington Regional Council to establish an end-to-end platform for capture, management and reporting of environmental information. It's goal is to allow all regional councils to maximise the value they get from their environmental data efforts and provide clear, consistent and user-centric information to end-users if this data. It’s built based on the experiences from the Environment Canterbury Water Data programme
+## About this Documentation
+> Published documentation is available [here](https://greater-wellington-regional-council.github.io/Environmental-Outcomes-Platform/)
 
-> Published documentation should be available [here](https://greater-wellington-regional-council.github.io/Environmental-Outcomes-Platform/)
+Documentation for EOP is expressed as a Gatsby web site as part of this repo, and deployed to GitHub pages.  Any changes are automatically published to the above link when the repository is pushed to or merged into the `main` branch in GitHub.
 
-All documentation for EOP should be defined in code as part of this repo, and deployed to GitHub pages. It is all very much a work in progress at this stage, with focus on high level of the 
+### Updating the documentation
 
-Documentation so far has been built using C4 models with the [Structurizr](https://structurizr.com/) tool. 
+It is recommended to start the documentation server locally and use the live preview in your browser to monitor the effect of changes.
 
-### Working on the Documentation
-
-> Expect this process to change
-
-Structurizr lite is used to automatically create C4 diagram images from code, and using the export function that is merged with supplementary documentation written in markdown files and then published as Github pages.
-
-Workflow
-
-Launching Structurizr locally
-
-* `cd docs-site`
-* `./batect structurizr`
-
-Making changes
-
-* Edit workspace.dsl file to update diagrams
-* View on http://localhost:8090
-
-Include diagrams in the site:
-
-* Export diagrams via http://localhost:8090
-* Save exported diagrams to the relevant folder in `src/markdown-pages`
-* Update the relevant markdown file to incorporate diagrams into the site.
-* `git commit` changes
+See the [docs-site README](./docs-site/README.md) for more information on how to run the documentation locally.
 
 ### How to Run the application locally
 
-To run He Kākano locally, you will need to start the shared infrastructure services and then start the individual applications. 
-
-#### Shared Infrastructure
-
-You will need at least the following installed on your machine before you start:-
-* A [JVM](https://aws.amazon.com/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc) installed on the target machine in order to run the [Batect](https://batect.dev/) tool.
-* [Docker](https://docs.docker.com/get-docker/)
-* And of course a **git** tool of some sort to clone the repo to your machine
-
-Shared services will expose the following ports that will need to be available before you start:-
-* 5432 for Postgres
-* 8080 for the Manager API
-* 9092 for Kafka
-
-With above in place, clone the repo to your machine and do the following from a command line shell to start the shared services:-
-1. `cd packages/Manager`
-2. `./batect runSupportServices`
-
-_And from a new shell session in the same folder_
-
-3. `./gradlew bootRun`
+To run CCCV locally, see the READMEs for the components you need to execute.  You may need to start more than one component.
+* [Plan Limits UI](./packages/PlanLimitsUI/README.md)
+* [CCCV](./packages/cccv/README.md)
+* [Manager](./packages/Manager/README.md)
+* [Local Infrastructure](./packages/LocalInfrastructure/README.md)
 
 #### Application Packages
 
 Having started the shared infrastructure, you will find specific run instructions for each application package in its own README.md file.  For example, [here are the run instructions for the Plan Limits UI](./packages/PlanLimitsUI/README.md).
 
-## `start.sh` convenience script
+## `start.sh` ZSH convenience script
 
-To simplify running EOP locally, a `start.sh` script has been provided in the root of the repository.  This script will start the shared infrastructure services and then another application component that you name as an argument.
+To simplify running EOP locally, a `start.sh` script written using ZSH has been provided in the root of the repository.  This script will start a package whose name you provide as the first argument.
 
-For example, to start the PlanUnitsUI application, you would run `./start.sh PlanUnitsUI`.  
+For example, to start the PlanUnitsUI single page application, you would run `./start.sh PlanUnitsUI`.
+
+A particularly convenient option for zsh users could be ```./start.sh manager -r``` which will completely delete the database, stop and remove any running containers and restart the backend services.  After running that, in another terminal session you can then ```./start.sh cccv``` or ```./start.sh PlanUnitsUI``` to start your choice SPA front end.
+
+This script was developed on a Mac.
+
+### DataTransformation script when running locally
+
+Something you may need to remember when running the EOP locally is that the data transformation script is not run automatically.  This script is responsible for transforming some raw data into forms that are needed by certain parts of the application.  You can run it manually by executing the following command after the rest of backend has started fully.
+`./start.sh DataTransformation`
+
+Try this if your front end or API are not displaying the data you expect.
