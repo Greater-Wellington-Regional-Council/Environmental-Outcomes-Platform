@@ -21,6 +21,19 @@ import org.springframework.stereotype.Component
 @Component
 class Queries(@Autowired val context: DSLContext) {
 
+  fun tablesExist(): Boolean {
+    return (context
+        .selectCount()
+        .from("information_schema.tables")
+        .where("table_name = 'plan_regions'")
+        .fetchOne()
+        ?.value1() ?: 0) > 0
+  }
+
+  fun tablePopulated(table: String): Boolean {
+    return (context.selectCount().from("public.$table").fetchOne()?.value1() ?: 0) > 0
+  }
+
   fun councils(): String {
     val innerQuery =
         select(COUNCILS.ID, COUNCILS.NAME, COUNCILS.BOUNDARY.`as`("geometry")).from(COUNCILS)
