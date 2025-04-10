@@ -17,9 +17,16 @@ class PlanLimitsManifestUpdater(val context: DSLContext, val manifest: Manifest)
   @SchedulerLock(name = "planLimitsManifestUpdater")
   fun updateManifest() {
     logger.info { startTaskMessage("planLimitsManifestUpdater") }
+
+    if (!manifest.tablesExistAndPopulated()) {
+      logger.info { "Manifest data tables do not yet exist." }
+      return
+    }
+
     //  Hard coded to just Wellington until we have more data since empty results
     //  for individual queries cause errors
     manifest.update(9)
+
     logger.info { endTaskMessage("planLimitsManifestUpdater") }
   }
 }
