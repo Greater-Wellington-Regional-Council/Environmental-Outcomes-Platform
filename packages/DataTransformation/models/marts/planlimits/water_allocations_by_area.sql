@@ -51,8 +51,30 @@ water_allocations_ruamahangasw AS (
   AND 
     status = 'active'
 
+),
+
+water_allocations_lakewairarapasw AS (
+
+  SELECT
+
+    'LakeWairarapaTotalSW' AS area_id,
+    SUM(allocation_plan) AS allocation_amount
+  FROM water_allocations
+
+  WHERE area_id IN (
+    'LakeWairarapaSW',
+    'OtukuraSW',
+    'TauherenikauSW'
+  )
+  AND
+    effective_to IS NULL
+  AND 
+    status = 'active'
+
 )
 
 SELECT * FROM water_allocations_by_area
 UNION ALL
 SELECT * FROM water_allocations_ruamahangasw
+UNION ALL
+SELECT * FROM water_allocations_lakewairarapasw

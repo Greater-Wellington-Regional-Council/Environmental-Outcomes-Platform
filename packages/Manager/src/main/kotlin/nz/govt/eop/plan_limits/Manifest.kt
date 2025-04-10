@@ -46,4 +46,8 @@ class Manifest(val queries: Queries, val context: DSLContext) {
     val md5 = MessageDigest.getInstance("MD5")
     return BigInteger(1, md5.digest(value.toByteArray())).toString(16).padStart(32, '0')
   }
+
+  fun tablesExistAndPopulated(): Boolean {
+    return queries.tablesExist() && queries.tablePopulated("plan_regions")
+  }
 }

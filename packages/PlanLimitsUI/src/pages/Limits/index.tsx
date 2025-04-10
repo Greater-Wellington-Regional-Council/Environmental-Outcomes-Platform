@@ -30,6 +30,7 @@ export default function Limits() {
   const [pinnedLocation, setPinnedLocation] = useState<PinnedLocation | null>(initialPinnedLocation);
   const [viewLocation, setViewLocation] = useState(initialViewLocation);
 
+
   const [ debouncedValue, updateValue ] = useDebounceValue<ViewLocation>(viewLocation, 500);
   useEffect(() => {
     const updatedLocation = {
@@ -41,6 +42,10 @@ export default function Limits() {
 
     navigate(updatedLocation, { replace: true });
   }, [debouncedValue, pinnedLocation, navigate, council.slug]);
+
+  useEffect(() => {
+    setShowPanel(true)
+  }, [pinnedLocation]);
 
   useEffect(() => {
     updateValue(viewLocation);
@@ -71,7 +76,7 @@ export default function Limits() {
   const planLimitsData = usePlanLimitsData(council.id);
   const [appState, setAppState] = useAppState(council);
 
-  const [ showPanel, setShowPanel ] = useState(true)
+  const [ showPanel, setShowPanel ] = useState(false)
 
   return (
     <div className={"base-page"}>
