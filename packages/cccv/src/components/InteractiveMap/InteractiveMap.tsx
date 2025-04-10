@@ -51,7 +51,7 @@ export default function InteractiveMap({
             <MapStyleSelector onStyleChange={setMapStyle || setDefaultStyle}/>
             <Map
                 ref={mapRef as MutableRefObject<MapRef>}
-                data-Testid="map"
+                data-testid="map"
                 mapStyle={mapStyle || defaultStyle}
                 style={{width: '100%', height: '100vh', aspectRatio: '24/9'}}
                 viewState={{...viewState, width: DEFAULT_VIEW_WIDTH, height: DEFAULT_VIEW_HEIGHT}}

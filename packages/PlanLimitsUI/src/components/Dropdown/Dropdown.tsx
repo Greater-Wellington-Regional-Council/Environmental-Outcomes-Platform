@@ -3,6 +3,7 @@ import { isArray, isObject } from 'lodash';
 import arrowSvg from '@images/icon_chevronDown.svg';
 import { DataValueType } from '@components/DataTable/DataTable';
 import randomString from '@lib/randomeString';
+import hyphenCase from '@lib/hyphenCase';
 
 export type DropdownValueType = string | number | null | undefined | DataValueType;
 
@@ -241,7 +242,7 @@ const Dropdown: FC<DropdownProps> = ({
           className={`dropdown-control flex p-2 top-18 font-bold bg-white rounded-xl border-[2px] border-nui ${controlClassName}`}
           onClick={toggleDropdown}
           role="combobox"
-          data-testid={dataTestid}
+          data-testid={hyphenCase(dataTestid)}
         >
           <div className="dropdown-value flex w-full items-center text-left pr-2">
             {multiSelect ? (
@@ -292,14 +293,14 @@ const Dropdown: FC<DropdownProps> = ({
             )}
 
             {/* Options */}
-            <div className="list-options max-h-200 overflow-y-auto min-w-max">
-              <ul className="m-0 p-0 w-full">
+            <div className="option-list-container max-h-200 overflow-y-auto min-w-max">
+              <ul className="option-list m-0 p-0 w-full" data-testid="option-list">
                 {selectOptions.map((option) => {
                   const selected = isOptionSelected(option.value);
                   return (
                     <li
                       key={`${option.value}`}
-                      className={`indent-0 m-0 pl-2 px-4 py-2 hover:bg-black hover:text-white cursor-pointer list-none text-left
+                      className={`option-list-item indent-0 m-0 pl-2 px-4 py-2 hover:bg-black hover:text-white cursor-pointer list-none text-left
                         ${selected ? 'bg-nui text-white' : ''}
                         ${optionClassName}
                       `}
@@ -308,7 +309,7 @@ const Dropdown: FC<DropdownProps> = ({
                         e.stopPropagation();
                         handleOptionClick(option.value, e);
                       }}
-                      data-testid={`option-${option.label}`}
+                      data-testid={`option-${hyphenCase(option.label)}`}
                     >
                       {option.label}
                     </li>
