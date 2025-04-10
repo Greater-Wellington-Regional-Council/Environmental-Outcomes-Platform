@@ -94,7 +94,7 @@ geospatial features helps improves usability and understanding of the data.
 This information may include:
 
 - Council boundaries
-- District boundaries
+- Catchment planning boundaries
 - Iwi significant areas
 
 ### Geospatial Analysis Data
@@ -104,7 +104,7 @@ combined with environmental observations to identify trends and in generate
 predictive models.
 
 For a example, using a river network graph to model downstream flow, combined
-with observations at a river site would help determine the how water quality at
+with observations at a river site would help determine how water quality at
 the river site impacts downstream water quality.
 
 This information may include:
@@ -117,9 +117,9 @@ This information may include:
 ## Governance
 
 Being a sector wide initiative, there is a need for governance to support equity
-amongst the stakeholders. There are two groups for governing EOP. The first is a
+amongst the stakeholders. There would be two groups for governing EOP. The first is a
 Steering Group on the strategic direction of EOP. The second is a Technical
-Working Group which will focus on the technical direction of EOP in terms of
+Working Group which would focus on the technical direction of EOP in terms of
 architecture, collaboration, development practices and technical priorities.
 
 <h3 id="steering-group">Steering Group</h3>
@@ -148,14 +148,14 @@ responsibilities of the Steering Group as follows:
 
 <h3 id="technical-working-group">Technical Working Group</h3>
 
-The intention is to establish a technical group.This will be the forum to share and
+The intention is to establish a technical group. This would be the forum to share and
 collaborate on the technical solution across contributing councils and potential future
 contributors.
 
 We imagine the activities of this group to be:
 
 - Discussion and feedback on major architectural concerns and decisions
-- Helping establish development practices for technical collaboration on EOP
+- Helping to establish development practices for technical collaboration on EOP
   across councils
 - Feeding back on current technical priorities of the EOP Delivery Team
 - Bringing a cross-council perspective to technical development by sharing
@@ -163,17 +163,17 @@ We imagine the activities of this group to be:
 
 ## Open Source
 
-EOP is being developed as Open Source Software (OSS License MIT) making it
+EOP was being developed as Open Source Software (OSS License MIT) making it
 open and available for all New Zealand regional councils. The Regional Councils are
-expected to be the main contributors, whether via their own staff or employing a third
-party vendor to contribute on their behalf.
+expected to be the main contributors, whether via their own staff or employing a third-party 
+vendor to contribute on their behalf.
 
 The main reason being open source in this sense is to be transparent about the work
 being done and lower the barrier to entry for other councils wishing to contribute.
 
 There is a cost to host and maintain an instance of the platform. Under the guidance
 of the steering group the platform is being built to be multi-tenanted with a single
-instance run to support the councils of New Zealand. The EOP Delivery team will be
+instance run to support the councils of New Zealand. The EOP Delivery team would be
 responsible for hosting and maintaining the shared instance of EOP.
 
 _Last Revision April 2025_
