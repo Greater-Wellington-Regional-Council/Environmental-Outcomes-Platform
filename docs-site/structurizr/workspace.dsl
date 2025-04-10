@@ -107,6 +107,7 @@ workspace "EOP - Plan Limits Viewer" {
             mapbox = softwaresystem "Mapbox GL" "The Mapbox GL system" "Existing System"
             mapLibra = softwaresystem "MapLibra" "The MapLibra system" "Existing System"
             addressFinder = softwaresystem "AddressFinder" "The AddressFinder cloud API" "Existing System"
+            hilltop = softwaresystem "Hilltop" "The Hilltop system" "Existing System"
         }
 
         # Relationships to Systems
@@ -152,12 +153,15 @@ workspace "EOP - Plan Limits Viewer" {
         managerAPI -> database "Reads from" "JDBC"
         database -> tileServer "Reads from" "TCP"
 
+        hilltop -> backend "Sends data to" "JSON/HTTPS"
+
         freshwaterManagementStaff -> gis "Uses to provide FMU text and other information"
     }
 
     views {
         systemContext planLimitsSystem "planLimitsSystemContext" {
             include *
+            include hilltop
             exclude cccv
             autoLayout lr 400 400
         }
