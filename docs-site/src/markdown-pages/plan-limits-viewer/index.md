@@ -103,9 +103,10 @@ This is a Postgres database with PostGIS extensions installed deployed via
 This is a standard Kafka Broker deployed using
 [AWS EKS](https://aws.amazon.com/eks/).  It is used to accept incoming data mainly from Hilltop.
 
-#### Hilltop
+#### Hilltop Crawler
 
-He Kākano uses Kafka to subscribe to the [Hilltop environmental data service](https://www.hilltop.co.nz/) and stores water usage data in the database to be displayed in the Plan Limits Viewer.
+The Hilltop Crawler is a custom application that periodically queries the [Hilltop service](https://hilltop.gw.govt.nz/) for
+water usage data and pushes this to the Kafka Broker.
 
 ### Hosting
 
