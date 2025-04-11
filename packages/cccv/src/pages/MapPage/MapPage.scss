@@ -64,7 +64,6 @@ $gapSize: 12px;
     bottom: -50%;
     transition: bottom 0.5s ease-in-out;
     z-index: 1000;
-    padding-top: 1em;
     overflow-y: auto;
   }
 
@@ -79,10 +78,10 @@ $gapSize: 12px;
   .address-box {
     @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[90%]
   }
+}
 
-  .print-button {
-    @apply mt-9 mr-5;
-  }
+.print-button {
+  @apply mt-0 mr-4 top-0;
 }
 
 @media (min-width: 641px) {

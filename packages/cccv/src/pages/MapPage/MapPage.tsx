@@ -112,7 +112,7 @@ export default function MapPage() {
 
     const mapRef = useRef<CombinedMapRef | null>(null)
 
-    const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
+    const [mapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
 
     const [featureBeingRolledOver, setFeatureBeingRolledOver] = useState<Feature | FeatureCollection | null>(null)
 
@@ -255,7 +255,8 @@ export default function MapPage() {
 
             <main role="application">
                 <div className="map-panel relative">
-                    <InteractiveMap
+                  {/*<MapStyleSelector onStyleChange={setMapStyle}/>*/}
+                  <InteractiveMap
                         startLocation={locationDetails as IMViewLocation}
                         locationInFocus={selectedLocation}
                         setLocationInFocus={setSelectedLocation}
@@ -265,7 +266,6 @@ export default function MapPage() {
                         hidden={sliderWidth}
                         mapRef={mapRef}
                         mapStyle={mapStyle}
-                        setMapStyle={setMapStyle}
                     >
                         <Source
                             id={FMU_BOUNDARIES_SOURCE}
@@ -344,28 +344,28 @@ export default function MapPage() {
                     </div>
 
                     {currentFmu?.freshwaterManagementUnit && (
-                        <div className={`absolute right-6 z-[1100] top-0 bg-transparent bg-opacity-1 print-button`}>
-                            <button
-                                onClick={async () => {
-                                    setPrinting(true)
-                                    takeMapSnapshot(mapRef)
-                                    renderPDF({...currentFmu!, mapImage: mapSnapshot}).then((PDF) => {
-                                        setPDF(PDF)
-                                        saveAs(PDF!, getFileName())
-                                    }).finally(() => setPrinting(false))
-                                }}
-                            >
-                                {printing ? <DownloadSpinner width={5} height={5}/> : "Print"}
-                            </button>
-                        </div>
-                    )}
-
-                    {currentFmu?.freshwaterManagementUnit && (
                         <SlidingPanel contentChanged={false} showPanel={showInfoPanel || true}
                                       onResize={(width) => setSliderWidth(width)}
                                       onClose={() => clearFmus()}>
 
                             {selectedLocation?.address && <PhysicalAddress address={selectedLocation.address}/>}
+
+                            {currentFmu?.freshwaterManagementUnit && (
+                              <div className={`absolute right-0 z-[1100] bg-transparent bg-opacity-1 print-button`}>
+                                <button
+                                  onClick={async () => {
+                                    setPrinting(true)
+                                    takeMapSnapshot(mapRef)
+                                    renderPDF({...currentFmu!, mapImage: mapSnapshot}).then((PDF) => {
+                                      setPDF(PDF)
+                                      saveAs(PDF!, getFileName())
+                                    }).finally(() => setPrinting(false))
+                                  }}
+                                >
+                                  {printing ? <DownloadSpinner width={5} height={5}/> : "Print"}
+                                </button>
+                              </div>
+                            )}
 
                             {currentFmus.length > 1 && (<div className={"mb-0"}>
                                 <div
