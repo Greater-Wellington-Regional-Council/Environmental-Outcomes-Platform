@@ -1,6 +1,6 @@
 // Note: include the trailing slash in the href. Otherwise, the active highlight in the navigation block will not work.
 export default [
-  { title: 'What is EOP?', href: '/what-is-eop/' },
+  { title: 'What is EOP?', href: '/' },
   { title: 'Technical Design', href: '/technical-design/' },
   { title: 'Current status', href: '/current-status/' },
   { title: 'CCCV', href: '/cccv/' },
