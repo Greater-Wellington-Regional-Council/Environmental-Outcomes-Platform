@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import DataTable from './DataTable';
@@ -6,6 +6,7 @@ import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { FilterDescriptor } from '@components/FilterPanel/FilterPanel';
+import { ComparisonOperator } from '@components/DataTable/ComplexFilter';
 
 vi.mock('file-saver', () => ({
   saveAs: vi.fn(),
@@ -29,7 +30,7 @@ const mockData = [
 ];
 
 const columns = [
-  { name: 'name', heading: 'Name', visible: true },
+  { name: 'name', heading: 'Name', visible: true, comparisonOperators: [ComparisonOperator.EqualTo] },
   { name: 'category_a', heading: 'Category A', visible: true, type: 'number' },
   { name: 'category_b', heading: 'Category B', visible: true, type: 'number' },
   { name: 'surface_take', heading: 'Surface Take', visible: true, type: 'number' },
@@ -112,4 +113,28 @@ describe('DataTable Component', () => {
     const pdfInstance = vi.mocked(jsPDF).mock.results[0].value;
     expect(pdfInstance.autoTable).toHaveBeenCalled();
   });
+
+  it('Only includes specified comparison operators in the filter', () => {
+    renderWithProvider(
+      <DataTable
+        data={mockData}
+        columns={columns}
+        outerFilters={emptyFilters}
+        options={{
+          complexFilter: true
+        }}
+      />
+    );
+
+    screen.getByTestId("dropdown-condition");
+
+    fireEvent.click(screen.getByTestId("dropdown-field-name"));
+    fireEvent.click(screen.getByTestId("option-name"));
+    fireEvent.click(screen.getByTestId("dropdown-condition"));
+
+    const filterOptions = screen.getByTestId('option-list').querySelectorAll('li')
+    expect(filterOptions?.length).toBe(1);
+  });
 });
+
+

@@ -33,6 +33,7 @@ export interface FilterDescriptor {
   suppressSelectAll?: boolean;
   multiSelect?: boolean;
   useModifierKeys?: boolean;
+  [key: string]: unknown | ((() => unknown));
 }
 
 export type FilterValues = {
