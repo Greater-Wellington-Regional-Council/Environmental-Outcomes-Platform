@@ -1,17 +1,16 @@
 import {Map, MapRef,} from "react-map-gl"
 
-import {MutableRefObject, useRef, useState} from 'react'
+import {MutableRefObject, useRef} from 'react'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './InteractiveMap.scss'
 import {DEFAULT_ZOOM, useViewState} from "@components/InteractiveMap/lib/useViewState.ts"
 
 import {InteractiveMapProps,} from "@components/InteractiveMap/lib/InteractiveMap"
 
-import MapStyleSelector from "@components/MapStyleSelector/MapStyleSelector.tsx"
 import MapControls from "@components/InteractiveMap/lib/MapControls/MapControls.tsx"
 import env from "@src/env.ts"
 import {debounce} from "lodash"
-import {urlDefaultMapStyle} from "@lib/urlsAndPaths.ts"
+
 import {announceError} from "@components/ErrorContext/announceError.ts"
 import {ErrorLevel} from "@components/ErrorContext/ErrorFlagAndOrMessage.ts"
 
@@ -25,7 +24,6 @@ export default function InteractiveMap({
                                            mapRef,
                                            children,
                                            mapStyle,
-                                           setMapStyle,
                                            onLoad,
                                        }: InteractiveMapProps) {
 
@@ -44,15 +42,12 @@ export default function InteractiveMap({
         if (onLoad) onLoad()
     }
 
-    const [defaultStyle, setDefaultStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
-console.log("style", mapStyle, defaultStyle, mapStyle || defaultStyle)
     return (
         <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>
-            <MapStyleSelector onStyleChange={setMapStyle || setDefaultStyle}/>
             <Map
                 ref={mapRef as MutableRefObject<MapRef>}
                 data-testid="map"
-                mapStyle={mapStyle || defaultStyle}
+                mapStyle={mapStyle}
                 style={{width: '100%', height: '100vh', aspectRatio: '24/9'}}
                 viewState={{...viewState, width: DEFAULT_VIEW_WIDTH, height: DEFAULT_VIEW_HEIGHT}}
                 mapboxAccessToken={env.MAPBOX_TOKEN}

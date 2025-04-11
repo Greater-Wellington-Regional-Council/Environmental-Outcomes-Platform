@@ -112,7 +112,7 @@ export default function MapPage() {
 
     const mapRef = useRef<CombinedMapRef | null>(null)
 
-    const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
+    const [mapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
 
     const [featureBeingRolledOver, setFeatureBeingRolledOver] = useState<Feature | FeatureCollection | null>(null)
 
@@ -255,7 +255,8 @@ export default function MapPage() {
 
             <main role="application">
                 <div className="map-panel relative">
-                    <InteractiveMap
+                  {/*<MapStyleSelector onStyleChange={setMapStyle}/>*/}
+                  <InteractiveMap
                         startLocation={locationDetails as IMViewLocation}
                         locationInFocus={selectedLocation}
                         setLocationInFocus={setSelectedLocation}
@@ -265,7 +266,6 @@ export default function MapPage() {
                         hidden={sliderWidth}
                         mapRef={mapRef}
                         mapStyle={mapStyle}
-                        setMapStyle={setMapStyle}
                     >
                         <Source
                             id={FMU_BOUNDARIES_SOURCE}
