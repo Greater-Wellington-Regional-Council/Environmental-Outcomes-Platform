@@ -45,7 +45,7 @@ export default function InteractiveMap({
     }
 
     const [defaultStyle, setDefaultStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
-
+console.log("style", mapStyle, defaultStyle, mapStyle || defaultStyle)
     return (
         <div className="map-container" data-testid={"InteractiveMap"} ref={mapContainerRef}>
             <MapStyleSelector onStyleChange={setMapStyle || setDefaultStyle}/>
@@ -57,7 +57,7 @@ export default function InteractiveMap({
                 viewState={{...viewState, width: DEFAULT_VIEW_WIDTH, height: DEFAULT_VIEW_HEIGHT}}
                 mapboxAccessToken={env.MAPBOX_TOKEN}
                 accessToken={env.LINZ_API_KEY}
-                doubleClickZoom={false}  // Disable the default double-click zoom
+                doubleClickZoom={false}
                 cursor='pointer'
                 dragPan={true}
                 zoom-={DEFAULT_ZOOM}

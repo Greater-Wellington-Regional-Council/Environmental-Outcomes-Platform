@@ -344,28 +344,28 @@ export default function MapPage() {
                     </div>
 
                     {currentFmu?.freshwaterManagementUnit && (
-                        <div className={`absolute right-6 z-[1100] top-0 bg-transparent bg-opacity-1 print-button`}>
-                            <button
-                                onClick={async () => {
-                                    setPrinting(true)
-                                    takeMapSnapshot(mapRef)
-                                    renderPDF({...currentFmu!, mapImage: mapSnapshot}).then((PDF) => {
-                                        setPDF(PDF)
-                                        saveAs(PDF!, getFileName())
-                                    }).finally(() => setPrinting(false))
-                                }}
-                            >
-                                {printing ? <DownloadSpinner width={5} height={5}/> : "Print"}
-                            </button>
-                        </div>
-                    )}
-
-                    {currentFmu?.freshwaterManagementUnit && (
                         <SlidingPanel contentChanged={false} showPanel={showInfoPanel || true}
                                       onResize={(width) => setSliderWidth(width)}
                                       onClose={() => clearFmus()}>
 
                             {selectedLocation?.address && <PhysicalAddress address={selectedLocation.address}/>}
+
+                            {currentFmu?.freshwaterManagementUnit && (
+                              <div className={`absolute right-0 z-[1100] bg-transparent bg-opacity-1 print-button`}>
+                                <button
+                                  onClick={async () => {
+                                    setPrinting(true)
+                                    takeMapSnapshot(mapRef)
+                                    renderPDF({...currentFmu!, mapImage: mapSnapshot}).then((PDF) => {
+                                      setPDF(PDF)
+                                      saveAs(PDF!, getFileName())
+                                    }).finally(() => setPrinting(false))
+                                  }}
+                                >
+                                  {printing ? <DownloadSpinner width={5} height={5}/> : "Print"}
+                                </button>
+                              </div>
+                            )}
 
                             {currentFmus.length > 1 && (<div className={"mb-0"}>
                                 <div
