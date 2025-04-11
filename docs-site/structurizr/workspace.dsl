@@ -153,7 +153,7 @@ workspace "EOP - Plan Limits Viewer" {
         managerAPI -> database "Reads from" "JDBC"
         database -> tileServer "Reads from" "TCP"
 
-        hilltop -> backend "Sends data to" "JSON/HTTPS"
+        hilltop -> backend "Pulls water usage data from" "JSON/HTTPS"
 
         freshwaterManagementStaff -> gis "Uses to provide FMU text and other information"
     }
