@@ -100,10 +100,10 @@ This information may include:
 ### Geospatial Analysis Data
 
 While similar to Geospatial context data, Geospatial Analysis Data can be
-combined with environmental observations to identify trends and in generate
+combined with environmental observations to identify trends and in-turn generate
 predictive models.
 
-For a example, using a river network graph to model downstream flow, combined
+For example, using a river network graph to model downstream flow, combined
 with observations at a river site would help determine how water quality at
 the river site impacts downstream water quality.
 
