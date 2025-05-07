@@ -17,7 +17,7 @@ buildscript {
   repositories { mavenCentral() }
   dependencies {
     classpath("org.flywaydb:flyway-database-postgresql:11.5.0")
-    classpath("org.springframework:spring-jdbc:6.2.3")
+    classpath("org.springframework:spring-jdbc:6.2.6")
     classpath("org.postgresql:postgresql:42.6.2")
   }
 }
