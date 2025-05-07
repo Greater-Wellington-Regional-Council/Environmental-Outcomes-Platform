@@ -17,7 +17,7 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.0",
+    "@headlessui/react": "^2.2.2",
     "@heroicons/react": "^2.2.0",
     "@mdx-js/react": "^3.1.0",
     "@parcel/watcher": "^2.5.1",
