@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import "./map.scss"
 import Map, {
   Layer,
   Marker,

@@ -88,7 +88,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, onCl
             data-testid="sliding-panel"
         >
             <div
-                className={`absolute top-0 m-0 p-0 text-gray-400 bg-transparent cursor-pointer leading-none`}
+                className={`info-close-button absolute top-1 m-0 p-0 text-gray-400 bg-transparent cursor-pointer leading-none`}
                 onClick={handleClose}
                 role="button"
                 aria-label="Close Panel"
@@ -99,6 +99,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, onCl
                           clipRule="evenodd"/>
                 </svg>
             </div>
+
             {isLargeScreen && (
                 <div
                     className="absolute left-[-6px] top-0 bottom-0 w-[6px] cursor-ew-resize bg-gray-100"
@@ -106,7 +107,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, onCl
                     onDoubleClick={handleDoubleClick}
                 />
             )}
-            <div className="relative z-30 mt-10 overflow-auto h-full">
+            <div className="relative z-30 mt-5 overflow-auto h-full">
                 {children}
             </div>
         </div>

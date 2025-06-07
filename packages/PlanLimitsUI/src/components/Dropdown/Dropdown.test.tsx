@@ -31,7 +31,7 @@ describe('Dropdown Component', () => {
     render(<Dropdown options={options} onChange={onChange} />);
 
     fireEvent.click(screen.getByRole('combobox'));
-    fireEvent.click(screen.getByTestId('option-Cherry'));
+    fireEvent.click(screen.getByTestId('option-cherry'));
     expect(onChange).toHaveBeenCalledWith('Cherry');
   });
 
@@ -65,7 +65,7 @@ describe('Dropdown Component', () => {
     const onChange = vi.fn();
     render(<Dropdown options={options} onChange={onChange} />);
     fireEvent.click(screen.getByRole('combobox'));
-    fireEvent.click(screen.getByTestId('option-Apple'));
+    fireEvent.click(screen.getByTestId('option-apple'));
     expect(onChange).toHaveBeenCalledWith('Apple');
   });
 
@@ -75,7 +75,7 @@ describe('Dropdown Component', () => {
 
     // Simulate ctrl-click or similar multiple selection
     fireEvent.click(screen.getByRole('combobox'));
-    fireEvent.click(screen.getByTestId('option-Banana'));
+    fireEvent.click(screen.getByTestId('option-banana'));
     expect(onChange).toHaveBeenCalledWith(['Apple', 'Banana']);
   });
 

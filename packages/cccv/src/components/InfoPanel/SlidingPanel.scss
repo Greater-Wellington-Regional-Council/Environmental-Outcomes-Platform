@@ -1,7 +1,7 @@
 /* For larger screens, slide in from the right */
 @media (min-width: 640px) {
   .sliding-panel {
-    top: 0px;
+    top: 0;
     right: 0;
     bottom: auto;
     max-width: 100%;
@@ -25,7 +25,7 @@
     bottom: 0;
     width: 100%; /* Full width for small screens */
     max-height: 60vh;
-    transform: translateY(100%); /* Hidden state */
+    transform: translateY(60%); /* Hidden state */
     overflow: auto;
     padding-top: 1em;
   }
@@ -35,4 +35,13 @@
   .sliding-panel.animate-out {
     transform: translateY(100%); /* Hidden state */
   }
+}
+
+/* Anchor to the bottom of the screen */
+.sliding-panel {
+  position: fixed;
+  z-index: 1000;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
 }

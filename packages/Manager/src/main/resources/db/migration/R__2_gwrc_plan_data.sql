@@ -1293,7 +1293,7 @@ VALUES
                   "allocationLimit": 7430
                 },
                 {
-                  "id": "LakeWairarapaSW",
+                  "id": "LakeWairarapaTotalSW",
                   "name": "Lake Wairarapa and tributaries above the confluence of the Lake Wairarapa outflow with the Ruamāhanga River",
                   "children": [
                     {

@@ -1,16 +1,14 @@
-import DataTable, {
-  ColumnDescriptor, DataValueType,
-  OuterFilter,
-} from '@components/DataTable/DataTable';
+import DataTable, { ColumnDescriptor, DataValueType, OuterFilter } from '@components/DataTable/DataTable';
 
 import { useWaterAllocationQuery, WaterType } from '@src/api';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { FilterDescriptor } from '@components/FilterPanel/FilterPanel';
 import { MonthYearFilter } from '@components/FilterPanel/Filters/MonthYearFilter/MonthYearFilter';
 import numValue from '@lib/numValue';
 import capitalise from '@lib/capitalise';
 
 import { monthLabel } from '@lib/monthToToday';
+import { ComparisonOperator } from '@components/DataTable/ComplexFilter';
 
 export const WaterAllocationTable = ({ council }: { council: Council }) => {
   const DEFAULT_MONTHS = [new Date(new Date().getFullYear(), new Date().getMonth(), 1)]
@@ -28,7 +26,7 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
       valueOk: [(value: DataValueType) => numValue(value) <= 100], heading: 'NRP Allocation %',
     },
     { name: 'area_id', visible: false },
-    { name: 'name', heading: 'Catchment' },
+    { name: 'name', heading: 'Catchment', comparisonOperators: [ComparisonOperator.EqualTo] },
     { name: 'allocation_limit', scale: 3, scaleSymbol: 'k' },
     { name: 'total_allocation', highlight: (c: string) => `border-r-2 border-l-2 border-${c}` },
     { name: 'month_start',visible: false, type: 'date' },
@@ -119,6 +117,7 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
           keyColumn: 'name',
           compareColumn: compareColumn,
         },
+        complexFilter: true
       }}
   />
   );

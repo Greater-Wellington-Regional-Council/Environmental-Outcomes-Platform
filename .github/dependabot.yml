@@ -9,6 +9,7 @@ updates:
     labels:
       - "gradle"
       - "dependencies"
+      - "hilltop crawler"
     groups:
        flyway-deps:
           patterns:
@@ -21,7 +22,8 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "gradle"
-      - "dependencies"      
+      - "dependencies"
+      - "ingest api"      
 
   - package-ecosystem: "gradle"
     directory: "/packages/Manager"
@@ -31,6 +33,7 @@ updates:
     labels:
       - "gradle"
       - "dependencies"
+      - "manager"
     groups:
        flyway-deps:
           patterns:
@@ -44,6 +47,7 @@ updates:
     labels:
       - "npm"
       - "dependencies"
+      - "plan limits ui"
 
   - package-ecosystem: "npm"
     directory: "/docs-site"
@@ -53,6 +57,7 @@ updates:
     labels:
       - "npm"
       - "dependencies"
+      - "docs site"
 
   - package-ecosystem: "npm"
     directory: "/packages/cccv"
@@ -62,6 +67,7 @@ updates:
     labels:
       - "npm"
       - "dependencies"
+      - "cccv"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -77,3 +83,4 @@ updates:
     labels:
       - "docker"
       - "dependencies"
+      - "data transformation"

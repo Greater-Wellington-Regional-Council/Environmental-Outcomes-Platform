@@ -82,6 +82,57 @@ WITH water_allocations AS (
 
          FROM surfacewater_allocations group by 1, 2
 
+     ),
+
+    lake_wairarapa_totals AS (
+         SELECT
+             month_start,
+            'LakeWairarapaTotalSW' AS area_id,
+             COALESCE(SUM(CASE WHEN category = 'A' THEN allocation_amount END), 0) AS category_A,
+             COALESCE(SUM(CASE WHEN category = 'B' THEN allocation_amount END), 0) AS category_B,
+             COALESCE(SUM(CASE WHEN category = 'ST' THEN allocation_amount END), 0) AS surface_take,
+             COALESCE(SUM(CASE WHEN category IN ('A', 'B','ST') THEN allocation_amount END), 0) AS total_allocation
+         FROM surfacewater_allocations
+         WHERE area_id IN (
+            'LakeWairarapaSW',
+            'OtukuraSW',
+            'TauherenikauSW'
+            )
+         GROUP BY 1, 2
+     ),
+
+    ruamahanga_totals AS (
+         SELECT
+             month_start,
+            'RuamahangaTotalSW' AS area_id,
+             COALESCE(SUM(CASE WHEN category = 'A' THEN allocation_amount END), 0) AS category_A,
+             COALESCE(SUM(CASE WHEN category = 'B' THEN allocation_amount END), 0) AS category_B,
+             COALESCE(SUM(CASE WHEN category = 'ST' THEN allocation_amount END), 0) AS surface_take,
+             COALESCE(SUM(CASE WHEN category IN ('A', 'B','ST') THEN allocation_amount END), 0) AS total_allocation
+         FROM surfacewater_allocations
+         WHERE area_id IN (
+            'BoothsSW',
+            'HuangaruaSW',
+            'KopuarangaSW',
+            'MangatarereSW',
+            'PapawaiSW',
+            'ParkvaleSW',
+            'Ruamahanga_LowerSW',
+            'Ruamahanga_MiddleSW',
+            'Ruamahanga_UpperSW',
+            'WaingawaSW',
+            'WaiohineSW',
+            'WaipouaSW'
+        )
+         GROUP BY 1, 2
+     ),
+
+surfacewater_allocation_by_area_and_category_with_totals AS (
+         SELECT * FROM surfacewater_allocation_by_area_and_category
+         UNION ALL
+         SELECT * FROM lake_wairarapa_totals
+         UNION ALL
+         SELECT * FROM ruamahanga_totals
      )
 
 SELECT
@@ -98,6 +149,6 @@ SELECT
     swl.name,
     swl.plan_region_id
 
-FROM surfacewater_allocation_by_area_and_category sw
+FROM surfacewater_allocation_by_area_and_category_with_totals sw
          LEFT JOIN surface_water_limits swl
                    ON swl.source_id = sw.area_id

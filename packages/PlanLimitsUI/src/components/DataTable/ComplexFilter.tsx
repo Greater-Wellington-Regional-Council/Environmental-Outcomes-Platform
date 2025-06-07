@@ -42,6 +42,14 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
   const [filterValues, setFilterValues] = useState<DataValueType[] | undefined>(props.currentValue as DataValueType[]);
   const [fieldDetails, setFieldDetails] = useState<FieldDetails | undefined>(undefined);
 
+  const fieldSupportsOperator = (
+    operator: ComparisonOperator,
+    fieldName: string,
+    fieldData: DataValueType[],
+  ): boolean => typeof props.fieldSupportsOperator === 'function'
+    ? props.fieldSupportsOperator(operator, fieldName, fieldData)
+    : true;
+
   const handleNewField = (name: string | undefined) => {
     if (name) {
       setFieldDetails(getFieldDetails(name, props.data as Row[]));
@@ -57,7 +65,9 @@ export const ComplexFilter: React.FC<FilterDescriptor> = (props) => {
 
   const getFieldDetails = (fieldName: string, data: Row[]) => {
     const fieldData = data.map((row) => row[fieldName]);
-    const conditions = getOperatorOptions();
+    const conditions =
+      getOperatorOptions().filter((condition) =>
+        fieldSupportsOperator(condition.value, fieldName, fieldData));
     const uniqueValues = uniq(fieldData);
     return { fieldName, conditions, values: uniqueValues };
   };

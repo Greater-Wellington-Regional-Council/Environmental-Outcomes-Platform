@@ -112,6 +112,9 @@ export type DataTableProps<T extends DataValueType[][] | Record<string, DataValu
       { [key: string]: 'asc' | 'desc' }
     ];
     compareColumn?: ColumnComparison;
+    complexFilter?: boolean | {
+      fieldSupportsOperator?: (operator: ComparisonOperator, fieldName: string, fieldData: DataValueType[]) => boolean;
+    }
   };
 };
 
@@ -151,7 +154,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     columnGroups = [],
     innerFilters = [],
     outerFilters = [],
-    options = {},
+    options = { complexFilter: false },
     onClearFilters = undefined,
   }: DataTableProps<T>,
 ): React.ReactElement {
@@ -297,6 +300,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     base.valueOk = givenOptions.valueOk || [];
     base.scale = givenOptions.scale || undefined;
     base.scaleSymbol = givenOptions.scaleSymbol || undefined;
+    base.comparisonOperators = givenOptions.comparisonOperators || undefined;
 
     return base;
   }
@@ -340,7 +344,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
   // Filter rows based on the inner filters
   // which are displayed in the table header
-  const innerFiltersWithComplex =
+  const innerFiltersWithComplex = options?.complexFilter ?
     [
       ...innerFilters,
       {
@@ -352,6 +356,11 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         onChange: (v: unknown) => console.log('Selected:', v),
         data: data,
         columns: visibleColumns,
+        fieldSupportsOperator: typeof options.complexFilter === 'object' ? options.complexFilter.fieldSupportsOperator :
+        (op: ComparisonOperator,  fieldName: string, _: DataValueType[]) =>
+            Array.isArray(columns.find(c => c.name === fieldName)?.comparisonOperators)
+              ? (columns.find(c => c.name === fieldName)!.comparisonOperators as ComparisonOperator[]).includes(op)
+              : true,
         valueMatchesFilter: (row: unknown, filterValue: unknown) => {
           const values = filterValue as DataValueType[];
           const matchValue = (row as Row)[values[0] as string] as DataValueType;
@@ -382,7 +391,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
           return false;
         },
       },
-    ] as FilterDescriptor[];
+    ] as FilterDescriptor[] : innerFilters;
 
   const filteredData = useMemo(() => {
     return sortArray(
@@ -496,17 +505,17 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   }
 
   return (
-    <div>
+    <div className="data-table-container min-w-[639px] flex-col">
       {/* Outer filters & actions (eg, water type and month) */}
-      <div className="flex pt-0 mt-0 pr-4 justify-between items-end" style={{ textAlign: 'unset' }}>
+      <div className="flex pt-0 mt-0 pr-4 justify-between items-end flex-wrap" style={{ textAlign: 'unset' }}>
         <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues}
                      onClose={onClearFilters} label="Show data for:" labelInline={false} />
-
-        {data[0] && <div className="space-x-4 mb-4">
+        {data[0] && <div className="action-buttons space-x-4 mb-4">
           <button onClick={downloadCSV}>Download</button>
           <button onClick={printPDF}>Print</button>
         </div>}
       </div>
+
 
       {data[0] ? <table className="table-auto border-collapse w-full">
 

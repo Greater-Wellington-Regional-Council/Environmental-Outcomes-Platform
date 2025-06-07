@@ -4,7 +4,7 @@ title: Plan Limits Viewer
 ---
 
 You can check out the Plan Limits Viewer at
-[https://plan-limits.eop.gw.govt.nz/](https://plan-limits.eop.gw.govt.nz/)
+[https://www.gw.govt.nz/environment/environmental-data-and-information/water-monitoring/water-quantity-allocations/](https://www.gw.govt.nz/environment/environmental-data-and-information/water-monitoring/water-quantity-allocations/)
 
 ![A screenshot of the Plan Limits Viewer](./plan-limits-viewer-screenshot.png)
 
@@ -24,8 +24,9 @@ limits to other data sets.
 
 The Plan Limits Viewer digitises these rules alongside the GIS data they
 reference, allowing a user to easily understand what limits apply where. It has
-been developed with Greater Wellington data sources as a starting point, and
-we're currently in the process of integrating data from other councils.
+been developed with Greater Wellington data sources as a starting point. We prototyped integrating other regional council’s data sources which demonstrated that the bones of the webapp was able to provide for other regions data but with their own skin to reflect regional nuance’s. Greater Wellington’s implementation of PLV has its own skin to reflect its Natural Resources Plan. 
+
+Since then, we have included more data sources from our consents management and environmental monitoring systems to tell users how much water has been allocated to consent holders and how much water they are using. The data is aggregated to a catchment level to avoid any privacy issues.  
 
 ![Context Diagram](./structurizr-1-planLimitsSystemContext.png)
 ![Context Key](./structurizr-1-SystemContext-key.png)
@@ -101,7 +102,12 @@ This is a Postgres database with PostGIS extensions installed deployed via
 #### Kafka Broker
 
 This is a standard Kafka Broker deployed using
-[AWS EKS](https://aws.amazon.com/eks/).
+[AWS EKS](https://aws.amazon.com/eks/).  It is used to accept incoming data mainly from Hilltop.
+
+#### Hilltop Crawler
+
+The Hilltop Crawler is a custom application that periodically queries the [Hilltop service](https://hilltop.gw.govt.nz/) for
+water usage data and pushes this to the Kafka Broker.
 
 ### Hosting
 

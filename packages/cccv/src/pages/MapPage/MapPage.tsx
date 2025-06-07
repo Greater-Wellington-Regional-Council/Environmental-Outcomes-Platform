@@ -112,7 +112,7 @@ export default function MapPage() {
 
     const mapRef = useRef<CombinedMapRef | null>(null)
 
-    const [mapStyle, setMapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
+    const [mapStyle] = useState(urlDefaultMapStyle(env.LINZ_API_KEY))
 
     const [featureBeingRolledOver, setFeatureBeingRolledOver] = useState<Feature | FeatureCollection | null>(null)
 
@@ -187,28 +187,28 @@ export default function MapPage() {
 
             let location: IMViewLocation
 
-            if (!addressBoundary) {
-                announceError("Failed to retrieve address data. Either the data is not available, or the LINZ service may not be available.", ErrorLevel.INFO)
+            if (addressBoundary) {
+              const centroid = calculateCentroids(addressBoundary)
 
-                location = {
-                    longitude: physicalAddress.location.geometry.coordinates[0],
-                    latitude: physicalAddress.location.geometry.coordinates[1],
-                    description: `<p>${physicalAddress.address}</p><br/><p class="tooltip-note">Boundary not available</p>`,
-                    zoom: ADDRESS_ZOOM,
-                } as IMViewLocation
+              const desc = `<p>${physicalAddress.address}</p>`
+
+              location = {
+                longitude: centroid[0] || physicalAddress.location.geometry.coordinates[0],
+                latitude: centroid[1] || physicalAddress.location.geometry.coordinates[1],
+                description: desc + (centroid[0] ? "" : '<p class="tooltip-note">Boundary not available</p>'),
+                zoom: ADDRESS_ZOOM,
+                featuresInFocus: addPropertiesToGeoJSON(addressBoundary, {location: physicalAddress.address}),
+                address: physicalAddress,
+              } as IMViewLocation
             } else {
-                const centroid = calculateCentroids(addressBoundary)
+              announceError("Failed to retrieve address data. Either the data is not available, or the LINZ service may not be available.", ErrorLevel.INFO)
 
-                const desc = `<p>${physicalAddress.address}</p>`
-
-                location = {
-                    longitude: centroid[0] || physicalAddress.location.geometry.coordinates[0],
-                    latitude: centroid[1] || physicalAddress.location.geometry.coordinates[1],
-                    description: desc + (centroid[0] ? "" : '<p class="tooltip-note">Boundary not available</p>'),
-                    zoom: ADDRESS_ZOOM,
-                    featuresInFocus: addPropertiesToGeoJSON(addressBoundary, {location: physicalAddress.address}),
-                    address: physicalAddress,
-                } as IMViewLocation
+              location = {
+                longitude: physicalAddress.location.geometry.coordinates[0],
+                latitude: physicalAddress.location.geometry.coordinates[1],
+                description: `<p>${physicalAddress.address}</p><br/><p class="tooltip-note">Boundary not available</p>`,
+                zoom: ADDRESS_ZOOM,
+              } as IMViewLocation
             }
 
             setSelectedLocation(location)
@@ -255,7 +255,8 @@ export default function MapPage() {
 
             <main role="application">
                 <div className="map-panel relative">
-                    <InteractiveMap
+                  {/*<MapStyleSelector onStyleChange={setMapStyle}/>*/}
+                  <InteractiveMap
                         startLocation={locationDetails as IMViewLocation}
                         locationInFocus={selectedLocation}
                         setLocationInFocus={setSelectedLocation}
@@ -265,7 +266,6 @@ export default function MapPage() {
                         hidden={sliderWidth}
                         mapRef={mapRef}
                         mapStyle={mapStyle}
-                        setMapStyle={setMapStyle}
                     >
                         <Source
                             id={FMU_BOUNDARIES_SOURCE}
@@ -344,28 +344,28 @@ export default function MapPage() {
                     </div>
 
                     {currentFmu?.freshwaterManagementUnit && (
-                        <div className={`absolute right-6 z-[1100] top-0 bg-transparent bg-opacity-1 print-button`}>
-                            <button
-                                onClick={async () => {
-                                    setPrinting(true)
-                                    takeMapSnapshot(mapRef)
-                                    renderPDF({...currentFmu!, mapImage: mapSnapshot}).then((PDF) => {
-                                        setPDF(PDF)
-                                        saveAs(PDF!, getFileName())
-                                    }).finally(() => setPrinting(false))
-                                }}
-                            >
-                                {printing ? <DownloadSpinner width={5} height={5}/> : "Print"}
-                            </button>
-                        </div>
-                    )}
-
-                    {currentFmu?.freshwaterManagementUnit && (
                         <SlidingPanel contentChanged={false} showPanel={showInfoPanel || true}
                                       onResize={(width) => setSliderWidth(width)}
                                       onClose={() => clearFmus()}>
 
                             {selectedLocation?.address && <PhysicalAddress address={selectedLocation.address}/>}
+
+                            {currentFmu?.freshwaterManagementUnit && (
+                              <div className={`absolute right-0 z-[1100] bg-transparent bg-opacity-1 print-button`}>
+                                <button
+                                  onClick={async () => {
+                                    setPrinting(true)
+                                    takeMapSnapshot(mapRef)
+                                    renderPDF({...currentFmu!, mapImage: mapSnapshot}).then((PDF) => {
+                                      setPDF(PDF)
+                                      saveAs(PDF!, getFileName())
+                                    }).finally(() => setPrinting(false))
+                                  }}
+                                >
+                                  {printing ? <DownloadSpinner width={5} height={5}/> : "Print"}
+                                </button>
+                              </div>
+                            )}
 
                             {currentFmus.length > 1 && (<div className={"mb-0"}>
                                 <div

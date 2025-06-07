@@ -191,7 +191,7 @@ export const FreshwaterManagementUnitPDF = (details: FreshwaterManagementUnitPDF
                 </View>
 
                 {/* Overview */}
-                <View style={[tw("mb-6 flex-row items-start"), { width: '100%' }]} wrap={false}>
+                <View style={[tw("mb-6 flex-row items-start"), { width: '100%' }]}>
                     {catchmentOverview && (
                         <View style={{ flex: 1, marginRight: '12px' }}>
                             <Text style={tw("body tb-2")}>{rPDFMarkup(makeSafe(catchmentOverview ?? ''))}</Text>

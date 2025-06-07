@@ -23,7 +23,7 @@ describe('SlidingPanel Component', () => {
 
     it('toggles visibility on double-click', () => {
         const { container } = render(
-            <SlidingPanel showPanel={true} contentChanged={false} onClose={() => {}} />
+            <SlidingPanel showPanel={true} contentChanged={false} />
     )
         const panel = container.querySelector('div[class*="sliding-panel-visible"]')
         expect(panel).toHaveStyle('display: block')

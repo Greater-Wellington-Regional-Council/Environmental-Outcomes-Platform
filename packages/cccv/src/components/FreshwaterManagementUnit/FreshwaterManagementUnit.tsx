@@ -168,7 +168,7 @@ const FreshwaterManagementUnit = (
                     Greater
                     Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Plans.
                 </p>
-                <div className="mt-6 flex justify-center">
+                <div className="mt-6 mb-6 flex justify-center">
                     <EmailLink>Contact us for more information</EmailLink>
                 </div>
             </div>

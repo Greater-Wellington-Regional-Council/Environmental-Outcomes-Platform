@@ -1,6 +1,6 @@
 ---
 slug: /cccv/
-title: CCCV
+title: Catchment Context, Challenges and Values (CCCV)
 ---
 
 You can check out the CCCV app at
@@ -9,6 +9,8 @@ You can check out the CCCV app at
 ![A screenshot of the CCCV application](./cccv-screenshot.png)
 
 ## Context
+
+Ministry for the Environment required all regional councils to provide CCCV information in a complete and digestible way. This requirement aligned with EOP’s intention to maximise the value regional council’s get from their environmental data efforts, and provide clear, consistent and user-centric information to end-users of this data. 
 
 Freshwater users such as farmers are required to present plans to the 
 government every five years showing how they will make use of ground and
