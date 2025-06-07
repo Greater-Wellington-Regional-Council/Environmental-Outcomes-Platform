@@ -3,11 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("org.springframework.boot") version "3.4.3"
   id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "7.0.2"
+  id("com.diffplug.spotless") version "7.0.4"
   id("org.flywaydb.flyway") version "11.3.3"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.1.10"
-  kotlin("plugin.spring") version "2.1.10"
+  kotlin("plugin.spring") version "2.1.21"
 }
 
 buildscript {
