@@ -3,9 +3,9 @@ import org.jooq.meta.jaxb.ForcedType
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
-  id("org.springframework.boot") version "3.4.0"
+  id("org.springframework.boot") version "3.5.0"
   id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "7.0.3"
+  id("com.diffplug.spotless") version "7.0.4"
   id("org.flywaydb.flyway") version "11.9.1"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
@@ -62,11 +62,11 @@ dependencies {
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.8.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.3.0")
-  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2024.1.0")
+  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2025.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
   implementation("org.locationtech.jts.io:jts-io-common:1.20.0")
-  implementation("com.opencsv:opencsv:5.11")
+  implementation("com.opencsv:opencsv:5.11.1")
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
@@ -74,7 +74,7 @@ dependencies {
   implementation("org.hibernate:hibernate-spatial:7.0.0.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
   implementation("commons-codec:commons-codec:1.18.0")
 
