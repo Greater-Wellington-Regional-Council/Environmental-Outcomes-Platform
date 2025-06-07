@@ -17,7 +17,7 @@
     "prettier": "prettier --write ."
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.2",
+    "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@mdx-js/react": "^3.1.0",
     "@parcel/watcher": "^2.5.1",
@@ -35,7 +35,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/node": "^22.13.17",
+    "@types/node": "^22.15.29",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",
