@@ -3,10 +3,10 @@ import org.jooq.meta.jaxb.ForcedType
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
-  id("org.springframework.boot") version "3.5.0"
+  id("org.springframework.boot") version "3.4.0"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "7.0.4"
-  id("org.flywaydb.flyway") version "11.4.0"
+  id("org.flywaydb.flyway") version "11.9.1"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.1.21"
@@ -16,7 +16,7 @@ plugins {
 buildscript {
   repositories { mavenCentral() }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.5.0")
+    classpath("org.flywaydb:flyway-database-postgresql:11.9.1")
     classpath("org.springframework:spring-jdbc:6.2.7")
     classpath("org.postgresql:postgresql:42.6.2")
   }
@@ -56,8 +56,8 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:11.5.0")
-  implementation("org.flywaydb:flyway-database-postgresql:11.5.0")
+  implementation("org.flywaydb:flyway-core:11.9.1")
+  implementation("org.flywaydb:flyway-database-postgresql:11.9.1")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.8.0")
@@ -73,7 +73,7 @@ dependencies {
   implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.9.4")
   implementation("org.hibernate:hibernate-spatial:7.0.0.Final")
 
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
   implementation("commons-codec:commons-codec:1.18.0")
