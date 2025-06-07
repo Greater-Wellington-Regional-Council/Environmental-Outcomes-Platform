@@ -3,7 +3,7 @@ import org.jooq.meta.jaxb.ForcedType
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
-  id("org.springframework.boot") version "3.5.0"
+  id("org.springframework.boot") version "3.4.0"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "7.0.4"
   id("org.flywaydb.flyway") version "11.9.1"
