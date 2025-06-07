@@ -74,7 +74,7 @@ dependencies {
   implementation("org.hibernate:hibernate-spatial:7.0.0.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
   implementation("commons-codec:commons-codec:1.18.0")
 
