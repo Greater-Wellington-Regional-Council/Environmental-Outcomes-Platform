@@ -17,6 +17,7 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
 )
 }
 
+// eslint-disable-next-line
 export const useLoading = () => {
     const context = useContext(LoadingContext)
     if (context === undefined) {
