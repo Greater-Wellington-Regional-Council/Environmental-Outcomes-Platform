@@ -1,7 +1,7 @@
 import { vi } from 'vitest'
 import service, { AddressFinderResponse, AddressLabelAndValue } from './AddressesService.ts'
 import { get } from '@lib/api.tsx'
-import { mocked } from "@storybook/test"
+import { mocked } from "storybook/test"
 import { announceError } from "@components/ErrorContext/announceError.ts"
 
 vi.mock('@lib/api.tsx', () => ({
