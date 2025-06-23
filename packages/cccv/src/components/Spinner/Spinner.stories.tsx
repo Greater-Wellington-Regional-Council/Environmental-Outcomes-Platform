@@ -1,5 +1,5 @@
 import Spinner from './Spinner'
-import {Meta, StoryObj} from "@storybook/react"
+import {Meta, StoryObj} from "@storybook/react-vite"
 
 const meta = {
     title: "Example/Spinner",

@@ -1,4 +1,4 @@
-import { Meta, StoryFn } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react-vite'
 import InteractiveMap from "./InteractiveMap.tsx"
 import {InteractiveMapProps} from "@components/InteractiveMap/lib/InteractiveMap"
 import {IMViewLocation} from "@shared/types/global"
