@@ -12,6 +12,7 @@
     "check:eslint": "eslint ./src --color --ext .ts,.tsx",
     "check:prettier": "prettier --check ./src",
     "check": "run-p check:*",
+    "prettier": "prettier --write ./src",
     "storybook": "storybook dev",
     "build-storybook": "storybook build"
   },

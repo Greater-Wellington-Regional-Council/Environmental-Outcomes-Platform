@@ -8,7 +8,7 @@ describe('numValue', () => {
     expect(numValue('')).toBe(0);
     expect(numValue('abc')).toBe(0);
     expect(numValue('1.2.3')).toBe(0);
-    expect(numValue('73839000.00')).toBe(73839000.00);
+    expect(numValue('73839000.00')).toBe(73839000.0);
   });
 });
 

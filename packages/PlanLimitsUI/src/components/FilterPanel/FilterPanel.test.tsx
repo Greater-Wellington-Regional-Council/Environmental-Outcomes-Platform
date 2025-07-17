@@ -25,7 +25,10 @@ describe('FilterPanel', () => {
       {
         name: 'filter1',
         type: (filter) => (
-          <button data-testid={`filter-${filter.name}`} onClick={() => filter.onChange?.(filter)}>
+          <button
+            data-testid={`filter-${filter.name}`}
+            onClick={() => filter.onChange?.(filter)}
+          >
             {filter.name}
           </button>
         ),
@@ -33,7 +36,10 @@ describe('FilterPanel', () => {
       {
         name: 'filter2',
         type: (filter) => (
-          <button data-testid={`filter-${filter.name}`} onClick={() => filter.onChange?.(filter)}>
+          <button
+            data-testid={`filter-${filter.name}`}
+            onClick={() => filter.onChange?.(filter)}
+          >
             {filter.name}
           </button>
         ),
@@ -53,7 +59,7 @@ describe('FilterPanel', () => {
         filterValues={filterValues}
         setFilterValues={mockSetFilterValues}
         onClose={mockOnClose}
-      />
+      />,
     );
 
     expect(screen.getByTestId('filter-filter1')).toBeInTheDocument();
@@ -68,14 +74,20 @@ describe('FilterPanel', () => {
         filterValues={filterValues}
         setFilterValues={mockSetFilterValues}
         onClose={mockOnClose}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByTestId('filter-filter1'));
-    expect(mockSetFilterValues).toHaveBeenCalledWith({ ...filterValues, filter1: 'value1' });
+    expect(mockSetFilterValues).toHaveBeenCalledWith({
+      ...filterValues,
+      filter1: 'value1',
+    });
 
     fireEvent.click(screen.getByTestId('filter-filter2'));
-    expect(mockSetFilterValues).toHaveBeenCalledWith({ ...filterValues, filter2: 'value2' });
+    expect(mockSetFilterValues).toHaveBeenCalledWith({
+      ...filterValues,
+      filter2: 'value2',
+    });
   });
 
   it('calls the onClose handler when the close button is clicked', () => {
@@ -85,7 +97,7 @@ describe('FilterPanel', () => {
         filterValues={filterValues}
         setFilterValues={mockSetFilterValues}
         onClose={mockOnClose}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByText('Close'));

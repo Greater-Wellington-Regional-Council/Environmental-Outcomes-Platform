@@ -265,48 +265,60 @@ export default function LimitsTable({
           appState.catBGroundWaterLimitsView &&
           Object.keys(appState.catBGroundWaterLimitsView).map((key) => (
             <tbody key={key}>
-              {appState.catBGroundWaterLimitsView![key].map((gwLimit, index) => (
-                <LimitRow
-                  key={`B-${key}-${index}`}
-                  type="Ground"
-                  category={gwLimit.groundWaterLimit.category}
-                  depth={gwLimit.groundWaterLimit.depth}
-                  hideCategory={!council.hasGroundwaterCategories}
-                  {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
-                  subUnitLimitRowSpan={
-                    appState.catBGroundWaterLimitsView![key].length > 1 ? 0 : 1
-                  }
-                  hideSubUnitLimit={index > 0}
-                  unitLimitRowSpan={
-                    appState.catBGroundWaterLimitsView![key].length > 1 ? 0 : 1
-                  }
-                  hideUnitLimit={index > 0}
-                />
-              ))}
+              {appState.catBGroundWaterLimitsView![key].map(
+                (gwLimit, index) => (
+                  <LimitRow
+                    key={`B-${key}-${index}`}
+                    type="Ground"
+                    category={gwLimit.groundWaterLimit.category}
+                    depth={gwLimit.groundWaterLimit.depth}
+                    hideCategory={!council.hasGroundwaterCategories}
+                    {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
+                    subUnitLimitRowSpan={
+                      appState.catBGroundWaterLimitsView![key].length > 1
+                        ? 0
+                        : 1
+                    }
+                    hideSubUnitLimit={index > 0}
+                    unitLimitRowSpan={
+                      appState.catBGroundWaterLimitsView![key].length > 1
+                        ? 0
+                        : 1
+                    }
+                    hideUnitLimit={index > 0}
+                  />
+                ),
+              )}
             </tbody>
           ))}
         {showGroundWaterLimits &&
           appState.catCGroundWaterLimitsView &&
           Object.keys(appState.catCGroundWaterLimitsView).map((key) => (
             <tbody key={key}>
-              {appState.catCGroundWaterLimitsView![key].map((gwLimit, index) => (
-                <LimitRow
-                  key={`C-${key}-${index}`}
-                  type="Ground"
-                  depth={gwLimit.groundWaterLimit.depth}
-                  category={gwLimit.groundWaterLimit.category}
-                  hideCategory={!council.hasGroundwaterCategories}
-                  {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
-                  subUnitLimitRowSpan={
-                    appState.catCGroundWaterLimitsView![key].length > 1 ? 0 : 1
-                  }
-                  hideSubUnitLimit={index > 0}
-                  unitLimitRowSpan={
-                    appState.catCGroundWaterLimitsView![key].length > 1 ? 0 : 1
-                  }
-                  hideUnitLimit={index > 0}
-                />
-              ))}
+              {appState.catCGroundWaterLimitsView![key].map(
+                (gwLimit, index) => (
+                  <LimitRow
+                    key={`C-${key}-${index}`}
+                    type="Ground"
+                    depth={gwLimit.groundWaterLimit.depth}
+                    category={gwLimit.groundWaterLimit.category}
+                    hideCategory={!council.hasGroundwaterCategories}
+                    {...pick(gwLimit, 'subUnitLimitView', 'unitLimitView')}
+                    subUnitLimitRowSpan={
+                      appState.catCGroundWaterLimitsView![key].length > 1
+                        ? 0
+                        : 1
+                    }
+                    hideSubUnitLimit={index > 0}
+                    unitLimitRowSpan={
+                      appState.catCGroundWaterLimitsView![key].length > 1
+                        ? 0
+                        : 1
+                    }
+                    hideUnitLimit={index > 0}
+                  />
+                ),
+              )}
             </tbody>
           ))}
       </table>
@@ -318,23 +330,21 @@ export default function LimitsTable({
             </div>
           )}
           {!regionOverrides?.limitsTableFooter &&
-            footNoteTexts.map(
-              ({ number, id, href, footNoteText }, index) => (
-                <div key={number} className={index === 0 ? 'mt-4' : ''}>
-                  <span id={id} className="underline">
-                    <sup>{number}</sup>
-                  </span>
-                  <a
-                    href={href}
-                    className="text-sm flex-1 underline"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {footNoteText}
-                  </a>
-                </div>
-              ),
-            )}
+            footNoteTexts.map(({ number, id, href, footNoteText }, index) => (
+              <div key={number} className={index === 0 ? 'mt-4' : ''}>
+                <span id={id} className="underline">
+                  <sup>{number}</sup>
+                </span>
+                <a
+                  href={href}
+                  className="text-sm flex-1 underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {footNoteText}
+                </a>
+              </div>
+            ))}
         </>
       )}
     </>
