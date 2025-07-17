@@ -22,7 +22,10 @@ export default function Usage() {
         title={`Water Allocations and Usage`}
         subtitle="Detailed Water Usage"
         council={council}
-        backTo={{ href: `/limits/${council.slug}`, text: 'Back to Water Allocation' }}
+        backTo={{
+          href: `/limits/${council.slug}`,
+          text: 'Back to Water Allocation',
+        }}
       />
 
       <nav className="mb-4">
@@ -32,8 +35,8 @@ export default function Usage() {
       <main role="application">
         <div className="p-4 map-panel">
           <p className="mb-2">
-            The data below <strong>is not all Water Use data</strong> supplied to
-            Greater Wellington. It only includes data provided using timely
+            The data below <strong>is not all Water Use data</strong> supplied
+            to Greater Wellington. It only includes data provided using timely
             automated telemetered systems.
           </p>
           <Results waterUseData={waterUseData} />
@@ -44,7 +47,6 @@ export default function Usage() {
 }
 
 function Results({ waterUseData }: { waterUseData: DetailedWaterUseQuery }) {
-
   if (waterUseData.isLoading) {
     return <LoadingIndicator>Loading data</LoadingIndicator>;
   }
@@ -66,7 +68,5 @@ function Results({ waterUseData }: { waterUseData: DetailedWaterUseQuery }) {
         to={waterUseData.data.formattedTo}
       />
     </>
-  )
-    ;
+  );
 }
-

@@ -89,8 +89,8 @@ export const get = async (
     }
 
     if (e instanceof Error) {
-      e && console.error('Fetch error:', e)
-      return {error: (e as { message: string }).message}
+      console.error('Fetch error:', e)
+      return { error: (e as { message: string }).message }
     } return { error: 'Unknown error' }
   }
 }

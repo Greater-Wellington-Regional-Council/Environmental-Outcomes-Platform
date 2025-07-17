@@ -12,7 +12,7 @@ function renderWithProviders(router = createMemoryRouter(routes)) {
   return render(
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router}></RouterProvider>
-    </QueryClientProvider>
+    </QueryClientProvider>,
   );
 }
 
@@ -22,7 +22,9 @@ describe('App Routing', () => {
     renderWithProviders(router);
 
     await waitFor(() => {
-      expect(router.state.location.pathname).toEqual('/limits/gw/@-41,175.35,8z');
+      expect(router.state.location.pathname).toEqual(
+        '/limits/gw/@-41,175.35,8z',
+      );
     });
   });
 
@@ -33,7 +35,9 @@ describe('App Routing', () => {
     renderWithProviders(router);
 
     await waitFor(() => {
-      expect(router.state.location.pathname).toEqual('/limits/gw/@-41,175.35,8z');
+      expect(router.state.location.pathname).toEqual(
+        '/limits/gw/@-41,175.35,8z',
+      );
     });
   });
 
@@ -55,7 +59,7 @@ describe('App Routing', () => {
     renderWithProviders(router);
 
     expect(router.state.location.pathname).toEqual(
-      '/limits/gw/@-44.675,169.138,16z'
+      '/limits/gw/@-44.675,169.138,16z',
     );
   });
 
@@ -67,7 +71,7 @@ describe('App Routing', () => {
 
     await waitFor(() => {
       expect(router.state.location.pathname).toEqual(
-        '/limits/@-44.675,169.138,16z'
+        '/limits/@-44.675,169.138,16z',
       );
       expect(router.state.location.search).toEqual('?pinned=-40.123,170.001');
     });

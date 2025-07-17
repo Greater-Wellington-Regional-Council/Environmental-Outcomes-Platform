@@ -13,7 +13,7 @@ function capitalize(str: string): string {
   });
 }
 
-function toSentenceCase(str: string): string {
+export function toSentenceCase(str: string): string {
   str = str.replace(/[_-]/g, ' ');
 
   return str.replace(/\b\w+\b/g, (word, index) => {

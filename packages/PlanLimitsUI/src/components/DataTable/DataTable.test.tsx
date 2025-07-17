@@ -20,7 +20,7 @@ vi.mock('jspdf', () => ({
     addFileToVFS: vi.fn(),
     addFont: vi.fn(),
     setFont: vi.fn(),
-    internal: { pageSize: 8 }
+    internal: { pageSize: 8 },
   })),
 }));
 
@@ -30,10 +30,20 @@ const mockData = [
 ];
 
 const columns = [
-  { name: 'name', heading: 'Name', visible: true, comparisonOperators: [ComparisonOperator.EqualTo] },
+  {
+    name: 'name',
+    heading: 'Name',
+    visible: true,
+    comparisonOperators: [ComparisonOperator.EqualTo],
+  },
   { name: 'category_a', heading: 'Category A', visible: true, type: 'number' },
   { name: 'category_b', heading: 'Category B', visible: true, type: 'number' },
-  { name: 'surface_take', heading: 'Surface Take', visible: true, type: 'number' },
+  {
+    name: 'surface_take',
+    heading: 'Surface Take',
+    visible: true,
+    type: 'number',
+  },
 ];
 
 const queryClient = new QueryClient();
@@ -54,10 +64,12 @@ describe('DataTable Component', () => {
         data={[]}
         columns={columns}
         options={{ includeTotals: false }}
-      />
+      />,
     );
 
-    expect(screen.getByText(/There is no data for these criteria/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/There is no data for these criteria/i),
+    ).toBeInTheDocument();
   });
 
   it('calculates totals correctly when enabled', () => {
@@ -66,13 +78,22 @@ describe('DataTable Component', () => {
         data={mockData}
         columns={columns}
         options={{ includeTotals: true }}
-      />
+      />,
     );
 
     expect(screen.getByText('Grand total')).toBeInTheDocument();
-    const totalCategoryA = mockData.reduce((sum, row) => sum + row.category_a, 0);
-    const totalCategoryB = mockData.reduce((sum, row) => sum + row.category_b, 0);
-    const totalSurfaceTake = mockData.reduce((sum, row) => sum + row.surface_take, 0);
+    const totalCategoryA = mockData.reduce(
+      (sum, row) => sum + row.category_a,
+      0,
+    );
+    const totalCategoryB = mockData.reduce(
+      (sum, row) => sum + row.category_b,
+      0,
+    );
+    const totalSurfaceTake = mockData.reduce(
+      (sum, row) => sum + row.surface_take,
+      0,
+    );
 
     expect(screen.getByText(totalCategoryA.toFixed(2))).toBeInTheDocument();
     expect(screen.getByText(totalCategoryB.toFixed(2))).toBeInTheDocument();
@@ -85,7 +106,7 @@ describe('DataTable Component', () => {
         data={mockData}
         columns={columns}
         options={{ includeTotals: false }}
-      />
+      />,
     );
 
     const downloadButton = screen.getByText(/Download/i);
@@ -102,7 +123,7 @@ describe('DataTable Component', () => {
         data={mockData}
         columns={columns}
         options={{ includeTotals: false }}
-      />
+      />,
     );
 
     const printButton = screen.getByText(/Print/i);
@@ -121,20 +142,20 @@ describe('DataTable Component', () => {
         columns={columns}
         outerFilters={emptyFilters}
         options={{
-          complexFilter: true
+          complexFilter: true,
         }}
-      />
+      />,
     );
 
-    screen.getByTestId("dropdown-condition");
+    screen.getByTestId('dropdown-condition');
 
-    fireEvent.click(screen.getByTestId("dropdown-field-name"));
-    fireEvent.click(screen.getByTestId("option-name"));
-    fireEvent.click(screen.getByTestId("dropdown-condition"));
+    fireEvent.click(screen.getByTestId('dropdown-field-name'));
+    fireEvent.click(screen.getByTestId('option-name'));
+    fireEvent.click(screen.getByTestId('dropdown-condition'));
 
-    const filterOptions = screen.getByTestId('option-list').querySelectorAll('li')
+    const filterOptions = screen
+      .getByTestId('option-list')
+      .querySelectorAll('li');
     expect(filterOptions?.length).toBe(1);
   });
 });
-
-

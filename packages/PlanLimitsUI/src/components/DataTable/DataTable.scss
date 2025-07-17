@@ -5,7 +5,8 @@
   border: 1px solid #ddd;
 }
 
-.table-header, .table-footer {
+.table-header,
+.table-footer {
   flex: none; /* Keep header and footer fixed */
 }
 
@@ -20,7 +21,8 @@
   table-layout: fixed; /* Ensures proper column alignment */
 }
 
-th, td {
+th,
+td {
   padding: 8px;
   text-align: left;
   border: 1px solid #ddd;

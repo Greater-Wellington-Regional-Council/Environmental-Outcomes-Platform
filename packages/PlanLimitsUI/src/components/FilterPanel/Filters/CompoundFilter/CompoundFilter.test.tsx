@@ -28,7 +28,7 @@ describe('CompoundFilter', () => {
           },
         ]}
         currentValue={[]}
-      />
+      />,
     );
 
     expect(screen.getByText('Select Field Name')).toBeInTheDocument();
@@ -66,7 +66,7 @@ describe('CompoundFilter', () => {
           },
         ]}
         currentValue={undefined}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByTestId('dropdown-field-name'));
@@ -107,7 +107,7 @@ describe('CompoundFilter', () => {
         ]}
         currentValue={[]}
         clearOn={['Field Name']}
-      />
+      />,
     );
 
     fireEvent.click(screen.getByTestId('dropdown-field-name'));
@@ -149,7 +149,7 @@ describe('CompoundFilter', () => {
         ]}
         currentValue={undefined}
         onSelect={mockOnSubmit}
-      />
+      />,
     );
 
     const submitButton = screen.getByTestId('submit-button');
@@ -167,6 +167,10 @@ describe('CompoundFilter', () => {
     fireEvent.click(screen.getByText('value_2'));
 
     fireEvent.click(submitButton);
-    expect(mockOnSubmit).toHaveBeenCalledWith(['field_name_1', '!=', 'value_2']);
+    expect(mockOnSubmit).toHaveBeenCalledWith([
+      'field_name_1',
+      '!=',
+      'value_2',
+    ]);
   });
 });

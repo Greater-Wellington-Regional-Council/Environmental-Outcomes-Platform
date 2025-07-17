@@ -4,14 +4,12 @@ import react from '@vitejs/plugin-react-swc';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 export default defineConfig(async () => {
-  const redirectAll = (await import('vite-plugin-rewrite-all')).default;
   const tsconfigPaths = (await import('vite-tsconfig-paths')).default;
 
   return {
     plugins: [
       tsconfigPaths(),
       react(),
-      redirectAll(),
     ],
     build: {
       rollupOptions: {
