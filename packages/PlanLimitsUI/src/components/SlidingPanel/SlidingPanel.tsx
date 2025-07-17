@@ -116,7 +116,7 @@ export default function SlidingPanel({ showPanel, contentChanged, onResize, chil
           </div>
 
             {isLargeScreen && (
-              // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+              // eslint-disable-next-line
                 <div
                     className="absolute left-[-6px] top-0 bottom-0 w-[6px] cursor-ew-resize z-20 bg-gray-100"
                     onMouseDown={handleMouseDown}

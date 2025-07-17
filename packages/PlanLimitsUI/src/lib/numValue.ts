@@ -2,7 +2,7 @@
 export const isNumber = (value: unknown): boolean =>
   typeof value === 'number' && !Number.isNaN(value);
 
-export const isNumberString = (value: unknown): boolean => /^[+\-]?\d+(\.\d+)?$/.test(value as string)
+export const isNumberString = (value: unknown): boolean => /^[+-]?\d+(\.\d+)?$/.test(value as string)
 
 export const numValue = (value: unknown, defaultValue?: number): number => {
   if (isNumber(value))

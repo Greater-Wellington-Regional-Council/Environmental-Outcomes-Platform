@@ -286,7 +286,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
     if (!col) return { name: 'unknown' };
 
-    let base = (typeof col === 'string') ? { name: col } : col!;
+    const base = (typeof col === 'string') ? { name: col } : col!;
     const givenOptions = columnProps.find((c) => c.name === base.name) || { name: base.name };
 
     base.heading = givenOptions.heading ?? deriveHeadingFromName(base.name);
@@ -357,7 +357,7 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         data: data,
         columns: visibleColumns,
         fieldSupportsOperator: typeof options.complexFilter === 'object' ? options.complexFilter.fieldSupportsOperator :
-        (op: ComparisonOperator,  fieldName: string, _: DataValueType[]) =>
+        (op: ComparisonOperator,  fieldName: string) =>
             Array.isArray(columns.find(c => c.name === fieldName)?.comparisonOperators)
               ? (columns.find(c => c.name === fieldName)!.comparisonOperators as ComparisonOperator[]).includes(op)
               : true,

@@ -54,7 +54,7 @@ export const WaterAllocationTable = ({ council }: { council: Council }) => {
       : ['name', 'category_a', 'category_b', 'surface_take', 'total_allocation', 'allocation_limit', 'pnrp_allocation_percentage'];
   };
 
-  let outerFilters: FilterDescriptor[] = useMemo(() => {
+  const outerFilters: FilterDescriptor[] = useMemo(() => {
     const filters = [{
       name: 'waterType',
       type: OuterFilter,
