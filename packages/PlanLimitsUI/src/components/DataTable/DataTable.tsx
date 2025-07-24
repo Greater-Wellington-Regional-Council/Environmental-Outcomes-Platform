@@ -2,7 +2,7 @@ import React, { ReactNode, useMemo, useEffect } from 'react';
 import 'react-dropdown/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import { applyPlugin } from 'jspdf-autotable';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import numValue, { isNumber } from '@lib/numValue';
@@ -578,6 +578,7 @@ function DataTable<
   };
 
   function printPDF() {
+    applyPlugin(jsPDF);
     const doc = new jsPDF();
 
     doc.addFileToVFS('OpenSans-Regular.ttf', OpenSansRegularBase64);
@@ -606,7 +607,7 @@ function DataTable<
         {} as Record<number, { halign: 'right' | 'left' | 'center' }>,
       );
 
-    doc.autoTable({
+    const tableConfig = {
       head: [visibleColumns.map((col) => col.heading || capitalise(col.name))],
       body: pdfData,
       styles: {
@@ -614,8 +615,9 @@ function DataTable<
       },
       // @ts-ignore
       columnStyles: buildColumnStyles() as Object,
-    });
+    };
 
+    doc.autoTable(tableConfig);
     const dateStr = new Date().toLocaleDateString();
     doc.text(`Generated on: ${dateStr}`, 8, doc.internal.pageSize.height - 8);
 
