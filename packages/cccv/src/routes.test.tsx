@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 import { ReactNode } from 'react';
-import routes from '@src/routes';
+import routes from './routes';
 
 type RouteType = {
   path: string;

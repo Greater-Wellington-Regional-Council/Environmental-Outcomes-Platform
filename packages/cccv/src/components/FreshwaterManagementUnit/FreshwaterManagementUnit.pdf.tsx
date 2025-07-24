@@ -27,7 +27,7 @@ import { Feature } from "geojson"
 
 try {
   (Font as unknown as { register: (arg0: unknown) => void }).register(fonts.inter)
-} catch (e) {
+} catch (e) { // eslint-disable-line
   console.log("Couldn't register inter font")
 }
 

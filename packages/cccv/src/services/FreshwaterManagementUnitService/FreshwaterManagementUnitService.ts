@@ -114,8 +114,7 @@ const service = {
   },
 
   loadSiteDescriptions: async (tangataWhenuaSites: FeatureCollection<import('geojson').Geometry, import('geojson').GeoJsonProperties> | undefined): Promise<FeatureCollection> => {
-
-    async function processFeatures(features: any[]) {
+    async function processFeatures(features: any[]) { // eslint-disable-line
       for (const feature of features) {
         if (!feature.properties) continue;
         if (!feature.properties.siteDescription) feature.properties.siteDescription = {} as Record<string, string>;

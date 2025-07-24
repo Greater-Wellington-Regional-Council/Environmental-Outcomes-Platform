@@ -126,7 +126,7 @@ $gapSize: 12px;
   }
 
   .address-box {
-    @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[90%]
+    @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[90%];
   }
 }
 
@@ -149,8 +149,6 @@ $gapSize: 12px;
     }
   }
 
-
-
   header {
     grid-column: 1 / span 12;
     grid-row: 1;
@@ -171,7 +169,7 @@ $gapSize: 12px;
     position: relative;
     height: fit-content;
     width: 100%;
-    order: 1
+    order: 1;
   }
 
   .info-panel {
@@ -182,7 +180,9 @@ $gapSize: 12px;
     height: 100%;
     width: 100%;
     right: -100%;
-    transition: right 0.5s ease-in-out, width 0.5s ease-in-out;
+    transition:
+      right 0.5s ease-in-out,
+      width 0.5s ease-in-out;
     z-index: 1000;
   }
 
@@ -195,11 +195,10 @@ $gapSize: 12px;
   }
 
   .address-box {
-    @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[50%]
+    @apply z-[1000] fixed bottom-2 grid-cols-3 bg-gray-800 text-white p-4 bg-transparent w-[50%];
   }
 
   .info-panel-open ~ .map-panel {
     grid-column: 1 / span 8;
   }
 }
-

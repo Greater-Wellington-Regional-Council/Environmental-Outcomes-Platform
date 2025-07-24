@@ -94,10 +94,10 @@ export default function Overview({
             regionOverrides?.flowManagementSite
               ? regionOverrides?.flowManagementSite
               : appState.flowLimit
-              ? appState.flowSite?.name
-              : appState.planRegion
-              ? appState.planRegion.defaultFlowManagementLimit
-              : 'None'
+                ? appState.flowSite?.name
+                : appState.planRegion
+                  ? appState.planRegion.defaultFlowManagementLimit
+                  : 'None'
           }
         />
         <LimitsListItem
@@ -106,13 +106,13 @@ export default function Overview({
             regionOverrides?.flowLimit
               ? regionOverrides?.flowLimit
               : appState.flowLimit
-              ? formatWaterQuantity(
-                  appState.flowLimit.minimumFlow,
-                  council.unitTypes.flow,
-                )
-              : appState.planRegion
-              ? appState.planRegion.defaultFlowManagementLimit
-              : 'None'
+                ? formatWaterQuantity(
+                    appState.flowLimit.minimumFlow,
+                    council.unitTypes.flow,
+                  )
+                : appState.planRegion
+                  ? appState.planRegion.defaultFlowManagementLimit
+                  : 'None'
           }
         />
       </dl>

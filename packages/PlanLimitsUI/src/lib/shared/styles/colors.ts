@@ -7,7 +7,7 @@ const colors = {
   textDefault: '#323232',
   textH6: '#737373',
   textCaption: '#737373',
-  grey: '#9D9D9D'
-}
+  grey: '#9D9D9D',
+};
 
 export default colors;

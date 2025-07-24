@@ -196,21 +196,23 @@ export function usePlanLimitsData(councilId: number) {
 export type PlanLimitsData = ReturnType<typeof usePlanLimitsData>;
 
 const startOfMonth = (date_in_month: Date | null | undefined) => {
-  const firstDayOfCurrentMonthDate = date_in_month || new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
+  const firstDayOfCurrentMonthDate =
+    date_in_month ||
+    new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
   const nzFormatter = new Intl.DateTimeFormat('en-NZ', {
     timeZone: 'Pacific/Auckland',
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit'
+    day: '2-digit',
   });
 
   const parts = nzFormatter.formatToParts(firstDayOfCurrentMonthDate);
-  const year = parts!.find(part => part!.type === 'year')!.value;
-  const month = parts!.find(part => part!.type === 'month')!.value;
-  const day = parts!.find(part => part!.type === 'day')!.value;
+  const year = parts!.find((part) => part!.type === 'year')!.value;
+  const month = parts!.find((part) => part!.type === 'month')!.value;
+  const day = parts!.find((part) => part!.type === 'day')!.value;
 
   return `${year}-${month}-${day}`;
-}
+};
 
 export type WaterType = 'surface' | 'ground';
 
@@ -227,8 +229,14 @@ export function useWaterUseQuery(councilId: number, from: string, to: string) {
   });
 }
 
-export function useWaterAllocationQuery(councilId: number, waterType: WaterType, start_month?: Array<Date> | null) {
-  const formattedDate = start_month?.map(d => startOfMonth(d))?.join(",") || startOfMonth(new Date());
+export function useWaterAllocationQuery(
+  councilId: number,
+  waterType: WaterType,
+  start_month?: Array<Date> | null,
+) {
+  const formattedDate =
+    start_month?.map((d) => startOfMonth(d))?.join(',') ||
+    startOfMonth(new Date());
   const endpoint = `/plan-limits/${waterType}-water-pnrp`;
 
   return useQuery({
@@ -236,6 +244,8 @@ export function useWaterAllocationQuery(councilId: number, waterType: WaterType,
     refetchOnWindowFocus: false,
     staleTime: 60 * 60 * 1000, // 1 hour
     queryFn: () =>
-      fetchFromAPI<Record<string, DataValueType>[]>(`${endpoint}?councilId=${councilId}&dates=${formattedDate}`),
+      fetchFromAPI<Record<string, DataValueType>[]>(
+        `${endpoint}?councilId=${councilId}&dates=${formattedDate}`,
+      ),
   });
 }

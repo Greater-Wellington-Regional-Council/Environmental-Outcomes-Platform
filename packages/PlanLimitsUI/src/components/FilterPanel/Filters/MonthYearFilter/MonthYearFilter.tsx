@@ -1,5 +1,5 @@
 import React from 'react';
-import { FilterDescriptor, } from '@components/FilterPanel/FilterPanel';
+import { FilterDescriptor } from '@components/FilterPanel/FilterPanel';
 import MonthYearPicker from '@components/MonthYearPicker';
 
 export const MonthYearFilter: React.FC<FilterDescriptor> = (filter) => {

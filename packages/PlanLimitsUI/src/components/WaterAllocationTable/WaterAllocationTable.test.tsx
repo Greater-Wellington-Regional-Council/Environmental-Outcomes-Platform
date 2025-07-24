@@ -17,7 +17,7 @@ vi.mock('jspdf', () => ({
     addFileToVFS: vi.fn(),
     addFont: vi.fn(),
     setFont: vi.fn(),
-    internal: { pageSize: 8 }
+    internal: { pageSize: 8 },
   })),
 }));
 
@@ -257,20 +257,32 @@ const columns = [
   { name: 'area_id', visible: false },
   { name: 'plan_region_id', visible: false },
   {
-    name: 'category_a', type: 'number', formula: 'sum(category_a)',
-    valueOk: [(value: number) => value > 0], heading: 'Surface take',
+    name: 'category_a',
+    type: 'number',
+    formula: 'sum(category_a)',
+    valueOk: [(value: number) => value > 0],
+    heading: 'Surface take',
   },
   {
-    name: 'category_b', type: 'number', formula: 'sum(category_b)',
-    valueOk: [(value: number) => value > 0], heading: 'Groundwater take',
+    name: 'category_b',
+    type: 'number',
+    formula: 'sum(category_b)',
+    valueOk: [(value: number) => value > 0],
+    heading: 'Groundwater take',
   },
   {
-    name: 'category_bc', type: 'number', formula: 'sum(category_bc)',
-    valueOk: [(value: number) => value > 0], heading: 'Groundwater take (confined)',
+    name: 'category_bc',
+    type: 'number',
+    formula: 'sum(category_bc)',
+    valueOk: [(value: number) => value > 0],
+    heading: 'Groundwater take (confined)',
   },
   {
-    name: 'category_c', type: 'number', formula: 'sum(category_c)',
-    valueOk: [(value: number) => value > 0], heading: 'Groundwater take (unconfined)',
+    name: 'category_c',
+    type: 'number',
+    formula: 'sum(category_c)',
+    valueOk: [(value: number) => value > 0],
+    heading: 'Groundwater take (unconfined)',
   },
 ];
 
@@ -278,22 +290,22 @@ describe('WaterAllocationTable Component', () => {
   it('renders the table with correct headers and data', () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
-        <WaterAllocationTable council={Councils.find(c => c.slug == 'gw')!} />
-      </QueryClientProvider>
-    )
+        <WaterAllocationTable council={Councils.find((c) => c.slug == 'gw')!} />
+      </QueryClientProvider>,
+    );
 
     columns.forEach((col, index) => {
       if (index > 0 && col.visible)
         expect(screen.getByText(col.heading!)).toBeInTheDocument();
     });
-  })
+  });
 
   it('includes a dropdown of months', () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
-        <WaterAllocationTable council={Councils.find(c => c.slug == 'gw')!} />
-      </QueryClientProvider>
-    )
+        <WaterAllocationTable council={Councils.find((c) => c.slug == 'gw')!} />
+      </QueryClientProvider>,
+    );
 
     const monthDropdown = screen.getByLabelText(/from:/i);
     expect(monthDropdown).toBeInTheDocument();
@@ -302,20 +314,22 @@ describe('WaterAllocationTable Component', () => {
   it('has current month as first item of dropdown', () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
-        <WaterAllocationTable council={Councils.find(c => c.slug == 'gw')!} />
-      </QueryClientProvider>
-    )
+        <WaterAllocationTable council={Councils.find((c) => c.slug == 'gw')!} />
+      </QueryClientProvider>,
+    );
 
     const monthDropdown = screen.getByLabelText(/from:/i);
-    expect(monthDropdown).toHaveTextContent(new Date().toLocaleString('default', { month: 'long', year: 'numeric' }));
+    expect(monthDropdown).toHaveTextContent(
+      new Date().toLocaleString('default', { month: 'long', year: 'numeric' }),
+    );
   });
 
   it('includes day in first item of dropdown if today not end of month', () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
-        <WaterAllocationTable council={Councils.find(c => c.slug == 'gw')!} />
-      </QueryClientProvider>
-    )
+        <WaterAllocationTable council={Councils.find((c) => c.slug == 'gw')!} />
+      </QueryClientProvider>,
+    );
 
     const monthDropdown = screen.getByLabelText(/from:/i);
     const firstEntry = monthToToday();
@@ -325,14 +339,18 @@ describe('WaterAllocationTable Component', () => {
 
   it('includes day in first item of dropdown if today Is end of month', () => {
     const today = new Date();
-    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const lastDayOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0,
+    ).getDate();
     today.setDate(lastDayOfMonth);
 
     render(
       <QueryClientProvider client={new QueryClient()}>
-        <WaterAllocationTable council={Councils.find(c => c.slug == 'gw')!} />
-      </QueryClientProvider>
-    )
+        <WaterAllocationTable council={Councils.find((c) => c.slug == 'gw')!} />
+      </QueryClientProvider>,
+    );
 
     const monthDropdown = screen.getByLabelText(/from:/i);
     const firstEntry = monthToToday(today);

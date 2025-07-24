@@ -18,7 +18,6 @@ const displayValue = (
   row?: Record<string, DataValueType>,
   cd?: ColumnDescriptor,
 ): string => {
-
   const scaleNumber = (input: number | string, scale?: number) => {
     if (typeof input === 'string') input = parseFloat(input);
     if (isNaN(input)) return input;
@@ -29,11 +28,15 @@ const displayValue = (
   if (cd?.formula && row) value = calculate(cd, row);
   if ((value ?? null) === null) return '';
   if (isDate(value)) return value.toLocaleDateString();
-  if (cd?.type === 'percent' && isNumber(value)) return `${numValue(value).toFixed(2)}%`;
-  if (isNumber(value) || isNumberString(value)) return scaleNumber(numValue(value), cd?.scale).toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }) + (cd?.scaleSymbol ?? '');
+  if (cd?.type === 'percent' && isNumber(value))
+    return `${numValue(value).toFixed(2)}%`;
+  if (isNumber(value) || isNumberString(value))
+    return (
+      scaleNumber(numValue(value), cd?.scale).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }) + (cd?.scaleSymbol ?? '')
+    );
   return value!.toString();
 };
 
@@ -57,7 +60,7 @@ export function DataCell({
         displayValue(
           value,
           currentRow,
-          ignoreFormula ? { ...col, formula: undefined } : col
+          ignoreFormula ? { ...col, formula: undefined } : col,
         ) ||
         ''}
       <span>{errorFlag({ col, s: value })}</span>

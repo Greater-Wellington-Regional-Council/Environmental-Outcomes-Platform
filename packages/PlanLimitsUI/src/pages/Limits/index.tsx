@@ -6,7 +6,8 @@ import { useAtom } from 'jotai';
 import {
   councilAtom,
   viewLocationUrlPath,
-  pinnedLocationUrlParam, } from '@lib/loader';
+  pinnedLocationUrlParam,
+} from '@lib/loader';
 import { useAppState } from '@lib/useAppState';
 import { usePlanLimitsData } from '@src/api';
 import Map from './map';
@@ -16,7 +17,6 @@ import GWHeader from '@components/GWHeader/GWHeader';
 import SlidingPanel from '@components/SlidingPanel/SlidingPanel';
 import Navigation from '@components/Navigation/Navigation';
 
-
 export default function Limits() {
   const [council] = useAtom(councilAtom);
 
@@ -25,13 +25,20 @@ export default function Limits() {
   const {
     locationString: initialViewLocation,
     pinnedLocation: initialPinnedLocation,
-  } = useLoaderData() as { locationString: ViewLocation; pinnedLocation: ViewLocation };
+  } = useLoaderData() as {
+    locationString: ViewLocation;
+    pinnedLocation: ViewLocation;
+  };
 
-  const [pinnedLocation, setPinnedLocation] = useState<PinnedLocation | null>(initialPinnedLocation);
+  const [pinnedLocation, setPinnedLocation] = useState<PinnedLocation | null>(
+    initialPinnedLocation,
+  );
   const [viewLocation, setViewLocation] = useState(initialViewLocation);
 
-
-  const [ debouncedValue, updateValue ] = useDebounceValue<ViewLocation>(viewLocation, 500);
+  const [debouncedValue, updateValue] = useDebounceValue<ViewLocation>(
+    viewLocation,
+    500,
+  );
   useEffect(() => {
     const updatedLocation = {
       pathname: viewLocationUrlPath(council.slug, debouncedValue),
@@ -44,7 +51,7 @@ export default function Limits() {
   }, [debouncedValue, pinnedLocation, navigate, council.slug]);
 
   useEffect(() => {
-    setShowPanel(true)
+    setShowPanel(true);
   }, [pinnedLocation]);
 
   useEffect(() => {
@@ -65,7 +72,7 @@ export default function Limits() {
       bottom: 0,
       right: 450,
     },
-    zoom: 8
+    zoom: 8,
   });
 
   const setViewState = (value: ViewState) => {
@@ -76,10 +83,10 @@ export default function Limits() {
   const planLimitsData = usePlanLimitsData(council.id);
   const [appState, setAppState] = useAppState(council);
 
-  const [ showPanel, setShowPanel ] = useState(false)
+  const [showPanel, setShowPanel] = useState(false);
 
   return (
-    <div className={"base-page"}>
+    <div className={'base-page'}>
       <GWHeader
         title="Natural Resource Plan"
         subtitle="Water Allocations and Usage"
@@ -105,7 +112,11 @@ export default function Limits() {
             />
           )}
 
-          <SlidingPanel showPanel={showPanel} contentChanged={false} onClose={() => setShowPanel(false)}>
+          <SlidingPanel
+            showPanel={showPanel}
+            contentChanged={false}
+            onClose={() => setShowPanel(false)}
+          >
             <Sidebar
               appState={appState}
               waterTakeFilter={waterTakeFilter}
