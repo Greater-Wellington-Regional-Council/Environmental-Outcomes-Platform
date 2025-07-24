@@ -11,6 +11,7 @@ import Dropdown from '../Dropdown/Dropdown';
 import DataCell from './DataCell';
 import { calculate } from './calculateValue';
 import { OpenSansRegularBase64 } from '@lib/fonts/OpenSansRegularBase64';
+import { OpenSansBoldBase64 } from '@lib/fonts/OpenSansBoldBase64';
 import { dateString } from '@lib/convertDate';
 import {
   FilterDescriptor,
@@ -582,8 +583,11 @@ function DataTable<
     const doc = new jsPDF();
 
     doc.addFileToVFS('OpenSans-Regular.ttf', OpenSansRegularBase64);
+    doc.addFileToVFS('OpenSans-Bold.ttf', OpenSansBoldBase64);
     doc.addFont('OpenSans-Regular.ttf', 'OpenSans', 'normal');
+    doc.addFont('OpenSans-Bold.ttf', 'OpenSans', 'bold');
     doc.setFont('OpenSans', 'normal');
+    doc.setFont('OpenSans', 'bold');
 
     const pdfData = filteredData.map((row) =>
       visibleColumns.map(
