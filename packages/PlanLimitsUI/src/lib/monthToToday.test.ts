@@ -34,15 +34,17 @@ describe('lastPastDay', () => {
 
   it('should return the last day of the month for a given year and month with includingToday set to true', () => {
     const today = new Date();
-    expect(lastPastDay(today.getFullYear(), today.getMonth(), true)).toStrictEqual(today);
+    expect(
+      lastPastDay(today.getFullYear(), today.getMonth(), true),
+    ).toStrictEqual(today);
   });
 
   it('should return the last day of the month for a given year and month with includingToday set to false', () => {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
-    expect(lastPastDay(today.getFullYear(), today.getMonth(), false)).toStrictEqual(
-      yesterday,
-    );
+    expect(
+      lastPastDay(today.getFullYear(), today.getMonth(), false),
+    ).toStrictEqual(yesterday);
   });
 });

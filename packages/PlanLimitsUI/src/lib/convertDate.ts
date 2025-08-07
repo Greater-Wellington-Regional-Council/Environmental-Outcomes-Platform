@@ -6,7 +6,10 @@ export function isValidDate(dateString: string): boolean {
   return datePattern.test(dateString);
 }
 
-export function convertDate(d: unknown | Date, orNull: boolean = false): unknown | Date | null {
+export function convertDate(
+  d: unknown | Date,
+  orNull: boolean = false,
+): unknown | Date | null {
   if (d instanceof Date) {
     return d;
   } else if (typeof d === 'string') {
@@ -20,18 +23,27 @@ export function convertDate(d: unknown | Date, orNull: boolean = false): unknown
   return orNull ? null : d;
 }
 
-export function dateString(d: unknown, orNull: boolean = false, format : 'dmy' | 'my' | 'mmm yyyy' | 'lmy' = 'lmy'): string | null {
-  const date  = (d instanceof Date) ? d : convertDate(d, orNull) as Date;
+export function dateString(
+  d: unknown,
+  orNull: boolean = false,
+  format: 'dmy' | 'my' | 'mmm yyyy' | 'lmy' = 'lmy',
+): string | null {
+  const date = d instanceof Date ? d : (convertDate(d, orNull) as Date);
 
-  if (!date) return null
+  if (!date) return null;
 
   switch (format) {
     case 'lmy':
-      return monthToToday(lastPastDay(date.getFullYear(), date.getMonth(), true));
+      return monthToToday(
+        lastPastDay(date.getFullYear(), date.getMonth(), true),
+      );
     case 'my':
       return `${date.getMonth() + 1}/${date.getFullYear()}`;
     case 'mmm yyyy':
-      return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+      return date.toLocaleDateString('en-GB', {
+        month: 'long',
+        year: 'numeric',
+      });
     default:
       return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   }

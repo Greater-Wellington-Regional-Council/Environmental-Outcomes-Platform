@@ -6,18 +6,18 @@ plugins {
   id("org.springframework.boot") version "3.4.0"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "7.0.4"
-  id("org.flywaydb.flyway") version "11.9.1"
+  id("org.flywaydb.flyway") version "11.10.0"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
-  kotlin("jvm") version "2.1.21"
+  kotlin("jvm") version "2.2.0"
   kotlin("plugin.spring") version "2.1.21"
 }
 
 buildscript {
   repositories { mavenCentral() }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.9.1")
-    classpath("org.springframework:spring-jdbc:6.2.7")
+    classpath("org.flywaydb:flyway-database-postgresql:11.10.0")
+    classpath("org.springframework:spring-jdbc:6.2.8")
     classpath("org.postgresql:postgresql:42.6.2")
   }
 }
@@ -45,9 +45,9 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
 
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.apache.kafka:kafka-streams")
@@ -56,12 +56,12 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:11.9.1")
-  implementation("org.flywaydb:flyway-database-postgresql:11.9.1")
+  implementation("org.flywaydb:flyway-core:11.10.0")
+  implementation("org.flywaydb:flyway-database-postgresql:11.10.0")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("net.javacrumbs.shedlock:shedlock-spring:6.8.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.8.0")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:6.9.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.9.0")
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2025.1.0")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
@@ -69,9 +69,9 @@ dependencies {
   implementation("com.opencsv:opencsv:5.11.1")
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
-  implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.2.1")
   implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.9.4")
-  implementation("org.hibernate:hibernate-spatial:7.0.0.Final")
+  implementation("org.hibernate:hibernate-spatial:7.0.4.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
@@ -86,7 +86,7 @@ dependencies {
   testImplementation("io.kotest:kotest-framework-engine:5.9.1")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
-  testImplementation("io.mockk:mockk:1.14.2")
+  testImplementation("io.mockk:mockk:1.14.4")
 
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")

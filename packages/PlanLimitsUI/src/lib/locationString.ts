@@ -1,9 +1,9 @@
 export function parseLocationString(
-  locationString: string
+  locationString: string,
 ): ViewLocation | null {
   // e.g. -00.000,000.000,1Z
   const match = locationString.match(
-    /^@(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?),(\d\d?)z$/
+    /^@(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?),(\d\d?)z$/,
   );
 
   if (!match) return null;
@@ -16,10 +16,10 @@ export function parseLocationString(
 }
 
 export function parsePinnedLocation(
-  pinnedLocationString: string
+  pinnedLocationString: string,
 ): PinnedLocation | null {
   const match = pinnedLocationString.match(
-    /^(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?)$/
+    /^(-?\d?\d?(\.\d{1,3})?),(\d?\d?\d?(\.\d{1,3})?)$/,
   );
 
   if (!match) return null;
@@ -40,7 +40,7 @@ export function createLocationString({
   zoom,
 }: ViewLocation) {
   return `@${roundToThreeDecimals(latitude)},${roundToThreeDecimals(
-    longitude
+    longitude,
   )},${Math.round(zoom)}z`;
 }
 

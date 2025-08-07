@@ -2,7 +2,7 @@ import React, { ReactNode, useMemo, useEffect } from 'react';
 import 'react-dropdown/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import { applyPlugin } from 'jspdf-autotable';
 import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import numValue, { isNumber } from '@lib/numValue';
@@ -11,8 +11,13 @@ import Dropdown from '../Dropdown/Dropdown';
 import DataCell from './DataCell';
 import { calculate } from './calculateValue';
 import { OpenSansRegularBase64 } from '@lib/fonts/OpenSansRegularBase64';
+import { OpenSansBoldBase64 } from '@lib/fonts/OpenSansBoldBase64';
 import { dateString } from '@lib/convertDate';
-import { FilterDescriptor, FilterPanel, SELECT_ALL } from '@components/FilterPanel/FilterPanel';
+import {
+  FilterDescriptor,
+  FilterPanel,
+  SELECT_ALL,
+} from '@components/FilterPanel/FilterPanel';
 
 import { useFilterValues } from '@components/FilterPanel/useFilterValues';
 
@@ -34,7 +39,15 @@ export type ColumnDescriptor = {
   scale?: number;
   scaleSymbol?: string;
 
-  [key: string]: string | number | boolean | undefined | null | (() => unknown) | ((c: string) => string) | unknown[];
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | undefined
+    | null
+    | (() => unknown)
+    | ((c: string) => string)
+    | unknown[];
 };
 
 type ColumnNameOrDescriptor = ColumnDescriptor | string;
@@ -46,7 +59,14 @@ type ColumnGroup = {
   lastColumn: string;
 };
 
-export type DataValueType = string | number | boolean | null | Date | undefined | ComparisonOperator;
+export type DataValueType =
+  | string
+  | number
+  | boolean
+  | null
+  | Date
+  | undefined
+  | ComparisonOperator;
 
 declare module 'jspdf' {
   // @ts-ignore
@@ -63,27 +83,32 @@ declare module 'jspdf' {
       alternateRowStyles?: object;
       tableLineColor?: string | number[];
       tableLineWidth?: number;
-      margin?: number | { top?: number; right?: number; bottom?: number; left?: number };
+      margin?:
+        | number
+        | { top?: number; right?: number; bottom?: number; left?: number };
       didDrawPage?: (data: unknown) => void;
     }) => jsPDF;
   }
 }
 
-export const OuterFilter: React.FC<FilterDescriptor> = (filter: FilterDescriptor) => {
+export const OuterFilter: React.FC<FilterDescriptor> = (
+  filter: FilterDescriptor,
+) => {
   const onSelection = (value: unknown) => {
     filter.onChange?.(value);
   };
 
   return (
-    <Dropdown {...filter}
-              options={filter.options ?? []}
-              selectAll={SELECT_ALL}
-              onChange={onSelection}
-              value={filter.currentValue as string}
-              placeholder={filter.placeholder || SELECT_ALL}
-              dataTestid={`dropdown-${filter.name}`}
-              className={`bg-transparent p-4 ${filter.className}`}
-              controlClassName={`p-2`}
+    <Dropdown
+      {...filter}
+      options={filter.options ?? []}
+      selectAll={SELECT_ALL}
+      onChange={onSelection}
+      value={filter.currentValue as string}
+      placeholder={filter.placeholder || SELECT_ALL}
+      dataTestid={`dropdown-${filter.name}`}
+      className={`bg-transparent p-4 ${filter.className}`}
+      controlClassName={`p-2`}
     />
   );
 };
@@ -96,7 +121,9 @@ export interface ColumnComparison {
   compareColumn: string;
 }
 
-export type DataTableProps<T extends DataValueType[][] | Record<string, DataValueType>[]> = {
+export type DataTableProps<
+  T extends DataValueType[][] | Record<string, DataValueType>[],
+> = {
   data: T;
   columns: ColumnDescriptor[];
   columnGroups?: ColumnGroup[];
@@ -108,57 +135,74 @@ export type DataTableProps<T extends DataValueType[][] | Record<string, DataValu
     [key: string]: unknown;
     order?: string[];
     rowObjectNamePlural?: string;
-    sort?: [
-      { [key: string]: 'asc' | 'desc' }
-    ];
+    sort?: [{ [key: string]: 'asc' | 'desc' }];
     compareColumn?: ColumnComparison;
-    complexFilter?: boolean | {
-      fieldSupportsOperator?: (operator: ComparisonOperator, fieldName: string, fieldData: DataValueType[]) => boolean;
-    }
+    complexFilter?:
+      | boolean
+      | {
+          fieldSupportsOperator?: (
+            operator: ComparisonOperator,
+            fieldName: string,
+            fieldData: DataValueType[],
+          ) => boolean;
+        };
   };
 };
 
-const ColumnGroupHeaders: React.FC<{ columnGroups: ColumnGroup[], columns: ColumnDescriptor[] }> = ({
-                                                                                                      columnGroups,
-                                                                                                      columns,
-                                                                                                    }) => {
-
+const ColumnGroupHeaders: React.FC<{
+  columnGroups: ColumnGroup[];
+  columns: ColumnDescriptor[];
+}> = ({ columnGroups, columns }) => {
   let currentGroup: string | undefined = undefined;
   const headers: ReactNode[] = [];
 
   columns.forEach((col) => {
-    const atGroupStart = columnGroups.find((group) => group.firstColumn === col.name);
-    const atGroupEnd = columnGroups.find((group) => group.lastColumn === col.name);
+    const atGroupStart = columnGroups.find(
+      (group) => group.firstColumn === col.name,
+    );
+    const atGroupEnd = columnGroups.find(
+      (group) => group.lastColumn === col.name,
+    );
     if (atGroupEnd) {
-      headers.push(<th key={atGroupEnd.name} colSpan={
-        columns.findIndex((c) => c.name === atGroupEnd.lastColumn) -
-        columns.findIndex((c) => c.name === atGroupEnd.firstColumn) + 1
-      } className="bg-kapiti text-white text-center pt-2 font-semibold text-lg">
-        {atGroupEnd.heading}
-      </th>);
+      headers.push(
+        <th
+          key={atGroupEnd.name}
+          colSpan={
+            columns.findIndex((c) => c.name === atGroupEnd.lastColumn) -
+            columns.findIndex((c) => c.name === atGroupEnd.firstColumn) +
+            1
+          }
+          className="bg-kapiti text-white text-center pt-2 font-semibold text-lg"
+        >
+          {atGroupEnd.heading}
+        </th>,
+      );
       currentGroup = undefined;
-    } else if (atGroupStart)
-      currentGroup = atGroupStart.name;
-    else if (!currentGroup || (col === columns[columns.length - 1])) {
-      headers.push(<th key={col.name} className="bg-kapiti text-white p-2 font-semibold" />);
+    } else if (atGroupStart) currentGroup = atGroupStart.name;
+    else if (!currentGroup || col === columns[columns.length - 1]) {
+      headers.push(
+        <th
+          key={col.name}
+          className="bg-kapiti text-white p-2 font-semibold"
+        />,
+      );
     }
   });
 
   return <>{headers}</>;
 };
 
-function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]>(
-  {
-    data,
-    columns: columnProps,
-    columnGroups = [],
-    innerFilters = [],
-    outerFilters = [],
-    options = { complexFilter: false },
-    onClearFilters = undefined,
-  }: DataTableProps<T>,
-): React.ReactElement {
-
+function DataTable<
+  T extends DataValueType[][] | Record<string, DataValueType>[],
+>({
+  data,
+  columns: columnProps,
+  columnGroups = [],
+  innerFilters = [],
+  outerFilters = [],
+  options = { complexFilter: false },
+  onClearFilters = undefined,
+}: DataTableProps<T>): React.ReactElement {
   const [hideFilters, setHideFilters] = React.useState(false);
   const [hideGroups, setHideGroups] = React.useState(false);
   const [columnGrouping, setColumnGrouping] = React.useState(columnGroups);
@@ -171,11 +215,12 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     }
     return result;
   }, [
-    JSON.stringify(outerFilters?.map(f => [f.name, f.currentValue])),
-    JSON.stringify(innerFilters?.map(f => [f.name, f.currentValue])),
+    JSON.stringify(outerFilters?.map((f) => [f.name, f.currentValue])),
+    JSON.stringify(innerFilters?.map((f) => [f.name, f.currentValue])),
   ]);
 
-  const { filterValues, setFilterValues, getFilterValue } = useFilterValues(computedFilters);
+  const { filterValues, setFilterValues, getFilterValue } =
+    useFilterValues(computedFilters);
 
   // Normalize data to array of objects in case it has been passed as array of arrays
   // and an array of column descriptors
@@ -202,31 +247,43 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
   // It is possible for the normalized table to transform into a comparison across dates or another column
   // This function does that to the normalized data
-  const dataCompared = (input: Row[], columns: ColumnComparison): [Row[], ColumnDescriptor[], ColumnDescriptor[]] => {
+  const dataCompared = (
+    input: Row[],
+    columns: ColumnComparison,
+  ): [Row[], ColumnDescriptor[], ColumnDescriptor[]] => {
     const resultMap = new Map<DataValueType, Row>();
-    const resultColumns: Array<ColumnDescriptor> = [{ ...fullColumnDescriptor(columns.keyColumn), visible: true }];
+    const resultColumns: Array<ColumnDescriptor> = [
+      { ...fullColumnDescriptor(columns.keyColumn), visible: true },
+    ];
 
-    input.forEach(({ [columns.unzipColumn]: d, [columns.keyColumn]: k, [columns.compareColumn]: v }) => {
-      const unzipHeader = d && fullColumnDescriptor(columns.unzipColumn).type === 'date' ?
-        dateString(d, true, 'lmy') || 'No date' :
-        (d || 'No label').toString();
+    input.forEach(
+      ({
+        [columns.unzipColumn]: d,
+        [columns.keyColumn]: k,
+        [columns.compareColumn]: v,
+      }) => {
+        const unzipHeader =
+          d && fullColumnDescriptor(columns.unzipColumn).type === 'date'
+            ? dateString(d, true, 'lmy') || 'No date'
+            : (d || 'No label').toString();
 
-      const unzipName = (d || 'zzzzz').toString();
+        const unzipName = (d || 'zzzzz').toString();
 
-      if (!resultMap.has(k)) {
-        resultMap.set(k, { [columns.keyColumn]: k });
-      }
+        if (!resultMap.has(k)) {
+          resultMap.set(k, { [columns.keyColumn]: k });
+        }
 
-      resultMap.get(k)![unzipName] = v;
+        resultMap.get(k)![unzipName] = v;
 
-      if (!resultColumns.find((r: { name: string; }) => r.name === unzipName))
-        resultColumns.push({
-          ...fullColumnDescriptor(columns.compareColumn),
-          name: unzipName,
-          heading: unzipHeader,
-          visible: true,
-        });
-    });
+        if (!resultColumns.find((r: { name: string }) => r.name === unzipName))
+          resultColumns.push({
+            ...fullColumnDescriptor(columns.compareColumn),
+            name: unzipName,
+            heading: unzipHeader,
+            visible: true,
+          });
+      },
+    );
 
     setHideFilters(true);
     setHideGroups(false);
@@ -236,21 +293,21 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
     // for the column group
     const columnOrder = [
       fullColumnDescriptor(columns.keyColumn),
-      ...resultColumns.slice(1).sort((a, b) => a.name.localeCompare(b.name))
+      ...resultColumns.slice(1).sort((a, b) => a.name.localeCompare(b.name)),
     ];
 
     // Add a column group for the comparison columns
-    setColumnGrouping([{ name: 'comparisonColumns',
-      heading: 'Compare ' + fullColumnDescriptor(columns.compareColumn).heading,
-      firstColumn: columns.keyColumn,
-      lastColumn: columnOrder[resultColumns.length - 1].name
-    }]);
+    setColumnGrouping([
+      {
+        name: 'comparisonColumns',
+        heading:
+          'Compare ' + fullColumnDescriptor(columns.compareColumn).heading,
+        firstColumn: columns.keyColumn,
+        lastColumn: columnOrder[resultColumns.length - 1].name,
+      },
+    ]);
 
-    return [
-      Array.from(resultMap.values()),
-      resultColumns,
-      columnOrder
-    ];
+    return [Array.from(resultMap.values()), resultColumns, columnOrder];
   };
 
   // Analyse all column data including defaults, and hydrate and return full column descriptor
@@ -268,17 +325,24 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
     const deriveHeadingFromName = (name: string) => {
       const special = {
-        'bc': 'BC',
-        'pnrp': 'PNRP',
-        'unchanged': ['a', 'of'],
-        'area_id': 'Catchment',
+        bc: 'BC',
+        pnrp: 'PNRP',
+        unchanged: ['a', 'of'],
+        area_id: 'Catchment',
       };
 
-      return _.get(special, name) || name
-        .replace(/_/g, ' ')
-        .split(' ')
-        .map(word => _.get(special, word) || (word.charAt(0).toUpperCase() + word.slice(1)))
-        .join(' ');
+      return (
+        _.get(special, name) ||
+        name
+          .replace(/_/g, ' ')
+          .split(' ')
+          .map(
+            (word) =>
+              _.get(special, word) ||
+              word.charAt(0).toUpperCase() + word.slice(1),
+          )
+          .join(' ')
+      );
     };
 
     const deriveAggFromType = (type: string) =>
@@ -286,8 +350,10 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
     if (!col) return { name: 'unknown' };
 
-    let base = (typeof col === 'string') ? { name: col } : col!;
-    const givenOptions = columnProps.find((c) => c.name === base.name) || { name: base.name };
+    const base = typeof col === 'string' ? { name: col } : col!;
+    const givenOptions = columnProps.find((c) => c.name === base.name) || {
+      name: base.name,
+    };
 
     base.heading = givenOptions.heading ?? deriveHeadingFromName(base.name);
     base.visible = givenOptions.visible ?? true;
@@ -308,13 +374,24 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   // Use the above methods to prepare the data and columns,
   // normalizing the data and columns, and comparing if necessary
   const [rows, columns, visibleColumns] = useMemo(() => {
-    const columns = data?.[0] ? Object.keys(data[0]).map((colName: string) => fullColumnDescriptor(colName)) : [];
+    const columns = data?.[0]
+      ? Object.keys(data[0]).map((colName: string) =>
+          fullColumnDescriptor(colName),
+        )
+      : [];
     const normalizedData = normalizeData(data, columns);
 
     if (options?.compare)
       return dataCompared(normalizedData, options.compare as ColumnComparison);
 
-    return [normalizedData, columns, (options?.order || columns).map(c => fullColumnDescriptor(c)).filter((c) => c.visible ?? true), [columns]];
+    return [
+      normalizedData,
+      columns,
+      (options?.order || columns)
+        .map((c) => fullColumnDescriptor(c))
+        .filter((c) => c.visible ?? true),
+      [columns],
+    ];
   }, [data, options.compare, filterValues]);
 
   useEffect(() => {
@@ -326,7 +403,10 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   }, []);
 
   // Sort the data based on the sort options
-  const sortArray = (data: Row[], sort: [{ [key: string]: 'asc' | 'desc' }?]) => {
+  const sortArray = (
+    data: Row[],
+    sort: [{ [key: string]: 'asc' | 'desc' }?],
+  ) => {
     return data.sort((a, b) => {
       for (const s of sort) {
         if (!s) continue;
@@ -344,54 +424,69 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
 
   // Filter rows based on the inner filters
   // which are displayed in the table header
-  const innerFiltersWithComplex = options?.complexFilter ?
-    [
-      ...innerFilters,
-      {
-        name: 'complexFilter',
-        type: ComplexFilter,
-        currentValue: undefined,
-        defaultValue: undefined,
-        options: [],
-        onChange: (v: unknown) => console.log('Selected:', v),
-        data: data,
-        columns: visibleColumns,
-        fieldSupportsOperator: typeof options.complexFilter === 'object' ? options.complexFilter.fieldSupportsOperator :
-        (op: ComparisonOperator,  fieldName: string, _: DataValueType[]) =>
-            Array.isArray(columns.find(c => c.name === fieldName)?.comparisonOperators)
-              ? (columns.find(c => c.name === fieldName)!.comparisonOperators as ComparisonOperator[]).includes(op)
-              : true,
-        valueMatchesFilter: (row: unknown, filterValue: unknown) => {
-          const values = filterValue as DataValueType[];
-          const matchValue = (row as Row)[values[0] as string] as DataValueType;
+  const innerFiltersWithComplex = options?.complexFilter
+    ? ([
+        ...innerFilters,
+        {
+          name: 'complexFilter',
+          type: ComplexFilter,
+          currentValue: undefined,
+          defaultValue: undefined,
+          options: [],
+          onChange: (v: unknown) => console.log('Selected:', v),
+          data: data,
+          columns: visibleColumns,
+          fieldSupportsOperator:
+            typeof options.complexFilter === 'object'
+              ? options.complexFilter.fieldSupportsOperator
+              : (op: ComparisonOperator, fieldName: string) =>
+                  Array.isArray(
+                    columns.find((c) => c.name === fieldName)
+                      ?.comparisonOperators,
+                  )
+                    ? (
+                        columns.find((c) => c.name === fieldName)!
+                          .comparisonOperators as ComparisonOperator[]
+                      ).includes(op)
+                    : true,
+          valueMatchesFilter: (row: unknown, filterValue: unknown) => {
+            const values = filterValue as DataValueType[];
+            const matchValue = (row as Row)[
+              values[0] as string
+            ] as DataValueType;
 
-          if (values[1] === ComparisonOperator.EqualTo) {
-            if (Array.isArray(values[2])) {
-              return values[2].includes(matchValue);
-            } else {
-              return matchValue === values[2];
+            if (values[1] === ComparisonOperator.EqualTo) {
+              if (Array.isArray(values[2])) {
+                return values[2].includes(matchValue);
+              } else {
+                return matchValue === values[2];
+              }
             }
-          }
 
-          if (values[1] === ComparisonOperator.NotEqualTo) {
-            if (Array.isArray(values[2])) {
-              return !values[2].includes(matchValue);
-            } else {
-              return matchValue !== values[2];
+            if (values[1] === ComparisonOperator.NotEqualTo) {
+              if (Array.isArray(values[2])) {
+                return !values[2].includes(matchValue);
+              } else {
+                return matchValue !== values[2];
+              }
             }
-          }
 
-          if (!matchValue || !values[2]) return false;
+            if (!matchValue || !values[2]) return false;
 
-          if (values[1] === ComparisonOperator.GreaterThan) return matchValue > values[2]!;
-          if (values[1] === ComparisonOperator.LessThan) return matchValue < values[2]!;
-          if (values[1] === ComparisonOperator.GreaterThanOrEqualTo) return matchValue >= values[2]!;
-          if (values[1] === ComparisonOperator.LessThanOrEqualTo) return matchValue <= values[2]!;
+            if (values[1] === ComparisonOperator.GreaterThan)
+              return matchValue > values[2]!;
+            if (values[1] === ComparisonOperator.LessThan)
+              return matchValue < values[2]!;
+            if (values[1] === ComparisonOperator.GreaterThanOrEqualTo)
+              return matchValue >= values[2]!;
+            if (values[1] === ComparisonOperator.LessThanOrEqualTo)
+              return matchValue <= values[2]!;
 
-          return false;
+            return false;
+          },
         },
-      },
-    ] as FilterDescriptor[] : innerFilters;
+      ] as FilterDescriptor[])
+    : innerFilters;
 
   const filteredData = useMemo(() => {
     return sortArray(
@@ -428,67 +523,95 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
         base.formula?.match(/\w+/g)?.slice(1) || [];
 
       const argNames = formulaArgs(fullColumnDescriptor(col));
-      const argValues = argNames.map((arg) => numValue(fullColumnDescriptor(arg).total?.()) ?? 0);
+      const argValues = argNames.map(
+        (arg) => numValue(fullColumnDescriptor(arg).total?.()) ?? 0,
+      );
 
-      return calculate(fullColumnDescriptor(col), _.zipObject(argNames, argValues));
+      return calculate(
+        fullColumnDescriptor(col),
+        _.zipObject(argNames, argValues),
+      );
     },
 
     selectAndCalculate: (c: ColumnNameOrDescriptor) => {
       const col = fullColumnDescriptor(c);
       if (col.aggregateBy === 'sum') return columnAggregationFunctions.sum(col);
-      if (col.aggregateBy === 'percent') return columnAggregationFunctions.percent(col);
+      if (col.aggregateBy === 'percent')
+        return columnAggregationFunctions.percent(col);
       return '';
     },
   };
 
   // Generate a filename for the downloaded CSV or PDF file
   // based on a queryKey property in the options object and the current date
-  const queryKeyToFile = (date: Date, extension: string, prefix: string = '') => {
-    const key = options?.queryKeys ? (options.queryKeys as unknown[]).map((k: unknown) => {
-      if (typeof k !== 'string') {
-        // @ts-ignore
-        return k.toString();
-      }
-      return k;
-    }).join('-') : '';
+  const queryKeyToFile = (
+    date: Date,
+    extension: string,
+    prefix: string = '',
+  ) => {
+    const key = options?.queryKeys
+      ? (options.queryKeys as unknown[])
+          .map((k: unknown) => {
+            if (typeof k !== 'string') {
+              // @ts-ignore
+              return k.toString();
+            }
+            return k;
+          })
+          .join('-')
+      : '';
 
     const dateStr = date.toLocaleDateString();
     return `${prefix ? prefix + '-' : ''}${key}-${dateStr}.${extension}`;
   };
 
   const downloadCSV = () => {
-    const csvData = filteredData.map((row) => columns.map((c) => row[typeof c === 'string' ? c : c.name]));
-    const csv = Papa.unparse({ fields: columns.map(c => typeof c === 'string' ? c : c.name), data: csvData });
+    const csvData = filteredData.map((row) =>
+      columns.map((c) => row[typeof c === 'string' ? c : c.name]),
+    );
+    const csv = Papa.unparse({
+      fields: columns.map((c) => (typeof c === 'string' ? c : c.name)),
+      data: csvData,
+    });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
 
     saveAs(blob, queryKeyToFile(new Date(), 'csv'));
   };
 
   function printPDF() {
+    applyPlugin(jsPDF);
     const doc = new jsPDF();
 
     doc.addFileToVFS('OpenSans-Regular.ttf', OpenSansRegularBase64);
+    doc.addFileToVFS('OpenSans-Bold.ttf', OpenSansBoldBase64);
     doc.addFont('OpenSans-Regular.ttf', 'OpenSans', 'normal');
+    doc.addFont('OpenSans-Bold.ttf', 'OpenSans', 'bold');
     doc.setFont('OpenSans', 'normal');
+    doc.setFont('OpenSans', 'bold');
 
     const pdfData = filteredData.map((row) =>
-      visibleColumns.map((c) =>
-        row[c.name]?.toLocaleString(undefined, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }) ?? '',
+      visibleColumns.map(
+        (c) =>
+          row[c.name]?.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) ?? '',
       ),
     );
 
     const buildColumnStyles = () =>
-      visibleColumns.reduce((acc, columnKey, index) => {
-        const detail = fullColumnDescriptor(columnKey);
-        if (!detail) return acc;
-        if (detail.type === 'number' || detail.type === 'percent') acc[index] = { halign: 'right' };
-        return acc;
-      }, {} as Record<number, { halign: 'right' | 'left' | 'center' }>);
+      visibleColumns.reduce(
+        (acc, columnKey, index) => {
+          const detail = fullColumnDescriptor(columnKey);
+          if (!detail) return acc;
+          if (detail.type === 'number' || detail.type === 'percent')
+            acc[index] = { halign: 'right' };
+          return acc;
+        },
+        {} as Record<number, { halign: 'right' | 'left' | 'center' }>,
+      );
 
-    doc.autoTable({
+    const tableConfig = {
       head: [visibleColumns.map((col) => col.heading || capitalise(col.name))],
       body: pdfData,
       styles: {
@@ -496,8 +619,9 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
       },
       // @ts-ignore
       columnStyles: buildColumnStyles() as Object,
-    });
+    };
 
+    doc.autoTable(tableConfig);
     const dateStr = new Date().toLocaleDateString();
     doc.text(`Generated on: ${dateStr}`, 8, doc.internal.pageSize.height - 8);
 
@@ -507,77 +631,118 @@ function DataTable<T extends DataValueType[][] | Record<string, DataValueType>[]
   return (
     <div className="data-table-container min-w-[639px] flex-col">
       {/* Outer filters & actions (eg, water type and month) */}
-      <div className="flex pt-0 mt-0 pr-4 justify-between items-end flex-wrap" style={{ textAlign: 'unset' }}>
-        <FilterPanel filters={outerFilters} filterValues={filterValues} setFilterValues={setFilterValues}
-                     onClose={onClearFilters} label="Show data for:" labelInline={false} />
-        {data[0] && <div className="action-buttons space-x-4 mb-4">
-          <button onClick={downloadCSV}>Download</button>
-          <button onClick={printPDF}>Print</button>
-        </div>}
+      <div
+        className="flex pt-0 mt-0 pr-4 justify-between items-end flex-wrap"
+        style={{ textAlign: 'unset' }}
+      >
+        <FilterPanel
+          filters={outerFilters}
+          filterValues={filterValues}
+          setFilterValues={setFilterValues}
+          onClose={onClearFilters}
+          label="Show data for:"
+          labelInline={false}
+        />
+        {data[0] && (
+          <div className="action-buttons space-x-4 mb-4">
+            <button onClick={downloadCSV}>Download</button>
+            <button onClick={printPDF}>Print</button>
+          </div>
+        )}
       </div>
 
+      {data[0] ? (
+        <table className="table-auto border-collapse w-full">
+          <thead>
+            {/* Inner Filters */}
+            {!hideFilters && (
+              <tr>
+                <th colSpan={99}>
+                  <FilterPanel
+                    className="bg-gray-300 p-4"
+                    filters={innerFiltersWithComplex}
+                    filterValues={filterValues}
+                    setFilterValues={setFilterValues}
+                    label={`Show ${options.rowObjectNamePlural || `rows`} where:`}
+                  ></FilterPanel>
+                </th>
+              </tr>
+            )}
 
-      {data[0] ? <table className="table-auto border-collapse w-full">
+            {/* Column groups */}
+            {!hideGroups && (
+              <tr>
+                <ColumnGroupHeaders
+                  columnGroups={columnGrouping}
+                  columns={visibleColumns}
+                />
+              </tr>
+            )}
 
-        <thead>
+            {/* Column headings */}
+            <tr>
+              {visibleColumns.map((col, colIndex) => (
+                <th
+                  key={col.name}
+                  className={`${col.name} py-2 px-1 bg-kapiti font-semibold ${'text-' + (col.align ?? 'left')} text-white p-2 ${col.highlight?.('white')}`}
+                >
+                  {colIndex == 0 ? '' : col.heading}
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-        {/* Inner Filters */}
-        {!hideFilters && <tr>
-          <th colSpan={99}>
-            <FilterPanel
-              className="bg-gray-300 p-4"
-              filters={innerFiltersWithComplex}
-              filterValues={filterValues}
-              setFilterValues={setFilterValues}
-              label={`Show ${options.rowObjectNamePlural || `rows`} where:`}>
-            </FilterPanel>
-          </th>
-        </tr>}
+          {/* Data */}
+          <tbody>
+            {filteredData.map((row, rowIndex) => (
+              <tr
+                key={rowIndex}
+                className={rowIndex % 2 === 0 ? 'bg-gray-100' : ''}
+              >
+                {visibleColumns.map((col, colIndex) => (
+                  <DataCell
+                    key={col.name}
+                    currentRow={row}
+                    className={`${colIndex == 0 ? 'row-title font-bold' : 'data font-lighter border-gray-200 border-r-2 tracking-wider'} ${col.highlight?.('gray') ?? ''}`}
+                    col={col}
+                    value={row[col.name]}
+                    ignoreFormula={true}
+                  />
+                ))}
+              </tr>
+            ))}
+          </tbody>
 
-        {/* Column groups */}
-        {!hideGroups && <tr>
-          <ColumnGroupHeaders columnGroups={columnGrouping} columns={visibleColumns} />
-        </tr>}
-
-        {/* Column headings */}
-        <tr>
-          {visibleColumns.map((col, colIndex) => (
-            <th key={col.name}
-                className={`${col.name} py-2 px-1 bg-kapiti font-semibold ${'text-' + (col.align ?? 'left')} text-white p-2 ${col.highlight?.('white')}`}>
-              {colIndex == 0 ? '' : col.heading}
-            </th>
-          ))}
-        </tr>
-
-        </thead>
-
-        {/* Data */}
-        <tbody>
-        {filteredData.map((row, rowIndex) => (
-          <tr key={rowIndex} className={rowIndex % 2 === 0 ? 'bg-gray-100' : ''}>
-            {visibleColumns.map((col, colIndex) => <DataCell key={col.name} currentRow={row}
-                                                             className={`${colIndex == 0 ? 'row-title font-bold' : 'data font-lighter border-gray-200 border-r-2 tracking-wider'} ${col.highlight?.('gray') ?? ''}`}
-                                                             col={col} value={row[col.name]} ignoreFormula={true} />)
-            }
-          </tr>
-        ))}
-        </tbody>
-
-        {/* Totals in footer */}
-        <tfoot>
-        {options?.includeTotals && <tr className="font-medium bg-nui text-white">
-          {visibleColumns.map((col, index: number) =>
-            index === 0
-              ? <td key={col.name} className={`py-2 px-4 w-[${col.width || 'auto'}]`}>{'Grand total'}</td>
-              : <DataCell key={col.name}
-                          className={`${col.name} totals text-white ${col.highlight?.('white') ?? ''}`} col={col}
-                          value={col.total?.() ?? ''} />,
-          )}
-        </tr>}
-        </tfoot>
-
-      </table> : <div className="font-bold ml-4 mt-2 text-lg text-nui-20">There is no data for these criteria</div>}
-
+          {/* Totals in footer */}
+          <tfoot>
+            {options?.includeTotals && (
+              <tr className="font-medium bg-nui text-white">
+                {visibleColumns.map((col, index: number) =>
+                  index === 0 ? (
+                    <td
+                      key={col.name}
+                      className={`py-2 px-4 w-[${col.width || 'auto'}]`}
+                    >
+                      {'Grand total'}
+                    </td>
+                  ) : (
+                    <DataCell
+                      key={col.name}
+                      className={`${col.name} totals text-white ${col.highlight?.('white') ?? ''}`}
+                      col={col}
+                      value={col.total?.() ?? ''}
+                    />
+                  ),
+                )}
+              </tr>
+            )}
+          </tfoot>
+        </table>
+      ) : (
+        <div className="font-bold ml-4 mt-2 text-lg text-nui-20">
+          There is no data for these criteria
+        </div>
+      )}
     </div>
   );
 }

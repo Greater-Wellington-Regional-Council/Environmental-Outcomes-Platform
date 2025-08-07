@@ -5,7 +5,12 @@ import { DataValueType } from '@components/DataTable/DataTable';
 import randomString from '@lib/randomeString';
 import hyphenCase from '@lib/hyphenCase';
 
-export type DropdownValueType = string | number | null | undefined | DataValueType;
+export type DropdownValueType =
+  | string
+  | number
+  | null
+  | undefined
+  | DataValueType;
 
 export type DropdownOption = {
   label: string;
@@ -40,24 +45,24 @@ interface DropdownProps {
 }
 
 const Dropdown: FC<DropdownProps> = ({
-                                       options,
-                                       selectAll,
-                                       placeholder = 'Select...',
-                                       value = undefined,
-                                       onChange,
-                                       arrow,
-                                       className = '',
-                                       controlClassName = '',
-                                       dropdownClassName = '',
-                                       optionClassName = '',
-                                       placeholderClassName = '',
-                                       dataTestid = 'dropdown-control',
-                                       allowFreeText = false,
-                                       label,
-                                       suppressSelectAll = false,
-                                       multiSelect = false,
-                                       useModifierKeys = false,
-                                     }) => {
+  options,
+  selectAll,
+  placeholder = 'Select...',
+  value = undefined,
+  onChange,
+  arrow,
+  className = '',
+  controlClassName = '',
+  dropdownClassName = '',
+  optionClassName = '',
+  placeholderClassName = '',
+  dataTestid = 'dropdown-control',
+  allowFreeText = false,
+  label,
+  suppressSelectAll = false,
+  multiSelect = false,
+  useModifierKeys = false,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<DataValueType>('');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -70,7 +75,10 @@ const Dropdown: FC<DropdownProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -123,12 +131,15 @@ const Dropdown: FC<DropdownProps> = ({
    */
   const toggleValueInArray = (
     currentArray: DropdownValueType[],
-    optionValue: DropdownValueType
+    optionValue: DropdownValueType,
   ) => {
     const index = currentArray.indexOf(optionValue);
     if (index >= 0) {
       // Remove it
-      return [...currentArray.slice(0, index), ...currentArray.slice(index + 1)];
+      return [
+        ...currentArray.slice(0, index),
+        ...currentArray.slice(index + 1),
+      ];
     } else {
       // Add it
       return [...currentArray, optionValue];
@@ -141,7 +152,7 @@ const Dropdown: FC<DropdownProps> = ({
   const shiftRangeSelection = (
     currentArray: DropdownValueType[],
     focusIdx: number,
-    newIdx: number
+    newIdx: number,
   ) => {
     // We assume focusIdx/newIdx are valid array indices
     const start = Math.min(focusIdx, newIdx);
@@ -161,7 +172,7 @@ const Dropdown: FC<DropdownProps> = ({
    */
   const handleOptionClick = (
     optionValue: DropdownValueType,
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>
+    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
   ) => {
     event.preventDefault();
 
@@ -185,13 +196,19 @@ const Dropdown: FC<DropdownProps> = ({
     const currentValueArray = Array.isArray(value) ? [...value] : [];
 
     // Find the index of the clicked item in selectOptions
-    const newIndex = selectOptions.findIndex((opt) => opt.value === optionValue);
+    const newIndex = selectOptions.findIndex(
+      (opt) => opt.value === optionValue,
+    );
 
     let newSelection: DropdownValueType[];
 
     if (shiftKey && focusIndex !== null) {
       // SHIFT + click: select contiguous range from focusIndex to newIndex
-      newSelection = shiftRangeSelection(currentValueArray, focusIndex, newIndex);
+      newSelection = shiftRangeSelection(
+        currentValueArray,
+        focusIndex,
+        newIndex,
+      );
     } else if (shiftKey && focusIndex === null) {
       // SHIFT + click but no focusIndex yet => treat like a single click
       newSelection = [optionValue];
@@ -230,14 +247,26 @@ const Dropdown: FC<DropdownProps> = ({
     }
   };
 
-  const labelId = label ? `${label.replace(/\s+/g, '-')}-dropdown-label-${randomString(5)}` : undefined;
+  const labelId = label
+    ? `${label.replace(/\s+/g, '-')}-dropdown-label-${randomString(5)}`
+    : undefined;
 
   return (
-    <div className={`dropdown relative font-bold bg-transparent inline-flex items-center ${className}`}>
-      <label className={`text-nui font-bold ${label ? 'block max-w-fit' : 'hidden'} pl-0 pr-4`} id={labelId}>
+    <div
+      className={`dropdown relative font-bold bg-transparent inline-flex items-center ${className}`}
+    >
+      <label
+        className={`text-nui font-bold ${label ? 'block max-w-fit' : 'hidden'} pl-0 pr-4`}
+        id={labelId}
+      >
         {label}
       </label>
-      <div ref={dropdownRef} data-testid='dropdown-div' className="dropdown-div relative font-bold bg-transparent w-full" aria-labelledby={labelId}>
+      <div
+        ref={dropdownRef}
+        data-testid="dropdown-div"
+        className="dropdown-div relative font-bold bg-transparent w-full"
+        aria-labelledby={labelId}
+      >
         <div
           className={`dropdown-control flex p-2 top-18 font-bold bg-white rounded-xl border-[2px] border-nui ${controlClassName}`}
           onClick={toggleDropdown}
@@ -257,16 +286,26 @@ const Dropdown: FC<DropdownProps> = ({
                   }
                 </span>
               ) : (
-                <span className={`text-nui font-light italic ${placeholderClassName}`}>
+                <span
+                  className={`text-nui font-light italic ${placeholderClassName}`}
+                >
                   {placeholder}
                 </span>
               )
             ) : value ? (
-              <span className="w-full" data-testid={`selected-${value.toString()}`}>
-                <>{selectOptions.find((option) => option.value === value)?.label || value}</>
+              <span
+                className="w-full"
+                data-testid={`selected-${value.toString()}`}
+              >
+                <>
+                  {selectOptions.find((option) => option.value === value)
+                    ?.label || value}
+                </>
               </span>
             ) : (
-              <span className={`text-nui font-light italic ${placeholderClassName}`}>
+              <span
+                className={`text-nui font-light italic ${placeholderClassName}`}
+              >
                 {placeholder}
               </span>
             )}
@@ -284,7 +323,13 @@ const Dropdown: FC<DropdownProps> = ({
                 <input
                   type="text"
                   className="w-full px-2 py-1 border rounded"
-                  value={inputValue as string | number | readonly string[] | undefined}
+                  value={
+                    inputValue as
+                      | string
+                      | number
+                      | readonly string[]
+                      | undefined
+                  }
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleFreeTextSubmit()}
                   placeholder="Enter..."
@@ -294,7 +339,10 @@ const Dropdown: FC<DropdownProps> = ({
 
             {/* Options */}
             <div className="option-list-container max-h-200 overflow-y-auto min-w-max">
-              <ul className="option-list m-0 p-0 w-full" data-testid="option-list">
+              <ul
+                className="option-list m-0 p-0 w-full"
+                data-testid="option-list"
+              >
                 {selectOptions.map((option) => {
                   const selected = isOptionSelected(option.value);
                   return (
@@ -324,7 +372,10 @@ const Dropdown: FC<DropdownProps> = ({
   );
 };
 
-const DefaultArrow: FC<{ isOpen: boolean; className?: string }> = ({ isOpen, className }) => (
+const DefaultArrow: FC<{ isOpen: boolean; className?: string }> = ({
+  isOpen,
+  className,
+}) => (
   <img
     src={arrowSvg}
     alt="Arrow icon"
