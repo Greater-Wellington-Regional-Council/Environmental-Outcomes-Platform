@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import "./map.scss"
+import './map.scss';
 import Map, {
   Layer,
   Marker,
@@ -65,8 +65,10 @@ function mapFeatureLayer<T extends Identifyable>(
   layerName: string,
   collection: T[],
 ) {
-  const featureLayers = mapFeatureLayers<T>(features, layerName, collection)
-  return featureLayers[layerName === "surfaceWaterSubUnitLimits" ? featureLayers.length - 1 : 0];
+  const featureLayers = mapFeatureLayers<T>(features, layerName, collection);
+  return featureLayers[
+    layerName === 'surfaceWaterSubUnitLimits' ? featureLayers.length - 1 : 0
+  ];
 }
 
 function mapAllFeatures(
@@ -131,13 +133,18 @@ export default function LimitsMap({
           pinnedLocation.latitude,
         ]),
       );
-      const activeLimits = mapAllFeatures(activeFeatures as MapboxGeoJSONFeature[], allPlanData! as unknown as AllPlanData);
+      const activeLimits = mapAllFeatures(
+        activeFeatures as MapboxGeoJSONFeature[],
+        allPlanData! as unknown as AllPlanData,
+      );
       setAppState(activeLimits, allPlanData! as unknown as AllPlanData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapLoaded, isLoaded, pinnedLocation, setAppState]);
 
-  const handleLoad = (evt: { target: { addImage: (arg0: string, arg1: HTMLImageElement) => void; }; }) => {
+  const handleLoad = (evt: {
+    target: { addImage: (arg0: string, arg1: HTMLImageElement) => void };
+  }) => {
     setMapLoaded(true);
 
     const img = new Image(20, 20);
@@ -156,7 +163,10 @@ export default function LimitsMap({
     if (pinnedLocation || !allPlanData) return;
 
     const activeFeatures = evt.target.queryRenderedFeatures(evt.point);
-    const activeLimits = mapAllFeatures(activeFeatures as MapboxGeoJSONFeature[], allPlanData as unknown as AllPlanData);
+    const activeLimits = mapAllFeatures(
+      activeFeatures as MapboxGeoJSONFeature[],
+      allPlanData as unknown as AllPlanData,
+    );
     setAppState(activeLimits, allPlanData as unknown as AllPlanData);
   };
 
@@ -335,11 +345,7 @@ export default function LimitsMap({
           <Layer
             id="surfaceWaterSubUnitLimitHighlight"
             type="fill"
-            filter={[
-              '==',
-              ['id'],
-              appState.surfaceWaterSubUnitLimit?.id || -1,
-            ]}
+            filter={['==', ['id'], appState.surfaceWaterSubUnitLimit?.id || -1]}
             paint={{
               'fill-outline-color': '#484896',
               'fill-color': '#6e599f',
@@ -398,11 +404,7 @@ export default function LimitsMap({
           paint={{
             'icon-opacity': [
               'case',
-              [
-                '==',
-                ['id'],
-                appState?.flowLimit?.measuredAtSiteId ?? -1,
-              ],
+              ['==', ['id'], appState?.flowLimit?.measuredAtSiteId ?? -1],
               1,
               0.5,
             ],

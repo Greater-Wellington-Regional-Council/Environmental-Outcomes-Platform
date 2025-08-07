@@ -11,10 +11,7 @@ import useWaterUseData, {
   type SWAndGWHeatmapData,
 } from '../../../lib/useWaterUseData';
 import Button from '../../../components/Button';
-import {
-  LoadingIndicator,
-  ErrorIndicator,
-} from '@components/Indicators';
+import { LoadingIndicator, ErrorIndicator } from '@components/Indicators';
 
 const MIN_OFFSET = -52;
 const MAX_OFFSET = 0;

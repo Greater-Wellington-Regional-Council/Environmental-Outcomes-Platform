@@ -2,26 +2,37 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import Dropdown, { simpleStringOptions } from './Dropdown';
 
-
 const options = simpleStringOptions(['Apple', 'Banana', 'Cherry']);
 
 describe('Dropdown Component', () => {
   it('renders a dropdown with the given list', () => {
-    render(<Dropdown options={options} onChange={v => console.log(v)} />);
+    render(<Dropdown options={options} onChange={(v) => console.log(v)} />);
     fireEvent.click(screen.getByRole('combobox'));
-    options.forEach(option => {
+    options.forEach((option) => {
       expect(screen.getByText(option.label)).toBeInTheDocument();
     });
   });
 
   it('includes selectAll as a label and option when provided', () => {
-    render(<Dropdown options={options} selectAll="Select All" onChange={v => console.log(v)} />);
+    render(
+      <Dropdown
+        options={options}
+        selectAll="Select All"
+        onChange={(v) => console.log(v)}
+      />,
+    );
     fireEvent.click(screen.getByRole('combobox'));
     expect(screen.getByText('Select All')).toBeInTheDocument();
   });
 
   it('initialises with the given value', () => {
-    render(<Dropdown options={options} value={"Banana"} onChange={v => console.log(v)} />);
+    render(
+      <Dropdown
+        options={options}
+        value={'Banana'}
+        onChange={(v) => console.log(v)}
+      />,
+    );
     fireEvent.click(screen.getByRole('combobox'));
     expect(screen.getByTestId('selected-Banana')).toBeInTheDocument();
   });
@@ -36,7 +47,13 @@ describe('Dropdown Component', () => {
   });
 
   it('includes a free text field when allowFreeText is true', () => {
-    render(<Dropdown options={options} allowFreeText onChange={v => console.log(v)} />);
+    render(
+      <Dropdown
+        options={options}
+        allowFreeText
+        onChange={(v) => console.log(v)}
+      />,
+    );
 
     fireEvent.click(screen.getByRole('combobox'));
     const input = screen.getByRole('textbox');
@@ -46,8 +63,12 @@ describe('Dropdown Component', () => {
   it('renders the label and associates it via aria-labelledby', () => {
     render(
       <>
-        <Dropdown options={options} label="dropdownLabel" onChange={v => console.log(v)} />
-      </>
+        <Dropdown
+          options={options}
+          label="dropdownLabel"
+          onChange={(v) => console.log(v)}
+        />
+      </>,
     );
 
     const label = screen.getByText('dropdownLabel');
@@ -57,7 +78,14 @@ describe('Dropdown Component', () => {
   });
 
   it('suppresses select all if suppressSelectAll is true', () => {
-    render(<Dropdown options={options} selectAll="Select All" suppressSelectAll onChange={v => console.log(v)} />);
+    render(
+      <Dropdown
+        options={options}
+        selectAll="Select All"
+        suppressSelectAll
+        onChange={(v) => console.log(v)}
+      />,
+    );
     expect(screen.queryByText('Select All')).not.toBeInTheDocument();
   });
 
@@ -71,7 +99,14 @@ describe('Dropdown Component', () => {
 
   it('calls onChange with all selected values when multiSelect is true', () => {
     const onChange = vi.fn();
-    render(<Dropdown options={options} multiSelect onChange={onChange} value={["Apple"]} />);
+    render(
+      <Dropdown
+        options={options}
+        multiSelect
+        onChange={onChange}
+        value={['Apple']}
+      />,
+    );
 
     // Simulate ctrl-click or similar multiple selection
     fireEvent.click(screen.getByRole('combobox'));
