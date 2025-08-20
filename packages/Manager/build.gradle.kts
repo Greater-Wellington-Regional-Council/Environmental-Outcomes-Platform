@@ -89,7 +89,7 @@ dependencies {
   testImplementation("io.mockk:mockk:1.14.4")
 
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:6.0.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
