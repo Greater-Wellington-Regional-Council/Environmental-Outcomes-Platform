@@ -66,7 +66,7 @@ dependencies {
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
   implementation("org.locationtech.jts.io:jts-io-common:1.20.0")
-  implementation("com.opencsv:opencsv:5.11.1")
+  implementation("com.opencsv:opencsv:5.12.0")
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.1")
