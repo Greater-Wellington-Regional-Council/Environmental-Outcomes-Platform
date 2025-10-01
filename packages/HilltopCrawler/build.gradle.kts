@@ -7,7 +7,7 @@ plugins {
   id("org.flywaydb.flyway") version "11.10.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.1.21"
-  kotlin("plugin.spring") version "2.1.21"
+  kotlin("plugin.spring") version "2.2.20"
 }
 
 buildscript {
