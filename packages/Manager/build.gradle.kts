@@ -71,7 +71,7 @@ dependencies {
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.1")
   implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.9.4")
-  implementation("org.hibernate:hibernate-spatial:7.0.4.Final")
+  implementation("org.hibernate:hibernate-spatial:7.1.2.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
