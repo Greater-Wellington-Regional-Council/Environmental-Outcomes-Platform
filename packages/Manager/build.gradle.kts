@@ -6,17 +6,17 @@ plugins {
   id("org.springframework.boot") version "3.4.0"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "7.0.4"
-  id("org.flywaydb.flyway") version "11.10.0"
+  id("org.flywaydb.flyway") version "11.10.5"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.2.0"
-  kotlin("plugin.spring") version "2.1.21"
+  kotlin("plugin.spring") version "2.2.0"
 }
 
 buildscript {
   repositories { mavenCentral() }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.10.0")
+    classpath("org.flywaydb:flyway-database-postgresql:11.10.5")
     classpath("org.springframework:spring-jdbc:6.2.8")
     classpath("org.postgresql:postgresql:42.6.2")
   }
@@ -56,8 +56,8 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:11.10.0")
-  implementation("org.flywaydb:flyway-database-postgresql:11.10.0")
+  implementation("org.flywaydb:flyway-core:11.10.5")
+  implementation("org.flywaydb:flyway-database-postgresql:11.10.5")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.9.0")
@@ -66,7 +66,7 @@ dependencies {
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
   implementation("org.locationtech.jts.io:jts-io-common:1.20.0")
-  implementation("com.opencsv:opencsv:5.11.1")
+  implementation("com.opencsv:opencsv:5.12.0")
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.1")
@@ -89,7 +89,7 @@ dependencies {
   testImplementation("io.mockk:mockk:1.14.4")
 
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:6.0.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
 
