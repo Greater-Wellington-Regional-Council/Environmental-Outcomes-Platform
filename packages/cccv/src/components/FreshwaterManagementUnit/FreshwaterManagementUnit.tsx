@@ -166,7 +166,7 @@ const FreshwaterManagementUnit = (
                 <p>
                     The content, data, and information used in this app comes from multiple sources, including
                     Greater
-                    Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Plans.
+                    Wellington’s <a>Natural Resources Plan</a> (2018) and Whaitua Implementation Programmes.
                 </p>
                 <div className="mt-6 mb-6 flex justify-center">
                     <EmailLink>Contact us for more information</EmailLink>
