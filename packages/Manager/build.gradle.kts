@@ -69,7 +69,7 @@ dependencies {
   implementation("com.opencsv:opencsv:5.12.0")
   implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
   implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
-  implementation("com.github.ben-manes.caffeine:caffeine:3.2.1")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
   implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.9.4")
   implementation("org.hibernate:hibernate-spatial:7.1.2.Final")
 
