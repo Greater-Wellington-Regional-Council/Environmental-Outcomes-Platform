@@ -9,7 +9,7 @@ plugins {
   id("org.flywaydb.flyway") version "11.18.0"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
-  kotlin("jvm") version "2.2.20"
+  kotlin("jvm") version "2.3.0"
   kotlin("plugin.spring") version "2.2.0"
 }
 
