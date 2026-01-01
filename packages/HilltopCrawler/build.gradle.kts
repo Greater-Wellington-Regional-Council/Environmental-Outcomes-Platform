@@ -6,7 +6,7 @@ plugins {
   id("com.diffplug.spotless") version "7.0.4"
   id("org.flywaydb.flyway") version "11.18.0"
   id("com.adarshr.test-logger") version "4.0.0"
-  kotlin("jvm") version "2.1.21"
+  kotlin("jvm") version "2.3.0"
   kotlin("plugin.spring") version "2.1.21"
 }
 
