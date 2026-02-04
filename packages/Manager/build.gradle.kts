@@ -90,7 +90,7 @@ dependencies {
 
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:6.0.0")
-  testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+  testImplementation("com.squareup.okhttp3:mockwebserver:5.3.2")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }
