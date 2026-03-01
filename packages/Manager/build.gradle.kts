@@ -62,7 +62,7 @@ dependencies {
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
-  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2025.1.0")
+  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2025.1.1")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("org.locationtech.jts:jts-core:1.20.0")
   implementation("org.locationtech.jts.io:jts-io-common:1.20.0")
