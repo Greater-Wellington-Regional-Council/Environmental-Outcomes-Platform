@@ -33,7 +33,7 @@ abstract class TaskMapper<T>(
     val fetchedUri: URI,
     val fetchedAt: Instant,
     val content: String,
-    val parsedContent: T
+    val parsedContent: T,
 ) {
   val contentHash: String = hashMessage(content)
   val baseUri = getUriWithoutQuery(fetchedUri)
@@ -61,7 +61,7 @@ class SitesListTaskMapper(
     fetchedUri: URI,
     fetchedAt: Instant,
     content: String,
-    parsedContent: HilltopSites
+    parsedContent: HilltopSites,
 ) :
     TaskMapper<HilltopSites>(
         HilltopFetchTaskType.SITES_LIST,
@@ -69,7 +69,8 @@ class SitesListTaskMapper(
         fetchedUri,
         fetchedAt,
         content,
-        parsedContent) {
+        parsedContent,
+    ) {
 
   override fun buildNewTasksList(): List<DB.HilltopFetchTaskCreate> =
       parsedContent.sites
@@ -100,7 +101,7 @@ class MeasurementsListTaskMapper(
     fetchedUri: URI,
     fetchedAt: Instant,
     content: String,
-    parsedContent: HilltopMeasurements
+    parsedContent: HilltopMeasurements,
 ) :
     TaskMapper<HilltopMeasurements>(
         HilltopFetchTaskType.MEASUREMENTS_LIST,
@@ -108,7 +109,8 @@ class MeasurementsListTaskMapper(
         fetchedUri,
         fetchedAt,
         content,
-        parsedContent) {
+        parsedContent,
+    ) {
 
   /** Generates a sequence of `YearMonth` from `startDate` to `endDate` inclusively. */
   private fun <T : Temporal> generateMonthSequence(startDate: T, endDate: T): List<YearMonth> {
@@ -132,7 +134,9 @@ class MeasurementsListTaskMapper(
           .flatMap { it ->
             val fromDate =
                 LocalDate.parse(
-                    it.from.subSequence(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    it.from.subSequence(0, 10),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+                )
             val toDate =
                 LocalDate.parse(it.to.subSequence(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
@@ -148,12 +152,14 @@ class MeasurementsListTaskMapper(
 
             generateMonthSequence(
                     fromDate,
-                    if (isLastObservationInCurrentMonth) toDate.minusMonths(1) else toDate)
+                    if (isLastObservationInCurrentMonth) toDate.minusMonths(1) else toDate,
+                )
                 .map { yearMonth ->
                   DB.HilltopFetchTaskCreate(
                       sourceConfig.id,
                       HilltopFetchTaskType.MEASUREMENT_DATA,
-                      buildPastMeasurementsUrl(baseUri, it.siteName, requestAs, yearMonth))
+                      buildPastMeasurementsUrl(baseUri, it.siteName, requestAs, yearMonth),
+                  )
                 }
                 .let { tasks ->
                   if (isLastObservationInCurrentMonth) {
@@ -161,7 +167,9 @@ class MeasurementsListTaskMapper(
                         DB.HilltopFetchTaskCreate(
                             sourceConfig.id,
                             HilltopFetchTaskType.MEASUREMENT_DATA_LATEST,
-                            buildLatestMeasurementsUrl(baseUri, it.siteName, requestAs)))
+                            buildLatestMeasurementsUrl(baseUri, it.siteName, requestAs),
+                        )
+                    )
                   } else {
                     tasks
                   }
@@ -187,7 +195,7 @@ class MeasurementDataTaskMapper(
     fetchedUri: URI,
     fetchedAt: Instant,
     content: String,
-    parsedContent: HilltopMeasurementValues
+    parsedContent: HilltopMeasurementValues,
 ) :
     TaskMapper<HilltopMeasurementValues>(
         HilltopFetchTaskType.MEASUREMENT_DATA,
@@ -195,7 +203,8 @@ class MeasurementDataTaskMapper(
         fetchedUri,
         fetchedAt,
         content,
-        parsedContent) {
+        parsedContent,
+    ) {
   override fun buildNewTasksList(): List<DB.HilltopFetchTaskCreate> = emptyList()
 
   override fun buildKafkaMessage(): HilltopMessage? =
@@ -223,7 +232,7 @@ class MeasurementDataLatestTaskMapper(
     fetchedUri: URI,
     fetchedAt: Instant,
     content: String,
-    parsedContent: HilltopMeasurementValues
+    parsedContent: HilltopMeasurementValues,
 ) :
     TaskMapper<HilltopMeasurementValues>(
         HilltopFetchTaskType.MEASUREMENT_DATA_LATEST,
@@ -231,7 +240,8 @@ class MeasurementDataLatestTaskMapper(
         fetchedUri,
         fetchedAt,
         content,
-        parsedContent) {
+        parsedContent,
+    ) {
   override fun buildNewTasksList(): List<DB.HilltopFetchTaskCreate> = emptyList()
 
   override fun buildKafkaMessage(): HilltopMessage? =
@@ -268,7 +278,8 @@ class MeasurementDataLatestTaskMapper(
     return if (lastValueAt != null && lastValueAt > fetchedAt.minus(1, ChronoUnit.HOURS)) {
       randomTimeBetween(
           maxOf(lastValueAt.plus(15, ChronoUnit.MINUTES), fetchedAt),
-          fetchedAt.plus(15, ChronoUnit.MINUTES))
+          fetchedAt.plus(15, ChronoUnit.MINUTES),
+      )
     } else if (lastValueAt != null && lastValueAt > fetchedAt.minus(1, ChronoUnit.DAYS)) {
       randomTimeBetween(fetchedAt, fetchedAt.plus(1, ChronoUnit.HOURS))
     } else if (lastValueAt != null && lastValueAt > fetchedAt.minus(7, ChronoUnit.DAYS)) {

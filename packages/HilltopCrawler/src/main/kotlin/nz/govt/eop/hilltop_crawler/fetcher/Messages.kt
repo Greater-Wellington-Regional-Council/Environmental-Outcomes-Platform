@@ -12,11 +12,15 @@ enum class HilltopMessageType {
 }
 
 @JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    property = "type",
+)
 @JsonSubTypes(
     JsonSubTypes.Type(value = HilltopSitesMessageKey::class, name = "SITES_LIST"),
     JsonSubTypes.Type(value = HilltopMeasurementListMessageKey::class, name = "MEASUREMENTS_LIST"),
-    JsonSubTypes.Type(value = HilltopMeasurementsMessageKey::class, name = "MEASUREMENT_DATA"))
+    JsonSubTypes.Type(value = HilltopMeasurementsMessageKey::class, name = "MEASUREMENT_DATA"),
+)
 abstract class HilltopMessageKey(
     val type: HilltopMessageType,
 ) {
@@ -28,14 +32,14 @@ abstract class HilltopMessageKey(
 data class HilltopSitesMessageKey(
     override val councilId: Int,
     override val hilltopBaseUrl: String,
-    override val at: Instant
+    override val at: Instant,
 ) : HilltopMessageKey(HilltopMessageType.SITES_LIST)
 
 data class HilltopMeasurementListMessageKey(
     override val councilId: Int,
     override val hilltopBaseUrl: String,
     override val at: Instant,
-    val siteName: String
+    val siteName: String,
 ) : HilltopMessageKey(HilltopMessageType.MEASUREMENTS_LIST)
 
 data class HilltopMeasurementsMessageKey(
@@ -44,15 +48,19 @@ data class HilltopMeasurementsMessageKey(
     override val at: Instant,
     val siteName: String,
     val measurementName: String,
-    val yearMonth: YearMonth
+    val yearMonth: YearMonth,
 ) : HilltopMessageKey(HilltopMessageType.MEASUREMENT_DATA)
 
 @JsonTypeInfo(
-    use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.EXISTING_PROPERTY,
+    property = "type",
+)
 @JsonSubTypes(
     JsonSubTypes.Type(value = HilltopSitesMessage::class, name = "SITES_LIST"),
     JsonSubTypes.Type(value = HilltopMeasurementListMessage::class, name = "MEASUREMENTS_LIST"),
-    JsonSubTypes.Type(value = HilltopMeasurementsMessage::class, name = "MEASUREMENT_DATA"))
+    JsonSubTypes.Type(value = HilltopMeasurementsMessage::class, name = "MEASUREMENT_DATA"),
+)
 abstract class HilltopMessage(val type: HilltopMessageType) {
   abstract val councilId: Int
   abstract val hilltopBaseUrl: String
@@ -68,7 +76,7 @@ data class HilltopSitesMessage(
     override val hilltopBaseUrl: String,
     override val at: Instant,
     override val hilltopUrl: String,
-    override val xml: String
+    override val xml: String,
 ) : HilltopMessage(HilltopMessageType.SITES_LIST) {
   override fun toKey(): HilltopMessageKey = HilltopSitesMessageKey(councilId, hilltopBaseUrl, at)
 }
@@ -79,7 +87,7 @@ data class HilltopMeasurementListMessage(
     override val at: Instant,
     val siteName: String,
     override val hilltopUrl: String,
-    override val xml: String
+    override val xml: String,
 ) : HilltopMessage(HilltopMessageType.MEASUREMENTS_LIST) {
   override fun toKey(): HilltopMessageKey =
       HilltopMeasurementListMessageKey(councilId, hilltopBaseUrl, at, siteName)
@@ -93,9 +101,15 @@ data class HilltopMeasurementsMessage(
     val measurementName: String,
     val yearMonth: YearMonth,
     override val hilltopUrl: String,
-    override val xml: String
+    override val xml: String,
 ) : HilltopMessage(HilltopMessageType.MEASUREMENT_DATA) {
   override fun toKey(): HilltopMessageKey =
       HilltopMeasurementsMessageKey(
-          councilId, hilltopBaseUrl, at, siteName, measurementName, yearMonth)
+          councilId,
+          hilltopBaseUrl,
+          at,
+          siteName,
+          measurementName,
+          yearMonth,
+      )
 }

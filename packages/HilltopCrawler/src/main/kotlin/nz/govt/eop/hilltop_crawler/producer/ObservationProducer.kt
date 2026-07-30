@@ -32,7 +32,9 @@ class ObservationProducer(
             rawDataTopic.name(),
             Consumed.with(
                 JsonSerde(HilltopMessageKey::class.java, objectMapper),
-                JsonSerde(HilltopMessage::class.java, objectMapper)))
+                JsonSerde(HilltopMessage::class.java, objectMapper),
+            ),
+        )
 
     messageStream
         .flatMap { _, value ->
@@ -64,7 +66,8 @@ class ObservationProducer(
                       value.councilId,
                       parsedXml.measurement.siteName,
                       parsedXml.measurement.dataSource.measurementName,
-                      observations)
+                      observations,
+                  )
               return@flatMap listOf(
                   KeyValue.pair(message.toKey(), message),
               )
@@ -78,10 +81,13 @@ class ObservationProducer(
             outputDataTopic.name(),
             Produced.with(
                 JsonSerde<ObservationMessageKey>(objectMapper).noTypeInfo(),
-                JsonSerde<ObservationMessage>(objectMapper).noTypeInfo()) { _, key, _, numPartitions
-                  ->
-                  BuiltInPartitioner.partitionForKey(
-                      "${key.councilId}#${key.siteName}".toByteArray(), numPartitions)
-                })
+                JsonSerde<ObservationMessage>(objectMapper).noTypeInfo(),
+            ) { _, key, _, numPartitions ->
+              BuiltInPartitioner.partitionForKey(
+                  "${key.councilId}#${key.siteName}".toByteArray(),
+                  numPartitions,
+              )
+            },
+        )
   }
 }

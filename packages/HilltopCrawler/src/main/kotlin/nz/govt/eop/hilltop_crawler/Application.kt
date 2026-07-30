@@ -15,7 +15,8 @@ fun main(args: Array<String>) {
   System.setProperty("com.sun.security.enableAIAcaIssuers", "true")
 
   StreamReadConstraints.overrideDefaultStreamReadConstraints(
-      StreamReadConstraints.builder().maxStringLength(50_000_000).build())
+      StreamReadConstraints.builder().maxStringLength(50_000_000).build()
+  )
 
   runApplication<Application>(*args)
 }

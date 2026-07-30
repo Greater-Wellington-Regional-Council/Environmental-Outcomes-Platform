@@ -35,7 +35,7 @@ class FetchTaskProcessor(
     private val db: DB,
     private val fetcher: HilltopFetcher,
     private val parsers: HilltopXmlParsers,
-    private val kafkaClient: HilltopMessageClient
+    private val kafkaClient: HilltopMessageClient,
 ) {
   private final val logger = KotlinLogging.logger {}
 
@@ -54,13 +54,23 @@ class FetchTaskProcessor(
 
       if (xmlContent == null) {
         handleTaskErrorRequeue(
-            taskToProcess, fetchedAt, FETCH_ERROR, Duration.ofMinutes(5), Duration.ofHours(1))
+            taskToProcess,
+            fetchedAt,
+            FETCH_ERROR,
+            Duration.ofMinutes(5),
+            Duration.ofHours(1),
+        )
         return
       }
 
       if (xmlContent.length > MAX_RESPONSE_SIZE) {
         handleTaskErrorRequeue(
-            taskToProcess, fetchedAt, RESPONSE_TOO_LARGE, Duration.ofDays(1), Duration.ofDays(30))
+            taskToProcess,
+            fetchedAt,
+            RESPONSE_TOO_LARGE,
+            Duration.ofDays(1),
+            Duration.ofDays(30),
+        )
         return
       }
 
@@ -73,7 +83,12 @@ class FetchTaskProcessor(
           }
       if (isErrorXml) {
         handleTaskErrorRequeue(
-            taskToProcess, fetchedAt, HILLTOP_ERROR, Duration.ofDays(1), Duration.ofDays(30))
+            taskToProcess,
+            fetchedAt,
+            HILLTOP_ERROR,
+            Duration.ofDays(1),
+            Duration.ofDays(30),
+        )
         return
       }
 
@@ -86,33 +101,42 @@ class FetchTaskProcessor(
                       taskToProcess.fetchUri,
                       fetchedAt,
                       xmlContent,
-                      parsers.parseSitesResponse(xmlContent))
+                      parsers.parseSitesResponse(xmlContent),
+                  )
               HilltopFetchTaskType.MEASUREMENTS_LIST ->
                   MeasurementsListTaskMapper(
                       source,
                       taskToProcess.fetchUri,
                       fetchedAt,
                       xmlContent,
-                      parsers.parseMeasurementsResponse(xmlContent))
+                      parsers.parseMeasurementsResponse(xmlContent),
+                  )
               HilltopFetchTaskType.MEASUREMENT_DATA ->
                   MeasurementDataTaskMapper(
                       source,
                       taskToProcess.fetchUri,
                       fetchedAt,
                       xmlContent,
-                      parsers.parseMeasurementValuesResponse(xmlContent))
+                      parsers.parseMeasurementValuesResponse(xmlContent),
+                  )
               HilltopFetchTaskType.MEASUREMENT_DATA_LATEST ->
                   MeasurementDataLatestTaskMapper(
                       source,
                       taskToProcess.fetchUri,
                       fetchedAt,
                       xmlContent,
-                      parsers.parseMeasurementValuesResponse(xmlContent))
+                      parsers.parseMeasurementValuesResponse(xmlContent),
+                  )
             }
           } catch (e: JsonMappingException) {
             logger.warn(e) { "Failed to parse content [${xmlContent}]" }
             handleTaskErrorRequeue(
-                taskToProcess, fetchedAt, PARSE_ERROR, Duration.ofDays(1), Duration.ofDays(30))
+                taskToProcess,
+                fetchedAt,
+                PARSE_ERROR,
+                Duration.ofDays(1),
+                Duration.ofDays(30),
+            )
             return
           }
 
@@ -126,7 +150,8 @@ class FetchTaskProcessor(
           fetchedAt,
           taskMapper.contentHash,
           if (taskMapper.contentHash == taskToProcess.previousDataHash) UNCHANGED else SUCCESS,
-          taskMapper.determineNextFetchAt())
+          taskMapper.determineNextFetchAt(),
+      )
     } catch (e: Exception) {
       // This is a catch-all for any errors that occur while processing a task.
       logger.error(e) {
@@ -136,7 +161,12 @@ class FetchTaskProcessor(
       // with a delay so that we don't end up in a situation where we are constantly trying to
       // process a task that is failing.
       handleTaskErrorRequeue(
-          taskToProcess, fetchedAt, UNKNOWN_ERROR, Duration.ofDays(1), Duration.ofDays(7))
+          taskToProcess,
+          fetchedAt,
+          UNKNOWN_ERROR,
+          Duration.ofDays(1),
+          Duration.ofDays(7),
+      )
     }
   }
 
@@ -145,26 +175,28 @@ class FetchTaskProcessor(
       fetchedAt: Instant,
       errorCode: DB.HilltopFetchStatus,
       minAmount: TemporalAmount,
-      maxAmount: TemporalAmount
+      maxAmount: TemporalAmount,
   ) =
       db.requeueTask(
           task.id,
           task.previousDataHash,
           HilltopFetchResult(fetchedAt, errorCode, null),
-          randomTimeBetween(fetchedAt.plus(minAmount), fetchedAt.plus(maxAmount)))
+          randomTimeBetween(fetchedAt.plus(minAmount), fetchedAt.plus(maxAmount)),
+      )
 
   fun handleTaskRequeue(
       task: DB.HilltopFetchTaskRow,
       fetchedAt: Instant,
       newContentHash: String?,
       statusCode: DB.HilltopFetchStatus,
-      nextFetchAt: Instant
+      nextFetchAt: Instant,
   ) =
       db.requeueTask(
           task.id,
           newContentHash,
           HilltopFetchResult(fetchedAt, statusCode, newContentHash),
-          nextFetchAt)
+          nextFetchAt,
+      )
 }
 
 private fun randomTimeBetween(earliest: Instant, latest: Instant): Instant =
