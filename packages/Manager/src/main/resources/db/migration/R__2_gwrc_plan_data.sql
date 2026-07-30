@@ -522,7 +522,7 @@ VALUES
                   "allocationLimit": 6750000
                 },
                 {
-                  "id": "Lower RuamahangaGW",
+                  "id": "LowerRuamahangaGW",
                   "name": "Lower Ruamāhanga",
                   "areas": [
                     {
