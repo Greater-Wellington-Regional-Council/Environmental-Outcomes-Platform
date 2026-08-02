@@ -107,9 +107,10 @@ fun isNonStable(version: String): Boolean {
   return !stableKeyword && !stablePattern.matches(version)
 }
 
-tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates") {
-  rejectVersionIf { isNonStable(candidate.version) && !isNonStable(currentVersion) }
-}
+tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>(
+    "dependencyUpdates") {
+      rejectVersionIf { isNonStable(candidate.version) && !isNonStable(currentVersion) }
+    }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   kotlin {
