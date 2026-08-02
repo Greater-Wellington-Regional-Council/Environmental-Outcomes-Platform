@@ -3,14 +3,15 @@ import org.jooq.meta.jaxb.ForcedType
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
 plugins {
-  id("org.springframework.boot") version "3.4.0"
+  id("org.springframework.boot") version "3.4.13"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "7.0.4"
+  id("com.github.ben-manes.versions") version "0.52.0"
   id("org.flywaydb.flyway") version "11.20.0"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.3.0"
-  kotlin("plugin.spring") version "2.2.0"
+  kotlin("plugin.spring") version "2.3.0"
 }
 
 buildscript {
@@ -33,7 +34,7 @@ repositories { mavenCentral() }
 ext["jooq.version"] = jooq.version.get()
 
 dependencies {
-  jooqGenerator("org.postgresql:postgresql")
+  jooqGenerator("org.postgresql:postgresql:42.7.4")
   // @see https://github.com/etiennestuder/gradle-jooq-plugin/issues/209#issuecomment-1056578392
   jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 
@@ -47,8 +48,6 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
-
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.apache.kafka:kafka-streams")
   implementation("io.micrometer:micrometer-tracing-bridge-brave")
@@ -62,21 +61,19 @@ dependencies {
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:6.10.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.10.0")
-  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2025.1.0")
-  implementation("de.grundid.opendatalab:geojson-jackson:1.14")
+  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2025.1.1")
   implementation("org.locationtech.jts:jts-core:1.20.0")
   implementation("org.locationtech.jts.io:jts-io-common:1.20.0")
   implementation("com.opencsv:opencsv:5.12.0")
-  implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
-  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
-  implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
+  implementation("io.github.resilience4j:resilience4j-spring-boot3:2.4.0")
+  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.4.0")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.2.4")
   implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.9.4")
-  implementation("org.hibernate:hibernate-spatial:7.1.2.Final")
-
+  implementation("org.hibernate.orm:hibernate-spatial")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
-  implementation("commons-codec:commons-codec:1.19.0")
+  implementation("commons-codec:commons-codec:1.22.1")
 
   testImplementation("org.jetbrains.kotlin:kotlin-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -101,6 +98,19 @@ tasks.withType<Test> {
   useJUnitPlatform()
   this.testLogging { this.showStandardStreams = true }
 }
+
+fun isNonStable(version: String): Boolean {
+  val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+
+  val stablePattern = Regex("^[0-9,.v-]+(-r)?$")
+
+  return !stableKeyword && !stablePattern.matches(version)
+}
+
+tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>(
+    "dependencyUpdates") {
+      rejectVersionIf { isNonStable(candidate.version) && !isNonStable(currentVersion) }
+    }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   kotlin {
