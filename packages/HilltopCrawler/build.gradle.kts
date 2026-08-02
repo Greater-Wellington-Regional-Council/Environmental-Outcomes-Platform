@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("org.springframework.boot") version "3.5.6"
@@ -19,7 +19,7 @@ group = "nz.govt.eop"
 
 version = "0.0.1-SNAPSHOT"
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
 
 repositories { mavenCentral() }
 
@@ -54,10 +54,10 @@ dependencies {
 // Don't repackage build in a "-plain" Jar
 tasks.getByName<Jar>("jar") { enabled = false }
 
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = listOf("-Xjsr305=strict")
-    jvmTarget = "17"
+kotlin {
+  compilerOptions {
+    freeCompilerArgs.add("-Xjsr305=strict")
+    jvmTarget = JvmTarget.JVM_17
   }
 }
 
