@@ -31,10 +31,14 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories { mavenCentral() }
 
-ext["jooq.version"] = jooq.version.get()
+val jooqVersion = "3.19.35"
+
+jooq.version.set(jooqVersion)
+
+ext["jooq.version"] = jooqVersion
 
 dependencies {
-  jooqGenerator("org.postgresql:postgresql:42.7.4")
+  jooqGenerator("org.postgresql:postgresql")
   // @see https://github.com/etiennestuder/gradle-jooq-plugin/issues/209#issuecomment-1056578392
   jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 
