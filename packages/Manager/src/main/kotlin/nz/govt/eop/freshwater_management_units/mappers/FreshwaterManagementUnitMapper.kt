@@ -67,7 +67,9 @@ class FreshwaterManagementUnitMapper : ObjectMapper() {
                 culturalOverview = feature.properties["cultural_significance"] as? String?,
                 otherInfo = feature.properties["Other"] as? String?,
                 vpo = feature.properties["values_priorities_outcomes"] as? String?,
-                catchmentOverview = feature.properties["Overview"] as? String?),
-        geom = parsedGeometry)
+                catchmentOverview = feature.properties["Overview"] as? String?,
+            ),
+        geom = parsedGeometry,
+    )
   }
 }

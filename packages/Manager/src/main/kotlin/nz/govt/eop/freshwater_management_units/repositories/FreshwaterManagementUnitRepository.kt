@@ -84,9 +84,10 @@ WHERE ST_Intersects(
     )
 )
     """,
-      nativeQuery = true)
+      nativeQuery = true,
+  )
   fun findAllByGeoJson(
       geoJson: String,
-      srid: Int = FreshwaterManagementUnit.DEFAULT_SRID
+      srid: Int = FreshwaterManagementUnit.DEFAULT_SRID,
   ): List<FreshwaterManagementUnit>
 }

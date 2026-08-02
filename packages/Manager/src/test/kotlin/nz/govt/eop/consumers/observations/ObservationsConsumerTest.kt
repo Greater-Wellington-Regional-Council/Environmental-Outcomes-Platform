@@ -40,7 +40,8 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
             .createInputTopic(
                 "observations",
                 JsonSerde(ObservationMessageKey::class.java).noTypeInfo().serializer(),
-                JsonSerde(ObservationMessage::class.java).noTypeInfo().serializer())
+                JsonSerde(ObservationMessage::class.java).noTypeInfo().serializer(),
+            )
   }
 
   @BeforeEach
@@ -150,7 +151,11 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
               "RAIN",
               listOf(
                   Observation(
-                      OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
+                      OffsetDateTime.parse("2020-01-01T00:00:00Z"),
+                      BigDecimal.valueOf(1.0),
+                  )
+              ),
+          )
 
       // WHEN / THEN
       inputTopic.pipeInput(observationMessage.toKey(), observationMessage)
@@ -169,7 +174,11 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
               "RAIN",
               listOf(
                   Observation(
-                      OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(6.6))))
+                      OffsetDateTime.parse("2020-01-01T00:00:00Z"),
+                      BigDecimal.valueOf(6.6),
+                  )
+              ),
+          )
 
       // WHEN
       inputTopic.pipeInput(observationMessage.toKey(), observationMessage)
@@ -199,7 +208,11 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
               "RAIN",
               listOf(
                   Observation(
-                      OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
+                      OffsetDateTime.parse("2020-01-01T00:00:00Z"),
+                      BigDecimal.valueOf(1.0),
+                  )
+              ),
+          )
       inputTopic.pipeInput(firstObservationMessage.toKey(), firstObservationMessage)
 
       val measurementRecord =
@@ -212,7 +225,11 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
               "RAIN",
               listOf(
                   Observation(
-                      OffsetDateTime.parse("2021-01-01T00:00:00Z"), BigDecimal.valueOf(2.0))))
+                      OffsetDateTime.parse("2021-01-01T00:00:00Z"),
+                      BigDecimal.valueOf(2.0),
+                  )
+              ),
+          )
 
       // WHEN
       inputTopic.pipeInput(secondObservationMessage.toKey(), secondObservationMessage)
@@ -220,7 +237,8 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
       // THEN
       val observationsResult =
           jdbcTemplate.queryForMap(
-              "SELECT * FROM observations WHERE observed_at > '2020-01-01T00:00:00Z'")
+              "SELECT * FROM observations WHERE observed_at > '2020-01-01T00:00:00Z'"
+          )
       observationsResult["observation_measurement_id"] shouldBe measurementRecord["id"]
       observationsResult["observed_at"] shouldBe
           Timestamp.from(OffsetDateTime.parse("2021-01-01T00:00:00Z").toInstant())
@@ -243,7 +261,11 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
               "RAIN",
               listOf(
                   Observation(
-                      OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
+                      OffsetDateTime.parse("2020-01-01T00:00:00Z"),
+                      BigDecimal.valueOf(1.0),
+                  )
+              ),
+          )
       inputTopic.pipeInput(firstObservationMessage.toKey(), firstObservationMessage)
       val firstObservationsResult = jdbcTemplate.queryForMap("SELECT * FROM observations")
 
@@ -254,7 +276,11 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
               "RAIN",
               listOf(
                   Observation(
-                      OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(2.0))))
+                      OffsetDateTime.parse("2020-01-01T00:00:00Z"),
+                      BigDecimal.valueOf(2.0),
+                  )
+              ),
+          )
 
       // WHEN
       inputTopic.pipeInput(secondObservationMessage.toKey(), secondObservationMessage)
@@ -283,7 +309,11 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
               "RAIN",
               listOf(
                   Observation(
-                      OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
+                      OffsetDateTime.parse("2020-01-01T00:00:00Z"),
+                      BigDecimal.valueOf(1.0),
+                  )
+              ),
+          )
       inputTopic.pipeInput(firstObservationMessage.toKey(), firstObservationMessage)
 
       val firstObservationsResult = jdbcTemplate.queryForMap("SELECT * FROM observations")
@@ -295,7 +325,11 @@ class ObservationsConsumerTest(@Autowired private val jdbcTemplate: JdbcTemplate
               "RAIN",
               listOf(
                   Observation(
-                      OffsetDateTime.parse("2020-01-01T00:00:00Z"), BigDecimal.valueOf(1.0))))
+                      OffsetDateTime.parse("2020-01-01T00:00:00Z"),
+                      BigDecimal.valueOf(1.0),
+                  )
+              ),
+          )
 
       // WHEN
       inputTopic.pipeInput(secondObservationMessage.toKey(), secondObservationMessage)

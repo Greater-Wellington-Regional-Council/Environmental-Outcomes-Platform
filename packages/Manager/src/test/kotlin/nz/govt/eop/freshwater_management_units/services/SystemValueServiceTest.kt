@@ -37,7 +37,8 @@ class SystemValueServiceTest {
             valueName = valueName,
             valueAsJson = expectedValue,
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now())
+            updatedAt = LocalDateTime.now(),
+        )
 
     `when`(repository.findByValueNameAndCouncilId(valueName, councilId))
         .thenReturn(Optional.of(systemValue))
@@ -80,7 +81,8 @@ class SystemValueServiceTest {
             valueName = valueName,
             valueAsJson = mapOf("key" to "oldValue"),
             createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now())
+            updatedAt = LocalDateTime.now(),
+        )
 
     `when`(repository.findByValueNameAndCouncilId(valueName, councilId))
         .thenReturn(Optional.of(existingSystemValue))
@@ -111,6 +113,7 @@ class SystemValueServiceTest {
         .save(
             argThat<SystemValue> {
               it.councilId == councilId && it.valueName == valueName && it.valueAsJson == newValue
-            })
+            }
+        )
   }
 }

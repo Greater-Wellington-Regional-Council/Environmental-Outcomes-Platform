@@ -9,7 +9,7 @@ import org.apache.kafka.common.header.Headers
 
 enum class ConsentStatus {
   active,
-  inactive
+  inactive,
 }
 
 data class WaterAllocationMessage(
@@ -24,7 +24,7 @@ data class WaterAllocationMessage(
     val meters: List<String>,
     val ingestId: String,
     val receivedAt: Instant,
-    val category: String
+    val category: String,
 )
 
 object KafkaMessageTypes {

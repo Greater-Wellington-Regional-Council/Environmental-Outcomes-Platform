@@ -45,15 +45,20 @@ class FreshwaterManagementUnitControllerTest {
                             locationValues = ttwLocationValues,
                             geomGeoJson =
                                 "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
-                            sourceName = "Schedule B"))
-                    .toFeatureCollection())
+                            sourceName = "Schedule B",
+                        )
+                    )
+                    .toFeatureCollection(),
+        )
 
     Mockito.`when`(
             fmuService.findFreshwaterManagementUnitByLatAndLng(
                 ArgumentMatchers.anyDouble(),
                 ArgumentMatchers.anyDouble(),
                 ArgumentMatchers.anyInt(),
-                ArgumentMatchers.anyBoolean()))
+                ArgumentMatchers.anyBoolean(),
+            )
+        )
         .thenReturn(fmu)
 
     Mockito.`when`(twService.findTangataWhenuaInterestSitesForFMU(fmu))
@@ -65,29 +70,38 @@ class FreshwaterManagementUnitControllerTest {
                     locationValues = ttwLocationValues,
                     geomGeoJson =
                         "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[175.34,-41],[175.35,-41],[175.35,-40.99],[175.34,-40.99],[175.34,-41]]]]}",
-                    sourceName = "Schedule B")))
+                    sourceName = "Schedule B",
+                )
+            )
+        )
 
     mvc.perform(
             MockMvcRequestBuilders.get(
-                    "/freshwater-management-units/by-lng-and-lat?lng=175.34&lat=-41")
+                    "/freshwater-management-units/by-lng-and-lat?lng=175.34&lat=-41"
+                )
                 .contentType(MediaType.APPLICATION_JSON),
         )
         .andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.location")
-                .value("Tangata Whenua site 1"))
+                .value("Tangata Whenua site 1")
+        )
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.sites")
-                .isArray())
+                .isArray()
+        )
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.sites[0]")
-                .value("site1"))
+                .value("site1")
+        )
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.sites[1]")
-                .value("site2"))
+                .value("site2")
+        )
         .andExpect(
             MockMvcResultMatchers.jsonPath("$.tangataWhenuaSites.features[0].properties.sites[2]")
-                .value("site3"))
+                .value("site3")
+        )
         .andReturn()
   }
 
@@ -148,12 +162,16 @@ class FreshwaterManagementUnitControllerTest {
 
     Mockito.`when`(
             fmuService.findFreshwaterManagementUnitsByShape(
-                ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean()))
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyBoolean(),
+            )
+        )
         .thenReturn(listOf(fmu1, fmu2))
 
     mvc.perform(
             MockMvcRequestBuilders.post(
-                    "/freshwater-management-units/search-for-freshwater-managements-intersecting")
+                    "/freshwater-management-units/search-for-freshwater-managements-intersecting"
+                )
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(geoJson),
         )

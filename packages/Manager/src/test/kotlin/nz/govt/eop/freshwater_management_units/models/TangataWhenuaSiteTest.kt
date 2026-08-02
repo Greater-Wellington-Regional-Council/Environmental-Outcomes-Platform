@@ -12,7 +12,8 @@ class TangataWhenuaSiteTest {
         TangataWhenuaSite(
             locationValues = listOf("Site A", "Site B"),
             properties = mapOf("Mana_Whenua" to "Whānui Group"),
-            sourceName = "Schedule B")
+            sourceName = "Schedule B",
+        )
 
     assertEquals(listOf("Site A", "Site B"), site.significantSites)
   }
@@ -26,8 +27,10 @@ class TangataWhenuaSiteTest {
                 mapOf(
                     "Mana_Whenua" to "Whānui Group",
                     "Wāhi_Mahara" to "Historic Place",
-                    "Te_Mahi_Kai" to null),
-            sourceName = "Schedule B")
+                    "Te_Mahi_Kai" to null,
+                ),
+            sourceName = "Schedule B",
+        )
 
     assertEquals(listOf("Wāhi_Mahara"), site.significantSites)
   }
@@ -38,7 +41,8 @@ class TangataWhenuaSiteTest {
         TangataWhenuaSite(
             locationValues = emptyList(),
             properties = mapOf<String, Any?>("Mana_Whenua" to null, "Wāhi_Mahara" to null),
-            sourceName = "Schedule B")
+            sourceName = "Schedule B",
+        )
 
     assertEquals(emptyList<String>(), site.significantSites)
   }
@@ -52,7 +56,8 @@ class TangataWhenuaSiteTest {
             locationValues = listOf("Value 1", "Value 2"),
             properties = mapOf("Mana_Whenua" to "Group A"),
             geomGeoJson = """{"type": "Point", "coordinates": [175.0, -40.0]}""",
-            sourceName = "Schedule B")
+            sourceName = "Schedule B",
+        )
     val site2 =
         TangataWhenuaSite(
             id = 2,
@@ -60,7 +65,8 @@ class TangataWhenuaSiteTest {
             locationValues = emptyList(),
             properties = mapOf("Wāhi_Mahara" to "Significant Spot"),
             geomGeoJson = """{"type": "Point", "coordinates": [174.0, -41.0]}""",
-            sourceName = "Schedule B")
+            sourceName = "Schedule B",
+        )
 
     val featureCollection: FeatureCollection = listOf(site1, site2).toFeatureCollection()
     val features = featureCollection.features

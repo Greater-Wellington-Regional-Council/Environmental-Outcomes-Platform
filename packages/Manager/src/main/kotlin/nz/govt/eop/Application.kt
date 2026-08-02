@@ -33,7 +33,9 @@ class FreshwaterManagementUnitsDataSources : UrlBasedDataSources<UrlBasedDataSou
 @EnableCaching
 @SpringBootApplication
 @EnableConfigurationProperties(
-    TangataWhenuaSitesDataSources::class, FreshwaterManagementUnitsDataSources::class)
+    TangataWhenuaSitesDataSources::class,
+    FreshwaterManagementUnitsDataSources::class,
+)
 class Application {
   @Bean fun restTemplate(): RestTemplate = RestTemplateBuilder().build()
 }

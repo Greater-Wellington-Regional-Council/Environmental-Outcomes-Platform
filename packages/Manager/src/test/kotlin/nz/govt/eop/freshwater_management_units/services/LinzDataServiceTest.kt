@@ -43,20 +43,21 @@ class LinzDataServiceTest {
   fun `test getUnitOfPropertyIdForAddressId returns correct data`() = runTest {
     val mockResponseBody =
         """
+        {
+          "features": [
             {
-              "features": [
-                {
-                  "properties": {
-                    "unit_of_property_id": "12345"
-                  }
-                }
-              ]
+              "properties": {
+                "unit_of_property_id": "12345"
+              }
             }
+          ]
+        }
         """
             .trimIndent()
 
     mockWebServer.enqueue(
-        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json")
+    )
 
     val result = linzDataService.getUnitOfPropertyIdForAddressId("some-address-id")
     assertEquals("12345", result)
@@ -65,7 +66,8 @@ class LinzDataServiceTest {
     val decodedPath = URLDecoder.decode(request.path, StandardCharsets.UTF_8.toString())
     assertEquals(
         "/services;key=dummy-linz-api-key/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=table-115638&cql_filter=address_id=some-address-id&PropertyName=(id,unit_of_property_id,address_id)&outputFormat=json",
-        decodedPath)
+        decodedPath,
+    )
   }
 
   @Test
@@ -76,11 +78,12 @@ class LinzDataServiceTest {
             {
               "some_other_key": []
             }
-        """
+            """
                 .trimIndent()
 
         mockWebServer.enqueue(
-            MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+            MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json")
+        )
 
         assertFailsWith<RuntimeException> {
           linzDataService.getUnitOfPropertyIdForAddressId("some-address-id")
@@ -90,33 +93,35 @@ class LinzDataServiceTest {
         val decodedPath = URLDecoder.decode(request.path, StandardCharsets.UTF_8.toString())
         assertEquals(
             "/services;key=dummy-linz-api-key/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=table-115638&cql_filter=address_id=some-address-id&PropertyName=(id,unit_of_property_id,address_id)&outputFormat=json",
-            decodedPath)
+            decodedPath,
+        )
       }
 
   @Test
   fun `test getGeometryForUnitOfProperty returns correct data`() = runTest {
     val mockResponseBody =
         """
+        {
+          "type": "FeatureCollection",
+          "features": [
             {
-              "type": "FeatureCollection",
-              "features": [
-                {
-                  "type": "Feature",
-                  "geometry": {
-                    "type": "Point",
-                    "coordinates": [174.7633, -36.8485]
-                  },
-                  "properties": {
-                    "unit_of_property_id": "12345"
-                  }
-                }
-              ]
+              "type": "Feature",
+              "geometry": {
+                "type": "Point",
+                "coordinates": [174.7633, -36.8485]
+              },
+              "properties": {
+                "unit_of_property_id": "12345"
+              }
             }
+          ]
+        }
         """
             .trimIndent()
 
     mockWebServer.enqueue(
-        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json")
+    )
 
     val result = linzDataService.getGeometryForUnitOfProperty("12345", "EPSG:4326")
 
@@ -129,7 +134,10 @@ class LinzDataServiceTest {
                         "type" to "Feature",
                         "geometry" to
                             mapOf("type" to "Point", "coordinates" to listOf(174.7633, -36.8485)),
-                        "properties" to mapOf("unit_of_property_id" to "12345"))))
+                        "properties" to mapOf("unit_of_property_id" to "12345"),
+                    )
+                ),
+        )
 
     assertEquals(expected, result)
 
@@ -137,7 +145,8 @@ class LinzDataServiceTest {
     val decodedPath = URLDecoder.decode(request.path, StandardCharsets.UTF_8.toString())
     assertEquals(
         "/services;key=dummy-linz-api-key/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=layer-113968&cql_filter=unit_of_property_id='12345'&PropertyName=(unit_of_property_id,geom)&SRSName=EPSG:4326&outputFormat=json",
-        decodedPath)
+        decodedPath,
+    )
   }
 
   @Test
@@ -146,11 +155,12 @@ class LinzDataServiceTest {
         val mockResponseBody =
             """
             null
-        """
+            """
                 .trimIndent()
 
         mockWebServer.enqueue(
-            MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+            MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json")
+        )
 
         assertFailsWith<RuntimeException> {
           linzDataService.getGeometryForUnitOfProperty("12345", "EPSG:4326")
@@ -160,6 +170,7 @@ class LinzDataServiceTest {
         val decodedPath = URLDecoder.decode(request.path, StandardCharsets.UTF_8.toString())
         assertEquals(
             "/services;key=dummy-linz-api-key/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=layer-113968&cql_filter=unit_of_property_id='12345'&PropertyName=(unit_of_property_id,geom)&SRSName=EPSG:4326&outputFormat=json",
-            decodedPath)
+            decodedPath,
+        )
       }
 }

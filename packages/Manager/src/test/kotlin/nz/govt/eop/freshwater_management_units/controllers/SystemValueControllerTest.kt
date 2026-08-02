@@ -36,7 +36,8 @@ class SystemValueControllerTest {
         .perform(
             get("/system-values/{councilId}/{valueName}", councilId, valueName)
                 .header("Referer", "http://test.com")
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isOk)
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.key").value("value"))
@@ -55,7 +56,8 @@ class SystemValueControllerTest {
         .perform(
             get("/system-values/{councilId}/{valueName}", councilId, valueName)
                 .header("Referer", "http://test.com")
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isNotFound)
 
     verify(service, times(1)).getValue(valueName, councilId)
@@ -72,7 +74,8 @@ class SystemValueControllerTest {
         .perform(
             get("/system-values/{valueName}", valueName)
                 .header("Referer", "http://test.com")
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isOk)
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.key").value("value"))
@@ -90,7 +93,8 @@ class SystemValueControllerTest {
         .perform(
             get("/system-values/{valueName}", valueName)
                 .header("Referer", "http://test.com")
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isNotFound)
 
     verify(service, times(1)).getValue(valueName, null)

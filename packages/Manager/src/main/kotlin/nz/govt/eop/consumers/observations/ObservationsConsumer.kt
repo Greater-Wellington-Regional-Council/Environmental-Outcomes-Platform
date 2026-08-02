@@ -24,7 +24,9 @@ class ObservationsConsumer(val store: ObservationStore) {
             "observations",
             Consumed.with(
                 JsonSerde(ObservationMessageKey::class.java),
-                JsonSerde(ObservationMessage::class.java)))
+                JsonSerde(ObservationMessage::class.java),
+            ),
+        )
 
     messageStream.foreach { _, value ->
       try {
@@ -34,7 +36,11 @@ class ObservationsConsumer(val store: ObservationStore) {
           }
           is ObservationDataMessage -> {
             store.storeObservations(
-                value.councilId, value.siteName, value.measurementName, value.observations)
+                value.councilId,
+                value.siteName,
+                value.measurementName,
+                value.observations,
+            )
           }
         }
       } catch (e: NonTransientDataAccessException) {
