@@ -41,16 +41,17 @@ class AddressFinderServiceTest {
   fun `test getAddressOptions returns correct data`() = runTest {
     val mockResponseBody =
         """
-            {
-              "completions": [
-                { "a": "123 Sample Street", "pxid": "abc123" }
-              ]
-            }
+        {
+          "completions": [
+            { "a": "123 Sample Street", "pxid": "abc123" }
+          ]
+        }
         """
             .trimIndent()
 
     mockWebServer.enqueue(
-        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json")
+    )
 
     val result = addressFinderService.getAddressOptions("Sample Street")
 
@@ -61,24 +62,26 @@ class AddressFinderServiceTest {
     val request = mockWebServer.takeRequest()
     assertEquals(
         "/autocomplete/?key=dummy-api-key&q=Sample%20Street&format=json&post_box=0&strict=2&region_code=F&highlight=1",
-        request.path)
+        request.path,
+    )
   }
 
   @Test
   fun `test getAddressByPxid returns correct data`() = runTest {
     val mockResponseBody =
         """
-            {
-              "aims_address_id": "aims123",
-              "a": "123 Sample Street",
-              "x": 174.7633,
-              "y": -36.8485
-            }
+        {
+          "aims_address_id": "aims123",
+          "a": "123 Sample Street",
+          "x": 174.7633,
+          "y": -36.8485
+        }
         """
             .trimIndent()
 
     mockWebServer.enqueue(
-        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json")
+    )
 
     val result = addressFinderService.getAddressByPxid("abc123")
 
@@ -91,7 +94,9 @@ class AddressFinderServiceTest {
                     "type" to "Feature",
                     "geometry" to
                         mapOf("type" to "Point", "coordinates" to listOf(174.7633, -36.8485)),
-                    "properties" to emptyMap<String, Any>()))
+                    "properties" to emptyMap<String, Any>(),
+                ),
+        )
 
     assertEquals(expected, result)
 
@@ -103,14 +108,15 @@ class AddressFinderServiceTest {
   fun `test getAddressByPxid throws exception when required fields are missing`() = runTest {
     val mockResponseBody =
         """
-            {
-              "a": "123 Sample Street"
-            }
+        {
+          "a": "123 Sample Street"
+        }
         """
             .trimIndent()
 
     mockWebServer.enqueue(
-        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json"))
+        MockResponse().setBody(mockResponseBody).addHeader("Content-Type", "application/json")
+    )
 
     assertFailsWith<RuntimeException> { addressFinderService.getAddressByPxid("missing_fields") }
 

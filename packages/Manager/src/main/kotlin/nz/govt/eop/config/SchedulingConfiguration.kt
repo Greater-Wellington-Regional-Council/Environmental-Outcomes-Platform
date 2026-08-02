@@ -22,6 +22,7 @@ class SchedulingConfiguration {
         JdbcTemplateLockProvider.Configuration.builder()
             .withJdbcTemplate(JdbcTemplate(dataSource))
             .usingDbTime()
-            .build())
+            .build()
+    )
   }
 }

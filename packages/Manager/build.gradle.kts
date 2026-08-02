@@ -5,7 +5,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils.*
 plugins {
   id("org.springframework.boot") version "3.4.13"
   id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "7.0.4"
+  id("com.diffplug.spotless") version "8.8.0"
   id("com.github.ben-manes.versions") version "0.52.0"
   id("org.flywaydb.flyway") version "11.20.0"
   id("nu.studer.jooq") version "9.0"
@@ -108,9 +108,10 @@ fun isNonStable(version: String): Boolean {
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>(
-    "dependencyUpdates") {
-      rejectVersionIf { isNonStable(candidate.version) && !isNonStable(currentVersion) }
-    }
+    "dependencyUpdates"
+) {
+  rejectVersionIf { isNonStable(candidate.version) && !isNonStable(currentVersion) }
+}
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
   kotlin {

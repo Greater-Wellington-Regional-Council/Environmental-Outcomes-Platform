@@ -35,7 +35,7 @@ class CacheConfig {
 annotation class LimitRequests(
     val header: String = "Referer", // Specify the header to use for identifying clients
     val limit: Int = 5, // Number of requests allowed per time period
-    val periodInSeconds: Long = 1 // Time period for the rate limit
+    val periodInSeconds: Long = 1, // Time period for the rate limit
 )
 
 @Aspect
@@ -45,7 +45,7 @@ class RateLimitingAspect(private val rateLimiterCache: Cache<String, RateLimiter
   private fun getOrCreateRateLimiter(
       clientId: String,
       limit: Int,
-      periodInSeconds: Long
+      periodInSeconds: Long,
   ): RateLimiter {
     return rateLimiterCache.get(clientId) {
       RateLimiter.of(
@@ -54,7 +54,8 @@ class RateLimitingAspect(private val rateLimiterCache: Cache<String, RateLimiter
               .limitForPeriod(limit)
               .limitRefreshPeriod(Duration.ofSeconds(periodInSeconds))
               .timeoutDuration(Duration.ZERO)
-              .build())
+              .build(),
+      )
     } ?: RateLimiter.ofDefaults(clientId)
   }
 

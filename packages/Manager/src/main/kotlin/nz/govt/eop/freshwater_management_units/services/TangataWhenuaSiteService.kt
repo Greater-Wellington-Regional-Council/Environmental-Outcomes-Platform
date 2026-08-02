@@ -59,7 +59,8 @@ class TangataWhenuaSiteService(
                   locationValues = locationValues,
                   geomGeoJson = geometry,
                   sourceName = sourceName,
-                  properties = properties)
+                  properties = properties,
+              )
 
           saveTangataWhenuaSite(tangataWhenuaSite)
         }
@@ -75,7 +76,8 @@ class TangataWhenuaSiteService(
         locationValues = site.locationValues,
         geom = site.geomGeoJson ?: "",
         sourceName = site.sourceName,
-        properties = propertiesJson)
+        properties = propertiesJson,
+    )
   }
 
   fun findTangataWhenuaInterestSitesForFMU(fmu: FreshwaterManagementUnit): List<TangataWhenuaSite> {

@@ -21,7 +21,9 @@ class WaterAllocationConsumer(@Autowired val context: DSLContext) {
   private val logger = KotlinLogging.logger {}
 
   @KafkaListener(
-      topics = [WATER_ALLOCATION_TOPIC_NAME], id = "nz.govt.eop.consumers.water-allocation")
+      topics = [WATER_ALLOCATION_TOPIC_NAME],
+      id = "nz.govt.eop.consumers.water-allocation",
+  )
   fun processMessage(allocation: WaterAllocationMessage) {
 
     val receivedAtUTC = allocation.receivedAt.atOffset(ZoneOffset.UTC)
@@ -56,7 +58,8 @@ class WaterAllocationConsumer(@Autowired val context: DSLContext) {
                   WATER_ALLOCATIONS.INGEST_ID,
                   WATER_ALLOCATIONS.CREATED_AT,
                   WATER_ALLOCATIONS.UPDATED_AT,
-                  WATER_ALLOCATIONS.CATEGORY)
+                  WATER_ALLOCATIONS.CATEGORY,
+              )
               .values(
                   allocation.sourceId,
                   allocation.consentId,
@@ -71,7 +74,8 @@ class WaterAllocationConsumer(@Autowired val context: DSLContext) {
                   allocation.ingestId,
                   now,
                   now,
-                  allocation.category)
+                  allocation.category,
+              )
               .execute()
 
       logger.info { "Consumed allocation for source_id:${allocation.sourceId}" }

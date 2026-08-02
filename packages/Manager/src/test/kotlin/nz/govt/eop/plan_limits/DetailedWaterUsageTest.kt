@@ -28,7 +28,8 @@ class DetailedWaterUsageTest(@Autowired val mvc: MockMvc) {
         .thenReturn("[]")
     mvc.perform(
             get("/plan-limits/water-usage?councilId=9&from=2022-01-01&to=2022-12-31")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isOk)
   }
 
@@ -38,7 +39,8 @@ class DetailedWaterUsageTest(@Autowired val mvc: MockMvc) {
         .thenReturn("[]")
     mvc.perform(
             get("/plan-limits/water-usage?councilId=9&from=2022-01-01&to=2023-01-01")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isBadRequest)
         .andExpect(content().string(containsString("The duration between")))
   }
@@ -49,7 +51,8 @@ class DetailedWaterUsageTest(@Autowired val mvc: MockMvc) {
         .thenReturn("[]")
     mvc.perform(
             get("/plan-limits/water-usage?councilId=9&from=2024-01-01&to=2024-12-31")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isOk)
   }
 }
