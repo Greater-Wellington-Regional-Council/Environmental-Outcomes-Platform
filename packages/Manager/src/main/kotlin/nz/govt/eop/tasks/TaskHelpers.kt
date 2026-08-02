@@ -14,7 +14,7 @@ fun processDataRefresh(
     logger: KLogger,
     taskName: String,
     checkFunc: () -> Boolean,
-    refreshFunc: () -> Unit
+    refreshFunc: () -> Unit,
 ) {
   logger.debug { startTaskMessage(taskName) }
   val needsRefresh = checkFunc()

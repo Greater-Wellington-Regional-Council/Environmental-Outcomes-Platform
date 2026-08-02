@@ -21,7 +21,8 @@ class WebConfiguration : WebMvcConfigurer {
             "https://*.amplifyapp.com",
             "https://*.gw-eop-dev.tech",
             "https://*.gw-eop-stage.tech",
-            "https://*.eop.gw.govt.nz")
+            "https://*.eop.gw.govt.nz",
+        )
         .allowedMethods(HttpMethod.GET.toString(), HttpMethod.POST.toString())
   }
 }

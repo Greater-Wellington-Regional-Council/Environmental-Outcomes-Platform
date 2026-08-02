@@ -21,7 +21,7 @@ constructor(
     private val repository: FreshwaterManagementUnitRepository,
     private val freshwaterManagementUnitsDataSources: FreshwaterManagementUnitsDataSources,
     private val twsService: TangataWhenuaSiteService,
-    restTemplate: RestTemplate
+    restTemplate: RestTemplate,
 ) : GeoJsonFetcher(restTemplate) {
 
   private val logger = KotlinLogging.logger {}
@@ -68,7 +68,7 @@ constructor(
       lng: Double,
       lat: Double,
       srid: Int = FreshwaterManagementUnit.DEFAULT_SRID,
-      includeTangataWhenuaSites: Boolean = true
+      includeTangataWhenuaSites: Boolean = true,
   ): FreshwaterManagementUnit? {
     val fmu = repository.findAllByLngLat(lng, lat, srid).firstOrNull()
 
@@ -82,7 +82,7 @@ constructor(
 
   fun findFreshwaterManagementUnitById(
       id: Int,
-      includeTangataWhenuaSites: Boolean = true
+      includeTangataWhenuaSites: Boolean = true,
   ): FreshwaterManagementUnit? {
     val fmu = repository.findById(id).orElse(null)
 
@@ -96,7 +96,7 @@ constructor(
 
   fun findFreshwaterManagementUnitsByShape(
       geoJson: String,
-      includeTangataWhenuaSites: Boolean = true
+      includeTangataWhenuaSites: Boolean = true,
   ): List<FreshwaterManagementUnit> {
     val fmus = repository.findAllByGeoJson(geoJson)
 

@@ -52,7 +52,9 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
   }
 
   @RequestMapping(
-      "/plan-limits/surface-water-limits", produces = [MediaType.APPLICATION_JSON_VALUE])
+      "/plan-limits/surface-water-limits",
+      produces = [MediaType.APPLICATION_JSON_VALUE],
+  )
   @ResponseBody
   fun surfaceWaterLimits(@RequestParam(name = "councilId") councilId: Int): ResponseEntity<String> {
     return ResponseEntity.ok()
@@ -72,7 +74,7 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
   @ResponseBody
   fun surfaceWaterPNRP(
       @RequestParam(name = "councilId") councilId: Int,
-      @RequestParam(name = "dates") dates: String?
+      @RequestParam(name = "dates") dates: String?,
   ): ResponseEntity<String> {
     return try {
       val dateList =
@@ -95,7 +97,8 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
       // Return a generic Internal Server Error
       ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(
-              "An unexpected error occurred while processing your request. Please try again later.")
+              "An unexpected error occurred while processing your request. Please try again later."
+          )
     }
   }
 
@@ -103,7 +106,7 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
   @ResponseBody
   fun groundWaterPNRP(
       @RequestParam(name = "councilId") councilId: Int,
-      @RequestParam(name = "dates") dates: String?
+      @RequestParam(name = "dates") dates: String?,
   ): ResponseEntity<String> {
     return try {
       val dateList =
@@ -125,12 +128,15 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
       // Return a generic Internal Server Error
       ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(
-              "An unexpected error occurred while processing your request. Please try again later.")
+              "An unexpected error occurred while processing your request. Please try again later."
+          )
     }
   }
 
   @RequestMapping(
-      "/plan-limits/flow-measurement-sites", produces = [MediaType.APPLICATION_JSON_VALUE])
+      "/plan-limits/flow-measurement-sites",
+      produces = [MediaType.APPLICATION_JSON_VALUE],
+  )
   @ResponseBody
   fun flowMeasurementSites(
       @RequestParam(name = "councilId") councilId: Int
@@ -154,7 +160,7 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
       @RequestParam(name = "councilId") councilId: Int,
       @RequestParam("from") from: LocalDate,
       @RequestParam("to") to: LocalDate,
-      @RequestParam("areaId") areaId: String?
+      @RequestParam("areaId") areaId: String?,
   ): ResponseEntity<String> {
     if (from >= to) {
       return ResponseEntity.badRequest().body("The parameter \"to\" must be after \"from\"")
@@ -162,7 +168,8 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
     if (YEARS.between(from, to) > 0) {
       return ResponseEntity.badRequest()
           .body(
-              "The duration between \"from\" and \"to\" should be more than one day and at most one year")
+              "The duration between \"from\" and \"to\" should be more than one day and at most one year"
+          )
     }
 
     return ResponseEntity.ok()
