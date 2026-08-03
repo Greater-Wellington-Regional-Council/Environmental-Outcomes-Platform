@@ -14,7 +14,7 @@ group = "nz.govt.eop"
 
 version = "0.0.1-SNAPSHOT"
 
-java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 
 repositories { mavenCentral() }
 
@@ -48,7 +48,7 @@ tasks.getByName<Jar>("jar") { enabled = false }
 kotlin {
   compilerOptions {
     freeCompilerArgs.add("-Xjsr305=strict")
-    jvmTarget = JvmTarget.JVM_17
+    jvmTarget = JvmTarget.JVM_21
   }
 }
 

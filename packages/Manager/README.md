@@ -5,7 +5,7 @@
 ### Prerequisites
 
 * Docker
-* A Java 17 or later JDK
+* A Java 21 or later JDK
 
 ### Building
 
