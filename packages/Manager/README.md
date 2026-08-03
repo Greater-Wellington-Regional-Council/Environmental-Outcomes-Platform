@@ -5,7 +5,7 @@
 ### Prerequisites
 
 * Docker
-* A Java 21 or later JDK
+* A Java 21 or later JDK for local Gradle commands, or use Batect to run builds in the shared Java 21 container.
 
 ### Building
 
@@ -16,6 +16,19 @@ As a quick start, running a build will ensure you've got the prerequisites insta
 * In a second session build the application ```./gradlew check```
 
 And if successful, everything you need is installed.
+
+CI and Batect builds use the shared Java 21 build container. To run the same full validation path locally, use:
+
+```bash
+./batect check
+```
+
+Manager's normal build path runs Flyway and jOOQ tasks that require a test database. For a quick local Java 21 compile
+check without a running database, run:
+
+```bash
+./gradlew compileKotlin compileTestKotlin -x generateJooq -x flywayMigrate
+```
 
 For day to day development use your IDE of choice. IntelliJ's community edition is a good full-featured IDE or VSCode
 with plugins for Kotlin and Gradle also works (though support for running inline is limited.)
