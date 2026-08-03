@@ -26,13 +26,13 @@ class MessagesParsingTest {
       // GIVEN
       val json =
           """
-                        {
-	                        "councilId": 9,
-	                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-	                        "type": "SITES_LIST",
-	                        "at": "2023-09-11T21:10:17.594098Z"
-                        }
-                        """
+          {
+           "councilId": 9,
+           "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+           "type": "SITES_LIST",
+           "at": "2023-09-11T21:10:17.594098Z"
+          }
+          """
               .trimIndent()
 
       // WHEN
@@ -43,7 +43,8 @@ class MessagesParsingTest {
           HilltopSitesMessageKey(
               9,
               "https://hilltop.gw.govt.nz/WaterUse.hts",
-              Instant.parse("2023-09-11T21:10:17.594098Z"))
+              Instant.parse("2023-09-11T21:10:17.594098Z"),
+          )
     }
 
     @Test
@@ -51,14 +52,14 @@ class MessagesParsingTest {
       // GIVEN
       val json =
           """
-                        {
-	                        "councilId": 9,
-	                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-	                        "type": "MEASUREMENTS_LIST",
-	                        "at": "2023-09-11T21:10:18.034236Z",
-	                        "siteName": "259250/2"
-                        }
-                        """
+          {
+           "councilId": 9,
+           "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+           "type": "MEASUREMENTS_LIST",
+           "at": "2023-09-11T21:10:18.034236Z",
+           "siteName": "259250/2"
+          }
+          """
               .trimIndent()
 
       // WHEN
@@ -70,7 +71,8 @@ class MessagesParsingTest {
               9,
               "https://hilltop.gw.govt.nz/WaterUse.hts",
               Instant.parse("2023-09-11T21:10:18.034236Z"),
-              "259250/2")
+              "259250/2",
+          )
     }
 
     @Test
@@ -78,16 +80,16 @@ class MessagesParsingTest {
       // GIVEN
       val json =
           """
-                        {
-                            "councilId": 9,
-                            "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-                            "type": "MEASUREMENT_DATA",
-                            "at": "2023-09-11T21:11:56.876507Z",
-                            "siteName": "292019/18",
-                            "measurementName": "Water Meter Volume",
-                            "yearMonth": "2022-01"
-                        }
-                        """
+          {
+              "councilId": 9,
+              "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+              "type": "MEASUREMENT_DATA",
+              "at": "2023-09-11T21:11:56.876507Z",
+              "siteName": "292019/18",
+              "measurementName": "Water Meter Volume",
+              "yearMonth": "2022-01"
+          }
+          """
               .trimIndent()
 
       // WHEN
@@ -101,7 +103,8 @@ class MessagesParsingTest {
               Instant.parse("2023-09-11T21:11:56.876507Z"),
               "292019/18",
               "Water Meter Volume",
-              YearMonth.of(2022, 1))
+              YearMonth.of(2022, 1),
+          )
     }
   }
 
@@ -115,7 +118,8 @@ class MessagesParsingTest {
           HilltopSitesMessageKey(
               9,
               "https://hilltop.gw.govt.nz/WaterUse.hts",
-              Instant.parse("2023-09-11T21:10:17.594098Z"))
+              Instant.parse("2023-09-11T21:10:17.594098Z"),
+          )
 
       // WHEN
       val result = objectMapper.writeValueAsString(message)
@@ -123,13 +127,13 @@ class MessagesParsingTest {
       // THEN
       val json =
           """
-                        {
-	                        "councilId": 9,
-	                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-	                        "type": "SITES_LIST",
-	                        "at": "2023-09-11T21:10:17.594098Z"
-                        }
-                        """
+          {
+           "councilId": 9,
+           "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+           "type": "SITES_LIST",
+           "at": "2023-09-11T21:10:17.594098Z"
+          }
+          """
               .trimIndent()
 
       result shouldEqualJson json
@@ -143,7 +147,8 @@ class MessagesParsingTest {
               9,
               "https://hilltop.gw.govt.nz/WaterUse.hts",
               Instant.parse("2023-09-11T21:10:18.034236Z"),
-              "259250/2")
+              "259250/2",
+          )
 
       // WHEN
       val result = objectMapper.writeValueAsString(message)
@@ -151,14 +156,14 @@ class MessagesParsingTest {
       // THEN
       val json =
           """
-                        {
-	                        "councilId": 9,
-	                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-	                        "type": "MEASUREMENTS_LIST",
-	                        "at": "2023-09-11T21:10:18.034236Z",
-	                        "siteName": "259250/2"
-                        }
-                        """
+          {
+           "councilId": 9,
+           "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+           "type": "MEASUREMENTS_LIST",
+           "at": "2023-09-11T21:10:18.034236Z",
+           "siteName": "259250/2"
+          }
+          """
               .trimIndent()
       result shouldEqualJson json
     }
@@ -173,23 +178,24 @@ class MessagesParsingTest {
               Instant.parse("2023-09-11T21:11:56.876507Z"),
               "292019/18",
               "Water Meter Volume",
-              YearMonth.of(2022, 1))
+              YearMonth.of(2022, 1),
+          )
 
       // WHEN
       val result = objectMapper.writeValueAsString(message)
       // THEN
       val json =
           """
-                        {
-                            "councilId": 9,
-                            "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-                            "type": "MEASUREMENT_DATA",
-                            "at": "2023-09-11T21:11:56.876507Z",
-                            "siteName": "292019/18",
-                            "measurementName": "Water Meter Volume",
-                            "yearMonth": "2022-01"
-                        }
-                        """
+          {
+              "councilId": 9,
+              "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+              "type": "MEASUREMENT_DATA",
+              "at": "2023-09-11T21:11:56.876507Z",
+              "siteName": "292019/18",
+              "measurementName": "Water Meter Volume",
+              "yearMonth": "2022-01"
+          }
+          """
               .trimIndent()
       result shouldEqualJson json
     }
@@ -203,15 +209,15 @@ class MessagesParsingTest {
       // GIVEN
       val json =
           """
-                    {
-                        "councilId": 9,
-                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-                        "type": "SITES_LIST",
-                        "at": "2023-09-11T21:10:17.594098Z",
-                        "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=SiteList&Location=Yes",
-                        "xml": "<xml></xml>"
-                    }
-                        """
+          {
+              "councilId": 9,
+              "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+              "type": "SITES_LIST",
+              "at": "2023-09-11T21:10:17.594098Z",
+              "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=SiteList&Location=Yes",
+              "xml": "<xml></xml>"
+          }
+          """
               .trimIndent()
 
       // WHEN
@@ -224,7 +230,8 @@ class MessagesParsingTest {
               "https://hilltop.gw.govt.nz/WaterUse.hts",
               Instant.parse("2023-09-11T21:10:17.594098Z"),
               "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=SiteList&Location=Yes",
-              "<xml></xml>")
+              "<xml></xml>",
+          )
     }
 
     @Test
@@ -232,16 +239,16 @@ class MessagesParsingTest {
       // GIVEN
       val json =
           """
-                    {
-                        "councilId": 9,
-                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-                        "type": "MEASUREMENTS_LIST",
-                        "at": "2023-09-11T21:10:19.965935Z",
-                        "siteName": "292068/12",
-                        "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=MeasurementList&Site=292068/12",
-                        "xml": "<xml></xml>"
-                    }
-                        """
+          {
+              "councilId": 9,
+              "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+              "type": "MEASUREMENTS_LIST",
+              "at": "2023-09-11T21:10:19.965935Z",
+              "siteName": "292068/12",
+              "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=MeasurementList&Site=292068/12",
+              "xml": "<xml></xml>"
+          }
+          """
               .trimIndent()
 
       // WHEN
@@ -255,7 +262,8 @@ class MessagesParsingTest {
               Instant.parse("2023-09-11T21:10:19.965935Z"),
               "292068/12",
               "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=MeasurementList&Site=292068/12",
-              "<xml></xml>")
+              "<xml></xml>",
+          )
     }
 
     @Test
@@ -263,18 +271,18 @@ class MessagesParsingTest {
       // GIVEN
       val json =
           """
-                    {
-                        "councilId": 9,
-                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-                        "type": "MEASUREMENT_DATA",
-                        "at": "2023-09-11T21:11:56.973761Z",
-                        "siteName": "292019/18",
-                        "measurementName": "Water Meter Volume",
-                        "yearMonth": "2022-03",
-                        "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=GetData&Site=292019/18&Measurement=Water%20Meter%20Volume&from=2022-03-01T00:00&to=2022-03-31T23:59:59",
-                        "xml": "<xml></xml>"
-                    }
-                        """
+          {
+              "councilId": 9,
+              "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+              "type": "MEASUREMENT_DATA",
+              "at": "2023-09-11T21:11:56.973761Z",
+              "siteName": "292019/18",
+              "measurementName": "Water Meter Volume",
+              "yearMonth": "2022-03",
+              "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=GetData&Site=292019/18&Measurement=Water%20Meter%20Volume&from=2022-03-01T00:00&to=2022-03-31T23:59:59",
+              "xml": "<xml></xml>"
+          }
+          """
               .trimIndent()
 
       // WHEN
@@ -290,7 +298,8 @@ class MessagesParsingTest {
               "Water Meter Volume",
               YearMonth.of(2022, 3),
               "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=GetData&Site=292019/18&Measurement=Water%20Meter%20Volume&from=2022-03-01T00:00&to=2022-03-31T23:59:59",
-              "<xml></xml>")
+              "<xml></xml>",
+          )
     }
   }
 
@@ -306,7 +315,8 @@ class MessagesParsingTest {
               "https://hilltop.gw.govt.nz/WaterUse.hts",
               Instant.parse("2023-09-11T21:10:17.594098Z"),
               "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=SiteList&Location=Yes",
-              "<xml></xml>")
+              "<xml></xml>",
+          )
 
       // WHEN
       val result = objectMapper.writeValueAsString(message)
@@ -314,15 +324,15 @@ class MessagesParsingTest {
       // THEN
       val json =
           """
-                    {
-                        "councilId": 9,
-                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-                        "type": "SITES_LIST",
-                        "at": "2023-09-11T21:10:17.594098Z",
-                        "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=SiteList&Location=Yes",
-                        "xml": "<xml></xml>"
-                    }
-                        """
+          {
+              "councilId": 9,
+              "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+              "type": "SITES_LIST",
+              "at": "2023-09-11T21:10:17.594098Z",
+              "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=SiteList&Location=Yes",
+              "xml": "<xml></xml>"
+          }
+          """
               .trimIndent()
 
       result shouldEqualJson json
@@ -338,23 +348,24 @@ class MessagesParsingTest {
               Instant.parse("2023-09-11T21:10:19.965935Z"),
               "292068/12",
               "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=MeasurementList&Site=292068/12",
-              "<xml></xml>")
+              "<xml></xml>",
+          )
       // WHEN
       val result = objectMapper.writeValueAsString(message)
 
       // THEN
       val json =
           """
-                    {
-                        "councilId": 9,
-                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-                        "type": "MEASUREMENTS_LIST",
-                        "at": "2023-09-11T21:10:19.965935Z",
-                        "siteName": "292068/12",
-                        "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=MeasurementList&Site=292068/12",
-                        "xml": "<xml></xml>"
-                    }
-                        """
+          {
+              "councilId": 9,
+              "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+              "type": "MEASUREMENTS_LIST",
+              "at": "2023-09-11T21:10:19.965935Z",
+              "siteName": "292068/12",
+              "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=MeasurementList&Site=292068/12",
+              "xml": "<xml></xml>"
+          }
+          """
               .trimIndent()
 
       result shouldEqualJson json
@@ -372,7 +383,8 @@ class MessagesParsingTest {
               "Water Meter Volume",
               YearMonth.of(2022, 3),
               "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=GetData&Site=292019/18&Measurement=Water%20Meter%20Volume&from=2022-03-01T00:00&to=2022-03-31T23:59:59",
-              "<xml></xml>")
+              "<xml></xml>",
+          )
 
       // WHEN
       val result = objectMapper.writeValueAsString(message)
@@ -380,18 +392,18 @@ class MessagesParsingTest {
       // THEN
       val json =
           """
-                    {
-                        "councilId": 9,
-                        "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
-                        "type": "MEASUREMENT_DATA",
-                        "at": "2023-09-11T21:11:56.973761Z",
-                        "siteName": "292019/18",
-                        "measurementName": "Water Meter Volume",
-                        "yearMonth": "2022-03",
-                        "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=GetData&Site=292019/18&Measurement=Water%20Meter%20Volume&from=2022-03-01T00:00&to=2022-03-31T23:59:59",
-                        "xml": "<xml></xml>"
-                    }
-                        """
+          {
+              "councilId": 9,
+              "hilltopBaseUrl": "https://hilltop.gw.govt.nz/WaterUse.hts",
+              "type": "MEASUREMENT_DATA",
+              "at": "2023-09-11T21:11:56.973761Z",
+              "siteName": "292019/18",
+              "measurementName": "Water Meter Volume",
+              "yearMonth": "2022-03",
+              "hilltopUrl": "https://hilltop.gw.govt.nz/WaterUse.hts?Service=Hilltop&Request=GetData&Site=292019/18&Measurement=Water%20Meter%20Volume&from=2022-03-01T00:00&to=2022-03-31T23:59:59",
+              "xml": "<xml></xml>"
+          }
+          """
               .trimIndent()
       result shouldEqualJson json
     }

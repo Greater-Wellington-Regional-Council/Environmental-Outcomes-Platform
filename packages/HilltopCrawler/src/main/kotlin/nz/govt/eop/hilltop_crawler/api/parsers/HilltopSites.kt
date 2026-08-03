@@ -8,11 +8,11 @@ data class HilltopSites(
     @JacksonXmlProperty(localName = "Projection") val projection: String?,
     @JacksonXmlProperty(localName = "Site")
     @JacksonXmlElementWrapper(useWrapping = false)
-    val sites: List<HilltopSite> = emptyList()
+    val sites: List<HilltopSite> = emptyList(),
 )
 
 data class HilltopSite(
     @JacksonXmlProperty(localName = "Name", isAttribute = true) val name: String,
     @JacksonXmlProperty(localName = "Easting") val easting: Int?,
-    @JacksonXmlProperty(localName = "Northing") val northing: Int?
+    @JacksonXmlProperty(localName = "Northing") val northing: Int?,
 )

@@ -25,11 +25,13 @@ class TaskMappersTests {
                 1,
                 1,
                 "http://some.url",
-                DB.HilltopSourceConfig(emptyList(), listOf("some ignored site"))),
+                DB.HilltopSourceConfig(emptyList(), listOf("some ignored site")),
+            ),
             URI("http://some.uri?foo=bar"),
             Instant.parse("2000-01-01T00:00:00Z"),
             "some content",
-            HilltopSites("some agency", "some projection", sites))
+            HilltopSites("some agency", "some projection", sites),
+        )
 
     @Test
     fun `should return empty ist of tasks when there are no sites for determine next tasks`() {
@@ -58,7 +60,8 @@ class TaskMappersTests {
                   1,
                   HilltopFetchTaskType.MEASUREMENTS_LIST,
                   "http://some.uri?Service=Hilltop&Request=MeasurementList&Site=Some%20Site",
-              ))
+              )
+          )
     }
 
     @Test
@@ -119,7 +122,10 @@ class TaskMappersTests {
                     "2000-01-01T00:00:00Z",
                     "2000-01-01T00:00:00Z",
                     "StdSeries",
-                    listOf(HilltopMeasurement("some measurement name", "some request as", 1, 1)))))
+                    listOf(HilltopMeasurement("some measurement name", "some request as", 1, 1)),
+                )
+            )
+        )
 
     private fun createRecordForTesting(dataSources: List<HilltopDatasource>) =
         MeasurementsListTaskMapper(
@@ -128,11 +134,15 @@ class TaskMappersTests {
                 1,
                 "http://some.url",
                 DB.HilltopSourceConfig(
-                    listOf("some datasource name", "another datasource name"), emptyList())),
+                    listOf("some datasource name", "another datasource name"),
+                    emptyList(),
+                ),
+            ),
             URI("http://some.uri?foo=bar"),
             Instant.parse("2000-01-01T00:00:00Z"),
             "some content",
-            HilltopMeasurements(dataSources))
+            HilltopMeasurements(dataSources),
+        )
 
     @Test
     fun `should return list of tasks mapped from measurements for determine next tasks`() {
@@ -146,8 +156,10 @@ class TaskMappersTests {
                       "2000-01-01T00:00:00Z",
                       "2000-01-01T00:00:00Z",
                       "StdSeries",
-                      listOf(
-                          HilltopMeasurement("some datasource name", "some datasource name", 1)))))
+                      listOf(HilltopMeasurement("some datasource name", "some datasource name", 1)),
+                  )
+              )
+          )
 
       // WHEN
       val result = underTest.buildNewTasksList()
@@ -159,7 +171,8 @@ class TaskMappersTests {
                   1,
                   HilltopFetchTaskType.MEASUREMENT_DATA,
                   "http://some.uri?Service=Hilltop&Request=GetData&Site=some%20site%20name&Measurement=some%20datasource%20name&from=2000-01-01T00:00&to=2000-01-31T23:59:59",
-              ))
+              )
+          )
     }
 
     @Test
@@ -174,8 +187,8 @@ class TaskMappersTests {
                       "2000-01-01T00:00:00Z",
                       "2000-01-01T00:00:00Z",
                       "StdSeries",
-                      listOf(
-                          HilltopMeasurement("some datasource name", "some datasource name", 1))),
+                      listOf(HilltopMeasurement("some datasource name", "some datasource name", 1)),
+                  ),
                   HilltopDatasource(
                       "another datasource name",
                       "some site name",
@@ -184,8 +197,14 @@ class TaskMappersTests {
                       "StdSeries",
                       listOf(
                           HilltopMeasurement(
-                              "another datasource name", "another datasource name", 1))),
-              ))
+                              "another datasource name",
+                              "another datasource name",
+                              1,
+                          )
+                      ),
+                  ),
+              )
+          )
 
       // WHEN
       val result = underTest.buildNewTasksList()
@@ -202,7 +221,8 @@ class TaskMappersTests {
                   1,
                   HilltopFetchTaskType.MEASUREMENT_DATA,
                   "http://some.uri?Service=Hilltop&Request=GetData&Site=some%20site%20name&Measurement=another%20datasource%20name&from=2000-01-01T00:00&to=2000-01-31T23:59:59",
-              ))
+              ),
+          )
     }
 
     @Test
@@ -217,9 +237,10 @@ class TaskMappersTests {
                       "2000-01-01T00:00:00Z",
                       "2000-06-01T00:00:00Z",
                       "StdSeries",
-                      listOf(
-                          HilltopMeasurement("some datasource name", "some datasource name", 1))),
-              ))
+                      listOf(HilltopMeasurement("some datasource name", "some datasource name", 1)),
+                  ),
+              )
+          )
 
       // WHEN
       val result = underTest.buildNewTasksList()
@@ -274,9 +295,10 @@ class TaskMappersTests {
                       "${currentDate.minusMonths(1)}T00:00:00",
                       "${currentDate}T01:00:00",
                       "StdSeries",
-                      listOf(
-                          HilltopMeasurement("some datasource name", "some datasource name", 1))),
-              ))
+                      listOf(HilltopMeasurement("some datasource name", "some datasource name", 1)),
+                  ),
+              )
+          )
 
       // WHEN
       val result = underTest.buildNewTasksList()
@@ -314,9 +336,10 @@ class TaskMappersTests {
                       "${currentDate}T00:00:00",
                       "${currentDate}T01:00:00",
                       "StdSeries",
-                      listOf(
-                          HilltopMeasurement("some datasource name", "some datasource name", 1))),
-              ))
+                      listOf(HilltopMeasurement("some datasource name", "some datasource name", 1)),
+                  ),
+              )
+          )
 
       // WHEN
       val result = underTest.buildNewTasksList()
@@ -346,8 +369,11 @@ class TaskMappersTests {
                       "2000-01-01T00:00:00Z",
                       "StdSeries",
                       listOf(
-                          HilltopMeasurement("some datasource name", "check me out like this", 1))),
-              ))
+                          HilltopMeasurement("some datasource name", "check me out like this", 1)
+                      ),
+                  ),
+              )
+          )
 
       // WHEN
       val result = underTest.buildNewTasksList()
@@ -377,8 +403,15 @@ class TaskMappersTests {
                       "StdSeries",
                       listOf(
                           HilltopMeasurement(
-                              "some datasource name", "check me out like this", 1, 1))),
-              ))
+                              "some datasource name",
+                              "check me out like this",
+                              1,
+                              1,
+                          )
+                      ),
+                  ),
+              )
+          )
 
       // WHEN
       val result = underTest.buildNewTasksList()
@@ -399,7 +432,10 @@ class TaskMappersTests {
                       "2000-01-01T00:00:00Z",
                       "2000-01-01T00:00:00Z",
                       "StdSeries",
-                      listOf(HilltopMeasurement("some name", "some request as", 1, 1)))))
+                      listOf(HilltopMeasurement("some name", "some request as", 1, 1)),
+                  )
+              )
+          )
 
       // WHEN
       val result = underTest.buildNewTasksList()
@@ -448,7 +484,7 @@ class TaskMappersTests {
 
     private fun createRecordForTesting(
         fetchedAtString: String,
-        lastValueAtString: String
+        lastValueAtString: String,
     ): MeasurementDataTaskMapper {
 
       val fetchedAt = Instant.parse(fetchedAtString)
@@ -460,7 +496,11 @@ class TaskMappersTests {
 
       return MeasurementDataTaskMapper(
           DB.HilltopSourcesRow(
-              1, 1, "http://some.url", DB.HilltopSourceConfig(emptyList(), emptyList())),
+              1,
+              1,
+              "http://some.url",
+              DB.HilltopSourceConfig(emptyList(), emptyList()),
+          ),
           URI("http://some.uri?foo=bar"),
           fetchedAt,
           "some content",
@@ -472,7 +512,11 @@ class TaskMappersTests {
                       "some name",
                       listOf(
                           Value(timestampInPlus12Time, "1.0", null),
-                      )))))
+                      ),
+                  ),
+              )
+          ),
+      )
     }
 
     @Test
@@ -495,11 +539,16 @@ class TaskMappersTests {
       val underTest =
           MeasurementDataTaskMapper(
               DB.HilltopSourcesRow(
-                  1, 1, "http://some.url", DB.HilltopSourceConfig(emptyList(), emptyList())),
+                  1,
+                  1,
+                  "http://some.url",
+                  DB.HilltopSourceConfig(emptyList(), emptyList()),
+              ),
               URI("http://some.uri"),
               fetchedAt,
               "some content",
-              HilltopMeasurementValues(null))
+              HilltopMeasurementValues(null),
+          )
 
       // WHEN
       val result = underTest.buildKafkaMessage()
@@ -564,11 +613,16 @@ class TaskMappersTests {
       val underTest =
           MeasurementDataTaskMapper(
               DB.HilltopSourcesRow(
-                  1, 1, "http://some.url", DB.HilltopSourceConfig(emptyList(), emptyList())),
+                  1,
+                  1,
+                  "http://some.url",
+                  DB.HilltopSourceConfig(emptyList(), emptyList()),
+              ),
               URI("http://some.uri"),
               fetchedAt,
               "some content",
-              HilltopMeasurementValues(null))
+              HilltopMeasurementValues(null),
+          )
 
       // WHEN
       val result = underTest.determineNextFetchAt()
@@ -584,7 +638,7 @@ class TaskMappersTests {
 
     private fun createRecordForTesting(
         fetchedAtString: String,
-        lastValueAtString: String
+        lastValueAtString: String,
     ): MeasurementDataLatestTaskMapper {
 
       val fetchedAt = Instant.parse(fetchedAtString)
@@ -596,7 +650,11 @@ class TaskMappersTests {
 
       return MeasurementDataLatestTaskMapper(
           DB.HilltopSourcesRow(
-              1, 1, "http://some.url", DB.HilltopSourceConfig(emptyList(), emptyList())),
+              1,
+              1,
+              "http://some.url",
+              DB.HilltopSourceConfig(emptyList(), emptyList()),
+          ),
           URI("http://some.uri?foo=bar"),
           fetchedAt,
           "some content",
@@ -608,7 +666,11 @@ class TaskMappersTests {
                       "some name",
                       listOf(
                           Value(timestampInPlus12Time, "1.0", null),
-                      )))))
+                      ),
+                  ),
+              )
+          ),
+      )
     }
 
     @Test
@@ -631,11 +693,16 @@ class TaskMappersTests {
       val underTest =
           MeasurementDataTaskMapper(
               DB.HilltopSourcesRow(
-                  1, 1, "http://some.url", DB.HilltopSourceConfig(emptyList(), emptyList())),
+                  1,
+                  1,
+                  "http://some.url",
+                  DB.HilltopSourceConfig(emptyList(), emptyList()),
+              ),
               URI("http://some.uri"),
               fetchedAt,
               "some content",
-              HilltopMeasurementValues(null))
+              HilltopMeasurementValues(null),
+          )
 
       // WHEN
       val result = underTest.buildKafkaMessage()
@@ -739,11 +806,16 @@ class TaskMappersTests {
       val underTest =
           MeasurementDataTaskMapper(
               DB.HilltopSourcesRow(
-                  1, 1, "http://some.url", DB.HilltopSourceConfig(emptyList(), emptyList())),
+                  1,
+                  1,
+                  "http://some.url",
+                  DB.HilltopSourceConfig(emptyList(), emptyList()),
+              ),
               URI("http://some.uri"),
               fetchedAt,
               "some content",
-              HilltopMeasurementValues(null))
+              HilltopMeasurementValues(null),
+          )
 
       // WHEN
       val result = underTest.determineNextFetchAt()
