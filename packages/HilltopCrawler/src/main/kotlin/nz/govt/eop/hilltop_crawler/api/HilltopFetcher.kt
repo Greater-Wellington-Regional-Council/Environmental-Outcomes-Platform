@@ -23,7 +23,8 @@ class HilltopFetcher(val restTemplate: RestTemplate) {
 
   private final val logger = KotlinLogging.logger {}
 
-  private final val bucketBandwidthLimit: Bandwidth = Bandwidth.simple(20, Duration.ofSeconds(1))
+  private final val bucketBandwidthLimit: Bandwidth =
+      Bandwidth.builder().capacity(20).refillGreedy(20, Duration.ofSeconds(1)).build()
   private final val bucket: BlockingBucket =
       Bucket.builder().addLimit(bucketBandwidthLimit).build().asBlocking()
 
