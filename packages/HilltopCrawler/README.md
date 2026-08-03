@@ -27,6 +27,17 @@ For a quick local Java 21 compile check without starting the Batect build contai
 ./gradlew compileKotlin compileTestKotlin
 ```
 
+### Dependency update visibility
+
+To review available plugin and dependency updates without applying them, run:
+
+```bash
+./gradlew dependencyUpdates
+```
+
+Use the report to review future upgrade candidates such as `kotlin-logging-jvm`, Kotest, Mockito, Bucket4j,
+`logstash-logback-encoder`, and explicit Flyway versions. Keep dependency upgrades in separate focused PRs.
+
 The app intends to keep all versions of data pulled from the Hilltop. Allowing downstream systems to keep track of when
 data has been updated in Hilltop. Noting that because Hilltop does not expose when changes were made we can only capture
 when the crawler first saw data change. This is also intended to allow us to update some parts of the system without

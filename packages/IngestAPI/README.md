@@ -33,6 +33,17 @@ For a quick local Java 21 compile check without starting the Batect build contai
 ./gradlew compileKotlin compileTestKotlin
 ```
 
+### Dependency update visibility
+
+To review available plugin and dependency updates without applying them, run:
+
+```bash
+./gradlew dependencyUpdates
+```
+
+Use the report to review future upgrade candidates such as `kotlin-logging-jvm`, Kotest, `logstash-logback-encoder`,
+and Spring/Kotlin plugin updates. Keep dependency upgrades in separate focused PRs.
+
 For day to day development use your IDE of choice. IntelliJ's community edition is a good full-featured IDE or VSCode
 with plugins for Kotlin and Gradle also works (though support for running inline is limited.)
 

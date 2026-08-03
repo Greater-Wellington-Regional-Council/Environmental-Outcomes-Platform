@@ -4,6 +4,7 @@ plugins {
   id("org.springframework.boot") version "3.5.16"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "8.8.0"
+  id("com.github.ben-manes.versions") version "0.52.0"
   id("org.flywaydb.flyway") version "11.20.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.4.10"
@@ -64,6 +65,20 @@ kotlin {
 tasks.withType<Test> {
   useJUnitPlatform()
   this.testLogging { this.showStandardStreams = true }
+}
+
+fun isNonStable(version: String): Boolean {
+  val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+
+  val stablePattern = Regex("^[0-9,.v-]+(-r)?$")
+
+  return !stableKeyword && !stablePattern.matches(version)
+}
+
+tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>(
+    "dependencyUpdates"
+) {
+  rejectVersionIf { isNonStable(candidate.version) && !isNonStable(currentVersion) }
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {

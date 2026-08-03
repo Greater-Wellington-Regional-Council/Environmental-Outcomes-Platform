@@ -30,6 +30,17 @@ check without a running database, run:
 ./gradlew compileKotlin compileTestKotlin -x generateJooq -x flywayMigrate
 ```
 
+### Dependency update visibility
+
+To review available plugin and dependency updates without applying them, run:
+
+```bash
+./gradlew dependencyUpdates
+```
+
+Use the report to review future upgrade candidates such as `kotlin-logging-jvm`, Kotest, Mockito/MockK,
+`logstash-logback-encoder`, and explicit Flyway versions. Keep dependency upgrades in separate focused PRs.
+
 For day to day development use your IDE of choice. IntelliJ's community edition is a good full-featured IDE or VSCode
 with plugins for Kotlin and Gradle also works (though support for running inline is limited.)
 
