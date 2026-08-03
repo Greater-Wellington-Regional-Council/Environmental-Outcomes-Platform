@@ -27,7 +27,7 @@ data class WaterAllocation(
 
 data class WaterAllocationsRequestBody(
     val ingestId: String,
-    val allocations: List<WaterAllocation>
+    val allocations: List<WaterAllocation>,
 )
 
 data class IngestResponse(val ingestId: String, val receivedAt: String, val recordsIngested: Int)
@@ -40,7 +40,7 @@ class Controller(private val producer: Producer) {
   @PostMapping("/water-allocations", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun waterAllocations(
       @AuthenticationPrincipal apiUser: UserDetails,
-      @RequestBody requestBody: WaterAllocationsRequestBody
+      @RequestBody requestBody: WaterAllocationsRequestBody,
   ): IngestResponse {
 
     val receivedAt = Instant.now()

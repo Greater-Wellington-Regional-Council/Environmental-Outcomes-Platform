@@ -25,7 +25,7 @@ fun buildPastMeasurementsUrl(
     hilltopUrl: String,
     siteId: String,
     measurementName: String,
-    month: YearMonth
+    month: YearMonth,
 ): String =
     DefaultUriBuilderFactory()
         .uriString(hilltopUrl)
