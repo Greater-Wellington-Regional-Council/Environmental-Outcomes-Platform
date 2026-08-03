@@ -15,8 +15,8 @@ class RestTemplateConfig {
   ): RestTemplateBuilder {
     val builder =
         RestTemplateBuilder()
-            .setConnectTimeout(Duration.ofSeconds(5))
-            .setReadTimeout(Duration.ofSeconds(30))
+            .connectTimeout(Duration.ofSeconds(5))
+            .readTimeout(Duration.ofSeconds(30))
     restTemplateBuilderConfigurer.configure(builder)
     return builder
   }
