@@ -22,7 +22,7 @@ dependencies {
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   runtimeOnly("org.springframework.boot:spring-boot-devtools")
-  runtimeOnly("net.logstash.logback:logstash-logback-encoder:8.1")
+  runtimeOnly("net.logstash.logback:logstash-logback-encoder:9.0")
 
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-security")
