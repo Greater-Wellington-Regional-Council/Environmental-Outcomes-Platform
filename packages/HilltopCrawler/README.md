@@ -6,6 +6,27 @@ This app extracts observation data from Hilltop servers and publishes them as to
 applications to consume. Which Hilltop servers and which types to extract are configured in a database table which can
 be added to while the system is running.
 
+## Getting Started
+
+### Prerequisites
+
+* Docker
+* A Java 21 or later JDK for local Gradle commands, or use Batect to run builds in the shared Java 21 container.
+
+### Build validation
+
+For day-to-day validation with local support services, run:
+
+```bash
+./batect check
+```
+
+For a quick local Java 21 compile check without starting the Batect build container, run:
+
+```bash
+./gradlew compileKotlin compileTestKotlin
+```
+
 The app intends to keep all versions of data pulled from the Hilltop. Allowing downstream systems to keep track of when
 data has been updated in Hilltop. Noting that because Hilltop does not expose when changes were made we can only capture
 when the crawler first saw data change. This is also intended to allow us to update some parts of the system without
