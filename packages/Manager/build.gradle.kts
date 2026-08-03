@@ -8,7 +8,7 @@ plugins {
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "8.8.0"
   id("com.github.ben-manes.versions") version "0.52.0"
-  id("org.flywaydb.flyway") version "11.20.0"
+  id("org.flywaydb.flyway") version "13.1.0"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.4.10"
@@ -18,7 +18,7 @@ plugins {
 buildscript {
   repositories { mavenCentral() }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.20.0")
+    classpath("org.flywaydb:flyway-database-postgresql:13.1.0")
     classpath("org.springframework:spring-jdbc:6.2.8")
     classpath("org.postgresql:postgresql:42.6.2")
   }
@@ -60,8 +60,8 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:11.20.0")
-  implementation("org.flywaydb:flyway-database-postgresql:11.20.0")
+  implementation("org.flywaydb:flyway-core:13.1.0")
+  implementation("org.flywaydb:flyway-database-postgresql:13.1.0")
   implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:7.7.0")
