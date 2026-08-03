@@ -75,9 +75,9 @@ dependencies {
   implementation("com.github.ben-manes.caffeine:caffeine:3.2.4")
   implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.9.4")
   implementation("org.hibernate.orm:hibernate-spatial")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.11.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.11.0")
   implementation("commons-codec:commons-codec:1.22.1")
 
   testImplementation("org.jetbrains.kotlin:kotlin-test")
