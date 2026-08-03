@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
@@ -27,7 +28,7 @@ group = "nz.govt.eop"
 
 version = "0.0.1-SNAPSHOT"
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 
 repositories { mavenCentral() }
 
@@ -96,7 +97,12 @@ dependencies {
 
 tasks.getByName<Jar>("jar") { enabled = false }
 
-tasks.withType<KotlinCompile> { compilerOptions { freeCompilerArgs = listOf("-Xjsr305=strict") } }
+tasks.withType<KotlinCompile> {
+  compilerOptions {
+    freeCompilerArgs = listOf("-Xjsr305=strict")
+    jvmTarget = JvmTarget.JVM_21
+  }
+}
 
 tasks.withType<Test> {
   useJUnitPlatform()

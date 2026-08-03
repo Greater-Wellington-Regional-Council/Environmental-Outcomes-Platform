@@ -9,7 +9,7 @@ It's made up of a simple Spring Boot application written in Kotlin, and packaged
 ### Prerequisites
 
 * Docker
-* A Java 17 or later JDK
+* A Java 21 or later JDK
 
 ### Building
 
