@@ -6,8 +6,8 @@ import org.springframework.jdbc.datasource.init.ScriptUtils.*
 plugins {
   id("org.springframework.boot") version "3.5.16"
   id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "8.8.0"
-  id("com.github.ben-manes.versions") version "0.52.0"
+  id("com.diffplug.spotless") version "8.9.0"
+  id("io.github.ben-manes.versions") version "0.59.0"
   id("org.flywaydb.flyway") version "11.20.0"
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
@@ -88,10 +88,10 @@ dependencies {
   testImplementation("io.kotest:kotest-framework-engine:5.9.1")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
-  testImplementation("io.mockk:mockk:1.14.7")
+  testImplementation("io.mockk:mockk:1.14.11")
 
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:6.0.0")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:5.3.2")
 }
 

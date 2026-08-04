@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
   id("org.springframework.boot") version "3.5.16"
   id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "8.8.0"
-  id("com.github.ben-manes.versions") version "0.52.0"
+  id("com.diffplug.spotless") version "8.9.0"
+  id("io.github.ben-manes.versions") version "0.59.0"
   id("org.flywaydb.flyway") version "11.20.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.4.10"
@@ -47,9 +47,9 @@ dependencies {
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
-  testImplementation("io.kotest:kotest-assertions-core:5.9.1")
-  testImplementation("io.kotest:kotest-assertions-json:5.9.1")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+  testImplementation("io.kotest:kotest-assertions-core:6.2.3")
+  testImplementation("io.kotest:kotest-assertions-json:6.2.3")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
 }
 
 // Don't repackage build in a "-plain" Jar

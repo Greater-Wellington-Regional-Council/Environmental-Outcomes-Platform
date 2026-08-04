@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
   id("org.springframework.boot") version "3.5.16"
   id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "8.8.0"
-  id("com.github.ben-manes.versions") version "0.52.0"
+  id("com.diffplug.spotless") version "8.9.0"
+  id("io.github.ben-manes.versions") version "0.59.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.4.10"
   kotlin("plugin.spring") version "2.4.10"
@@ -23,7 +23,7 @@ dependencies {
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   runtimeOnly("org.springframework.boot:spring-boot-devtools")
-  runtimeOnly("net.logstash.logback:logstash-logback-encoder:8.1")
+  runtimeOnly("net.logstash.logback:logstash-logback-encoder:9.0")
 
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-security")
@@ -38,7 +38,7 @@ dependencies {
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.springframework.security:spring-security-test")
-  testImplementation("io.kotest:kotest-assertions-core:6.0.7")
+  testImplementation("io.kotest:kotest-assertions-core:6.2.3")
 
   kapt("org.springframework.boot:spring-boot-configuration-processor")
 }
