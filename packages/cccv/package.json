@@ -42,7 +42,7 @@
     "react-dom": "^18.3.1",
     "react-map-gl": "^7.1.7",
     "react-pdf-html": "^2.1.2",
-    "react-pdf-tailwind": "^2.3.0",
+    "react-pdf-tailwind": "^3.0.0",
     "react-query": "^3.39.3",
     "react-refresh": "^0.14.2",
     "react-router-dom": "^6.28.0",
