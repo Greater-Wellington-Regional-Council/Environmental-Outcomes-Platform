@@ -1,8 +1,8 @@
 package nz.govt.eop.hilltop_crawler.fetcher
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.annotation.PostConstruct
 import java.time.Duration
-import mu.KotlinLogging
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Component
 

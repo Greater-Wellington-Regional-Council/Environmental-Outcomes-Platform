@@ -15,17 +15,17 @@ It is based on the current `build.gradle.kts` files and `./gradlew dependencyUpd
 Scope: Kotest, Mockito Kotlin, and MockK only.
 
 - `Manager`
-  - `io.kotest:kotest-runner-junit5` `5.9.1` → `6.2.3`
-  - `io.kotest:kotest-assertions-core` `5.9.1` → `6.2.3`
-  - `io.kotest:kotest-framework-engine` `5.9.1` → `6.2.3`
-  - `io.mockk:mockk` `1.14.7` → `1.14.11`
-  - `org.mockito.kotlin:mockito-kotlin` `6.0.0` → `6.3.0`
+  - `io.kotest:kotest-runner-junit5` `5.9.1` → `6.2.3` # keeping on 5
+  - `io.kotest:kotest-assertions-core` `5.9.1` → `6.2.3` # keeping on 5
+  - `io.kotest:kotest-framework-engine` `5.9.1` → `6.2.3` # keeping on 5
+  - `io.mockk:mockk` `1.14.7` → `1.14.11` # done
+  - `org.mockito.kotlin:mockito-kotlin` `6.0.0` → `6.3.0` # done
 - `IngestAPI`
-  - `io.kotest:kotest-assertions-core` `6.0.7` → `6.2.3`
+  - `io.kotest:kotest-assertions-core` `6.0.7` → `6.2.3` # done
 - `HilltopCrawler`
-  - `io.kotest:kotest-assertions-core` `5.9.1` → `6.2.3`
-  - `io.kotest:kotest-assertions-json` `5.9.1` → `6.2.3`
-  - `org.mockito.kotlin:mockito-kotlin` `5.4.0` → `6.3.0`
+  - `io.kotest:kotest-assertions-core` `5.9.1` → `6.2.3` # done
+  - `io.kotest:kotest-assertions-json` `5.9.1` → `6.2.3` # done
+  - `org.mockito.kotlin:mockito-kotlin` `5.4.0` → `6.3.0` # done
 
 Recommended validation:
 
@@ -43,8 +43,8 @@ Scope: build tooling only; no runtime dependency changes.
 
 Candidates shown across the three packages:
 
-- `com.diffplug.spotless` `8.8.0` → `8.9.0`
-- `com.github.ben-manes.versions` `0.52.0` → `0.59.0`
+- `com.diffplug.spotless` `8.8.0` → `8.9.0` # done
+- `com.github.ben-manes.versions` `0.52.0` → `0.59.0` # done
 
 Why this grouping:
 
@@ -72,7 +72,7 @@ Current state:
 
 Recommended change:
 
-- Update `IngestAPI` to `net.logstash.logback:logstash-logback-encoder:9.0` so all three packages align.
+- Update `IngestAPI` to `net.logstash.logback:logstash-logback-encoder:9.0` so all three packages align. # done
 
 Why this grouping:
 

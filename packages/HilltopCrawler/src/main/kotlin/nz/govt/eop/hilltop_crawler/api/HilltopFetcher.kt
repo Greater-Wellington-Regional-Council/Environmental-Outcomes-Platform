@@ -3,9 +3,9 @@ package nz.govt.eop.hilltop_crawler.api
 import io.github.bucket4j.Bandwidth
 import io.github.bucket4j.BlockingBucket
 import io.github.bucket4j.Bucket
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.net.URI
 import java.time.Duration
-import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate

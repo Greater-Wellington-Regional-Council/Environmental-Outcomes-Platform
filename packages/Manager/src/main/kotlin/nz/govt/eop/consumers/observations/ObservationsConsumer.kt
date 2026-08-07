@@ -1,6 +1,6 @@
 package nz.govt.eop.consumers.observations
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
 import org.springframework.beans.factory.annotation.Autowired

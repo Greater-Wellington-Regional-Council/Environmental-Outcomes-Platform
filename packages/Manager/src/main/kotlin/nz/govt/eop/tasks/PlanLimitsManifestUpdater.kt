@@ -1,7 +1,7 @@
 package nz.govt.eop.tasks
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.util.concurrent.TimeUnit
-import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import nz.govt.eop.plan_limits.Manifest
 import org.jooq.DSLContext

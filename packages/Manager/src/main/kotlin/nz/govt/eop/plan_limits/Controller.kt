@@ -1,9 +1,9 @@
 package nz.govt.eop.plan_limits
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit.YEARS
 import java.util.concurrent.TimeUnit
-import mu.KotlinLogging
 import org.jooq.*
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
@@ -93,7 +93,7 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
         ResponseEntity.ok().cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS)).body(result)
       }
     } catch (e: Exception) {
-      logger.error("Error //fetching surface water PNRP data", e)
+      logger.error(e) { "Error //fetching surface water PNRP data" }
       // Return a generic Internal Server Error
       ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(
@@ -124,7 +124,7 @@ class Controller(val context: DSLContext, val queries: Queries, val manifest: Ma
         ResponseEntity.ok().cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS)).body(result)
       }
     } catch (e: Exception) {
-      logger.error("Error fetching ground water PNRP data", e)
+      logger.error(e) { "Error fetching ground water PNRP data" }
       // Return a generic Internal Server Error
       ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(
