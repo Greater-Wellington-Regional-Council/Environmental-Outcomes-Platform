@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  id("org.springframework.boot") version "3.5.16"
+  id("org.springframework.boot") version "4.1.0"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "8.9.0"
   id("io.github.ben-manes.versions") version "0.59.0"
