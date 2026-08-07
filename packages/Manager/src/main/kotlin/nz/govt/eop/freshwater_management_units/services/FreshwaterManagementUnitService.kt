@@ -1,7 +1,7 @@
 package nz.govt.eop.freshwater_management_units.services
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.net.URI
-import mu.KotlinLogging
 import nz.govt.eop.FreshwaterManagementUnitsDataSources
 import nz.govt.eop.freshwater_management_units.mappers.FreshwaterManagementUnitMapper
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
@@ -33,7 +33,7 @@ constructor(
 
   @Transactional
   fun loadFromArcGIS() {
-    logger.info("Loading Freshwater Management Units from ArcGIS sources")
+    logger.info { "Loading Freshwater Management Units from ArcGIS sources" }
 
     freshwaterManagementUnitsDataSources.sources.forEach { source ->
       source.urls.forEach { fetchAndSave(it, source.name) }

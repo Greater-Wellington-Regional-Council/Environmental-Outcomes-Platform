@@ -1,9 +1,9 @@
 package nz.govt.eop.consumers
 
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.oshai.kotlinlogging.withLoggingContext
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import mu.KotlinLogging
-import mu.withLoggingContext
 import nz.govt.eop.messages.WaterAllocationMessage
 import nz.govt.eop.si.jooq.tables.WaterAllocations.Companion.WATER_ALLOCATIONS
 import org.jooq.*

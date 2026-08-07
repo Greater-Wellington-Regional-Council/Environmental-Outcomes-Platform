@@ -62,7 +62,7 @@ dependencies {
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
   implementation("org.flywaydb:flyway-core:11.20.0")
   implementation("org.flywaydb:flyway-database-postgresql:11.20.0")
-  implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+  implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:7.7.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:7.7.0")

@@ -1,6 +1,6 @@
 package nz.govt.eop.tasks
 
-import mu.KLogger
+import io.github.oshai.kotlinlogging.KLogger
 
 fun startTaskMessage(name: String) = "Start Task ${name}"
 

@@ -2,11 +2,11 @@ package nz.govt.eop.hilltop_crawler.fetcher
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonMappingException
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.Duration
 import java.time.Instant
 import java.time.temporal.TemporalAmount
 import kotlin.random.Random
-import mu.KotlinLogging
 import nz.govt.eop.hilltop_crawler.MAX_RESPONSE_SIZE
 import nz.govt.eop.hilltop_crawler.api.HilltopFetcher
 import nz.govt.eop.hilltop_crawler.api.parsers.HilltopXmlParsers

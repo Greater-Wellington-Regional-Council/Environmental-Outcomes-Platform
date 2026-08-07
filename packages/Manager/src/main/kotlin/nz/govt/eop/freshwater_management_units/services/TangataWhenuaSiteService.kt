@@ -1,8 +1,8 @@
 package nz.govt.eop.freshwater_management_units.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.net.URI
-import mu.KotlinLogging
 import nz.govt.eop.TangataWhenuaSitesDataSources
 import nz.govt.eop.freshwater_management_units.models.FreshwaterManagementUnit
 import nz.govt.eop.freshwater_management_units.models.TangataWhenuaSite
@@ -30,9 +30,7 @@ class TangataWhenuaSiteService(
   @Transactional
   fun loadFromArcGIS() {
     deleteAll()
-    logger.info(
-        "Loading from ArcGIS URL",
-    )
+    logger.info { "Loading from ArcGIS URL" }
 
     tangataWhenuaSitesDataSources.sources.forEach { source ->
       source.urls.forEach { fetchAndSave(it, source.name) }
