@@ -3,25 +3,25 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
+buildscript {
+  repositories { mavenCentral() }
+  dependencies {
+    classpath(libs.flyway.database.postgresql.get())
+    classpath("org.springframework:spring-jdbc:6.2.8")
+    classpath("org.postgresql:postgresql:42.6.2")
+  }
+}
+
 plugins {
   id("org.springframework.boot") version "3.5.16"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "8.9.0"
   id("io.github.ben-manes.versions") version "0.59.0"
-  id("org.flywaydb.flyway") version "11.20.0"
+  alias(libs.plugins.flyway)
   id("nu.studer.jooq") version "9.0"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.4.10"
   kotlin("plugin.spring") version "2.4.10"
-}
-
-buildscript {
-  repositories { mavenCentral() }
-  dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.20.0")
-    classpath("org.springframework:spring-jdbc:6.2.8")
-    classpath("org.postgresql:postgresql:42.6.2")
-  }
 }
 
 group = "nz.govt.eop"
@@ -60,8 +60,8 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:11.20.0")
-  implementation("org.flywaydb:flyway-database-postgresql:11.20.0")
+  implementation(libs.flyway.core)
+  implementation(libs.flyway.database.postgresql)
   implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
   implementation("net.javacrumbs.shedlock:shedlock-spring:7.7.0")
