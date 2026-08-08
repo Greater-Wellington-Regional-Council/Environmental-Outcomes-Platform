@@ -8,7 +8,7 @@ buildscript {
   dependencies {
     classpath(libs.flyway.database.postgresql.get())
     classpath("org.springframework:spring-jdbc:6.2.8")
-    classpath("org.postgresql:postgresql:42.6.2")
+    classpath(libs.postgresql.get())
   }
 }
 
@@ -18,7 +18,7 @@ plugins {
   id("com.diffplug.spotless") version "8.9.0"
   id("io.github.ben-manes.versions") version "0.59.0"
   alias(libs.plugins.flyway)
-  id("nu.studer.jooq") version "9.0"
+  id("nu.studer.jooq") version "10.2.1"
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.4.10"
   kotlin("plugin.spring") version "2.4.10"
@@ -32,18 +32,18 @@ java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 
 repositories { mavenCentral() }
 
-val jooqVersion = "3.19.35"
+val jooqVersion = "3.21.7"
 
 jooq.version.set(jooqVersion)
 
 ext["jooq.version"] = jooqVersion
 
 dependencies {
-  jooqGenerator("org.postgresql:postgresql")
+  jooqGenerator(libs.postgresql)
   // @see https://github.com/etiennestuder/gradle-jooq-plugin/issues/209#issuecomment-1056578392
   jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 
-  runtimeOnly("org.postgresql:postgresql")
+  runtimeOnly(libs.postgresql)
   runtimeOnly("net.logstash.logback:logstash-logback-encoder:9.0")
 
   implementation("org.springframework.boot:spring-boot-starter-web")
