@@ -1,154 +1,45 @@
 # Package upgrade plan for Manager, IngestAPI, and HilltopCrawler
 
-This plan groups the next sensible package-update PRs for the Kotlin/Spring packages:
+This plan lists only package-upgrade work that is not yet complete for the Kotlin/Spring packages:
 
 - `packages/Manager`
 - `packages/IngestAPI`
 - `packages/HilltopCrawler`
 
-It is based on the current `build.gradle.kts` files and `./gradlew dependencyUpdates` output from each package.
+## Remaining recommended PRs
 
-## Current in-flight PR
+### PR 1 — Manager Kotest major-version decision
 
-### PR 1 — Test dependency refresh
+Scope: `Manager` Kotest dependencies only.
 
-Scope: Kotest, Mockito Kotlin, and MockK only.
+Status: blocked pending a `kotest-extensions-spring` release newer than `1.3.0` that supports the target Kotest major version.
 
-- `Manager`
-  - `io.kotest:kotest-runner-junit5` `5.9.1` → `6.2.3` # keeping on 5
-  - `io.kotest:kotest-assertions-core` `5.9.1` → `6.2.3` # keeping on 5
-  - `io.kotest:kotest-framework-engine` `5.9.1` → `6.2.3` # keeping on 5
-  - `io.mockk:mockk` `1.14.7` → `1.14.11` # done
-  - `org.mockito.kotlin:mockito-kotlin` `6.0.0` → `6.3.0` # done
-- `IngestAPI`
-  - `io.kotest:kotest-assertions-core` `6.0.7` → `6.2.3` # done
-- `HilltopCrawler`
-  - `io.kotest:kotest-assertions-core` `5.9.1` → `6.2.3` # done
-  - `io.kotest:kotest-assertions-json` `5.9.1` → `6.2.3` # done
-  - `org.mockito.kotlin:mockito-kotlin` `5.4.0` → `6.3.0` # done
+Remaining candidates:
+
+- `io.kotest:kotest-runner-junit5` `5.9.1` → `6.2.3`
+- `io.kotest:kotest-assertions-core` `5.9.1` → `6.2.3`
+- `io.kotest:kotest-framework-engine` `5.9.1` → `6.2.3`
+
+Current note:
+
+- These were intentionally kept on Kotest 5 during the earlier test dependency refresh.
+- `Manager` also depends on `io.kotest.extensions:kotest-extensions-spring:1.3.0`.
+- Do not move `Manager` to Kotest 6 until the Spring extension has a compatible release; mixing incompatible Kotest core/runner artifacts with the Spring extension can break test discovery or Spring test integration.
+
+Recommended approach:
+
+- Keep `Manager` on Kotest 5 while `kotest-extensions-spring` remains at `1.3.0`.
+- Monitor `kotest-extensions-spring` for a newer compatible release.
+- Once available, update the Kotest runner/assertions/framework artifacts and `kotest-extensions-spring` together.
+- Review Kotest 6 migration requirements for the existing `Manager` test suite before making the major-version move.
 
 Recommended validation:
 
 ```bash
 cd packages/Manager && ./gradlew test --no-daemon
-cd ../IngestAPI && ./gradlew test --no-daemon
-cd ../HilltopCrawler && ./gradlew test --no-daemon
 ```
 
-## Recommended follow-up PRs
-
-### PR 2 — Lightweight Gradle tooling updates
-
-Scope: build tooling only; no runtime dependency changes.
-
-Candidates shown across the three packages:
-
-- `com.diffplug.spotless` `8.8.0` → `8.9.0` # done
-- `com.github.ben-manes.versions` `0.52.0` → `0.59.0` # done
-
-Why this grouping:
-
-- These are low-risk build-time updates.
-- They are common to all three packages.
-- They improve formatting/dependency-update maintenance without changing application runtime behaviour.
-
-Recommended validation:
-
-```bash
-for pkg in Manager IngestAPI HilltopCrawler; do
-  (cd "packages/$pkg" && ./gradlew spotlessCheck dependencyUpdates --no-daemon)
-done
-```
-
-### PR 3 — `logstash-logback-encoder` alignment
-
-Scope: logging encoder only.
-
-Current state:
-
-- `Manager`: `9.0`
-- `IngestAPI`: `8.1` → candidate `9.0`
-- `HilltopCrawler`: `9.0`
-
-Recommended change:
-
-- Update `IngestAPI` to `net.logstash.logback:logstash-logback-encoder:9.0` so all three packages align. # done
-
-Why this grouping:
-
-- Small, focused runtime dependency update.
-- Keeps logging format risk isolated from broader Spring/Kafka updates.
-
-Recommended validation:
-
-```bash
-cd packages/IngestAPI && ./gradlew test --no-daemon
-```
-
-Also smoke-test application startup if logging configuration is environment-sensitive.
-
-### PR 4 — Kotlin logging migration - DONE
-
-Scope: `kotlin-logging-jvm` only.
-
-Current state across the three packages:
-
-- `io.github.microutils:kotlin-logging-jvm:3.0.5`
-
-Recommended change:
-
-- Migrate to the maintained `io.github.oshai:kotlin-logging-jvm` artifact line.
-- Use the same target version in all three packages.
-
-Why this grouping:
-
-- This is likely a small source-level migration, not just a version bump.
-- Imports may need to change from the old `mu.KotlinLogging` style depending on current source usage.
-- Keeping this separate makes any logging-source changes easy to review.
-
-Recommended validation:
-
-```bash
-for pkg in Manager IngestAPI HilltopCrawler; do
-  (cd "packages/$pkg" && ./gradlew compileKotlin test --no-daemon)
-done
-```
-
-### PR 5 — Flyway version rationalisation - DONE
-
-Scope: Flyway declarations and version management in `Manager` and `HilltopCrawler`.
-
-Current state:
-
-- `Manager` and `HilltopCrawler` both declare Flyway in multiple places:
-  - Gradle plugin: `org.flywaydb.flyway` `11.20.0`
-  - buildscript classpath: `org.flywaydb:flyway-database-postgresql` `11.20.0`
-  - runtime dependencies: `org.flywaydb:flyway-core` / `org.flywaydb:flyway-database-postgresql` `11.20.0`
-- Candidate shown by dependency reports: `13.1.0`
-
-Recommended approach:
-
-1. First PR: rationalise version management without changing the Flyway version.
-   - Introduce a single `val flywayVersion = "11.20.0"` in each package.
-   - Use it for plugin/classpath/runtime declarations where Gradle Kotlin DSL allows.
-   - Confirm whether Gradle Flyway tasks are still required or Spring Boot runtime Flyway is sufficient.
-2. Later PR: update Flyway `11.20.0` → `13.1.0` if still appropriate.
-
-Why this grouping:
-
-- Flyway affects database migration behaviour and should be isolated.
-- Reducing duplicate version declarations first lowers risk before a major version update.
-
-Recommended validation:
-
-```bash
-cd packages/Manager && ./gradlew flywayInfo test --no-daemon
-cd ../HilltopCrawler && ./gradlew flywayInfo test --no-daemon
-```
-
-If `flywayInfo` requires local database services, validate via the package `batect check` path instead.
-
-### PR 6 — Spring Boot 4 readiness review, not upgrade
+### PR 2 — Spring Boot 4 readiness review, not upgrade
 
 Scope: assessment only, with any compatibility fixes split out before upgrading.
 
@@ -169,22 +60,17 @@ Recommended approach:
   - Actuator/observability changes.
 - Split any required source changes into preparatory PRs before the actual Boot 4 upgrade.
 
-Why this grouping:
-
-- This is the highest-risk dependency move in the current reports.
-- It affects application startup, security, Kafka integration, database/JPA/JOOQ integration, tests, and Docker/Batect validation.
-
 Recommended validation for the eventual upgrade:
 
 ```bash
-for pkg in Manager IngestAPI HilltopCrawler; do
-  (cd "packages/$pkg" && ./gradlew clean check --no-daemon)
-done
+cd packages/Manager && ./gradlew clean check --no-daemon
+cd ../IngestAPI && ./gradlew clean check --no-daemon
+cd ../HilltopCrawler && ./gradlew clean check --no-daemon
 ```
 
 Also run each package's `./batect check` where available.
 
-### PR 7 — Kafka stack update
+### PR 3 — Kafka stack update
 
 Scope: Kafka libraries only, after Spring Boot 4 planning is clear.
 
@@ -198,11 +84,6 @@ Recommended approach:
 - Prefer handling `spring-kafka` as part of the Spring Boot 4 work unless there is a supported Spring Boot 3.5-compatible patch/minor path.
 - Treat Kafka Streams as a separate PR from Spring Kafka if it can be updated independently.
 
-Why this grouping:
-
-- Kafka and Kafka Streams changes can affect message serialization, embedded test infrastructure, and runtime broker compatibility.
-- The three packages communicate through Kafka topics, so cross-package behaviour matters.
-
 Recommended validation:
 
 ```bash
@@ -213,32 +94,22 @@ cd ../HilltopCrawler && ./gradlew test --no-daemon
 
 Add an integration smoke test with local Kafka if available through Batect.
 
-### PR 8 — Manager persistence and API library review
+### PR 4 — Manager persistence and API library review
 
 Scope: Manager-specific data/API dependencies.
 
 Candidates shown for `Manager`:
 
-- `nu.studer.jooq` Gradle plugin `9.0` → `10.2.1`
-- jOOQ `3.19.35` → `3.21.6`
 - Hibernate Spatial `6.6.53.Final` → `7.4.5.Final`
 - `org.springdoc:springdoc-openapi-starter-webmvc-ui` `2.8.9` → `3.1.0`
 - `de.grundid.opendatalab:geojson-jackson` `1.14` → `3.0`
-- PostgreSQL driver `42.6.2` / `42.7.11` → `42.7.13`
 - JAXB API `3.0.1` → `4.0.5`
 
 Recommended approach:
 
 - Split this into small PRs rather than one large Manager update:
-  1. PostgreSQL driver patch alignment.
-  2. jOOQ Gradle plugin and jOOQ version update with code generation validation.
-  3. Springdoc update, ideally after the Spring Boot 4 path is decided.
-  4. Hibernate Spatial/JAXB/GeoJSON updates after compatibility checks.
-
-Why this grouping:
-
-- Manager has the most database and generated-code complexity.
-- jOOQ/Flyway/PostGIS/Hibernate changes can interact in non-obvious ways.
+  1. Springdoc update, ideally after the Spring Boot 4 path is decided.
+  2. Hibernate Spatial/JAXB/GeoJSON updates after compatibility checks.
 
 Recommended validation:
 
@@ -249,24 +120,18 @@ cd packages/Manager
 
 Use `./batect check` if local database-backed Gradle tasks require support services.
 
-### PR 9 — Coroutines and Micrometer updates
+### PR 5 — Micrometer tracing update
 
-Scope: cross-cutting runtime libraries.
+Scope: cross-cutting observability runtime library.
 
-Candidates shown:
+Remaining candidate:
 
-- `org.jetbrains.kotlinx:kotlinx-coroutines-*` `1.10.2` → `1.11.0` in `Manager`
 - `io.micrometer:micrometer-tracing-bridge-brave` `1.5.12` → `1.7.0` in `Manager` and `IngestAPI`
 
 Recommended approach:
 
-- Keep coroutines and Micrometer in separate PRs unless a Spring Boot upgrade manages them together.
-- Check whether Spring Boot's BOM should own these versions rather than explicit declarations.
-
-Why this grouping:
-
-- Coroutines affect async/reactive code paths.
-- Micrometer tracing changes can affect observability and propagated trace context.
+- Check whether Spring Boot's BOM should own this version rather than explicit declarations.
+- Consider deferring if it is better handled alongside Spring Boot 4.
 
 Recommended validation:
 
@@ -275,45 +140,40 @@ cd packages/Manager && ./gradlew test --no-daemon
 cd ../IngestAPI && ./gradlew test --no-daemon
 ```
 
-### PR 10 — Gradle wrapper major-version planning
+### PR 6 — Gradle 9 wrapper update
 
 Scope: Gradle 9 compatibility.
 
 Current report:
 
 - Gradle `8.14.5` → `9.6.1`, with `9.7.0-rc-2` also visible.
-- Reports warn that deprecated Gradle features were used, making the build incompatible with Gradle 9.0.
+
+Current note:
+
+- Gradle 8 deprecation cleanup has already been checked in this PR.
+- `Manager`, `IngestAPI`, and `HilltopCrawler` passed `clean check --warning-mode all` on Gradle `8.14.5` with no Gradle deprecation warnings.
 
 Recommended approach:
 
-- First PR: run with `--warning-mode all` and fix/document deprecations while staying on Gradle 8.
-- Later PR: update wrappers to the latest stable Gradle 9 release once warnings are resolved.
-
-Why this grouping:
-
-- Gradle major upgrades can break build logic and plugins even when application code is unchanged.
-- Fixing deprecations first reduces risk and makes the eventual wrapper update smaller.
+- Update wrappers to the latest stable Gradle 9 release in a dedicated PR.
+- Keep this separate from runtime dependency updates because Gradle major upgrades can expose plugin compatibility issues.
+- Validate all three packages and Batect paths after the wrapper update.
 
 Recommended validation:
 
 ```bash
-for pkg in Manager IngestAPI HilltopCrawler; do
-  (cd "packages/$pkg" && ./gradlew clean check --warning-mode all --no-daemon)
-done
+cd packages/Manager && ./gradlew clean check --warning-mode all --no-daemon
+cd ../IngestAPI && ./gradlew clean check --warning-mode all --no-daemon
+cd ../HilltopCrawler && ./gradlew clean check --warning-mode all --no-daemon
 ```
 
 ## Suggested order
 
-1. Complete PR 1: Kotest / Mockito Kotlin / MockK.
-2. PR 2: lightweight Gradle tooling updates.
-3. PR 3: `logstash-logback-encoder` alignment.
-4. PR 4: Kotlin logging migration.
-5. PR 5: Flyway version rationalisation.
-6. PR 10 first half: Gradle deprecation cleanup while staying on Gradle 8.
-7. PR 8 small parts: Manager PostgreSQL driver and jOOQ validation.
-8. PR 6: Spring Boot 4 readiness review and preparatory fixes.
-9. PR 7: Kafka stack update, coordinated with Spring Boot 4 decisions.
-10. PR 10 second half: Gradle 9 wrapper update.
+1. Manager Kotest major-version decision.
+2. Spring Boot 4 readiness review and preparatory fixes.
+3. Kafka stack update, coordinated with Spring Boot 4 decisions.
+4. Micrometer tracing update, unless folded into Spring Boot 4 work.
+5. Gradle 9 wrapper update.
 
 ## General guardrails
 
