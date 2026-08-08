@@ -87,7 +87,7 @@ cd packages/IngestAPI && ./gradlew test --no-daemon
 
 Also smoke-test application startup if logging configuration is environment-sensitive.
 
-### PR 4 — Kotlin logging migration
+### PR 4 — Kotlin logging migration - DONE
 
 Scope: `kotlin-logging-jvm` only.
 
@@ -114,7 +114,7 @@ for pkg in Manager IngestAPI HilltopCrawler; do
 done
 ```
 
-### PR 5 — Flyway version rationalisation
+### PR 5 — Flyway version rationalisation - DONE
 
 Scope: Flyway declarations and version management in `Manager` and `HilltopCrawler`.
 
