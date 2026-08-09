@@ -51,7 +51,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.9.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.apache.kafka:kafka-streams")
@@ -92,7 +92,7 @@ dependencies {
 
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
   testImplementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
-  testImplementation("com.squareup.okhttp3:mockwebserver:5.3.2")
+  testImplementation("com.squareup.okhttp3:mockwebserver:5.4.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }
