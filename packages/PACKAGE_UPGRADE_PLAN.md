@@ -1,5 +1,7 @@
 # Package upgrade plan for Manager, IngestAPI, and HilltopCrawler
 
+> Current position, August 2026: this original plan is superseded by `packages/PACKAGE_UPGRADE_PLAN_2.md` for active maintenance work. Do not proceed with Spring Boot 4, Spring Framework 7, Gradle 9, or Kotlin major-platform upgrade work now. The project should stay on the Spring Boot 3 / Spring Framework 6 / Gradle 8 line and review the major-platform position again in 2027.
+
 This plan lists only package-upgrade work that is not yet complete for the Kotlin/Spring packages:
 
 - `packages/Manager`
