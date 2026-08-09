@@ -1,5 +1,20 @@
 # Package upgrade plan 2 for Manager, IngestAPI, and HilltopCrawler
 
+## Current upgrade position — August 2026
+
+The Spring Boot 3 / Gradle 8 maintenance pass for this plan has been completed to a satisfactory point. Stop further major-platform upgrade work for now.
+
+Current position:
+
+- Do not upgrade to Spring Boot 4 now.
+- Do not upgrade to Spring Framework 7 now.
+- Do not upgrade to Spring Kafka 4, Hibernate 7, Springdoc 3, or other Spring Boot 4-oriented dependency lines now.
+- Do not upgrade to Gradle 9 now.
+- Do not start a Kotlin major-version/platform upgrade now; keep Kotlin changes limited to the currently supported project line unless a separate compatibility review is agreed.
+- Review the Spring Boot 4 / Gradle 9 / Kotlin platform position again in 2027.
+
+Until that 2027 review, prefer only low-risk patch/minor updates that remain compatible with Spring Boot 3.x, Spring Framework 6.x, Gradle 8.x, and Java/Kotlin JVM target/toolchain 21.
+
 This plan lists remaining package-upgrade work for the Kotlin/Spring packages while staying on the current major platform lines:
 
 - Spring Boot 3.x / Spring Framework 6.x
@@ -14,9 +29,10 @@ Packages covered:
 
 ## Explicit non-goals for this plan
 
-- Do not upgrade to Spring Boot 4 or Spring Framework 7.
+- Do not upgrade to Spring Boot 4 or Spring Framework 7 before the 2027 review.
 - Do not upgrade to Spring Kafka 4 as part of this plan unless a supported Spring Boot 3-compatible path is confirmed.
-- Do not upgrade to Gradle 9.
+- Do not upgrade to Gradle 9 before the 2027 review.
+- Do not start a Kotlin major-version/platform upgrade before the 2027 review.
 - Do not move `Manager` to Spring Boot 4-specific integration artifacts such as `resilience4j-spring-boot4`.
 - Do not combine runtime dependency updates with Gradle wrapper or build-tool major-version changes.
 
@@ -205,6 +221,8 @@ cd ../HilltopCrawler && ./gradlew clean check --warning-mode all --no-daemon
 
 ## Suggested order
 
+Status: the Spring Boot 3 / Gradle 8 maintenance items in this plan have been reviewed and carried out where appropriate. No further major-platform update work is planned until the 2027 review.
+
 1. Spring Boot 3.5.x patch maintenance across all three packages.
 2. Kafka stack updates within the Spring Boot 3-supported version range.
 3. Manager persistence and API library updates within Spring Boot 3 compatibility.
@@ -215,6 +233,7 @@ cd ../HilltopCrawler && ./gradlew clean check --warning-mode all --no-daemon
 ## General guardrails
 
 - Keep every PR on Spring Boot 3.x, Spring Framework 6.x, and Gradle 8.x.
+- Defer Spring Boot 4, Spring Framework 7, Gradle 9, and Kotlin major-platform decisions until the 2027 review.
 - Keep each PR focused on one dependency family or risk area.
 - Avoid combining runtime dependency changes with build-tool changes.
 - Prefer versions managed by the Spring Boot 3 BOM unless there is a documented reason to override.
