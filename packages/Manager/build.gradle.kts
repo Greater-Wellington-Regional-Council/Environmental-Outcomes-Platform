@@ -15,7 +15,7 @@ buildscript {
 plugins {
   id("org.springframework.boot") version "3.5.16"
   id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "8.9.0"
+  id("com.diffplug.spotless") version "8.10.1"
   id("io.github.ben-manes.versions") version "0.59.0"
   alias(libs.plugins.flyway)
   id("nu.studer.jooq") version "10.2.1"
