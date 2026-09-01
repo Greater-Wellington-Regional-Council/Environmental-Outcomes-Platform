@@ -49,8 +49,8 @@ dependencies {
 
   testImplementation("org.springframework.boot:spring-boot-starter-test")
   testImplementation("org.springframework.kafka:spring-kafka-test")
-  testImplementation("io.kotest:kotest-assertions-core:6.2.3")
-  testImplementation("io.kotest:kotest-assertions-json:6.2.3")
+  testImplementation("io.kotest:kotest-assertions-core:6.2.4")
+  testImplementation("io.kotest:kotest-assertions-json:6.2.4")
   testImplementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
 }
 
