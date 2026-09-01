@@ -26,7 +26,7 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Cache Batect
-        uses: actions/cache@v5.0.3
+        uses: actions/cache@v6.1.0
         with:
           path: ~/.batect/cache
           key: batect-${{ hashFiles(format('{0}/batect', './docs-site')) }}
