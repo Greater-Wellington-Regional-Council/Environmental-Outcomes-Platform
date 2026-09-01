@@ -11,7 +11,7 @@ plugins {
   id("org.springframework.boot") version "3.5.16"
   id("io.spring.dependency-management") version "1.1.7"
   id("com.diffplug.spotless") version "8.9.0"
-  id("io.github.ben-manes.versions") version "0.59.0"
+  id("io.github.ben-manes.versions") version "0.61.0"
   alias(libs.plugins.flyway)
   id("com.adarshr.test-logger") version "4.0.0"
   kotlin("jvm") version "2.4.10"
