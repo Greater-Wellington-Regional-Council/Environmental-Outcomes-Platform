@@ -63,7 +63,7 @@ dependencies {
   implementation(libs.flyway.core)
   implementation(libs.flyway.database.postgresql)
   implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
-  implementation("de.grundid.opendatalab:geojson-jackson:1.14")
+  implementation("de.grundid.opendatalab:geojson-jackson:3.0")
   implementation("net.javacrumbs.shedlock:shedlock-spring:7.7.0")
   implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:7.7.0")
   implementation(dependencyNotation = "net.postgis:postgis-jdbc:2025.1.1")
