@@ -25,7 +25,7 @@ class LinzAddressDataController(private val linzDataService: LinzDataService) {
   @GetMapping("/unit-of-property/{unitOfPropertyId}/geometry")
   fun getGeometryForUnitOfProperty(
       @PathVariable unitOfPropertyId: String,
-      @RequestParam(defaultValue = "EPSG:4326") projection: String
+      @RequestParam(defaultValue = "EPSG:4326") projection: String,
   ): ResponseEntity<Map<String, Any>> {
     return try {
       val geometryData = linzDataService.getGeometryForUnitOfProperty(unitOfPropertyId, projection)
@@ -40,7 +40,7 @@ class LinzAddressDataController(private val linzDataService: LinzDataService) {
   @GetMapping("/address/{addressId}/geometry")
   fun getGeometryForAddressId(
       @PathVariable addressId: String,
-      @RequestParam(defaultValue = "EPSG:4326") projection: String
+      @RequestParam(defaultValue = "EPSG:4326") projection: String,
   ): ResponseEntity<Map<String, Any>> {
     return try {
       val unitOfPropertyId = linzDataService.getUnitOfPropertyIdForAddressId(addressId)

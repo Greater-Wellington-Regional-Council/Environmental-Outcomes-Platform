@@ -26,10 +26,11 @@ import org.springframework.test.context.ActiveProfiles
 @EmbeddedKafka(
     partitions = 1,
     bootstrapServersProperty = "spring.kafka.bootstrap-servers",
-    topics = [WATER_ALLOCATION_TOPIC_NAME])
+    topics = [WATER_ALLOCATION_TOPIC_NAME],
+)
 class WaterAllocationConsumerIntegrationTest(
     @Autowired val template: KafkaTemplate<String, WaterAllocationMessage>,
-    @Autowired val context: DSLContext
+    @Autowired val context: DSLContext,
 ) {
 
   @BeforeEach
@@ -53,7 +54,8 @@ class WaterAllocationConsumerIntegrationTest(
             listOf("meter-0", "meter-1"),
             "firstIngestId",
             Instant.now(),
-            "category")
+            "category",
+        )
 
     // WHEN
     template.send(WATER_ALLOCATION_TOPIC_NAME, message.sourceId, message)

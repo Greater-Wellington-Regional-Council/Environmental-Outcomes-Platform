@@ -31,7 +31,7 @@ class AddressFinderWebClientConfig {
 @Service
 class AddressFinderService(
     private val addressFinderWebClient: WebClient,
-    @Value("\${addressfinder.api.key}") private val addressFinderApiKey: String
+    @Value("\${addressfinder.api.key}") private val addressFinderApiKey: String,
 ) {
   companion object {
     const val DEFAULT_REGION_CODE = "F"
@@ -39,7 +39,7 @@ class AddressFinderService(
 
   fun getAddressOptions(
       query: String?,
-      regionCode: String? = DEFAULT_REGION_CODE
+      regionCode: String? = DEFAULT_REGION_CODE,
   ): List<Map<String, Any>> = runBlocking {
     if (query == null) return@runBlocking emptyList()
 
@@ -65,7 +65,8 @@ class AddressFinderService(
     return@runBlocking completions.map { completion ->
       mapOf(
           "label" to (completion["a"] ?: ""), // Provide a default value for nullable entries
-          "value" to (completion["pxid"] ?: ""))
+          "value" to (completion["pxid"] ?: ""),
+      )
     }
   }
 
@@ -98,6 +99,8 @@ class AddressFinderService(
             mapOf(
                 "type" to "Feature",
                 "geometry" to mapOf("type" to "Point", "coordinates" to listOf(x, y)),
-                "properties" to emptyMap<String, Any>()))
+                "properties" to emptyMap<String, Any>(),
+            ),
+    )
   }
 }

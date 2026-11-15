@@ -78,7 +78,7 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
       councilStatsId: Int,
       siteName: String,
       measurementName: String,
-      observations: List<Observation>
+      observations: List<Observation>,
   ) {
     var measurementId = getMeasurementId(councilStatsId, siteName, measurementName)
 
@@ -91,11 +91,16 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
   private fun getMeasurementId(
       councilStatsId: Int,
       siteName: String,
-      measurementName: String
+      measurementName: String,
   ): Int? {
     return try {
       jdbcTemplate.queryForObject(
-          SELECT_MEASUREMENT_ID_QUERY, Int::class.java, councilStatsId, siteName, measurementName)
+          SELECT_MEASUREMENT_ID_QUERY,
+          Int::class.java,
+          councilStatsId,
+          siteName,
+          measurementName,
+      )
     } catch (ex: EmptyResultDataAccessException) {
       null
     }
@@ -105,7 +110,7 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
       councilStatsId: Int,
       siteName: String,
       measurementName: String,
-      observations: List<Observation>
+      observations: List<Observation>,
   ): Int {
     val keyHolder: KeyHolder = GeneratedKeyHolder()
 
@@ -120,7 +125,8 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
           ps.setInt(6, observations.size)
           ps
         },
-        keyHolder)
+        keyHolder,
+    )
 
     return keyHolder.keys?.get("id") as Int?
         ?: throw IllegalStateException("No key found in KeyHolder after insert operation.")
@@ -138,7 +144,8 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
           }
 
           override fun getBatchSize() = observations.size
-        })
+        },
+    )
 
     jdbcTemplate.update(
         UPDATE_MEASUREMENT_FIRST_OBSERVED_QUERY,
@@ -158,7 +165,11 @@ class ObservationStore(private val jdbcTemplate: JdbcTemplate) {
   private fun fetchExistingSiteId(councilStatsId: Int, siteName: String): Int? {
     return try {
       jdbcTemplate.queryForObject(
-          SELECT_SITE_QUERY, SingleColumnRowMapper(), councilStatsId, siteName)
+          SELECT_SITE_QUERY,
+          SingleColumnRowMapper(),
+          councilStatsId,
+          siteName,
+      )
     } catch (ex: EmptyResultDataAccessException) {
       null
     }

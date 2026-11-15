@@ -1,54 +1,58 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 import org.springframework.jdbc.datasource.init.ScriptUtils.*
 
-plugins {
-  id("org.springframework.boot") version "3.4.0"
-  id("io.spring.dependency-management") version "1.1.7"
-  id("com.diffplug.spotless") version "7.0.4"
-  id("org.flywaydb.flyway") version "11.10.5"
-  id("nu.studer.jooq") version "9.0"
-  id("com.adarshr.test-logger") version "4.0.0"
-  kotlin("jvm") version "2.2.0"
-  kotlin("plugin.spring") version "2.2.0"
-}
-
 buildscript {
   repositories { mavenCentral() }
   dependencies {
-    classpath("org.flywaydb:flyway-database-postgresql:11.10.5")
-    classpath("org.springframework:spring-jdbc:6.2.8")
-    classpath("org.postgresql:postgresql:42.6.2")
+    classpath(libs.flyway.database.postgresql.get())
+    classpath("org.springframework:spring-jdbc:6.2.19")
+    classpath(libs.postgresql.get())
   }
+}
+
+plugins {
+  id("org.springframework.boot") version "3.5.16"
+  id("io.spring.dependency-management") version "1.1.7"
+  id("com.diffplug.spotless") version "8.9.0"
+  id("io.github.ben-manes.versions") version "0.61.0"
+  alias(libs.plugins.flyway)
+  id("nu.studer.jooq") version "10.2.1"
+  id("com.adarshr.test-logger") version "4.0.0"
+  kotlin("jvm") version "2.4.10"
+  kotlin("plugin.spring") version "2.4.10"
 }
 
 group = "nz.govt.eop"
 
 version = "0.0.1-SNAPSHOT"
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
 
 repositories { mavenCentral() }
 
-ext["jooq.version"] = jooq.version.get()
+val jooqVersion = "3.21.7"
+
+jooq.version.set(jooqVersion)
+
+ext["jooq.version"] = jooqVersion
 
 dependencies {
-  jooqGenerator("org.postgresql:postgresql")
+  jooqGenerator(libs.postgresql)
   // @see https://github.com/etiennestuder/gradle-jooq-plugin/issues/209#issuecomment-1056578392
   jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
 
-  runtimeOnly("org.postgresql:postgresql")
-  runtimeOnly("net.logstash.logback:logstash-logback-encoder:8.1")
+  runtimeOnly(libs.postgresql)
+  runtimeOnly("net.logstash.logback:logstash-logback-encoder:9.0")
 
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springframework.boot:spring-boot-starter-jdbc")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.9.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
-
   implementation("org.springframework.kafka:spring-kafka")
   implementation("org.apache.kafka:kafka-streams")
   implementation("io.micrometer:micrometer-tracing-bridge-brave")
@@ -56,27 +60,25 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
   implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-  implementation("org.flywaydb:flyway-core:11.10.5")
-  implementation("org.flywaydb:flyway-database-postgresql:11.10.5")
-  implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+  implementation(libs.flyway.core)
+  implementation(libs.flyway.database.postgresql)
+  implementation("io.github.oshai:kotlin-logging-jvm:8.0.4")
   implementation("de.grundid.opendatalab:geojson-jackson:1.14")
-  implementation("net.javacrumbs.shedlock:shedlock-spring:6.9.0")
-  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:6.9.0")
-  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2025.1.0")
-  implementation("de.grundid.opendatalab:geojson-jackson:1.14")
+  implementation("net.javacrumbs.shedlock:shedlock-spring:7.7.0")
+  implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:7.7.0")
+  implementation(dependencyNotation = "net.postgis:postgis-jdbc:2025.1.1")
   implementation("org.locationtech.jts:jts-core:1.20.0")
   implementation("org.locationtech.jts.io:jts-io-common:1.20.0")
   implementation("com.opencsv:opencsv:5.12.0")
-  implementation("io.github.resilience4j:resilience4j-spring-boot3:2.3.0")
-  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.3.0")
-  implementation("com.github.ben-manes.caffeine:caffeine:3.2.1")
+  implementation("io.github.resilience4j:resilience4j-spring-boot3:2.4.0")
+  implementation("io.github.resilience4j:resilience4j-ratelimiter:2.4.0")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.2.4")
   implementation("io.hypersistence:hypersistence-utils-hibernate-60:3.9.4")
-  implementation("org.hibernate:hibernate-spatial:7.0.4.Final")
-
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.10.2")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
-  implementation("commons-codec:commons-codec:1.18.0")
+  implementation("org.hibernate.orm:hibernate-spatial")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.11.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.11.0")
+  implementation("commons-codec:commons-codec:1.22.1")
 
   testImplementation("org.jetbrains.kotlin:kotlin-test")
   testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -86,20 +88,39 @@ dependencies {
   testImplementation("io.kotest:kotest-framework-engine:5.9.1")
   testImplementation("org.springframework.kafka:spring-kafka-test")
   testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
-  testImplementation("io.mockk:mockk:1.14.4")
+  testImplementation("io.mockk:mockk:1.14.11")
 
   testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
-  testImplementation("org.mockito.kotlin:mockito-kotlin:6.0.0")
-  testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+  testImplementation("org.mockito.kotlin:mockito-kotlin:6.3.0")
+  testImplementation("com.squareup.okhttp3:mockwebserver:5.4.0")
 }
 
 tasks.getByName<Jar>("jar") { enabled = false }
 
-tasks.withType<KotlinCompile> { compilerOptions { freeCompilerArgs = listOf("-Xjsr305=strict") } }
+tasks.withType<KotlinCompile> {
+  compilerOptions {
+    freeCompilerArgs = listOf("-Xjsr305=strict")
+    jvmTarget = JvmTarget.JVM_21
+  }
+}
 
 tasks.withType<Test> {
   useJUnitPlatform()
   this.testLogging { this.showStandardStreams = true }
+}
+
+fun isNonStable(version: String): Boolean {
+  val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+
+  val stablePattern = Regex("^[0-9,.v-]+(-r)?$")
+
+  return !stableKeyword && !stablePattern.matches(version)
+}
+
+tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>(
+    "dependencyUpdates"
+) {
+  rejectVersionIf { isNonStable(candidate.version) && !isNonStable(currentVersion) }
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {

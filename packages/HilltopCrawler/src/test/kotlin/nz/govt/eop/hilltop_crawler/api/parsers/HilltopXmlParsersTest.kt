@@ -24,7 +24,8 @@ class HilltopXmlParsersTest {
       result.sites shouldBe
           arrayListOf(
               HilltopSite("Wrens Creek at Graham Road", 2764950, 6100940),
-              HilltopSite("X Forest Rd Drain at Drop Structure", null, null))
+              HilltopSite("X Forest Rd Drain at Drop Structure", null, null),
+          )
     }
 
     @Test
@@ -56,7 +57,8 @@ class HilltopXmlParsersTest {
       result.sites shouldBe
           arrayListOf(
               HilltopSite("Wrens Creek at Graham Road", 2764950, 6100940),
-              HilltopSite("X Forest Rd Drain at Drop Structure", null, null))
+              HilltopSite("X Forest Rd Drain at Drop Structure", null, null),
+          )
     }
   }
 
@@ -92,7 +94,8 @@ class HilltopXmlParsersTest {
               "Campbell Signature",
               "Campbell Software Version",
               "Rainfall",
-              "SCADA Rainfall")
+              "SCADA Rainfall",
+          )
 
       result.datasources.map { it.type } shouldBe
           arrayListOf(
@@ -113,7 +116,8 @@ class HilltopXmlParsersTest {
               "StdQualSeries",
               "StdQualSeries",
               "CheckSeries",
-              "CheckSeries")
+              "CheckSeries",
+          )
 
       result.datasources[0].measurements.size shouldBe 9
 

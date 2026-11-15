@@ -27,7 +27,8 @@ class AddressesControllerTest {
     val serviceResponse =
         listOf(
             mapOf("label" to "Test Address 1", "value" to "123"),
-            mapOf("label" to "Test Address 2", "value" to "456"))
+            mapOf("label" to "Test Address 2", "value" to "456"),
+        )
 
     every { addressFinderService.getAddressOptions(query) } returns serviceResponse
 
@@ -67,7 +68,9 @@ class AddressesControllerTest {
                     "type" to "Feature",
                     "geometry" to
                         mapOf("type" to "Point", "coordinates" to listOf(174.775, -41.290)),
-                    "properties" to emptyMap<String, Any>()))
+                    "properties" to emptyMap<String, Any>(),
+                ),
+        )
     every { addressFinderService.getAddressByPxid(pxid) } returns serviceResponse
 
     val response: ResponseEntity<Map<String, Any>> = addressesController.getAddressByPxid(pxid)

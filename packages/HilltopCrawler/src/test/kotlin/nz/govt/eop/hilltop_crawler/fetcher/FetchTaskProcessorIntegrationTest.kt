@@ -38,7 +38,7 @@ class FetchTaskProcessorIntegrationTest(
     @Autowired val underTest: FetchTaskProcessor,
     @Autowired val restTemplate: RestTemplate,
     @Autowired val jdbcTemplate: JdbcTemplate,
-    @Autowired val mockKafka: HilltopMessageClient
+    @Autowired val mockKafka: HilltopMessageClient,
 ) {
 
   private final val mockServer = MockRestServiceServer.createServer(restTemplate)
@@ -66,9 +66,19 @@ class FetchTaskProcessorIntegrationTest(
     val sourceId = createDefaultSource(jdbcTemplate)
 
     createFetchTask(
-        jdbcTemplate, sourceId, "SITES_LIST", "http://example.com/1", "2021-01-01 00:10:00")
+        jdbcTemplate,
+        sourceId,
+        "SITES_LIST",
+        "http://example.com/1",
+        "2021-01-01 00:10:00",
+    )
     createFetchTask(
-        jdbcTemplate, sourceId, "SITES_LIST", "http://example.com/2", "2021-01-01 00:00:00")
+        jdbcTemplate,
+        sourceId,
+        "SITES_LIST",
+        "http://example.com/2",
+        "2021-01-01 00:00:00",
+    )
 
     val input = this.javaClass.getResource("/hilltop-xml/SitesResponse-empty.xml")!!.readText()
 
@@ -111,7 +121,12 @@ class FetchTaskProcessorIntegrationTest(
     val sourceId = createDefaultSource(jdbcTemplate)
 
     createFetchTask(
-        jdbcTemplate, sourceId, "SITES_LIST", "http://example.com", "2021-01-01 00:00:00")
+        jdbcTemplate,
+        sourceId,
+        "SITES_LIST",
+        "http://example.com",
+        "2021-01-01 00:00:00",
+    )
 
     mockServer
         .expect(requestTo("http://example.com"))
@@ -142,7 +157,12 @@ class FetchTaskProcessorIntegrationTest(
     val sourceId = createDefaultSource(jdbcTemplate)
 
     createFetchTask(
-        jdbcTemplate, sourceId, "SITES_LIST", "http://example.com", "2021-01-01 00:00:00")
+        jdbcTemplate,
+        sourceId,
+        "SITES_LIST",
+        "http://example.com",
+        "2021-01-01 00:00:00",
+    )
 
     val input = this.javaClass.getResource("/hilltop-xml/ErrorResponse.xml")!!.readText()
 
@@ -176,7 +196,12 @@ class FetchTaskProcessorIntegrationTest(
     val sourceId = createDefaultSource(jdbcTemplate)
 
     createFetchTask(
-        jdbcTemplate, sourceId, "SITES_LIST", "http://example.com", "2021-01-01 00:00:00")
+        jdbcTemplate,
+        sourceId,
+        "SITES_LIST",
+        "http://example.com",
+        "2021-01-01 00:00:00",
+    )
 
     val input = Random.nextBytes(20_000_001)
 
@@ -210,7 +235,12 @@ class FetchTaskProcessorIntegrationTest(
     val sourceId = createDefaultSource(jdbcTemplate)
 
     createFetchTask(
-        jdbcTemplate, sourceId, "SITES_LIST", "http://example.com", "2021-01-01 00:00:00")
+        jdbcTemplate,
+        sourceId,
+        "SITES_LIST",
+        "http://example.com",
+        "2021-01-01 00:00:00",
+    )
 
     mockServer
         .expect(requestTo("http://example.com"))
@@ -242,18 +272,23 @@ class FetchTaskProcessorIntegrationTest(
     val sourceId = createDefaultSource(jdbcTemplate)
 
     createFetchTask(
-        jdbcTemplate, sourceId, "SITES_LIST", "http://example.com", "2021-01-01 00:00:00")
+        jdbcTemplate,
+        sourceId,
+        "SITES_LIST",
+        "http://example.com",
+        "2021-01-01 00:00:00",
+    )
 
     val xml =
         """
-            <HilltopServer>
-                <Agency>Horizons</Agency>
-                <Version>2303.2.2.47</Version>
-                <Projection>NZMG</Projection>
-                <Site>
-                </Site>
-                <Site Name="X Forest Rd Drain at Drop Structure"></Site>
-            </HilltopServer>
+        <HilltopServer>
+            <Agency>Horizons</Agency>
+            <Version>2303.2.2.47</Version>
+            <Projection>NZMG</Projection>
+            <Site>
+            </Site>
+            <Site Name="X Forest Rd Drain at Drop Structure"></Site>
+        </HilltopServer>
         """
             .trimIndent()
 
@@ -292,7 +327,8 @@ class FetchTaskProcessorIntegrationTest(
         "SITES_LIST",
         "http://example.com",
         "2021-01-01 00:00:00",
-        "0fcafcc9533e521e53cad82226d44c832eca280e75dda23ffe5575b6563995c0")
+        "0fcafcc9533e521e53cad82226d44c832eca280e75dda23ffe5575b6563995c0",
+    )
 
     val input = this.javaClass.getResource("/hilltop-xml/SitesResponse-list.xml")!!.readText()
 
@@ -424,7 +460,8 @@ class FetchTaskProcessorIntegrationTest(
       it.nextFetchAt shouldBeBefore Instant.now()
       it.fetchUri shouldBe
           URI(
-              "http://example.com?Service=Hilltop&Request=GetData&Site=Ahuahu%20at%20Te%20Tuhi%20Junction&Measurement=Rainfall%20%5BRainfall%5D&from=2023-03-01T00:00&to=2023-03-31T23:59:59")
+              "http://example.com?Service=Hilltop&Request=GetData&Site=Ahuahu%20at%20Te%20Tuhi%20Junction&Measurement=Rainfall%20%5BRainfall%5D&from=2023-03-01T00:00&to=2023-03-31T23:59:59"
+          )
     }
 
     argumentCaptor<HilltopMeasurementListMessage>().apply {
@@ -502,11 +539,11 @@ class FetchTaskProcessorIntegrationTest(
 
     val input =
         """
-                <?xml version="1.0" ?>
-                <Hilltop>
-                    <Agency>GWRC</Agency>
-                </Hilltop>
-            """
+        <?xml version="1.0" ?>
+        <Hilltop>
+            <Agency>GWRC</Agency>
+        </Hilltop>
+        """
             .trimIndent()
 
     mockServer
@@ -639,15 +676,17 @@ fun listTasksToProcess(template: JdbcTemplate): List<DB.HilltopFetchTaskRow> =
         FROM hilltop_fetch_tasks
         ORDER BY next_fetch_at, id
         """
-            .trimIndent()) { rs, _ ->
-          DB.HilltopFetchTaskRow(
-              rs.getInt("id"),
-              rs.getInt("source_id"),
-              HilltopFetchTaskType.valueOf(rs.getString("request_type")),
-              rs.getTimestamp("next_fetch_at").toInstant(),
-              URI(rs.getString("fetch_url")),
-              rs.getString("previous_data_hash"))
-        }
+            .trimIndent()
+    ) { rs, _ ->
+      DB.HilltopFetchTaskRow(
+          rs.getInt("id"),
+          rs.getInt("source_id"),
+          HilltopFetchTaskType.valueOf(rs.getString("request_type")),
+          rs.getTimestamp("next_fetch_at").toInstant(),
+          URI(rs.getString("fetch_url")),
+          rs.getString("previous_data_hash"),
+      )
+    }
 
 fun createDefaultSource(template: JdbcTemplate): Int {
   val keyHolder: KeyHolder = GeneratedKeyHolder()
@@ -656,9 +695,11 @@ fun createDefaultSource(template: JdbcTemplate): Int {
       { connection ->
         connection.prepareStatement(
             """INSERT INTO hilltop_sources (council_id, hts_url, configuration) VALUES (1, 'http://example.com', '{"measurementNames": ["Rainfall"]}') RETURNING id""",
-            arrayOf("id"))
+            arrayOf("id"),
+        )
       },
-      keyHolder)
+      keyHolder,
+  )
 
   return keyHolder.keys?.get("id") as Int
 }
@@ -669,7 +710,7 @@ fun createFetchTask(
     requestType: String,
     url: String,
     nextFetchAt: String,
-    previousDataHash: String? = null
+    previousDataHash: String? = null,
 ) =
     template.update(
         """INSERT INTO hilltop_fetch_tasks (source_id, request_type, fetch_url, next_fetch_at, previous_data_hash) VALUES (?, ?, ?, ?::TIMESTAMP, ?)""",
@@ -677,4 +718,5 @@ fun createFetchTask(
         requestType,
         url,
         nextFetchAt,
-        previousDataHash)
+        previousDataHash,
+    )

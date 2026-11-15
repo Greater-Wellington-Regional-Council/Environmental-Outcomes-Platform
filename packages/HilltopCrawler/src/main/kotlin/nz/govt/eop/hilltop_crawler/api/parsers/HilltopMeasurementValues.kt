@@ -14,7 +14,7 @@ data class HilltopMeasurementValues(
 data class Measurement(
     @JacksonXmlProperty(localName = "SiteName", isAttribute = true) val siteName: String,
     @JacksonXmlProperty(localName = "DataSource") val dataSource: DataSource,
-    @JacksonXmlProperty(localName = "Data") val data: Data
+    @JacksonXmlProperty(localName = "Data") val data: Data,
 )
 
 data class DataSource(
@@ -25,7 +25,7 @@ data class Data(
     @JacksonXmlProperty(localName = "DateFormat", isAttribute = true) val dateFormat: String,
     @JacksonXmlProperty(localName = "E")
     @JacksonXmlElementWrapper(useWrapping = false)
-    val values: List<Value> = emptyList()
+    val values: List<Value> = emptyList(),
 )
 
 data class Value(
@@ -34,7 +34,7 @@ data class Value(
     @JacksonXmlProperty(localName = "Value") val value2String: String?,
     @JacksonXmlProperty(localName = "Parameter")
     @JacksonXmlElementWrapper(useWrapping = false)
-    val parameters: List<Parameter>? = null
+    val parameters: List<Parameter>? = null,
 ) {
   val value: BigDecimal
     get() = BigDecimal(value1String ?: value2String)
@@ -45,5 +45,5 @@ data class Value(
 
 data class Parameter(
     @JacksonXmlProperty(localName = "Name") val name: String,
-    @JacksonXmlProperty(localName = "Value") val value: String
+    @JacksonXmlProperty(localName = "Value") val value: String,
 )

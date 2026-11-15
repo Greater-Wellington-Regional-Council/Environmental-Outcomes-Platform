@@ -17,12 +17,12 @@ data class HilltopDatasource(
     @JacksonXmlProperty(localName = "TSType") val type: String,
     @JacksonXmlProperty(localName = "Measurement")
     @JacksonXmlElementWrapper(useWrapping = false)
-    val measurements: List<HilltopMeasurement> = emptyList()
+    val measurements: List<HilltopMeasurement> = emptyList(),
 )
 
 data class HilltopMeasurement(
     @JacksonXmlProperty(localName = "Name", isAttribute = true) val name: String,
     @JacksonXmlProperty(localName = "RequestAs") val requestAs: String,
     @JacksonXmlProperty(localName = "Item") val itemNumber: Int,
-    @JacksonXmlProperty(localName = "VM") val vm: Int? = null
+    @JacksonXmlProperty(localName = "VM") val vm: Int? = null,
 )

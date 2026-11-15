@@ -40,7 +40,8 @@ class ObservationsProducerTest(@Autowired val objectMapper: ObjectMapper) {
             HilltopXmlParsers(),
             objectMapper,
             TopicBuilder.name(HILLTOP_RAW_DATA_TOPIC_NAME).build(),
-            TopicBuilder.name(OUTPUT_DATA_TOPIC_NAME).build())
+            TopicBuilder.name(OUTPUT_DATA_TOPIC_NAME).build(),
+        )
         .buildPipeline(streamsBuilder)
     val topology = streamsBuilder.build()
     val driver = TopologyTestDriver(topology, Properties())
@@ -48,13 +49,15 @@ class ObservationsProducerTest(@Autowired val objectMapper: ObjectMapper) {
         driver.createInputTopic(
             HILLTOP_RAW_DATA_TOPIC_NAME,
             JsonSerde(HilltopMessageKey::class.java).noTypeInfo().serializer(),
-            JsonSerde(HilltopMessage::class.java).noTypeInfo().serializer())
+            JsonSerde(HilltopMessage::class.java).noTypeInfo().serializer(),
+        )
 
     outputTopic =
         driver.createOutputTopic(
             OUTPUT_DATA_TOPIC_NAME,
             JsonSerde(ObservationMessageKey::class.java).noTypeInfo().deserializer(),
-            JsonSerde(ObservationMessage::class.java).noTypeInfo().deserializer())
+            JsonSerde(ObservationMessage::class.java).noTypeInfo().deserializer(),
+        )
   }
 
   @Test
@@ -65,7 +68,12 @@ class ObservationsProducerTest(@Autowired val objectMapper: ObjectMapper) {
 
     val message =
         HilltopSitesMessage(
-            555, "http://example.com", Instant.now(), "http://hilltop.example.com/some/path", input)
+            555,
+            "http://example.com",
+            Instant.now(),
+            "http://hilltop.example.com/some/path",
+            input,
+        )
 
     // WHEN
     inputTopic.pipeInput(message.toKey(), message)
@@ -93,7 +101,8 @@ class ObservationsProducerTest(@Autowired val objectMapper: ObjectMapper) {
             Instant.now(),
             "SOME_SITE_NAME",
             "http://hilltop.example.com/some/path",
-            input)
+            input,
+        )
 
     // WHEN
     inputTopic.pipeInput(message.toKey(), message)
@@ -118,7 +127,8 @@ class ObservationsProducerTest(@Autowired val objectMapper: ObjectMapper) {
             "SOME_MEASUREMENT_NAME",
             YearMonth.of(2023, 8),
             "http://hilltop.example.com/some/path",
-            input)
+            input,
+        )
 
     // WHEN
     inputTopic.pipeInput(message.toKey(), message)
@@ -135,6 +145,8 @@ class ObservationsProducerTest(@Autowired val objectMapper: ObjectMapper) {
             "Water Meter Volume",
             listOf(
                 Observation(OffsetDateTime.parse("2023-08-29T12:00Z"), BigDecimal.valueOf(0)),
-                Observation(OffsetDateTime.parse("2023-08-30T12:00Z"), BigDecimal.valueOf(100))))
+                Observation(OffsetDateTime.parse("2023-08-30T12:00Z"), BigDecimal.valueOf(100)),
+            ),
+        )
   }
 }

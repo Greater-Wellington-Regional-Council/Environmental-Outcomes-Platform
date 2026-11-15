@@ -34,7 +34,7 @@ class FreshwaterManagementUnitsFetcherTest :
 @SpringBootTest
 class FreshwaterManagementUnitsFetcherWriteTest(
     private val rmuRepository: FreshwaterManagementUnitRepository,
-    private val fmuService: FreshwaterManagementUnitService
+    private val fmuService: FreshwaterManagementUnitService,
 ) :
     FunSpec({
       val freshwaterManagementUnitsFetcher = FreshwaterManagementUnitFetcher(fmuService)

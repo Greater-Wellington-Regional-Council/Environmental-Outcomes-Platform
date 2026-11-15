@@ -24,7 +24,8 @@ fun createUnsavedFMU(): FreshwaterManagementUnit {
       objectMapper.writeValueAsString(
           mockFeatureResponse.features
               .find { feature -> feature.properties["FID"] == 20 }!!
-              .geometry)
+              .geometry
+      )
 
   val geometry =
       GeoJsonReader().read(geometryJson).also { g: Geometry ->
@@ -104,15 +105,16 @@ class FreshwaterManagementUnitTest(
       }
 
       test(
-          "toFeature() should correctly convert FreshwaterManagementUnit to FreshwaterManagementUnitFeature") {
-            val fmu = repository.findAll().find { fmu -> fmu.fmuName1 == "Parkvale Stream" }!!
-            val feature = fmu.toFeature()
+          "toFeature() should correctly convert FreshwaterManagementUnit to FreshwaterManagementUnitFeature"
+      ) {
+        val fmu = repository.findAll().find { fmu -> fmu.fmuName1 == "Parkvale Stream" }!!
+        val feature = fmu.toFeature()
 
-            feature.id shouldBe fmu.id
-            feature.geometry shouldNotBe null
-            feature.properties["fmuName1"] shouldBe fmu.fmuName1
-            feature.properties["fmuGroup"] shouldBe fmu.fmuGroup
-            feature.properties["shapeLeng"] shouldBe fmu.shapeLeng
-            feature.properties["shapeArea"] shouldBe fmu.shapeArea
-          }
+        feature.id shouldBe fmu.id
+        feature.geometry shouldNotBe null
+        feature.properties["fmuName1"] shouldBe fmu.fmuName1
+        feature.properties["fmuGroup"] shouldBe fmu.fmuGroup
+        feature.properties["shapeLeng"] shouldBe fmu.shapeLeng
+        feature.properties["shapeArea"] shouldBe fmu.shapeArea
+      }
     })

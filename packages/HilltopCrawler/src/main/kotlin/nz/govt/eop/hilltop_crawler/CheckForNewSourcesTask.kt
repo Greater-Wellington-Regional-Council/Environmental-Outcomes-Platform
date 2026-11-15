@@ -28,7 +28,11 @@ class CheckForNewSourcesTask(val db: DB) {
     sources.forEach {
       db.createFetchTask(
           DB.HilltopFetchTaskCreate(
-              it.id, HilltopFetchTaskType.SITES_LIST, buildSiteListUrl(it.htsUrl)))
+              it.id,
+              HilltopFetchTaskType.SITES_LIST,
+              buildSiteListUrl(it.htsUrl),
+          )
+      )
     }
   }
 }

@@ -3,9 +3,9 @@ package nz.govt.eop.hilltop_crawler.api
 import io.github.bucket4j.Bandwidth
 import io.github.bucket4j.BlockingBucket
 import io.github.bucket4j.Bucket
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.net.URI
 import java.time.Duration
-import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
@@ -23,7 +23,8 @@ class HilltopFetcher(val restTemplate: RestTemplate) {
 
   private final val logger = KotlinLogging.logger {}
 
-  private final val bucketBandwidthLimit: Bandwidth = Bandwidth.simple(20, Duration.ofSeconds(1))
+  private final val bucketBandwidthLimit: Bandwidth =
+      Bandwidth.builder().capacity(20).refillGreedy(20, Duration.ofSeconds(1)).build()
   private final val bucket: BlockingBucket =
       Bucket.builder().addLimit(bucketBandwidthLimit).build().asBlocking()
 

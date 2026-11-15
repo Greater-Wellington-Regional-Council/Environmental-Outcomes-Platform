@@ -118,7 +118,12 @@ class FreshwaterManagementUnitServiceWithMockedRepositoryTest {
   @BeforeEach
   fun setup() {
     Mockito.reset(
-        fmuRepository, restTemplate, mapper, twsService, freshwaterManagementUnitsDataSources)
+        fmuRepository,
+        restTemplate,
+        mapper,
+        twsService,
+        freshwaterManagementUnitsDataSources,
+    )
 
     Mockito.`when`(freshwaterManagementUnitsDataSources.sources)
         .thenReturn(
@@ -126,7 +131,9 @@ class FreshwaterManagementUnitServiceWithMockedRepositoryTest {
                 UrlBasedDataSources.Source().apply {
                   name = "arcgis"
                   urls = listOf("http://test.url1")
-                }))
+                }
+            )
+        )
   }
 
   @Test
@@ -146,7 +153,10 @@ class FreshwaterManagementUnitServiceWithMockedRepositoryTest {
 
     Mockito.`when`(
             restTemplate.getForEntity(
-                ArgumentMatchers.any<URI>(), ArgumentMatchers.eq(FeatureCollection::class.java)))
+                ArgumentMatchers.any<URI>(),
+                ArgumentMatchers.eq(FeatureCollection::class.java),
+            )
+        )
         .thenReturn(ResponseEntity.ok(mockFeatureCollection))
 
     try {
@@ -170,7 +180,10 @@ class FreshwaterManagementUnitServiceWithMockedRepositoryTest {
 
     Mockito.`when`(
             restTemplate.getForEntity(
-                ArgumentMatchers.any<URI>(), ArgumentMatchers.eq(FeatureCollection::class.java)))
+                ArgumentMatchers.any<URI>(),
+                ArgumentMatchers.eq(FeatureCollection::class.java),
+            )
+        )
         .thenReturn(ResponseEntity.ok(mockFeatureCollection))
 
     try {
@@ -191,7 +204,10 @@ class FreshwaterManagementUnitServiceWithMockedRepositoryTest {
   fun `Fetch and save FMUs from URL`() {
     Mockito.`when`(
             restTemplate.getForEntity(
-                ArgumentMatchers.any<URI>(), ArgumentMatchers.eq(FeatureCollection::class.java)))
+                ArgumentMatchers.any<URI>(),
+                ArgumentMatchers.eq(FeatureCollection::class.java),
+            )
+        )
         .thenReturn(ResponseEntity.ok(FeatureCollection()))
 
     fmuService.fetchAndSave("http://test.url1")
@@ -210,7 +226,10 @@ class FreshwaterManagementUnitServiceWithMockedRepositoryTest {
 
     Mockito.`when`(
             restTemplate.getForEntity(
-                ArgumentMatchers.any<URI>(), ArgumentMatchers.eq(FeatureCollection::class.java)))
+                ArgumentMatchers.any<URI>(),
+                ArgumentMatchers.eq(FeatureCollection::class.java),
+            )
+        )
         .thenReturn(ResponseEntity.ok(mockFeatureCollection))
 
     fmuService.fetchAndSave("http://test.url1")

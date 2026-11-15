@@ -27,7 +27,7 @@ class LinzDataWebClientConfig {
 @Service
 class LinzDataService(
     private val linzDataWebClient: WebClient,
-    @Value("\${linz.koord.api.key}") private val linzApiKey: String
+    @Value("\${linz.koord.api.key}") private val linzApiKey: String,
 ) {
 
   fun getUnitOfPropertyIdForAddressId(addressId: String): String = runBlocking {
@@ -79,7 +79,8 @@ class LinzDataService(
 
         if (body.isEmpty()) {
           throw RuntimeException(
-              "Failed to retrieve geometry data for unit of property $unitOfPropertyId")
+              "Failed to retrieve geometry data for unit of property $unitOfPropertyId"
+          )
         }
 
         body

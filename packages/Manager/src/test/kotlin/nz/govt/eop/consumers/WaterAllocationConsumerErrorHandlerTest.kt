@@ -30,11 +30,12 @@ import org.springframework.test.context.ActiveProfiles
 @EmbeddedKafka(
     partitions = 1,
     bootstrapServersProperty = "spring.kafka.bootstrap-servers",
-    topics = [WATER_ALLOCATION_TOPIC_NAME])
+    topics = [WATER_ALLOCATION_TOPIC_NAME],
+)
 class WaterAllocationConsumerErrorHandlerTest(
     @Autowired val broker: EmbeddedKafkaBroker,
     @Autowired val template: KafkaTemplate<String, Any>,
-    @Autowired val fakeConsumer: FakeConsumer
+    @Autowired val fakeConsumer: FakeConsumer,
 ) {
 
   @DirtiesContext
@@ -59,7 +60,8 @@ class WaterAllocationConsumerErrorHandlerTest(
             listOf("meter-0", "meter-1"),
             "firstIngestId",
             Instant.now(),
-            "category")
+            "category",
+        )
 
     val secondMessage = firstMessage.copy(sourceId = "sourceId")
 
@@ -72,7 +74,9 @@ class WaterAllocationConsumerErrorHandlerTest(
     // Assert the first message ended up in the DLT
     val dltRecord =
         KafkaTestUtils.getSingleRecord(
-            dltConsumer, "$WATER_ALLOCATION_TOPIC_NAME.manager-consumer.DLT")
+            dltConsumer,
+            "$WATER_ALLOCATION_TOPIC_NAME.manager-consumer.DLT",
+        )
     dltRecord.shouldNotBeNull()
 
     // Assert we tried to process the message multiple times
@@ -103,7 +107,9 @@ class WaterAllocationConsumerErrorHandlerTest(
     // Assert the first message ended up in the DLT
     val dltRecord =
         KafkaTestUtils.getSingleRecord(
-            dltConsumer, "$WATER_ALLOCATION_TOPIC_NAME.manager-consumer.DLT")
+            dltConsumer,
+            "$WATER_ALLOCATION_TOPIC_NAME.manager-consumer.DLT",
+        )
     dltRecord.shouldNotBeNull()
 
     // This assert json shows how the message is a byte array encoded as JSON
@@ -119,7 +125,9 @@ class FakeConsumer {
   var messageProcessed = false
 
   @KafkaListener(
-      topics = [WATER_ALLOCATION_TOPIC_NAME], id = "nz.govt.eop.consumers.water-allocation-fake")
+      topics = [WATER_ALLOCATION_TOPIC_NAME],
+      id = "nz.govt.eop.consumers.water-allocation-fake",
+  )
   fun processMessage(allocation: WaterAllocationMessage) {
     timesCalled++
 

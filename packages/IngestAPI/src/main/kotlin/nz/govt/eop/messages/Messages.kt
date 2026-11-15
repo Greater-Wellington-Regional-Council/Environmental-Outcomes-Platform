@@ -6,7 +6,7 @@ import nz.govt.eop.ingest.api.WaterAllocation
 
 enum class ConsentStatus {
   active,
-  inactive
+  inactive,
 }
 
 data class WaterAllocationMessage(
@@ -21,12 +21,12 @@ data class WaterAllocationMessage(
     val meters: List<String>,
     val ingestId: String,
     val receivedAt: Instant,
-    val category: String
+    val category: String,
 ) {
   constructor(
       allocation: WaterAllocation,
       ingestId: String,
-      receivedAt: Instant
+      receivedAt: Instant,
   ) : this(
       allocation.sourceId,
       allocation.consentId,

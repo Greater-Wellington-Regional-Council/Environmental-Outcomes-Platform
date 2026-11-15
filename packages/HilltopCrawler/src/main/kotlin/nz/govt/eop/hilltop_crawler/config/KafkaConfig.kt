@@ -26,7 +26,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer
 class KafkaConfig(
     val applicationConfiguration: ApplicationConfiguration,
     val properties: KafkaProperties,
-    val objectMapper: ObjectMapper
+    val objectMapper: ObjectMapper,
 ) {
 
   @Bean
@@ -67,7 +67,8 @@ class KafkaConfig(
     return DefaultKafkaProducerFactory(
         properties.buildProducerProperties(),
         JsonSerializer<HilltopMessageKey>(objectMapper).forKeys().noTypeInfo(),
-        JsonSerializer<HilltopMessage>(objectMapper).noTypeInfo())
+        JsonSerializer<HilltopMessage>(objectMapper).noTypeInfo(),
+    )
   }
 
   @Bean

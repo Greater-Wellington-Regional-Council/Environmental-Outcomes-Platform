@@ -37,7 +37,8 @@ class ControllerIntegrationTest(@Autowired val mvc: MockMvc) {
   @Test
   fun `can load plan regions`() {
     mvc.perform(
-            get("/plan-limits/plan-regions?councilId=9").contentType(MediaType.APPLICATION_JSON))
+            get("/plan-limits/plan-regions?councilId=9").contentType(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isOk)
   }
 
@@ -45,7 +46,8 @@ class ControllerIntegrationTest(@Autowired val mvc: MockMvc) {
   fun `can load surface water limits`() {
     mvc.perform(
             get("/plan-limits/surface-water-limits?councilId=9")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isOk)
   }
 
@@ -53,7 +55,8 @@ class ControllerIntegrationTest(@Autowired val mvc: MockMvc) {
   fun `can load ground water limits`() {
     mvc.perform(
             get("/plan-limits/ground-water-limits?councilId=9")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isOk)
   }
 
@@ -61,7 +64,8 @@ class ControllerIntegrationTest(@Autowired val mvc: MockMvc) {
   fun `can load flow management sites`() {
     mvc.perform(
             get("/plan-limits/flow-measurement-sites?councilId=9")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isOk)
   }
 

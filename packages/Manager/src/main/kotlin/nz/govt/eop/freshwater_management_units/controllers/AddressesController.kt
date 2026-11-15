@@ -13,7 +13,7 @@ class AddressesController(private val addressFinderService: AddressFinderService
   @GetMapping("/options")
   fun getAddressOptions(
       @RequestParam query: String?,
-      @RequestParam regionCode: String? = AddressFinderService.DEFAULT_REGION_CODE
+      @RequestParam regionCode: String? = AddressFinderService.DEFAULT_REGION_CODE,
   ): ResponseEntity<List<Map<String, Any>>> {
     return try {
       val addressOptions =

@@ -23,12 +23,12 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
       val id: Int,
       val councilId: Int,
       val htsUrl: String,
-      val config: HilltopSourceConfig
+      val config: HilltopSourceConfig,
   )
 
   data class HilltopSourceConfig(
       val measurementNames: List<String>,
-      val excludedSitesNames: List<String> = listOf()
+      val excludedSitesNames: List<String> = listOf(),
   )
 
   data class HilltopFetchTaskCreate(
@@ -55,7 +55,7 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
     HILLTOP_ERROR,
     RESPONSE_TOO_LARGE,
     PARSE_ERROR,
-    UNKNOWN_ERROR
+    UNKNOWN_ERROR,
   }
 
   val hilltopSourcesRowMapper: (rs: ResultSet, rowNum: Int) -> HilltopSourcesRow = { rs, _ ->
@@ -63,16 +63,17 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
         rs.getInt("id"),
         rs.getInt("council_id"),
         rs.getString("hts_url"),
-        objectMapper.readValue(rs.getString("configuration"), HilltopSourceConfig::class.java))
+        objectMapper.readValue(rs.getString("configuration"), HilltopSourceConfig::class.java),
+    )
   }
 
   fun getSource(id: Int): HilltopSourcesRow =
       template.queryForObject(
           """
-        SELECT id, council_id, hts_url, configuration
-        FROM hilltop_sources
-        WHERE id = ?
-        """
+          SELECT id, council_id, hts_url, configuration
+          FROM hilltop_sources
+          WHERE id = ?
+          """
               .trimIndent(),
           hilltopSourcesRowMapper,
           id,
@@ -82,12 +83,13 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
 
     return template.query(
         """
-          SELECT id, council_id, hts_url, configuration
-          FROM hilltop_sources
-          ORDER BY id
-          """
+        SELECT id, council_id, hts_url, configuration
+        FROM hilltop_sources
+        ORDER BY id
+        """
             .trimIndent(),
-        hilltopSourcesRowMapper)
+        hilltopSourcesRowMapper,
+    )
   }
 
   fun createFetchTask(request: HilltopFetchTaskCreate) {
@@ -99,49 +101,53 @@ class DB(val template: JdbcTemplate, val objectMapper: ObjectMapper) {
             .trimIndent(),
         request.sourceId,
         request.requestType.toString(),
-        request.baseUrl)
+        request.baseUrl,
+    )
   }
 
   fun getNextTaskToProcess(): HilltopFetchTaskRow? =
       template
           .query(
               """
-        SELECT id, source_id, request_type, next_fetch_at, fetch_url, previous_data_hash
-        FROM hilltop_fetch_tasks
-        WHERE next_fetch_at < NOW()
-        ORDER BY next_fetch_at, id
-        LIMIT 1
-        FOR UPDATE SKIP LOCKED
-        """
-                  .trimIndent()) { rs, _ ->
-                HilltopFetchTaskRow(
-                    rs.getInt("id"),
-                    rs.getInt("source_id"),
-                    HilltopFetchTaskType.valueOf(rs.getString("request_type")),
-                    rs.getTimestamp("next_fetch_at").toInstant(),
-                    URI(rs.getString("fetch_url")),
-                    rs.getString("previous_data_hash"))
-              }
+              SELECT id, source_id, request_type, next_fetch_at, fetch_url, previous_data_hash
+              FROM hilltop_fetch_tasks
+              WHERE next_fetch_at < NOW()
+              ORDER BY next_fetch_at, id
+              LIMIT 1
+              FOR UPDATE SKIP LOCKED
+              """
+                  .trimIndent()
+          ) { rs, _ ->
+            HilltopFetchTaskRow(
+                rs.getInt("id"),
+                rs.getInt("source_id"),
+                HilltopFetchTaskType.valueOf(rs.getString("request_type")),
+                rs.getTimestamp("next_fetch_at").toInstant(),
+                URI(rs.getString("fetch_url")),
+                rs.getString("previous_data_hash"),
+            )
+          }
           .firstOrNull()
 
   fun requeueTask(
       id: Int,
       currentContentHash: String?,
       currentResult: HilltopFetchResult,
-      nextFetchAt: Instant
+      nextFetchAt: Instant,
   ) {
     template.update(
         """
-          UPDATE hilltop_fetch_tasks
-          SET previous_data_hash = ?, 
-              previous_history = jsonb_path_query_array(previous_history, '$[last-49 to last]') || ?::jsonb,    
-              next_fetch_at = ?
-          WHERE id = ?
-          """
+        UPDATE hilltop_fetch_tasks
+        SET previous_data_hash = ?, 
+            previous_history = jsonb_path_query_array(previous_history, '$[last-49 to last]') || ?::jsonb,    
+            next_fetch_at = ?
+        WHERE id = ?
+        """
             .trimIndent(),
         currentContentHash,
         objectMapper.writeValueAsString(currentResult),
         OffsetDateTime.ofInstant(nextFetchAt, ZoneOffset.UTC),
-        id)
+        id,
+    )
   }
 }

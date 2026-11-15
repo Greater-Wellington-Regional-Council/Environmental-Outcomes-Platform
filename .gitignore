@@ -66,3 +66,5 @@ qodana.yaml
 !src/workers/**/*.js
 /*.patch
 /test-results/.last-run.json
+
+*.swp

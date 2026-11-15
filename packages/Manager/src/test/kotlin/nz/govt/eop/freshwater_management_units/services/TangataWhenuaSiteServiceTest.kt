@@ -33,7 +33,8 @@ class TangataWhenuaSiteServiceTest :
                     geometry = Point(174.0, -41.0)
                     setProperty("Location", "Sample Location")
                     setProperty("Values_", "site1,site2,site3")
-                  })
+                  }
+              )
             }
         val service =
             TangataWhenuaSiteService(restTemplateMock, repositoryMock).apply {
@@ -46,8 +47,10 @@ class TangataWhenuaSiteServiceTest :
                             UrlBasedDataSources.Source().apply {
                               name = "Schedule B"
                               urls = listOf("http://test.url1")
-                            })
-                  })
+                            }
+                        )
+                  },
+              )
             }
 
         whenever(restTemplateMock.getForEntity(any<URI>(), eq(FeatureCollection::class.java)))

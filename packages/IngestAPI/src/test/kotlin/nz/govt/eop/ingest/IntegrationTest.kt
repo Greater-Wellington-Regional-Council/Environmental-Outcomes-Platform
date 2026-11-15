@@ -25,7 +25,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @EmbeddedKafka(
     partitions = 1,
     bootstrapServersProperty = "spring.kafka.bootstrap-servers",
-    topics = [WATER_ALLOCATION_TOPIC_NAME])
+    topics = [WATER_ALLOCATION_TOPIC_NAME],
+)
 @SpringBootTest
 @AutoConfigureMockMvc
 class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: EmbeddedKafkaBroker) {
@@ -34,7 +35,8 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
     mvc.perform(
             post("/water-allocations")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "WRONG TOKENs"))
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
         .andExpect(status().isUnauthorized)
   }
 
@@ -44,7 +46,8 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
             post("/water-allocations")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"notIngestId": "1", "allocations": []}"""))
+                .content("""{"notIngestId": "1", "allocations": []}""")
+        )
         .andExpect(status().isBadRequest)
   }
 
@@ -63,7 +66,9 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                         { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": null, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": 0.0, "meters": [], "category": "B" },
                     ]
                 }
-              """))
+              """
+                )
+        )
         .andExpect(status().isBadRequest)
   }
 
@@ -82,7 +87,9 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                         { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 0.0, "isMetered": true, "allocationDaily": null, "allocationYearly": 0.0, "meters": [], "category": "B" },
                     ]
                 }
-              """))
+              """
+                )
+        )
         .andExpect(status().isBadRequest)
   }
 
@@ -101,7 +108,9 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
                         { "sourceId": "OrongorongoSW-20540", "consentId":  "20540", "status":  "active", "areaId":  "OrongorongoSW", "allocationPlan": 0.0, "isMetered": true, "allocationDaily": 0.0, "allocationYearly": null, "meters": [], "category": "B" },
                     ]
                 }
-              """))
+              """
+                )
+        )
         .andExpect(status().isBadRequest)
   }
 
@@ -124,7 +133,8 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
             post("/water-allocations")
                 .with(SecurityMockMvcRequestPostProcessors.httpBasic("gw", "test-api-token"))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(testData))
+                .content(testData)
+        )
         .andExpect(status().isOk)
 
     val records = KafkaTestUtils.getRecords(consumer)
@@ -146,7 +156,10 @@ class IntegrationTest(@Autowired val mvc: MockMvc, @Autowired val broker: Embedd
 
     val cf =
         DefaultKafkaConsumerFactory<String, WaterAllocationMessage>(
-            consumerProps, StringDeserializer(), JsonDeserializer())
+            consumerProps,
+            StringDeserializer(),
+            JsonDeserializer(),
+        )
 
     val consumer: Consumer<String, WaterAllocationMessage> = cf.createConsumer()
     consumer.subscribe(listOf(WATER_ALLOCATION_TOPIC_NAME))

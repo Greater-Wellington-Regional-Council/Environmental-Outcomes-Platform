@@ -1,9 +1,9 @@
 package nz.govt.eop.tasks
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.net.URI
 import java.util.concurrent.TimeUnit
-import mu.KotlinLogging
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import nz.govt.eop.utils.GeoJsonFetcher
 import org.springframework.jdbc.core.JdbcTemplate

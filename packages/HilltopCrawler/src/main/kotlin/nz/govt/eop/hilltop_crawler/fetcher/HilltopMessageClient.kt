@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 @Component
 class HilltopMessageClient(
     @Qualifier("hilltopRawDataTopic") private val dataTopic: NewTopic,
-    private val kafkaSender: KafkaTemplate<HilltopMessageKey, HilltopMessage>
+    private val kafkaSender: KafkaTemplate<HilltopMessageKey, HilltopMessage>,
 ) {
   fun send(message: HilltopMessage) {
     val partitionKey = "${message.councilId}#${message.hilltopBaseUrl}".toByteArray()

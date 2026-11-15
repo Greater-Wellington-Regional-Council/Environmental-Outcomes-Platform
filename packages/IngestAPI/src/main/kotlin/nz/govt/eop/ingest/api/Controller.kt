@@ -1,9 +1,9 @@
 package nz.govt.eop.ingest.api
 
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.oshai.kotlinlogging.withLoggingContext
 import java.math.BigDecimal
 import java.time.Instant
-import mu.KotlinLogging
-import mu.withLoggingContext
 import nz.govt.eop.messages.ConsentStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -27,7 +27,7 @@ data class WaterAllocation(
 
 data class WaterAllocationsRequestBody(
     val ingestId: String,
-    val allocations: List<WaterAllocation>
+    val allocations: List<WaterAllocation>,
 )
 
 data class IngestResponse(val ingestId: String, val receivedAt: String, val recordsIngested: Int)
@@ -40,7 +40,7 @@ class Controller(private val producer: Producer) {
   @PostMapping("/water-allocations", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun waterAllocations(
       @AuthenticationPrincipal apiUser: UserDetails,
-      @RequestBody requestBody: WaterAllocationsRequestBody
+      @RequestBody requestBody: WaterAllocationsRequestBody,
   ): IngestResponse {
 
     val receivedAt = Instant.now()

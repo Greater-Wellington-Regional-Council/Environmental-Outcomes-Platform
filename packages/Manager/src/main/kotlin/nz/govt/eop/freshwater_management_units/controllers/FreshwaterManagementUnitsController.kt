@@ -19,11 +19,15 @@ class FreshwaterManagementUnitsController(
       @RequestParam lng: Double,
       @RequestParam lat: Double,
       @RequestParam(required = false) srid: Int = FreshwaterManagementUnit.DEFAULT_SRID,
-      @RequestParam(required = false, defaultValue = "true") includeTangataWhenuaSites: Boolean
+      @RequestParam(required = false, defaultValue = "true") includeTangataWhenuaSites: Boolean,
   ): ResponseEntity<FreshwaterManagementUnit> {
     val fmu =
         fmuService.findFreshwaterManagementUnitByLatAndLng(
-            lng, lat, srid, includeTangataWhenuaSites)
+            lng,
+            lat,
+            srid,
+            includeTangataWhenuaSites,
+        )
     return if (fmu == null) {
       ResponseEntity.notFound().build()
     } else {
@@ -33,10 +37,11 @@ class FreshwaterManagementUnitsController(
 
   @PostMapping(
       "/search-for-freshwater-managements-intersecting",
-      produces = [MediaType.APPLICATION_JSON_VALUE])
+      produces = [MediaType.APPLICATION_JSON_VALUE],
+  )
   fun searchForFreshwaterManagementsIntersecting(
       @RequestBody geoJson: String,
-      @RequestParam(required = false, defaultValue = "true") includeTangataWhenuaSites: Boolean
+      @RequestParam(required = false, defaultValue = "true") includeTangataWhenuaSites: Boolean,
   ): ResponseEntity<List<FreshwaterManagementUnit>> {
     val fmus = fmuService.findFreshwaterManagementUnitsByShape(geoJson, includeTangataWhenuaSites)
 
@@ -50,7 +55,7 @@ class FreshwaterManagementUnitsController(
   @GetMapping("/{id}", produces = [MediaType.APPLICATION_JSON_VALUE])
   fun getFreshwaterManagementUnitById(
       @PathVariable id: Int,
-      @RequestParam(required = false, defaultValue = "true") includeTangataWhenuaSites: Boolean
+      @RequestParam(required = false, defaultValue = "true") includeTangataWhenuaSites: Boolean,
   ): ResponseEntity<FreshwaterManagementUnit> {
     val fmu = fmuService.findFreshwaterManagementUnitById(id, includeTangataWhenuaSites)
     return if (fmu == null) {
@@ -63,7 +68,7 @@ class FreshwaterManagementUnitsController(
   @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
   fun getFreshwaterManagementUnits(
       @RequestParam(required = false, defaultValue = "true") includeTangataWhenuaSites: Boolean,
-      @RequestParam(required = false) format: String? = null
+      @RequestParam(required = false) format: String? = null,
   ): ResponseEntity<Any> {
     val fmus = fmuService.findAllFreshwaterManagementUnits(includeTangataWhenuaSites)
 
